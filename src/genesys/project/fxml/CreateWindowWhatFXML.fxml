@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.net.URL?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane id="AnchorPane" prefHeight="313.0" prefWidth="647.0" styleClass="mainFxmlClass" xmlns="http://javafx.com/javafx/9" xmlns:fx="http://javafx.com/fxml/1" fx:controller="genesys.project.fxml.CreateWindowWhatController">
+    <stylesheets>
+        <URL value="@builderfxml.css" />
+    </stylesheets>
+   <children>
+      <Button fx:id="newSpecies" contentDisplay="TOP" layoutX="14.0" layoutY="14.0" mnemonicParsing="false" onAction="#newSpeciesActions" prefHeight="283.0" prefWidth="200.0" text="New Species">
+         <graphic>
+            <ImageView fitHeight="195.0" fitWidth="186.0" onMouseClicked="#newSpeciesActions" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../builder/IMAGES/create%20species.png" />
+               </image>
+            </ImageView>
+         </graphic>
+      </Button>
+      <Button fx:id="newCulture" contentDisplay="TOP" layoutX="225.0" layoutY="14.0" mnemonicParsing="false" onAction="#newCultureActions" prefHeight="283.0" prefWidth="200.0" text="New Culture">
+         <graphic>
+            <ImageView fitHeight="116.0" fitWidth="178.0" onMouseClicked="#newCultureActions" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../builder/IMAGES/create%20culture.png" />
+               </image>
+            </ImageView>
+         </graphic>
+      </Button>
+      <Button fx:id="newRoster" contentDisplay="TOP" layoutX="431.0" layoutY="14.0" mnemonicParsing="false" onAction="#newRosterAcrions" prefHeight="283.0" prefWidth="200.0" text="New Roster">
+         <graphic>
+            <ImageView fitHeight="116.0" fitWidth="181.0" onMouseClicked="#newRosterAcrions" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../builder/IMAGES/create%20roster.png" />
+               </image>
+            </ImageView>
+         </graphic>
+      </Button>
+   </children>
+</AnchorPane>

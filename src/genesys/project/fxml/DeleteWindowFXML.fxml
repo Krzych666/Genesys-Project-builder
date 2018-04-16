@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.net.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane id="AnchorPane" prefHeight="325.0" prefWidth="406.0" styleClass="mainFxmlClass" xmlns:fx="http://javafx.com/fxml/1" fx:controller="genesys.project.fxml.DeleteWindowController">
+    <stylesheets>
+        <URL value="@builderfxml.css"/>
+    </stylesheets>
+    <children>
+      <Label fx:id="speciesDeleteLabel" alignment="CENTER" layoutX="14.0" layoutY="27.0" prefHeight="17.0" prefWidth="150.0" text="Species" />
+      <ComboBox fx:id="speciesDeleteDropdown" layoutX="14.0" layoutY="44.0" onAction="#speciesDeleteDropdownItemStateChangedActions" prefWidth="150.0" />
+      <Label fx:id="cultureDeleteLabel" alignment="CENTER" layoutX="14.0" layoutY="89.0" prefHeight="17.0" prefWidth="150.0" text="Culture" />
+      <ComboBox fx:id="cultureDeleteDropdown" layoutX="14.0" layoutY="106.0" onAction="#cultureDeleteDropdownItemStateChangedActions" prefWidth="150.0" />
+      <Label fx:id="classDeleteLabel" alignment="CENTER" layoutX="225.0" layoutY="27.0" prefHeight="17.0" prefWidth="150.0" text="Class" />
+      <ComboBox fx:id="classDeleteDropdown" layoutX="225.0" layoutY="44.0" onAction="#classDeleteDropdownItemStateChangedActions" prefHeight="25.0" prefWidth="150.0" />
+      <Label fx:id="heroDeleteLabel" alignment="CENTER" layoutX="225.0" layoutY="89.0" prefHeight="17.0" prefWidth="150.0" text="Hero" />
+      <ComboBox fx:id="heroDeleteDropdown" layoutX="225.0" layoutY="106.0" onAction="#heroDeleteDropdownItemStateChangedActions" prefHeight="25.0" prefWidth="150.0" />
+      <Label fx:id="progressDeleteLabel" alignment="CENTER" layoutX="14.0" layoutY="180.0" prefHeight="17.0" prefWidth="150.0" text="Progress" />
+      <ComboBox fx:id="progressDeleteDropdown" layoutX="14.0" layoutY="197.0" onAction="#progressDeleteDropdownItemStateChangedActions" prefWidth="150.0" />
+      <Label fx:id="rosterDeleteLabel" alignment="CENTER" layoutX="14.0" layoutY="242.0" prefHeight="17.0" prefWidth="150.0" text="Roster" />
+      <ComboBox fx:id="rosterDeleteDropdown" layoutX="14.0" layoutY="259.0" onAction="#rosterDeleteDropdownItemStateChangedActions" prefWidth="150.0" />
+      <Button fx:id="deleteFinishButton" layoutX="225.0" layoutY="202.0" mnemonicParsing="false" onAction="#deleteFinishButtonActions" prefHeight="40.0" prefWidth="150.0" text="Delete" />
+      <Button fx:id="deleteCancelButton" layoutX="225.0" layoutY="252.0" mnemonicParsing="false" onAction="#deleteCancelButtonActions" prefHeight="40.0" prefWidth="150.0" text="Cancel" />
+   </children>
+</AnchorPane>

@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.net.URL?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane id="AnchorPane" prefHeight="200.0" prefWidth="884.0" styleClass="mainFxmlClass" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/9" fx:controller="genesys.project.fxml.CreateSpeciesController">
+    <stylesheets>
+        <URL value="@builderfxml.css" />
+    </stylesheets>
+   <children>
+      <Button fx:id="createHumanoid" contentDisplay="TOP" layoutX="14.0" layoutY="14.0" mnemonicParsing="false" onAction="#createHumanoidActions" text="Humaniod">
+         <graphic>
+            <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../builder/IMAGES/primarious-humanoid01.png" />
+               </image>
+            </ImageView>
+         </graphic>
+      </Button>
+      <Button fx:id="createFey" contentDisplay="TOP" layoutX="186.0" layoutY="14.0" mnemonicParsing="false" onAction="#createFeyActions" text="Fey">
+         <graphic>
+            <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../builder/IMAGES/fey01.png" />
+               </image>
+            </ImageView>
+         </graphic>
+      </Button>
+      <Button fx:id="createReptilia" contentDisplay="TOP" layoutX="360.0" layoutY="14.0" mnemonicParsing="false" onAction="#createReptiliaActions" text="Reptilia">
+         <graphic>
+            <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../builder/IMAGES/reptilia01.png" />
+               </image>
+            </ImageView>
+         </graphic>
+      </Button>
+      <Button fx:id="createInsecta" contentDisplay="TOP" layoutX="707.0" layoutY="14.0" mnemonicParsing="false" onAction="#createInsectaActions" text="Insecta">
+         <graphic>
+            <ImageView fitHeight="150.0" fitWidth="199.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../builder/IMAGES/insekt01.png" />
+               </image>
+            </ImageView>
+         </graphic>
+      </Button>
+      <Button fx:id="createBiest" contentDisplay="TOP" layoutX="533.0" layoutY="14.0" mnemonicParsing="false" onAction="#createBiestActions" text="Biest">
+         <graphic>
+            <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../builder/IMAGES/beast01.png" />
+               </image>
+            </ImageView>
+         </graphic>
+      </Button>
+   </children>
+</AnchorPane>

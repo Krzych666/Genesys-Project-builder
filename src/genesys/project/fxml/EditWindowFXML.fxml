@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.net.URL?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane id="AnchorPane" prefHeight="325.0" prefWidth="406.0" styleClass="mainFxmlClass" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/9" fx:controller="genesys.project.fxml.EditWindowController">
+    <stylesheets>
+        <URL value="@builderfxml.css" />
+    </stylesheets>
+   <children>
+      <Label fx:id="speciesEditLabel" alignment="CENTER" layoutX="14.0" layoutY="27.0" prefHeight="17.0" prefWidth="150.0" text="Species" />
+      <ComboBox fx:id="speciesEditDropdown" layoutX="14.0" layoutY="44.0" onAction="#speciesEditDropdownItemStateChangedActions" prefWidth="150.0" />
+      <Label fx:id="cultureEditLabel" alignment="CENTER" layoutX="14.0" layoutY="89.0" prefHeight="17.0" prefWidth="150.0" text="Culture" />
+      <ComboBox fx:id="cultureEditDropdown" layoutX="14.0" layoutY="106.0" onAction="#cultureEditDropdownItemStateChangedActions" prefWidth="150.0" />
+      <Label fx:id="classEditLabel" alignment="CENTER" layoutX="225.0" layoutY="27.0" prefHeight="17.0" prefWidth="150.0" text="Class" />
+      <ComboBox fx:id="classEditDropdown" layoutX="225.0" layoutY="44.0" onAction="#classEditDropdownItemStateChangedActions" prefHeight="25.0" prefWidth="150.0" />
+      <Label fx:id="heroEditLabel" alignment="CENTER" layoutX="225.0" layoutY="89.0" prefHeight="17.0" prefWidth="150.0" text="Hero" />
+      <ComboBox fx:id="heroEditDropdown" layoutX="225.0" layoutY="106.0" onAction="#heroEditDropdownItemStateChangedActions" prefHeight="25.0" prefWidth="150.0" />
+      <Label fx:id="progressEditLabel" alignment="CENTER" layoutX="14.0" layoutY="180.0" prefHeight="17.0" prefWidth="150.0" text="Progress" />
+      <ComboBox fx:id="progressEditDropdown" layoutX="14.0" layoutY="197.0" onAction="#progressEditDropdownItemStateChangedActions" prefWidth="150.0" />
+      <Label fx:id="rosterEditLabel" alignment="CENTER" layoutX="14.0" layoutY="242.0" prefHeight="17.0" prefWidth="150.0" text="Roster" />
+      <ComboBox fx:id="rosterEditDropdown" layoutX="14.0" layoutY="259.0" onAction="#rosterEditDropdownItemStateChangedActions" prefWidth="150.0" />
+      <Button fx:id="editFinishButton" layoutX="225.0" layoutY="202.0" mnemonicParsing="false" onAction="#editFinishButtonActions" prefHeight="40.0" prefWidth="150.0" text="Edit" />
+      <Button fx:id="editCancelButton" layoutX="225.0" layoutY="252.0" mnemonicParsing="false" onAction="#editCancelButtonActions" prefHeight="40.0" prefWidth="150.0" text="Cancel" />
+      <CheckBox fx:id="editNameOnlyCheckbox" layoutX="225.0" layoutY="172.0" mnemonicParsing="false" text="Edit name only" />
+   </children>
+</AnchorPane>

@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.net.URL?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane id="AnchorPane" prefHeight="732.0" prefWidth="797.0" styleClass="mainFxmlClass" xmlns="http://javafx.com/javafx/9" xmlns:fx="http://javafx.com/fxml/1" fx:controller="genesys.project.fxml.SpeciesCreatorWindowController">
+    <stylesheets>
+        <URL value="@builderfxml.css" />
+    </stylesheets>
+    <children>
+      <Label fx:id="pointsPerModelText1" layoutX="9.0" layoutY="14.0" text="Points per Model:" />
+      <Label fx:id="pointsPerModelValue1" layoutX="103.0" layoutY="14.0" prefHeight="17.0" prefWidth="37.0" />
+      <Label fx:id="woundsText1" layoutX="154.0" layoutY="14.0" text="Wounds:" />
+      <Label fx:id="woundsValue1" layoutX="201.0" layoutY="14.0" prefHeight="17.0" prefWidth="37.0" />
+      <Label fx:id="sizeText1" layoutX="245.0" layoutY="14.0" text="Size:" />
+      <Label fx:id="sizeValue1" layoutX="269.0" layoutY="14.0" prefHeight="17.0" prefWidth="37.0" />
+      <Label fx:id="attacksText1" layoutX="315.0" layoutY="14.0" text="Attacks:" />
+      <Label fx:id="attacksValue1" layoutX="357.0" layoutY="14.0" prefHeight="17.0" prefWidth="37.0" />
+      <Label fx:id="characteristicsText1" layoutX="141.0" layoutY="40.0" text="Characteristics" />
+      <Label fx:id="strengthText1" layoutX="19.0" layoutY="68.0" text="Strength:" />
+      <Label fx:id="strengthValue1" layoutX="68.0" layoutY="68.0" prefHeight="17.0" prefWidth="37.0" />
+      <Label fx:id="toughnessText1" layoutX="131.0" layoutY="68.0" text="Toughness:" />
+      <Label fx:id="toughnessValue1" layoutX="191.0" layoutY="68.0" prefHeight="17.0" prefWidth="37.0" />
+      <Label fx:id="movementText1" layoutX="257.0" layoutY="68.0" text="Movement:" />
+      <Label fx:id="movementValue1" layoutX="318.0" layoutY="68.0" prefHeight="17.0" prefWidth="37.0" />
+      <Label fx:id="martialText1" layoutX="25.0" layoutY="99.0" text="Martial:" />
+      <Label fx:id="martialValue1" layoutX="74.0" layoutY="99.0" prefHeight="17.0" prefWidth="37.0" />
+      <Label fx:id="rangedText1" layoutX="149.0" layoutY="99.0" text="Ranged:" />
+      <Label fx:id="rangedValue1" layoutX="203.0" layoutY="99.0" prefHeight="17.0" prefWidth="37.0" />
+      <Label fx:id="defenseText1" layoutX="268.0" layoutY="99.0" text="Defense:" />
+      <Label fx:id="defenseValue1" layoutX="329.0" layoutY="99.0" prefHeight="17.0" prefWidth="37.0" />
+      <Label fx:id="disciplineText1" layoutX="18.0" layoutY="129.0" text="Discipline:" />
+      <Label fx:id="disciplineValue1" layoutX="76.0" layoutY="129.0" prefHeight="17.0" prefWidth="37.0" />
+      <Label fx:id="willpowerText1" layoutX="143.0" layoutY="129.0" text="Willpower:" />
+      <Label fx:id="willpowerValue1" layoutX="203.0" layoutY="129.0" prefHeight="17.0" prefWidth="37.0" />
+      <Label fx:id="commandText1" layoutX="265.0" layoutY="129.0" text="Command:" />
+      <Label fx:id="commandValue1" layoutX="326.0" layoutY="129.0" prefHeight="17.0" prefWidth="37.0" />
+      <Label fx:id="mTText1" layoutX="13.0" layoutY="188.0" text="Martial (MT):" />
+      <Label fx:id="mTValue1" layoutX="81.0" layoutY="188.0" prefHeight="17.0" prefWidth="37.0" />
+      <Label fx:id="rTText1" layoutX="139.0" layoutY="188.0" text="Ranged (RT):" />
+      <Label fx:id="rTValue1" layoutX="210.0" layoutY="188.0" prefHeight="17.0" prefWidth="37.0" />
+      <Label fx:id="moraleText1" layoutX="278.0" layoutY="188.0" text="Morale:" />
+      <Label fx:id="moraleValue1" layoutX="320.0" layoutY="188.0" prefHeight="17.0" prefWidth="37.0" />
+      <Label fx:id="targetNumbersText1" layoutX="128.0" layoutY="163.0" text="Target Numbers" />
+      <Label fx:id="skillsText1" layoutX="160.0" layoutY="236.0" text="Skills" />
+      <Label fx:id="lifeDomainText" layoutX="455.0" layoutY="14.0" text="Life Domain:" />
+      <Label fx:id="lifeDomainValue" layoutX="530.0" layoutY="14.0" prefHeight="17.0" prefWidth="149.0" />
+      <Label fx:id="nameInputTextField" layoutX="477.0" layoutY="49.0" text="Species:" />
+      <TextField fx:id="nameInputField" alignment="CENTER" layoutX="530.0" layoutY="45.0" promptText="&gt;enter name here&lt;" />
+      <Label fx:id="classInputTextField" layoutX="489.0" layoutY="77.0" text="Class:" />
+      <Label fx:id="classNameValue" layoutX="530.0" layoutY="77.0" prefHeight="17.0" prefWidth="149.0" />
+      <Label fx:id="skillSetText" layoutX="429.0" layoutY="121.0" text="Evolutionary Branch:" />
+      <ComboBox fx:id="skillSetChooser" layoutX="548.0" layoutY="117.0" onAction="#skillSetChooserItemStateChangedActions" prefHeight="25.0" prefWidth="149.0" />
+      <RadioButton fx:id="lightSetButton" layoutX="429.0" layoutY="227.0" mnemonicParsing="false" onAction="#lightSetButtonActions" text="Path of Light" />
+      <RadioButton fx:id="darknessSetButton" layoutX="547.0" layoutY="227.0" mnemonicParsing="false" onAction="#darknessSetButtonActions" text="Path of Darkness" />
+      <RadioButton fx:id="twilightSetButton" layoutX="429.0" layoutY="261.0" mnemonicParsing="false" onAction="#twilightSetButtonActions" text="Shadows of Twilight" />
+      <CheckBox fx:id="outcastsCheckbox" layoutX="428.0" layoutY="294.0" mnemonicParsing="false" onAction="#outcastCheckboxActions" text="Outcasts" />
+      <ListView fx:id="availableSkillsList" layoutX="428.0" layoutY="346.0" onMouseClicked="#availableSkillsListMousePressedActions" prefHeight="183.0" prefWidth="355.0" />
+      <ListView fx:id="skillsList1" layoutX="14.0" layoutY="346.0" onMouseClicked="#skillsList1MousePressedActions" prefHeight="183.0" prefWidth="355.0" />
+      <Button fx:id="moveSkillButton" layoutX="375.0" layoutY="425.0" mnemonicParsing="false" onAction="#moveSkillButtonActions" prefHeight="25.0" prefWidth="49.0" text="&lt;-&gt;" />
+      <Button fx:id="createFinish" layoutX="5.0" layoutY="658.0" mnemonicParsing="false" onAction="#createFinishActions" prefHeight="60.0" prefWidth="789.0" text="Create" />
+      <Label fx:id="skillsLeft1a" layoutX="14.0" layoutY="254.0" prefHeight="80.0" prefWidth="293.0" />
+      <Label fx:id="skillsLeft1b" layoutX="309.0" layoutY="254.0" prefHeight="80.0" prefWidth="60.0" />
+      <ComboBox fx:id="secondaryPathChooser" layoutX="582.0" layoutY="257.0" onAction="#twilightSecondaryChooseActions" prefWidth="150.0" />
+      <Label fx:id="skillSubSetText" layoutX="429.0" layoutY="155.0" text="Sub Branch:" />
+      <ComboBox fx:id="skillSubSetChooser" layoutX="548.0" layoutY="151.0" onAction="#skillSubSetChooserItemStateChangedActions" prefHeight="25.0" prefWidth="149.0" />
+      <ListView fx:id="subSkillsList1" layoutX="18.0" layoutY="558.0" onMouseClicked="#subSkillsListMouse1Pressed" prefHeight="88.0" prefWidth="200.0" />
+      <TextArea fx:id="subSkillText1" editable="false" layoutX="223.0" layoutY="558.0" prefHeight="88.0" prefWidth="562.0" wrapText="true" />
+      <CheckBox fx:id="showAsCoreSkills" layoutX="20.0" layoutY="535.0" mnemonicParsing="false" onAction="#showAsCoreSkillsPressed" text="Show as core skills" />
+   </children>
+</AnchorPane>
