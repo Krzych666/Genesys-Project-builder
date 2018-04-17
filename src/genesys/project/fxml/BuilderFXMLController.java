@@ -660,7 +660,7 @@ public class BuilderFXMLController implements Initializable {
                 if (tmp[1][i].contains("Increase")) {
                     a = 0;
                 }
-                if (tmp[1][i].contains("Decrease") || tmp[1][i].contains("Model Size")) {
+                if (tmp[1][i].contains("Decrease") || tmp[1][i].contains("Model Size")|| tmp[1][i].contains("Increase Size")) {
                     a = 1;
                 }
                 for (int u = 0; u < wheretabl.size(); u++) {

@@ -7,12 +7,18 @@ package genesys.project.fxml;
 
 import genesys.project.builder.BuilderCORE;
 import genesys.project.builder.BuilderCORE.Enmuerations.LifedomainValue;
+import genesys.project.builder.BuilderCORE.Enmuerations.MainClasificationValue;
 import genesys.project.builder.BuilderCORE.Enmuerations.MainDomainValue;
+import genesys.project.builder.BuilderCORE.Enmuerations.MainKingdomValue;
 import genesys.project.builder.BuilderCORE.Enmuerations.MainLineageValue;
+import genesys.project.builder.BuilderCORE.Enmuerations.MainOrderValue;
+import genesys.project.builder.BuilderCORE.Enmuerations.MainRegionValue;
 import genesys.project.builder.BuilderCORE.Enmuerations.UseCases;
 import genesys.project.builder.DatabaseModifier;
 import genesys.project.builder.DatabaseModifier.AFey;
 import genesys.project.builder.DatabaseModifier.AReptilia;
+import genesys.project.builder.DatabaseModifier.ABiest;
+import genesys.project.builder.DatabaseModifier.AInsecta;
 import genesys.project.builder.GenesysProjectBuilder;
 import java.io.IOException;
 import static java.lang.Integer.max;
@@ -217,8 +223,16 @@ public class SpeciesCreatorWindowController implements Initializable {
                 ((AReptilia) DatabaseModifier.holdSpecies).setMainLineage(MainLineageValue.Draconic);
                 break;
             case Biest:
+                skillSetText.setText(BuilderCORE.BIESTSKILS);
+                skillSubSetText.setText(BuilderCORE.BIESTSUBSKILS);
+                ((ABiest) DatabaseModifier.holdSpecies).setMainKingdom(MainKingdomValue.NONE);
+                ((ABiest) DatabaseModifier.holdSpecies).setMainRegion(MainRegionValue.NONE);
                 break;
             case Insecta:
+                skillSetText.setText(BuilderCORE.INSECTASKILS);
+                skillSubSetText.setText(BuilderCORE.INSECTASUBSKILS);
+                ((AInsecta) DatabaseModifier.holdSpecies).setMainClasification(MainClasificationValue.NONE);
+                ((AInsecta) DatabaseModifier.holdSpecies).setMainOrder(MainOrderValue.NONE);
                 break;
         }
         skillSetChooser.setItems(DatabaseModifier.getSkillSet());
@@ -605,6 +619,7 @@ public class SpeciesCreatorWindowController implements Initializable {
             DatabaseModifier.outcasts = false;
             secondaryPathChooser.setVisible(false);
         }
+        simplifyToCoreSkills = false;
     }
 
     void setSpeciesList(ListView speciesList) {

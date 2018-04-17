@@ -111,6 +111,26 @@ public class BuilderCORE {
     /**
      * @param args the command line arguments
      */
+    /**
+     * BIESTSKILS = "Traits"
+     */
+    public static final String BIESTSKILS = "Traits";
+
+    /**
+     * BIESTSUBSKILS = "Evolutionary Branch"
+     */
+    public static final String BIESTSUBSKILS = "Evolutionary Branch";
+
+    /**
+     * INSECTASKILS = "Classification"
+     */
+    public static final String INSECTASKILS = "Classification";
+
+    /**
+     * INSECTASUBSKILS = "Order"
+     */
+    public static final String INSECTASUBSKILS = "Order";
+
     public static void main(String[] args) {
 
     }
@@ -474,12 +494,17 @@ public class BuilderCORE {
             /**
              * Draconic
              */
-            Draconic("Draconic");
+            Draconic("Draconic"),
+            Troglodyte("Troglodyte"),
+            Saurien("Saurien"),
+            Tuatara("Tuatara"),
+            Gargoyle("Gargoyle"),
+            Ophidian("Ophidian");
 
-            private String mlv;
+            private String mainlineagevalue;
 
-            private MainLineageValue(String mlv) {
-                this.mlv = mlv;
+            private MainLineageValue(String mainlineagevalue) {
+                this.mainlineagevalue = mainlineagevalue;
             }
 
             /**
@@ -487,17 +512,189 @@ public class BuilderCORE {
              * @return
              */
             public String getText() {
-                return this.mlv;
+                return this.mainlineagevalue;
             }
 
             /**
              *
-             * @param mlv
+             * @param mainlineagevalue
              * @return
              */
-            public static MainLineageValue getEnum(String mlv) {
+            public static MainLineageValue getEnum(String mainlineagevalue) {
                 for (MainLineageValue b : MainLineageValue.values()) {
-                    if (b.mlv.equalsIgnoreCase(mlv)) {
+                    if (b.mainlineagevalue.equalsIgnoreCase(mainlineagevalue)) {
+                        return b;
+                    }
+                }
+                return null;
+            }
+        }
+
+        /**
+         * Main Kingdom Values
+         */
+        public enum MainKingdomValue {
+            NONE(""),
+            Ursidae("Ursidae"),
+            CanusLupis("Canus Lupis"),
+            AvianAves("Avian Aves"),
+            Bor("Bor"),
+            Ovis("Ovis"),
+            Taurus("Taurus"),
+            Feline("Feline"),
+            Vermin("Vermin"),
+            Caballis("Caballis"),
+            Ichthyes("Ichthyes");
+
+            private String mainkingdomvalue;
+
+            private MainKingdomValue(String mainkingdomvalue) {
+                this.mainkingdomvalue = mainkingdomvalue;
+            }
+
+            /**
+             *
+             * @return
+             */
+            public String getText() {
+                return this.mainkingdomvalue;
+            }
+
+            /**
+             *
+             * @param mainkingdomvalue
+             * @return
+             */
+            public static MainKingdomValue getEnum(String mainkingdomvalue) {
+                for (MainKingdomValue b : MainKingdomValue.values()) {
+                    if (b.mainkingdomvalue.equalsIgnoreCase(mainkingdomvalue)) {
+                        return b;
+                    }
+                }
+                return null;
+            }
+        }
+
+        /**
+         * Main Region Values
+         */
+        public enum MainRegionValue {
+            NONE(""),
+            Caverns("Caverns"),
+            Desert("Desert"),
+            Forests("Forests"),
+            Marsh("Marsh"),
+            Mountains("Mountains"),
+            Moon("Moon"),
+            Oceans("Oceans"),
+            Plains("Plains"),
+            Sky("Sky"),
+            Tundra("Tundra");
+            private String mainregionvalue;
+
+            private MainRegionValue(String mainregionvalue) {
+                this.mainregionvalue = mainregionvalue;
+            }
+
+            /**
+             *
+             * @return
+             */
+            public String getText() {
+                return this.mainregionvalue;
+            }
+
+            /**
+             *
+             * @param mainregionvalue
+             * @return
+             */
+            public static MainRegionValue getEnum(String mainregionvalue) {
+                for (MainRegionValue b : MainRegionValue.values()) {
+                    if (b.mainregionvalue.equalsIgnoreCase(mainregionvalue)) {
+                        return b;
+                    }
+                }
+                return null;
+            }
+        }
+
+        /**
+         * Main Clasification Values
+         */
+        public enum MainClasificationValue {
+            NONE(""),
+            Arachnea("Arachnea"),
+            Crustacea("Crustacea"),
+            Insecta("Insecta"),
+            Myriapoda("Myriapoda");
+            private String mainclasificationvalue;
+
+            private MainClasificationValue(String mainclasificationvalue) {
+                this.mainclasificationvalue = mainclasificationvalue;
+            }
+
+            /**
+             *
+             * @return
+             */
+            public String getText() {
+                return this.mainclasificationvalue;
+            }
+
+            /**
+             *
+             * @param mainclasificationvalue
+             * @return
+             */
+            public static MainClasificationValue getEnum(String mainclasificationvalue) {
+                for (MainClasificationValue b : MainClasificationValue.values()) {
+                    if (b.mainclasificationvalue.equalsIgnoreCase(mainclasificationvalue)) {
+                        return b;
+                    }
+                }
+                return null;
+            }
+        }
+
+        /**
+         * Main Order Values
+         */
+        public enum MainOrderValue {
+            NONE(""),
+            Arachnid("Arachnid"),
+            Scorpionoid("Scorpionoid"),
+            Decapod("Decapod"),
+            Isopod("Isopod"),
+            Coleoptera("Coleoptera"),
+            Dipteran("Dipteran"),
+            Formicadae("Formicadae"),
+            Mantid("Mantid"),
+            Vespidae("Vespidae"),
+            Centipedea("Centipedea"),
+            Millipedea("Millipedea");
+            private String mainordervalue;
+
+            private MainOrderValue(String mainordervalue) {
+                this.mainordervalue = mainordervalue;
+            }
+
+            /**
+             *
+             * @return
+             */
+            public String getText() {
+                return this.mainordervalue;
+            }
+
+            /**
+             *
+             * @param mainordervalue
+             * @return
+             */
+            public static MainOrderValue getEnum(String mainordervalue) {
+                for (MainOrderValue b : MainOrderValue.values()) {
+                    if (b.mainordervalue.equalsIgnoreCase(mainordervalue)) {
                         return b;
                     }
                 }

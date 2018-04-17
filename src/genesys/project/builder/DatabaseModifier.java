@@ -7,8 +7,12 @@ package genesys.project.builder;
 
 import genesys.project.builder.BuilderCORE.Enmuerations.DBTables;
 import genesys.project.builder.BuilderCORE.Enmuerations.LifedomainValue;
+import genesys.project.builder.BuilderCORE.Enmuerations.MainClasificationValue;
 import static genesys.project.builder.BuilderCORE.Enmuerations.MainDomainValue;
+import genesys.project.builder.BuilderCORE.Enmuerations.MainKingdomValue;
 import genesys.project.builder.BuilderCORE.Enmuerations.MainLineageValue;
+import genesys.project.builder.BuilderCORE.Enmuerations.MainOrderValue;
+import genesys.project.builder.BuilderCORE.Enmuerations.MainRegionValue;
 import genesys.project.builder.BuilderCORE.Enmuerations.UseCases;
 import genesys.project.fxml.BuilderFXMLController;
 import java.io.IOException;
@@ -206,10 +210,10 @@ public class DatabaseModifier {
                 holdSpecies.SpeciesModifiers = "Arcana=" + arcana;
                 break;
             case Biest:
-                holdSpecies.SpeciesModifiers = "";  //TODO
+                holdSpecies.SpeciesModifiers = "Arcana=" + arcana;
                 break;
             case Insecta:
-                holdSpecies.SpeciesModifiers = "";  //TODO
+                holdSpecies.SpeciesModifiers = "Arcana=" + arcana;
                 break;
         }
     }
@@ -402,119 +406,43 @@ public class DatabaseModifier {
      * @return @throws SQLException
      */
     public static String skillsCanTake() throws SQLException {
-        String[] show = new String[21];
-        int sh = 0;
         chooseConnection(UseCases.COREdb);
         PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT StartingNumberOfSkills FROM StartingCharacteristics WHERE LifeDomain = ?");
         stmt.setString(1, holdSpecies.Lifedomain.toString());
         String rules = BuilderCORE.getValue(stmt, "StartingNumberOfSkills");
-        if (holdSpecies.Lifedomain == LifedomainValue.Humanoid) {
-            show = rules.split(",");
-            sh = 3;
-        }
-        if (holdSpecies.Lifedomain == LifedomainValue.Fey) {
-            int a = 0;
-            int aa = 0;
-            sh = 21;
-            for (int i = 0; i < sh; i++) {
-                show[i] = rules.split(";")[a].split(",")[aa];
-                aa++;
-                if (i == 2) {
-                    a = 1;
-                    aa = 0;
-                }
-                if (i == 5) {
-                    a = 2;
-                    aa = 0;
-                }
-                if (i == 8) {
-                    a = 3;
-                    aa = 0;
-                }
-                if (i == 12) {
-                    a = 4;
-                    aa = 0;
-                }
-                if (i == 16) {
-                    a = 5;
-                    aa = 0;
-                }
-            }
-        }
-        if (holdSpecies.Lifedomain == LifedomainValue.Reptilia) {
-            show[0] = rules;
-            sh = 1;
-        }
-        if (holdSpecies.Lifedomain == LifedomainValue.Biest) {
-            System.out.println("Biest not supported yet");  //TODO
-        }
-        if (holdSpecies.Lifedomain == LifedomainValue.Insecta) {
-            System.out.println("Insecta not supported yet");  //TODO
-        }
-        String[] fintex = {"", "", "", "", "", ""};
-        int q = 0;
-        for (int i = 0; i < sh; i++) {
-            if (i < 3) {
-                q = 0;
-            }
-            if (i >= 3 && i < 6) {
-                q = 1;
-            }
-            if (i >= 6 && i < 9) {
-                q = 2;
-            }
-            if (i >= 9 && i < 13) {
-                q = 3;
-            }
-            if (i >= 13 && i < 17) {
-                q = 4;
-            }
-            if (i >= 17 && i < 21) {
-                q = 5;
-            }
-            fintex[q] += show[i] + "\n";
-        }
-        int ch = 0;
         switch (holdSpecies.Lifedomain) {
             case Humanoid:
-                ch = 0;
-                break;
+                return rules.replace(",", "\n").replace(":", " : ");
             case Fey:
-                switch (((AFey) holdSpecies).MainDomain) {
+                switch (((AFey) holdSpecies).getMainDomain()) {
                     case Light:
                         if (!outcasts) {
-                            ch = 0;
+                            return rules.split(";")[0].replace(",", "\n").replace(":", " : ");
                         } else {
-                            ch = 3;
+                            return rules.split(";")[3].replace(",", "\n").replace(":", " : ");
                         }
-                        break;
                     case Darkness:
                         if (!outcasts) {
-                            ch = 1;
+                            return rules.split(";")[1].replace(",", "\n").replace(":", " : ");
                         } else {
-                            ch = 4;
+                            return rules.split(";")[4].replace(",", "\n").replace(":", " : ");
                         }
-                        break;
                     case Twilight:
                         if (!outcasts) {
-                            ch = 2;
+                            return rules.split(";")[2].replace(",", "\n").replace(":", " : ");
                         } else {
-                            ch = 5;
+                            return rules.split(";")[5].replace(",", "\n").replace(":", " : ");
                         }
-                        break;
                 }
                 break;
             case Reptilia:
-                ch = 0;
-                break;
-            case Biest:  //TODO
-                ch = 0;
-                break;
-            case Insecta:  //TODO
-                ch = 0;
-                break;
+                return rules.replace(":", " : ");
+            case Biest:
+                return rules.replace(",", "\n").replace(":", " : ");
+            case Insecta:
+                return rules.replace(",", "\n").replace(":", " : ");
         }
-        return fintex[ch];
+        return null;
     }
 
     /**
@@ -551,10 +479,12 @@ public class DatabaseModifier {
             case Reptilia:
                 fintex += ((AReptilia) holdSpecies).LesserClass + "\n" + ((AReptilia) holdSpecies).CommonClass + "\n" + ((AReptilia) holdSpecies).RareClass + "\n" + ((AReptilia) holdSpecies).AncientClass;
                 break;
-            case Biest: //TODO
+            case Biest:
+                fintex += ((ABiest) holdSpecies).CommonClass + "\n" + ((ABiest) holdSpecies).GreaterClass + "\n" + ((ABiest) holdSpecies).LeaderClass + "\n" + ((ABiest) holdSpecies).LegendaryClass;
                 break;
             case Insecta:
-                break;  //TODO
+                fintex += ((AInsecta) holdSpecies).LesserClass + "\n" + ((AInsecta) holdSpecies).CommonClass + "\n" + ((AInsecta) holdSpecies).AdvancedClass + "\n" + ((AInsecta) holdSpecies).ApexClass;
+                break;
         }
         return fintex;
     }
@@ -582,16 +512,16 @@ public class DatabaseModifier {
                 SpMod = holdSpecies.SpeciesModifiers;
                 break;
             case Fey:
-                SpMod = "MainDomain=" + ((AFey) holdSpecies).MainDomain.getText() + "," + holdSpecies.SpeciesModifiers;
+                SpMod = "MainDomain=" + ((AFey) holdSpecies).getMainDomain().getText() + "," + holdSpecies.SpeciesModifiers;
                 break;
             case Reptilia:
-                SpMod = "MainLineage=" + ((AReptilia) holdSpecies).MainLineage.getText() + "," + holdSpecies.SpeciesModifiers;
+                SpMod = "MainLineage=" + ((AReptilia) holdSpecies).getMainLineage().getText() + "," + holdSpecies.SpeciesModifiers;
                 break;
             case Biest:
-                SpMod = "Main_Biest" + "," + holdSpecies.SpeciesModifiers;  //TODO
+                SpMod = "MainKingdom=" + ((ABiest) holdSpecies).getMainKingdom().getText() + "," + "MainRegion=" + ((ABiest) holdSpecies).getMainRegion().getText() + "," + holdSpecies.SpeciesModifiers;
                 break;
             case Insecta:
-                SpMod = "Main_Insecta" + "," + holdSpecies.SpeciesModifiers;    //TODO
+                SpMod = "MainClasification=" + ((AInsecta) holdSpecies).getMainClasification().getText() + "," + "MainOrder=" + ((AInsecta) holdSpecies).getMainOrder().getText() + "," + holdSpecies.SpeciesModifiers;
                 break;
         }
         if (holdCulture.CultureName.equals(holdSpecies.SpeciesName)) {
@@ -784,7 +714,7 @@ public class DatabaseModifier {
             if (LifedomainValue.Fey == holdSpecies.Lifedomain) {
                 chooseConnection(UseCases.COREdb);
                 PreparedStatement stmt1 = BuilderCORE.getConnection().prepareStatement("SELECT DISTINCT LifeDomainTree1 FROM Skills WHERE (LifeDomain = 'Fey' AND (LifeDomainTree1 = ? OR LifeDomainTree1 = ?))");
-                switch (((AFey) holdSpecies).MainDomain) {
+                switch (((AFey) holdSpecies).getMainDomain()) {
                     case Light:
                         if (!outcasts) {
                             stmt1.setString(1, BuilderCORE.LIGHT);
@@ -806,7 +736,7 @@ public class DatabaseModifier {
                     case Twilight:
                         if (!outcasts) {
                             stmt1.setString(1, BuilderCORE.TWILIGHT);
-                            switch (((AFey) holdSpecies).SecondaryDomain) {
+                            switch (((AFey) holdSpecies).getSecondaryDomain()) {
                                 case Light:
                                     stmt1.setString(2, BuilderCORE.LIGHT);
                                     break;
@@ -824,7 +754,6 @@ public class DatabaseModifier {
                         break;
                 }
                 tmp = BuilderCORE.getData(stmt1, "LifeDomainTree1", null);
-
             }
         }
         int a = 0;
@@ -919,8 +848,35 @@ public class DatabaseModifier {
                     holdSpecies.GreaterTraitsAndPowersOfTwilight = addRemove(holdSpecies.GreaterTraitsAndPowersOfTwilight, Add);
                 }
                 break;
-            case "Draconic":
-                holdSpecies.TraitsFromDraconicLineage = addRemove(holdSpecies.TraitsFromDraconicLineage, Add);
+            case "Reptilia Lineages":
+                holdSpecies.ReptiliaLineage = addRemove(holdSpecies.ReptiliaLineage, Add);
+                break;
+            case "EnvironmentalAdaptability":
+                holdSpecies.EnvironmentalAdaptability = addRemove(holdSpecies.EnvironmentalAdaptability, Add);
+                break;
+            case "ExtremisAffinity":
+                holdSpecies.ExtremisAffinity = addRemove(holdSpecies.ExtremisAffinity, Add);
+                break;
+            case "BiestialKingdoms":
+                holdSpecies.setBiestialKingdoms(addRemove(holdSpecies.getBiestialKingdoms(), Add));
+                break;
+            case "RegionalTraits":
+                holdSpecies.setRegionalTraits(addRemove(holdSpecies.getRegionalTraits(), Add));
+                break;
+            case "SpiritualAndScientificKnowledge":
+                holdSpecies.setSpiritualAndScientificKnowledge(addRemove(holdSpecies.getSpiritualAndScientificKnowledge(), Add));
+                break;
+            case "Clasification":
+                holdSpecies.setClasification(addRemove(holdSpecies.getClasification(), Add));
+                break;
+            case "Order":
+                holdSpecies.setOrder(addRemove(holdSpecies.getOrder(), Add));
+                break;
+            case "GeneticMorphology":
+                holdSpecies.setGeneticMorphology(addRemove(holdSpecies.getGeneticMorphology(), Add));
+                break;
+            case "Knowledge":
+                holdSpecies.setKnowledge(addRemove(holdSpecies.getKnowledge(), Add));
                 break;
             default:
                 break;
@@ -934,7 +890,7 @@ public class DatabaseModifier {
             }
         }
         if (holdSpecies.Lifedomain == LifedomainValue.Fey) {
-            switch (((AFey) holdSpecies).MainDomain) {
+            switch (((AFey) holdSpecies).getMainDomain()) {
                 case Light:
                     if (!outcasts) {
                         fintex = holdSpecies.LesserTraitsAndPowersOfLight + "\n" + holdSpecies.GreaterTraitsAndPowersOfLight + "\n" + holdSpecies.LesserTraitsAndPowersOfTwilight + "\n";
@@ -959,14 +915,14 @@ public class DatabaseModifier {
             }
         }
         if (holdSpecies.Lifedomain == LifedomainValue.Reptilia) {
-            fintex = holdSpecies.TraitsFromDraconicLineage + "\n";
+            fintex = holdSpecies.ReptiliaLineage + "\n" + holdSpecies.EnvironmentalAdaptability + "\n" + holdSpecies.ExtremisAffinity + "\n";
         }
 
         if (holdSpecies.Lifedomain == LifedomainValue.Biest) {
-            //TODO
+            fintex = holdSpecies.getBiestialKingdoms() + "\n" + holdSpecies.getRegionalTraits() + "\n" + holdSpecies.GeneticMutation + "\n" + holdSpecies.EnvironmentalAdaptation + "\n" + holdSpecies.getSpiritualAndScientificKnowledge() + "\n";
         }
         if (holdSpecies.Lifedomain == LifedomainValue.Insecta) {
-            //TODO
+            fintex = holdSpecies.getOrder() + "\n" + holdSpecies.getGeneticMorphology() + "\n" + holdSpecies.EnvironmentalAdaptation + "\n" + holdSpecies.getKnowledge() + "\n";
         }
 
         return fintex;
@@ -1382,7 +1338,9 @@ public class DatabaseModifier {
                 LesserTraitsAndPowersOfLight, GreaterTraitsAndPowersOfLight,
                 LesserTraitsAndPowersOfDarkness, GreaterTraitsAndPowersOfDarkness,
                 LesserTraitsAndPowersOfTwilight, GreaterTraitsAndPowersOfTwilight,
-                TraitsFromDraconicLineage;
+                ReptiliaLineage, EnvironmentalAdaptability, ExtremisAffinity,
+                BiestialKingdoms, RegionalTraits, SpiritualAndScientificKnowledge,
+                Clasification, Order, GeneticMorphology, Knowledge;
         private int NumberOfSkills, MaxNumberOfLowClases, MaxNumberOfMidClases, MaxNumberOfHigClases;
 
         /**
@@ -1669,7 +1627,7 @@ public class DatabaseModifier {
          * @return
          */
         public int getTraitsFromDraconicLineage() {
-            return TraitsFromDraconicLineage;
+            return ReptiliaLineage;
         }
 
         /**
@@ -1677,7 +1635,106 @@ public class DatabaseModifier {
          * @param TraitsFromDraconicLineage
          */
         public void setTraitsFromDraconicLineage(int TraitsFromDraconicLineage) {
-            this.TraitsFromDraconicLineage = TraitsFromDraconicLineage;
+            this.ReptiliaLineage = TraitsFromDraconicLineage;
+        }
+
+        /**
+         * @return the BiestialKingdoms
+         */
+        public int getBiestialKingdoms() {
+            return BiestialKingdoms;
+        }
+
+        /**
+         * @param BiestialKingdoms the BiestialKingdoms to set
+         */
+        public void setBiestialKingdoms(int BiestialKingdoms) {
+            this.BiestialKingdoms = BiestialKingdoms;
+        }
+
+        /**
+         * @return the RegionalTraits
+         */
+        public int getRegionalTraits() {
+            return RegionalTraits;
+        }
+
+        /**
+         * @param RegionalTraits the RegionalTraits to set
+         */
+        public void setRegionalTraits(int RegionalTraits) {
+            this.RegionalTraits = RegionalTraits;
+        }
+
+        /**
+         * @return the SpiritualAndScientificKnowledge
+         */
+        public int getSpiritualAndScientificKnowledge() {
+            return SpiritualAndScientificKnowledge;
+        }
+
+        /**
+         * @param SpiritualAndScientificKnowledge the
+         * SpiritualAndScientificKnowledge to set
+         */
+        public void setSpiritualAndScientificKnowledge(int SpiritualAndScientificKnowledge) {
+            this.SpiritualAndScientificKnowledge = SpiritualAndScientificKnowledge;
+        }
+
+        /**
+         * @return the Clasification
+         */
+        public int getClasification() {
+            return Clasification;
+        }
+
+        /**
+         * @param Clasification the Clasification to set
+         */
+        public void setClasification(int Clasification) {
+            this.Clasification = Clasification;
+        }
+
+        /**
+         * @return the Order
+         */
+        public int getOrder() {
+            return Order;
+        }
+
+        /**
+         * @param Order the Order to set
+         */
+        public void setOrder(int Order) {
+            this.Order = Order;
+        }
+
+        /**
+         * @return the GeneticMorphology
+         */
+        public int getGeneticMorphology() {
+            return GeneticMorphology;
+        }
+
+        /**
+         * @param GeneticMorphology the GeneticMorphology to set
+         */
+        public void setGeneticMorphology(int GeneticMorphology) {
+            this.GeneticMorphology = GeneticMorphology;
+        }
+
+        /**
+         * @return the Knowledge
+         */
+        public int getKnowledge() {
+            return Knowledge;
+        }
+
+        /**
+         * @param Knowledge the Knowledge to set
+         */
+        public void setKnowledge(int Knowledge) {
+            this.Knowledge = Knowledge;
         }
 
         /**
@@ -1734,11 +1791,11 @@ public class DatabaseModifier {
          */
         public ASpecies getClone() {
             ASpecies aClone = createASpecies(this.Lifedomain);
-            aClone.setAll(this.SpeciesName, this.Skills, this.SpeciesModifiers, this.GeneticMutation, this.EnvironmentalAdaptation, this.KnowledgeAndScience, this.LesserTraitsAndPowersOfLight, this.GreaterTraitsAndPowersOfLight, this.LesserTraitsAndPowersOfDarkness, this.GreaterTraitsAndPowersOfDarkness, this.LesserTraitsAndPowersOfTwilight, this.GreaterTraitsAndPowersOfTwilight, this.TraitsFromDraconicLineage, this.NumberOfSkills, this.MaxNumberOfLowClases, this.MaxNumberOfMidClases, this.MaxNumberOfHigClases);
+            aClone.setAll(this.SpeciesName, this.Skills, this.SpeciesModifiers, this.GeneticMutation, this.EnvironmentalAdaptation, this.KnowledgeAndScience, this.LesserTraitsAndPowersOfLight, this.GreaterTraitsAndPowersOfLight, this.LesserTraitsAndPowersOfDarkness, this.GreaterTraitsAndPowersOfDarkness, this.LesserTraitsAndPowersOfTwilight, this.GreaterTraitsAndPowersOfTwilight, this.ReptiliaLineage, this.EnvironmentalAdaptability, this.ExtremisAffinity, this.BiestialKingdoms, this.RegionalTraits, this.SpiritualAndScientificKnowledge, this.Clasification, this.Order, this.GeneticMorphology, this.Knowledge, this.NumberOfSkills, this.MaxNumberOfLowClases, this.MaxNumberOfMidClases, this.MaxNumberOfHigClases);
             return aClone;
         }
 
-        private void setAll(String SpeciesName, String Skills, String SpeciesModifiers, int GeneticMutation, int EnvironmentalAdaptation, int KnowledgeAndScience, int LesserTraitsAndPowersOfLight, int GreaterTraitsAndPowersOfLight, int LesserTraitsAndPowersOfDarkness, int GreaterTraitsAndPowersOfDarkness, int LesserTraitsAndPowersOfTwilight, int GreaterTraitsAndPowersOfTwilight, int TraitsFromDraconicLineage, int NumberOfSkills, int MaxNumberOfLowClases, int MaxNumberOfMidClases, int MaxNumberOfHigClases) {
+        private void setAll(String SpeciesName, String Skills, String SpeciesModifiers, int GeneticMutation, int EnvironmentalAdaptation, int KnowledgeAndScience, int LesserTraitsAndPowersOfLight, int GreaterTraitsAndPowersOfLight, int LesserTraitsAndPowersOfDarkness, int GreaterTraitsAndPowersOfDarkness, int LesserTraitsAndPowersOfTwilight, int GreaterTraitsAndPowersOfTwilight, int ReptiliaLineage, int EnvironmentalAdaptability, int ExtremisAffinity, int BiestialKingdoms, int RegionalTraits, int SpiritualAndScientificKnowledge, int Clasification, int Order, int GeneticMorphology, int Knowledge, int NumberOfSkills, int MaxNumberOfLowClases, int MaxNumberOfMidClases, int MaxNumberOfHigClases) {
             this.SpeciesName = SpeciesName;
             this.Skills = Skills;
             this.SpeciesModifiers = SpeciesModifiers;
@@ -1751,7 +1808,16 @@ public class DatabaseModifier {
             this.GreaterTraitsAndPowersOfDarkness = GreaterTraitsAndPowersOfDarkness;
             this.LesserTraitsAndPowersOfTwilight = LesserTraitsAndPowersOfTwilight;
             this.GreaterTraitsAndPowersOfTwilight = GreaterTraitsAndPowersOfTwilight;
-            this.TraitsFromDraconicLineage = TraitsFromDraconicLineage;
+            this.ReptiliaLineage = ReptiliaLineage;
+            this.EnvironmentalAdaptability = EnvironmentalAdaptability;
+            this.ExtremisAffinity = ExtremisAffinity;
+            this.BiestialKingdoms = BiestialKingdoms;
+            this.RegionalTraits = RegionalTraits;
+            this.SpiritualAndScientificKnowledge = SpiritualAndScientificKnowledge;
+            this.Clasification = Clasification;
+            this.Order = Order;
+            this.GeneticMorphology = GeneticMorphology;
+            this.Knowledge = Knowledge;
             this.NumberOfSkills = NumberOfSkills;
             this.MaxNumberOfLowClases = MaxNumberOfLowClases;
             this.MaxNumberOfMidClases = MaxNumberOfMidClases;
@@ -1781,7 +1847,7 @@ public class DatabaseModifier {
     public static class AFey extends ASpecies {
 
         private MainDomainValue MainDomain, SecondaryDomain;
-        private int DiscipleClass, ArchlordClass, ParagonClass;//privatize
+        private int DiscipleClass, ArchlordClass, ParagonClass;
 
         /**
          * AFey
@@ -1792,40 +1858,33 @@ public class DatabaseModifier {
         ;
 
         /**
-         *
-         * @return
+         * @return the MainDomain
          */
         public MainDomainValue getMainDomain() {
             return MainDomain;
         }
 
-        ;
-
         /**
-         *
-         * @param MainDomain
+         * @param MainDomain the MainDomain to set
          */
         public void setMainDomain(MainDomainValue MainDomain) {
             this.MainDomain = MainDomain;
         }
 
         /**
-         *
-         * @return
+         * @return the SecondaryDomain
          */
         public MainDomainValue getSecondaryDomain() {
             return SecondaryDomain;
         }
 
-        ;
-
         /**
-         *
-         * @param SecondaryDomain
+         * @param SecondaryDomain the SecondaryDomain to set
          */
         public void setSecondaryDomain(MainDomainValue SecondaryDomain) {
             this.SecondaryDomain = SecondaryDomain;
         }
+
     }
 
     /**
@@ -1845,22 +1904,19 @@ public class DatabaseModifier {
         ;
 
         /**
-         *
-         * @return
+         * @return the MainLineage
          */
-        public MainLineageValue getMainDomain() {
+        public MainLineageValue getMainLineage() {
             return MainLineage;
         }
 
-        ;
-
         /**
-         *
-         * @param MainLineage
+         * @param MainLineage the MainLineage to set
          */
         public void setMainLineage(MainLineageValue MainLineage) {
             this.MainLineage = MainLineage;
         }
+
     }
 
     /**
@@ -1868,31 +1924,97 @@ public class DatabaseModifier {
      */
     public static class ABiest extends ASpecies {
 
+        private MainKingdomValue MainKingdom;
+        private MainRegionValue MainRegion;
+        private int CommonClass, GreaterClass, LeaderClass, LegendaryClass;
+
         /**
          * ABiest
          */
         public ABiest() {
         }
-    ;
+
+        ;
+
+        /**
+         * @return the MainKingdom
+         */
+        public MainKingdomValue getMainKingdom() {
+            return MainKingdom;
+        }
+
+        /**
+         * @param MainKingdom the MainKingdom to set
+         */
+        public void setMainKingdom(MainKingdomValue MainKingdom) {
+            this.MainKingdom = MainKingdom;
+        }
+
+        /**
+         * @return the MainRegion
+         */
+        public MainRegionValue getMainRegion() {
+            return MainRegion;
+        }
+
+        /**
+         * @param MainRegion the MainRegion to set
+         */
+        public void setMainRegion(MainRegionValue MainRegion) {
+            this.MainRegion = MainRegion;
+        }
 
     }
-                                
+
     /**
-     *AInsecta
+     * AInsecta
      */
     public static class AInsecta extends ASpecies {
+
+        private MainClasificationValue MainClasification;
+        private MainOrderValue MainOrder;
+        private int LesserClass, CommonClass, AdvancedClass, ApexClass;
 
         /**
          * AInsecta
          */
         public AInsecta() {
         }
-    ;
+
+        ;
+
+        /**
+         * @return the MainClasification
+         */
+        public MainClasificationValue getMainClasification() {
+            return MainClasification;
+        }
+
+        /**
+         * @param MainClasification the MainClasification to set
+         */
+        public void setMainClasification(MainClasificationValue MainClasification) {
+            this.MainClasification = MainClasification;
+        }
+
+        /**
+         * @return the MainOrder
+         */
+        public MainOrderValue getMainOrder() {
+            return MainOrder;
+        }
+
+        /**
+         * @param MainOrder the MainOrder to set
+         */
+        public void setMainOrder(MainOrderValue MainOrder) {
+            this.MainOrder = MainOrder;
+        }
 
     }
-        
+
     /**
-     *ACulture
+     * ACulture
      */
     public static class ACulture {
 
