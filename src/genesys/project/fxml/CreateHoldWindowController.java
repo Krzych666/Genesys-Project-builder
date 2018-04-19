@@ -253,7 +253,7 @@ public class CreateHoldWindowController implements Initializable {
      */
     public void populateLabels() throws SQLException {
         for (int i = 0; i < valuesLabels3.length; i++) {
-            valuesLabels3[i].setText(GenesysProjectBuilder.CORE.getCharacteristics(DatabaseModifier.holdSpecies.getLifedomain().toString())[i]);
+            valuesLabels3[i].setText(GenesysProjectBuilder.CORE.getCharacteristics(DatabaseModifier.holdSpecies.getLifedomain().toString(),DatabaseModifier.holdSpecies.getCharacteristicGroup().toString())[i]);
         }
     }
 

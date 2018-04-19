@@ -7,6 +7,7 @@ package genesys.project.fxml;
 
 import genesys.project.builder.BuilderCORE;
 import genesys.project.builder.BuilderCORE.Enmuerations.LifedomainValue;
+import genesys.project.builder.BuilderCORE.Enmuerations.CharacteristicGroup;
 import genesys.project.builder.BuilderCORE.Enmuerations.UseCases;
 import genesys.project.builder.BuilderCORE.TheModifiers;
 import genesys.project.builder.GenesysProjectBuilder;
@@ -63,6 +64,7 @@ public class BuilderFXMLController implements Initializable {
      * currentLifeDomain
      */
     public static LifedomainValue currentLifeDomain;
+    public static CharacteristicGroup currentCharacteristicGroup;
     private String fullSkillList;
 
     @FXML
@@ -306,9 +308,13 @@ public class BuilderFXMLController implements Initializable {
             stmt.setString(1, speciesList.getSelectionModel().getSelectedItem().toString());
             currentLifeDomain = (LifedomainValue.valueOf(BuilderCORE.getValue(stmt, "LifeDomain")));
             chooseConnection(UseCases.Userdb);
-            PreparedStatement stmt1 = BuilderCORE.getConnection().prepareStatement("SELECT Skills FROM CreatedSpecies WHERE SpeciesName = ?");
+            PreparedStatement stmt1 = BuilderCORE.getConnection().prepareStatement("SELECT CharacteristicGroup FROM CreatedSpecies WHERE SpeciesName = ?");
             stmt1.setString(1, speciesList.getSelectionModel().getSelectedItem().toString());
-            skillsList.setItems(getSkills("SpeciesName", BuilderCORE.getValue(stmt1, "Skills"), speciesList.getSelectionModel().getSelectedItem().toString(), null));
+            currentCharacteristicGroup = (CharacteristicGroup.valueOf(BuilderCORE.getValue(stmt1, "CharacteristicGroup")));
+            chooseConnection(UseCases.Userdb);
+            PreparedStatement stmt2 = BuilderCORE.getConnection().prepareStatement("SELECT Skills FROM CreatedSpecies WHERE SpeciesName = ?");
+            stmt2.setString(1, speciesList.getSelectionModel().getSelectedItem().toString());
+            skillsList.setItems(getSkills("SpeciesName", BuilderCORE.getValue(stmt2, "Skills"), speciesList.getSelectionModel().getSelectedItem().toString(), null));
             chooseConnection(UseCases.Userdb);
             PreparedStatement stmt3 = BuilderCORE.getConnection().prepareStatement("SELECT CultureName FROM CreatedCultures WHERE SpeciesName = ?");
             stmt3.setString(1, speciesList.getSelectionModel().getSelectedItem().toString());
@@ -434,18 +440,18 @@ public class BuilderFXMLController implements Initializable {
 
     /**
      *
-     * @param tabl
+     * @param table
      * @param name
-     * @param fSp
-     * @param fCu
+     * @param SpeciesName
+     * @param CultureName
      * @return
      * @throws SQLException
      */
-    public ObservableList<String> getSkills(String tabl, String name, String fSp, String fCu) throws SQLException {
+    public ObservableList<String> getSkills(String table, String name, String SpeciesName, String CultureName) throws SQLException {
         fullSkillList = "";
-        String[] lst = getBaseSkills(tabl, name, fSp, fCu).split(",");
+        String[] lst = getBaseSkills(table, name, SpeciesName, CultureName).split(",");
         fullSkillList = "";
-        String[] lstref = getBaseSkills(tabl, name, fSp, fCu).split(",");
+        String[] lstref = getBaseSkills(table, name, SpeciesName, CultureName).split(",");
         List<String> ruledskills = new ArrayList<>();
         for (int i = 0; i < lst.length; i++) {
             chooseConnection(UseCases.COREdb);
@@ -481,7 +487,7 @@ public class BuilderFXMLController implements Initializable {
         return tmp;
     }
 
-    private String getBaseSkills(String colu, String name, String fSp, String fCu) throws SQLException {
+    private String getBaseSkills(String colu, String name, String SpeciesName, String CultureName) throws SQLException {
         if ("SpeciesName".equals(colu) || name.equals(BuilderCORE.BASE)) {
             chooseConnection(UseCases.Userdb);
             PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT Skills FROM CreatedSpecies WHERE SpeciesName = ?");
@@ -491,22 +497,22 @@ public class BuilderFXMLController implements Initializable {
         if ("ClassName".equals(colu) && (!name.equals(BuilderCORE.BASE))) {
             chooseConnection(UseCases.Userdb);
             PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT Skills FROM CreatedClasses WHERE SpeciesName = ? AND CultureName = ? AND ClassName = ?");
-            stmt.setString(1, fSp);
-            stmt.setString(2, fCu);
+            stmt.setString(1, SpeciesName);
+            stmt.setString(2, CultureName);
             stmt.setString(3, name);
             String skillsThis = BuilderCORE.getValue(stmt, "Skills");
             chooseConnection(UseCases.Userdb);
             PreparedStatement stmt1 = BuilderCORE.getConnection().prepareStatement("SELECT BasedOn FROM CreatedClasses WHERE SpeciesName = ? AND CultureName = ? AND ClassName = ?");
-            stmt1.setString(1, fSp);
-            stmt1.setString(2, fCu);
+            stmt1.setString(1, SpeciesName);
+            stmt1.setString(2, CultureName);
             stmt1.setString(3, name);
             String basedOn = BuilderCORE.getValue(stmt1, "BasedOn");
             String skillsBefore = "";
             if (!basedOn.equals("") && !basedOn.equals("null")) {
-                skillsBefore = getBaseSkills(colu, basedOn, fSp, fCu);
+                skillsBefore = getBaseSkills(colu, basedOn, SpeciesName, CultureName);
             }
             if (!skillsThis.equals("") && !skillsThis.equals("null") && !skillsBefore.equals("")) {
-                fullSkillList = (skillsThis + ";" + skillsBefore);
+                fullSkillList = (skillsThis + "," + skillsBefore);
             } else {
                 fullSkillList = (skillsBefore);
             }
@@ -789,7 +795,7 @@ public class BuilderFXMLController implements Initializable {
      */
     public void populateLabels() throws SQLException {
         for (int i = 0; i < valuesLabels.length; i++) {
-            valuesLabels[i].setText(GenesysProjectBuilder.CORE.getCharacteristics(currentLifeDomain.toString())[i]);
+            valuesLabels[i].setText(GenesysProjectBuilder.CORE.getCharacteristics(currentLifeDomain.toString(),currentCharacteristicGroup.toString())[i]);
         }
     }
 

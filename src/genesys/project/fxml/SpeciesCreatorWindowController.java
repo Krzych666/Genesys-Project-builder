@@ -6,7 +6,6 @@
 package genesys.project.fxml;
 
 import genesys.project.builder.BuilderCORE;
-import genesys.project.builder.BuilderCORE.Enmuerations.LifedomainValue;
 import genesys.project.builder.BuilderCORE.Enmuerations.MainClasificationValue;
 import genesys.project.builder.BuilderCORE.Enmuerations.MainDomainValue;
 import genesys.project.builder.BuilderCORE.Enmuerations.MainKingdomValue;
@@ -14,6 +13,10 @@ import genesys.project.builder.BuilderCORE.Enmuerations.MainLineageValue;
 import genesys.project.builder.BuilderCORE.Enmuerations.MainOrderValue;
 import genesys.project.builder.BuilderCORE.Enmuerations.MainRegionValue;
 import genesys.project.builder.BuilderCORE.Enmuerations.UseCases;
+import genesys.project.builder.BuilderCORE.Enmuerations.primaryChooserValue;
+import genesys.project.builder.BuilderCORE.Enmuerations.secondaryChooserValue;
+import static genesys.project.builder.BuilderCORE.Enmuerations.primaryChooserValue.*;
+import static genesys.project.builder.BuilderCORE.Enmuerations.secondaryChooserValue.*;
 import genesys.project.builder.DatabaseModifier;
 import genesys.project.builder.DatabaseModifier.AFey;
 import genesys.project.builder.DatabaseModifier.AReptilia;
@@ -42,10 +45,8 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
-import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
-import javafx.scene.control.ToggleGroup;
 
 /**
  * FXML Controller class
@@ -145,7 +146,13 @@ public class SpeciesCreatorWindowController implements Initializable {
     @FXML
     private ComboBox skillSubSetChooser;
     @FXML
-    private ComboBox secondaryPathChooser;
+    private ComboBox primaryChooser;
+    @FXML
+    private ComboBox secondaryChooser;
+    @FXML
+    private Label primaryChooserText;
+    @FXML
+    private Label secondaryChooserText;
     @FXML
     private Label skillSetText;
     @FXML
@@ -156,13 +163,6 @@ public class SpeciesCreatorWindowController implements Initializable {
     private Label skillsLeft1a;
     @FXML
     private Label skillsLeft1b;
-    @FXML
-    private RadioButton lightSetButton;
-    @FXML
-    private RadioButton darknessSetButton;
-    @FXML
-    private RadioButton twilightSetButton;
-    private ToggleGroup feyPath;
     @FXML
     private CheckBox outcastsCheckbox;
     @FXML
@@ -253,7 +253,7 @@ public class SpeciesCreatorWindowController implements Initializable {
      *
      * @throws SQLException
      */
-    public void wipeFeySkills() throws SQLException {
+    public void wipeSkills() throws SQLException {
         skillsList1.getItems().clear();
         DatabaseModifier.holdSpecies.setAllTraitsAndPowers(0, 0, 0, 0, 0, 0);
         skillsLeft1b.setText(DatabaseModifier.skillsLeftModify("0", true));
@@ -327,15 +327,7 @@ public class SpeciesCreatorWindowController implements Initializable {
     public void outcastCheckboxActions() throws SQLException {
         DatabaseModifier.outcasts = !DatabaseModifier.outcasts;
         DatabaseModifier.holdSpecies.setSpeciesModifiers("Outcasts=" + DatabaseModifier.outcasts + ",SecondaryDomain=" + ((AFey) DatabaseModifier.holdSpecies).getSecondaryDomain().getText());
-        if (lightSetButton.isSelected()) {
-            lightSetButtonActions();
-        }
-        if (darknessSetButton.isSelected()) {
-            darknessSetButtonActions();
-        }
-        if (twilightSetButton.isSelected()) {
-            twilightSetButtonActions();
-        }
+        PrimaryChooseActions();
     }
 
     /**
@@ -343,77 +335,88 @@ public class SpeciesCreatorWindowController implements Initializable {
      * @throws SQLException
      */
     @FXML
-    public void lightSetButtonActions() throws SQLException {
-        if (!lightSetButton.isSelected()) {
-            lightSetButton.setSelected(true);
-        }
-        darknessSetButton.setSelected(false);
-        twilightSetButton.setSelected(false);
-        secondaryPathChooser.setVisible(false);
-        ((DatabaseModifier.AFey) DatabaseModifier.holdSpecies).setMainDomain(MainDomainValue.Light);
-        skillsLeft1a.setText(DatabaseModifier.skillsCanTake());
-        wipeFeySkills();
-    }
-
-    /**
-     *
-     * @throws SQLException
-     */
-    @FXML
-    public void darknessSetButtonActions() throws SQLException {
-        if (!darknessSetButton.isSelected()) {
-            darknessSetButton.setSelected(true);
-        }
-        lightSetButton.setSelected(false);
-        twilightSetButton.setSelected(false);
-        secondaryPathChooser.setVisible(false);
-        ((DatabaseModifier.AFey) DatabaseModifier.holdSpecies).setMainDomain(MainDomainValue.Darkness);
-        skillsLeft1a.setText(DatabaseModifier.skillsCanTake());
-        wipeFeySkills();
-    }
-
-    /**
-     *
-     * @throws SQLException
-     */
-    @FXML
-    public void twilightSetButtonActions() throws SQLException {
-        if (!twilightSetButton.isSelected()) {
-            twilightSetButton.setSelected(true);
-        }
-        lightSetButton.setSelected(false);
-        darknessSetButton.setSelected(false);
-        ((DatabaseModifier.AFey) DatabaseModifier.holdSpecies).setMainDomain(MainDomainValue.Twilight);
-        skillsLeft1a.setText(DatabaseModifier.skillsCanTake());
-        if (DatabaseModifier.outcasts) {
-            secondaryPathChooser.setVisible(false);
-            ((DatabaseModifier.AFey) DatabaseModifier.holdSpecies).setSecondaryDomain(MainDomainValue.Twilight);
-            wipeFeySkills();
-        } else {
-            secondaryPathChooser.setVisible(true);
-            secondaryPathChooser.getSelectionModel().select(0);
-            twilightSecondaryChooseActions();
-        }
-    }
-
-    /**
-     *
-     * @throws SQLException
-     */
-    @FXML
-    public void twilightSecondaryChooseActions() throws SQLException {
-        switch (secondaryPathChooser.getSelectionModel().getSelectedItem().toString()) {
-            case BuilderCORE.LIGHT:
-                ((DatabaseModifier.AFey) DatabaseModifier.holdSpecies).setSecondaryDomain(MainDomainValue.Light);
+    public void PrimaryChooseActions() throws SQLException {
+        switch (primaryChooserValue.getEnum(primaryChooser.getSelectionModel().getSelectedItem().toString())) {
+            case Light:
+            case Darkness:
+                ((DatabaseModifier.AFey) DatabaseModifier.holdSpecies).setMainDomain(MainDomainValue.getEnum(primaryChooser.getSelectionModel().getSelectedItem().toString()));
+                secondaryChooser.setVisible(false);
+                secondaryChooserText.setVisible(false);
                 break;
-            case BuilderCORE.DARKNESS:
-                ((DatabaseModifier.AFey) DatabaseModifier.holdSpecies).setSecondaryDomain(MainDomainValue.Darkness);
+            case Twilight:
+                ((DatabaseModifier.AFey) DatabaseModifier.holdSpecies).setMainDomain(MainDomainValue.Twilight);
+                if (DatabaseModifier.outcasts) {
+                    secondaryChooser.setVisible(false);
+                    secondaryChooserText.setVisible(false);
+                    ((DatabaseModifier.AFey) DatabaseModifier.holdSpecies).setSecondaryDomain(MainDomainValue.Twilight);
+                    wipeSkills();
+                } else {
+                    secondaryChooser.setVisible(true);
+                    secondaryChooser.getSelectionModel().select(0);
+                    secondaryChooserText.setVisible(true);
+                    SecondaryChooseActions();
+                }
+                break;
+            case Ursidae:
+            case CanusLupis:
+            case AvianAves:
+            case Bor:
+            case Ovis:
+            case Taurus:
+            case Feline:
+            case Vermin:
+            case Caballis:
+            case Ichthyes:
+                ((DatabaseModifier.ABiest) DatabaseModifier.holdSpecies).setMainKingdom(MainKingdomValue.getEnum(primaryChooser.getSelectionModel().getSelectedItem().toString()));
+                DatabaseModifier.holdSpecies.setCharacteristicGroup(BuilderCORE.Enmuerations.CharacteristicGroup.getEnum(primaryChooser.getSelectionModel().getSelectedItem().toString()));
+                break;
+            case Arachnea:
+            case Crustacea:
+            case Insecta:
+            case Myriapoda:
+                ((DatabaseModifier.AInsecta) DatabaseModifier.holdSpecies).setMainClasification(MainClasificationValue.getEnum(primaryChooser.getSelectionModel().getSelectedItem().toString()));
+                DatabaseModifier.holdSpecies.setCharacteristicGroup(BuilderCORE.Enmuerations.CharacteristicGroup.getEnum(primaryChooser.getSelectionModel().getSelectedItem().toString()));
+                break;
+            case NONE:
+                DatabaseModifier.holdSpecies.setCharacteristicGroup(BuilderCORE.Enmuerations.CharacteristicGroup.standard);
                 break;
             default:
                 break;
         }
-        DatabaseModifier.holdSpecies.setSpeciesModifiers("Outcasts=" + DatabaseModifier.outcasts + ",SecondaryDomain=" + ((AFey) DatabaseModifier.holdSpecies).getSecondaryDomain().getText());
-        wipeFeySkills();
+
+        skillsLeft1a.setText(DatabaseModifier.skillsCanTake());
+        wipeSkills();
+
+    }
+
+    /**
+     *
+     * @throws SQLException
+     */
+    @FXML
+    public void SecondaryChooseActions() throws SQLException {
+        switch (secondaryChooserValue.getEnum(secondaryChooser.getSelectionModel().getSelectedItem().toString())) {
+            case Light:
+            case Darkness:
+                ((DatabaseModifier.AFey) DatabaseModifier.holdSpecies).setSecondaryDomain(MainDomainValue.getEnum(secondaryChooser.getSelectionModel().getSelectedItem().toString()));
+                break;
+            default:
+                break;
+        }
+        switch (DatabaseModifier.holdSpecies.getLifedomain()) {
+            case Humanoid:
+                break;
+            case Fey:
+                DatabaseModifier.holdSpecies.setSpeciesModifiers("Outcasts=" + DatabaseModifier.outcasts + ",SecondaryDomain=" + ((AFey) DatabaseModifier.holdSpecies).getSecondaryDomain().getText());
+                break;
+            case Reptilia:
+                break;
+            case Biest:
+                break;
+            case Insecta:
+                break;
+        }
+        wipeSkills();
     }
 
     /**
@@ -451,7 +454,7 @@ public class SpeciesCreatorWindowController implements Initializable {
             BuilderFXMLController.HOLD_MODIFIERS.clearModifiers();
         }
         skillsLeft1a.setText(DatabaseModifier.skillsCanTake());
-        GenesysProjectBuilder.CORE.getCharacteristics(DatabaseModifier.holdSpecies.getLifedomain().toString());
+        GenesysProjectBuilder.CORE.getCharacteristics(DatabaseModifier.holdSpecies.getLifedomain().toString(), DatabaseModifier.holdSpecies.getCharacteristicGroup().toString());
         int cost = DatabaseModifier.baseAddedCost(DatabaseModifier.holdSpecies.getLifedomain(), DatabaseModifier.holdSpecies, null, DatabaseModifier.b, 0);
         String tex = Integer.toString(cost);
         pointsPerModelValue1.setText(tex);
@@ -540,13 +543,11 @@ public class SpeciesCreatorWindowController implements Initializable {
                 c = Integer.parseInt(commandValue1.getText());
                 break;
             case Reptilia:
+            case Biest:
+            case Insecta:
                 a = Integer.parseInt(strengthValue1.getText());
                 b = Integer.parseInt(toughnessValue1.getText());
                 c = Integer.parseInt(movementValue1.getText());
-                break;
-            case Biest:
-                break;
-            case Insecta:
                 break;
         }
         DatabaseModifier.holdSpecies.setMaxNumberOfLowClases(max(max(a, b), c));
@@ -560,7 +561,7 @@ public class SpeciesCreatorWindowController implements Initializable {
      */
     public void populateLabels() throws SQLException {
         for (int i = 0; i < valuesLabels.length; i++) {
-            valuesLabels[i].setText(GenesysProjectBuilder.CORE.getCharacteristics(DatabaseModifier.holdSpecies.getLifedomain().toString())[i]);
+            valuesLabels[i].setText(GenesysProjectBuilder.CORE.getCharacteristics(DatabaseModifier.holdSpecies.getLifedomain().toString(), DatabaseModifier.holdSpecies.getCharacteristicGroup().toString())[i]);
         }
     }
 
@@ -598,26 +599,67 @@ public class SpeciesCreatorWindowController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         this.valuesLabels = new Label[]{strengthValue1, toughnessValue1, movementValue1, martialValue1, rangedValue1, defenseValue1, disciplineValue1, willpowerValue1, commandValue1, woundsValue1, attacksValue1, sizeValue1, mTValue1, rTValue1, moraleValue1};
-        secondaryPathChooser.setItems(FXCollections.observableArrayList(BuilderCORE.LIGHT, BuilderCORE.DARKNESS));
+
         try {
             createSpecies();
         } catch (IOException | SQLException ex) {
             Logger.getLogger(SpeciesCreatorWindowController.class.getName()).log(Level.SEVERE, null, ex);
         }
-        if (DatabaseModifier.holdSpecies.getLifedomain() != LifedomainValue.Fey) {
-            lightSetButton.setVisible(false);
-            darknessSetButton.setVisible(false);
-            twilightSetButton.setVisible(false);
-            outcastsCheckbox.setVisible(false);
-            secondaryPathChooser.setVisible(false);
-        } else {
-            lightSetButton.setVisible(true);
-            lightSetButton.setSelected(true);
-            darknessSetButton.setVisible(true);
-            twilightSetButton.setVisible(true);
-            outcastsCheckbox.setVisible(true);
-            DatabaseModifier.outcasts = false;
-            secondaryPathChooser.setVisible(false);
+        switch (DatabaseModifier.holdSpecies.getLifedomain()) {
+            case Humanoid:
+                primaryChooser.setVisible(false);
+                secondaryChooser.setVisible(false);
+                primaryChooserText.setVisible(false);
+                secondaryChooserText.setVisible(false);
+                outcastsCheckbox.setVisible(false);
+                break;
+            case Fey:
+                primaryChooser.setVisible(true);
+                primaryChooser.setItems(FXCollections.observableArrayList(primaryChooserValue.Light.getText(), primaryChooserValue.Darkness.getText(), primaryChooserValue.Twilight.getText()));
+                primaryChooser.getSelectionModel().select(0);
+                secondaryChooser.setVisible(false);
+                secondaryChooser.setItems(FXCollections.observableArrayList(secondaryChooserValue.Light.getText(), secondaryChooserValue.Darkness.getText()));
+                secondaryChooser.getSelectionModel().select(0);
+                primaryChooserText.setVisible(true);
+                primaryChooserText.setText("Path");
+                secondaryChooserText.setVisible(false);
+                secondaryChooserText.setText("Sphere");
+                outcastsCheckbox.setVisible(true);
+                DatabaseModifier.outcasts = false;
+                break;
+            case Reptilia:
+                primaryChooser.setVisible(false);
+                secondaryChooser.setVisible(false);
+                primaryChooserText.setVisible(false);
+                secondaryChooserText.setVisible(false);
+                outcastsCheckbox.setVisible(false);
+                break;
+            case Biest:
+                primaryChooser.setVisible(true);
+                primaryChooser.setItems(FXCollections.observableArrayList(primaryChooserValue.NONE.getText(), primaryChooserValue.Ursidae.getText(), primaryChooserValue.CanusLupis.getText(), primaryChooserValue.AvianAves.getText(), primaryChooserValue.Bor.getText(), primaryChooserValue.Ovis.getText(), primaryChooserValue.Taurus.getText(), primaryChooserValue.Feline.getText(), primaryChooserValue.Vermin.getText(), primaryChooserValue.Caballis.getText(), primaryChooserValue.Ichthyes.getText()));
+                primaryChooser.getSelectionModel().select(0);
+                secondaryChooser.setVisible(true);
+                secondaryChooser.setItems(FXCollections.observableArrayList(secondaryChooserValue.Caverns.getText(), secondaryChooserValue.Desert.getText(), secondaryChooserValue.Forests.getText(), secondaryChooserValue.Marsh.getText(), secondaryChooserValue.Mountains.getText(), secondaryChooserValue.Moon.getText(), secondaryChooserValue.Oceans.getText(), secondaryChooserValue.Plains.getText(), secondaryChooserValue.Sky.getText(), secondaryChooserValue.Tundra.getText()));
+                secondaryChooser.getSelectionModel().select(0);
+                primaryChooserText.setVisible(true);
+                primaryChooserText.setText("Kingdom");
+                secondaryChooserText.setVisible(true);
+                secondaryChooserText.setText("Region");
+                outcastsCheckbox.setVisible(false);
+                break;
+            case Insecta:
+                primaryChooser.setVisible(true);
+                primaryChooser.setItems(FXCollections.observableArrayList(primaryChooserValue.NONE.getText(), primaryChooserValue.Arachnea.getText(), primaryChooserValue.Crustacea.getText(), primaryChooserValue.Insecta.getText(), primaryChooserValue.Myriapoda.getText()));
+                primaryChooser.getSelectionModel().select(0);
+                secondaryChooser.setVisible(false);
+                secondaryChooser.setItems(FXCollections.observableArrayList(secondaryChooserValue.NONE.getText(), secondaryChooserValue.Arachnid.getText(), secondaryChooserValue.Scorpionoid.getText(), secondaryChooserValue.Decapod.getText(), secondaryChooserValue.Isopod.getText(), secondaryChooserValue.Coleoptera.getText(), secondaryChooserValue.Dipteran.getText(), secondaryChooserValue.Formicadae.getText(), secondaryChooserValue.Mantid.getText(), secondaryChooserValue.Vespidae.getText(), secondaryChooserValue.Centipedea.getText(), secondaryChooserValue.Millipedea.getText()));
+                secondaryChooser.getSelectionModel().select(0);
+                primaryChooserText.setVisible(true);
+                primaryChooserText.setText("Classification");
+                secondaryChooserText.setVisible(false);
+                secondaryChooserText.setText("Order");
+                outcastsCheckbox.setVisible(false);
+                break;
         }
         simplifyToCoreSkills = false;
     }

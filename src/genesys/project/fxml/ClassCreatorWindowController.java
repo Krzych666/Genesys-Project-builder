@@ -298,11 +298,11 @@ public class ClassCreatorWindowController implements Initializable {
         if (availableSkillsList1.getSelectionModel().getSelectedItem() != null) {
             //SkillsLeftActual2.setText(skillsLeftModify(AvailableSkillsList1.getSelectedValue(),true));
             DatabaseModifier.holdClass[DatabaseModifier.b].addSkills(availableSkillsList1.getSelectionModel().getSelectedItem().toString());
-            DatabaseModifier.holdClass[DatabaseModifier.b].addSkills(",");
+            DatabaseModifier.holdClass[DatabaseModifier.b].addSkills(";");
         }
         if (skillsList2.getSelectionModel().getSelectedItem() != null) {
             //SkillsLeftActual2.setText(skillsLeftModify(SkillsList2.getSelectedValue().split(" \\(")[0],false));
-            DatabaseModifier.holdClass[DatabaseModifier.b].setSkills(DatabaseModifier.holdClass[DatabaseModifier.b].getSkills().replace(skillsList2.getSelectionModel().getSelectedItem().toString().split(" \\(")[0] + ",", ""));
+            DatabaseModifier.holdClass[DatabaseModifier.b].setSkills(DatabaseModifier.holdClass[DatabaseModifier.b].getSkills().replace(skillsList2.getSelectionModel().getSelectedItem().toString().split(" \\(")[0] + ";", ""));
         }
 
         if (!("".equals(DatabaseModifier.holdClass[DatabaseModifier.b].getSkills()) || DatabaseModifier.holdClass[DatabaseModifier.b].getSkills() == null)) {
@@ -395,7 +395,7 @@ public class ClassCreatorWindowController implements Initializable {
             speciesList.getSelectionModel().clearSelection();
         } else {
             DatabaseModifier.numberOfClases++;
-            DatabaseModifier.recognizeClassDo(DatabaseModifier.holdClass[DatabaseModifier.b].getType(), true);
+            DatabaseModifier.recognizeClassDo(DatabaseModifier.holdSpecies.getLifedomain(),DatabaseModifier.holdClass[DatabaseModifier.b].getType(), true);
             DatabaseModifier.holdClass[DatabaseModifier.b].setClassName(nameInputField2.getText());
             classList1.getItems().add(DatabaseModifier.holdClass[DatabaseModifier.b].getClassName());
             classesLeft3b.setText(DatabaseModifier.classLeftModify());
@@ -410,7 +410,7 @@ public class ClassCreatorWindowController implements Initializable {
      */
     public void populateLabels() throws SQLException {
         for (int i = 0; i < valuesLabels2.length; i++) {
-            valuesLabels2[i].setText(GenesysProjectBuilder.CORE.getCharacteristics(DatabaseModifier.holdSpecies.getLifedomain().toString())[i]);
+            valuesLabels2[i].setText(GenesysProjectBuilder.CORE.getCharacteristics(DatabaseModifier.holdSpecies.getLifedomain().toString(), DatabaseModifier.holdSpecies.getCharacteristicGroup().toString())[i]);
         }
     }
 
@@ -446,7 +446,6 @@ public class ClassCreatorWindowController implements Initializable {
 
     @FXML
     private void showAsCoreSkillsPressed() throws SQLException {
-
         simplifyToCoreSkills = showAsCoreSkills.isSelected();
         int i = -1;
         if (!subSkillsList2.getSelectionModel().isEmpty()) {
@@ -528,7 +527,7 @@ public class ClassCreatorWindowController implements Initializable {
         } catch (SQLException ex) {
             Logger.getLogger(ClassCreatorWindowController.class.getName()).log(Level.SEVERE, null, ex);
         }
-
+        simplifyToCoreSkills = false;
     }
 
     void setClassesLeft3b(Label classesLeft3b) {

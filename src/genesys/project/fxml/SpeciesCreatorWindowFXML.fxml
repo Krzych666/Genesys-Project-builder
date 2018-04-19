@@ -6,7 +6,6 @@
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
-<?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -59,21 +58,21 @@
       <Label fx:id="classNameValue" layoutX="530.0" layoutY="77.0" prefHeight="17.0" prefWidth="149.0" />
       <Label fx:id="skillSetText" layoutX="429.0" layoutY="121.0" text="Evolutionary Branch:" />
       <ComboBox fx:id="skillSetChooser" layoutX="548.0" layoutY="117.0" onAction="#skillSetChooserItemStateChangedActions" prefHeight="25.0" prefWidth="149.0" />
-      <RadioButton fx:id="lightSetButton" layoutX="429.0" layoutY="227.0" mnemonicParsing="false" onAction="#lightSetButtonActions" text="Path of Light" />
-      <RadioButton fx:id="darknessSetButton" layoutX="547.0" layoutY="227.0" mnemonicParsing="false" onAction="#darknessSetButtonActions" text="Path of Darkness" />
-      <RadioButton fx:id="twilightSetButton" layoutX="429.0" layoutY="261.0" mnemonicParsing="false" onAction="#twilightSetButtonActions" text="Shadows of Twilight" />
-      <CheckBox fx:id="outcastsCheckbox" layoutX="428.0" layoutY="294.0" mnemonicParsing="false" onAction="#outcastCheckboxActions" text="Outcasts" />
+      <CheckBox fx:id="outcastsCheckbox" layoutX="429.0" layoutY="280.0" mnemonicParsing="false" onAction="#outcastCheckboxActions" text="Outcasts" />
       <ListView fx:id="availableSkillsList" layoutX="428.0" layoutY="346.0" onMouseClicked="#availableSkillsListMousePressedActions" prefHeight="183.0" prefWidth="355.0" />
       <ListView fx:id="skillsList1" layoutX="14.0" layoutY="346.0" onMouseClicked="#skillsList1MousePressedActions" prefHeight="183.0" prefWidth="355.0" />
       <Button fx:id="moveSkillButton" layoutX="375.0" layoutY="425.0" mnemonicParsing="false" onAction="#moveSkillButtonActions" prefHeight="25.0" prefWidth="49.0" text="&lt;-&gt;" />
       <Button fx:id="createFinish" layoutX="5.0" layoutY="658.0" mnemonicParsing="false" onAction="#createFinishActions" prefHeight="60.0" prefWidth="789.0" text="Create" />
       <Label fx:id="skillsLeft1a" layoutX="14.0" layoutY="254.0" prefHeight="80.0" prefWidth="293.0" />
       <Label fx:id="skillsLeft1b" layoutX="309.0" layoutY="254.0" prefHeight="80.0" prefWidth="60.0" />
-      <ComboBox fx:id="secondaryPathChooser" layoutX="582.0" layoutY="257.0" onAction="#twilightSecondaryChooseActions" prefWidth="150.0" />
+      <ComboBox fx:id="secondaryChooser" layoutX="548.0" layoutY="225.0" onAction="#SecondaryChooseActions" prefWidth="150.0" />
       <Label fx:id="skillSubSetText" layoutX="429.0" layoutY="155.0" text="Sub Branch:" />
       <ComboBox fx:id="skillSubSetChooser" layoutX="548.0" layoutY="151.0" onAction="#skillSubSetChooserItemStateChangedActions" prefHeight="25.0" prefWidth="149.0" />
       <ListView fx:id="subSkillsList1" layoutX="18.0" layoutY="558.0" onMouseClicked="#subSkillsListMouse1Pressed" prefHeight="88.0" prefWidth="200.0" />
       <TextArea fx:id="subSkillText1" editable="false" layoutX="223.0" layoutY="558.0" prefHeight="88.0" prefWidth="562.0" wrapText="true" />
       <CheckBox fx:id="showAsCoreSkills" layoutX="20.0" layoutY="535.0" mnemonicParsing="false" onAction="#showAsCoreSkillsPressed" text="Show as core skills" />
+      <ComboBox fx:id="primaryChooser" layoutX="548.0" layoutY="193.0" onAction="#PrimaryChooseActions" prefWidth="150.0" />
+      <Label fx:id="primaryChooserText" layoutX="431.0" layoutY="197.0" text="primaryChooserText" />
+      <Label fx:id="secondaryChooserText" layoutX="431.0" layoutY="229.0" text="secondaryChooserText" />
    </children>
 </AnchorPane>

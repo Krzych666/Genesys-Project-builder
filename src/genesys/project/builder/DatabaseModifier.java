@@ -5,6 +5,7 @@
  */
 package genesys.project.builder;
 
+import genesys.project.builder.BuilderCORE.Enmuerations.CharacteristicGroup;
 import genesys.project.builder.BuilderCORE.Enmuerations.DBTables;
 import genesys.project.builder.BuilderCORE.Enmuerations.LifedomainValue;
 import genesys.project.builder.BuilderCORE.Enmuerations.MainClasificationValue;
@@ -25,6 +26,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.ListView;
 import static genesys.project.builder.BuilderCORE.chooseConnection;
+import java.util.Arrays;
 
 /**
  *
@@ -196,6 +198,7 @@ public class DatabaseModifier {
         holdSpecies = null;
         holdSpecies = ASpecies.createASpecies(lifedomain);
         holdSpecies.Lifedomain = lifedomain;
+        holdSpecies.CharacteristicGroup = CharacteristicGroup.standard;
         holdCulture = new ACulture();
         BuilderFXMLController.HOLD_MODIFIERS.clearModifiers();
         numberOfClases = b = 0;
@@ -225,9 +228,6 @@ public class DatabaseModifier {
      * @throws SQLException
      */
     public static ObservableList<String> getAddedSkills(String HoldSkills) throws SQLException {
-        if (holdSpecies.getSkills() == null || "".equals(holdSpecies.getSkills())) {
-            return null;
-        }
         if (HoldSkills == null || "".equals(HoldSkills)) {
             return null;
         }
@@ -471,19 +471,19 @@ public class DatabaseModifier {
         String fintex = "";
         switch (holdSpecies.Lifedomain) {
             case Humanoid:
-                fintex += ((AHumanoid) holdSpecies).StandardClass + "\n" + ((AHumanoid) holdSpecies).EliteClass + "\n" + ((AHumanoid) holdSpecies).LeaderClass + "\n" + ((AHumanoid) holdSpecies).UniqueClass;
+                fintex += ((AHumanoid) holdSpecies).getStandardClass() + "\n" + ((AHumanoid) holdSpecies).getEliteClass() + "\n" + ((AHumanoid) holdSpecies).getLeaderClass() + "\n" + ((AHumanoid) holdSpecies).getUniqueClass();
                 break;
             case Fey:
-                fintex += ((AFey) holdSpecies).DiscipleClass + "\n" + ((AFey) holdSpecies).ArchlordClass + "\n" + ((AFey) holdSpecies).ParagonClass;
+                fintex += ((AFey) holdSpecies).getDiscipleClass() + "\n" + ((AFey) holdSpecies).getArchlordClass() + "\n" + ((AFey) holdSpecies).getParagonClass();
                 break;
             case Reptilia:
-                fintex += ((AReptilia) holdSpecies).LesserClass + "\n" + ((AReptilia) holdSpecies).CommonClass + "\n" + ((AReptilia) holdSpecies).RareClass + "\n" + ((AReptilia) holdSpecies).AncientClass;
+                fintex += ((AReptilia) holdSpecies).getLesserClass() + "\n" + ((AReptilia) holdSpecies).getCommonClass() + "\n" + ((AReptilia) holdSpecies).getRareClass() + "\n" + ((AReptilia) holdSpecies).getAncientClass();
                 break;
             case Biest:
-                fintex += ((ABiest) holdSpecies).CommonClass + "\n" + ((ABiest) holdSpecies).GreaterClass + "\n" + ((ABiest) holdSpecies).LeaderClass + "\n" + ((ABiest) holdSpecies).LegendaryClass;
+                fintex += ((ABiest) holdSpecies).getCommonClass() + "\n" + ((ABiest) holdSpecies).getGreaterClass() + "\n" + ((ABiest) holdSpecies).getLeaderClass() + "\n" + ((ABiest) holdSpecies).getLegendaryClass();
                 break;
             case Insecta:
-                fintex += ((AInsecta) holdSpecies).LesserClass + "\n" + ((AInsecta) holdSpecies).CommonClass + "\n" + ((AInsecta) holdSpecies).AdvancedClass + "\n" + ((AInsecta) holdSpecies).ApexClass;
+                fintex += ((AInsecta) holdSpecies).getLesserClass() + "\n" + ((AInsecta) holdSpecies).getCommonClass() + "\n" + ((AInsecta) holdSpecies).getAdvancedClass() + "\n" + ((AInsecta) holdSpecies).getApexClass();
                 break;
         }
         return fintex;
@@ -525,7 +525,7 @@ public class DatabaseModifier {
                 break;
         }
         if (holdCulture.CultureName.equals(holdSpecies.SpeciesName)) {
-            executeSQL("INSERT INTO `CreatedSpecies`(LifeDomain,SpeciesName,Skills,SpeciesModifiers) VALUES ('" + holdSpecies.Lifedomain.toString() + "','" + holdSpecies.SpeciesName + "','" + holdSpecies.Skills + "','" + SpMod + "');");
+            executeSQL("INSERT INTO `CreatedSpecies`(LifeDomain,CharacteristicGroup,SpeciesName,Skills,SpeciesModifiers) VALUES ('" + holdSpecies.Lifedomain.toString() + "','" + holdSpecies.CharacteristicGroup.toString() + "','" + holdSpecies.SpeciesName + "','" + holdSpecies.Skills + "','" + SpMod + "');");
         }
         executeSQL("INSERT INTO `CreatedCultures`(CultureName,SpeciesName) VALUES ('" + holdCulture.CultureName + "','" + holdCulture.SpeciesName + "');");
         for (int i = 0; i < numberOfClases; i++) {
@@ -657,45 +657,94 @@ public class DatabaseModifier {
 
     /**
      *
+     * @param lifedomain
      * @param type
      * @param add
      */
-    public static void recognizeClassDo(String type, Boolean add) {
-        switch (type) {
-            case "Standard Class":
-                ((AHumanoid) holdSpecies).StandardClass = addRemove(((AHumanoid) holdSpecies).StandardClass, add);
+    public static void recognizeClassDo(LifedomainValue lifedomain, String type, Boolean add) {
+        switch (lifedomain) {
+            case Humanoid:
+                switch (type) {
+                    case "Standard Class":
+                        ((AHumanoid) holdSpecies).setStandardClass(addRemove(((AHumanoid) holdSpecies).getStandardClass(), add));
+                        break;
+                    case "Elite Class":
+                        ((AHumanoid) holdSpecies).setEliteClass(addRemove(((AHumanoid) holdSpecies).getEliteClass(), add));
+                        break;
+                    case "Leader Class":
+                        ((AHumanoid) holdSpecies).setLeaderClass(addRemove(((AHumanoid) holdSpecies).getLeaderClass(), add));
+                        break;
+                    case "Unique Class":
+                        ((AHumanoid) holdSpecies).setUniqueClass(addRemove(((AHumanoid) holdSpecies).getUniqueClass(), add));
+                        break;
+                    default:
+                        break;
+                }
                 break;
-            case "Elite Class":
-                ((AHumanoid) holdSpecies).EliteClass = addRemove(((AHumanoid) holdSpecies).EliteClass, add);
+            case Fey:
+                switch (type) {
+                    case "Disciple Class":
+                        ((AFey) holdSpecies).setDiscipleClass(addRemove(((AFey) holdSpecies).getDiscipleClass(), add));
+                        break;
+                    case "Archlord Class":
+                        ((AFey) holdSpecies).setArchlordClass(addRemove(((AFey) holdSpecies).getArchlordClass(), add));
+                        break;
+                    case "Paragon Class":
+                        ((AFey) holdSpecies).setParagonClass(addRemove(((AFey) holdSpecies).getParagonClass(), add));
+                        break;
+                    default:
+                        break;
+                }
                 break;
-            case "Leader Class":
-                ((AHumanoid) holdSpecies).LeaderClass = addRemove(((AHumanoid) holdSpecies).LeaderClass, add);
+            case Reptilia:
+                switch (type) {
+                    case "Lesser Class":
+                        ((AReptilia) holdSpecies).setLesserClass(addRemove(((AReptilia) holdSpecies).getLesserClass(), add));
+                        break;
+                    case "Common Class":
+                        ((AReptilia) holdSpecies).setCommonClass(addRemove(((AReptilia) holdSpecies).getCommonClass(), add));
+                        break;
+                    case "Rare Class":
+                        ((AReptilia) holdSpecies).setRareClass(addRemove(((AReptilia) holdSpecies).getRareClass(), add));
+                        break;
+                    case "Ancient Class":
+                        ((AReptilia) holdSpecies).setAncientClass(addRemove(((AReptilia) holdSpecies).getAncientClass(), add));
+                        break;
+                    default:
+                        break;
+                }
                 break;
-            case "Unique Class":
-                ((AHumanoid) holdSpecies).UniqueClass = addRemove(((AHumanoid) holdSpecies).UniqueClass, add);
+            case Biest:
+                switch (type) {
+                    case "Common Class":
+                        ((ABiest) holdSpecies).setCommonClass(addRemove(((ABiest) holdSpecies).getCommonClass(), add));
+                        break;
+                    case "Greater Class":
+                        ((ABiest) holdSpecies).setGreaterClass(addRemove(((ABiest) holdSpecies).getGreaterClass(), add));
+                        break;
+                    case "Leader Class":
+                        ((ABiest) holdSpecies).setLeaderClass(addRemove(((ABiest) holdSpecies).getLeaderClass(), add));
+                        break;
+                    case "Legendary Class":
+                        ((ABiest) holdSpecies).setLegendaryClass(addRemove(((ABiest) holdSpecies).getLegendaryClass(), add));
+                        break;
+                }
                 break;
-            case "Disciple Class":
-                ((AFey) holdSpecies).DiscipleClass = addRemove(((AFey) holdSpecies).DiscipleClass, add);
-                break;
-            case "Archlord Class":
-                ((AFey) holdSpecies).ArchlordClass = addRemove(((AFey) holdSpecies).ArchlordClass, add);
-                break;
-            case "Paragon Class":
-                ((AFey) holdSpecies).ParagonClass = addRemove(((AFey) holdSpecies).ParagonClass, add);
-                break;
-            case "Lesser Class":
-                ((AReptilia) holdSpecies).LesserClass = addRemove(((AReptilia) holdSpecies).LesserClass, add);
-                break;
-            case "Common Class":
-                ((AReptilia) holdSpecies).CommonClass = addRemove(((AReptilia) holdSpecies).CommonClass, add);
-                break;
-            case "Rare Class":
-                ((AReptilia) holdSpecies).RareClass = addRemove(((AReptilia) holdSpecies).RareClass, add);
-                break;
-            case "Ancient Class":
-                ((AReptilia) holdSpecies).AncientClass = addRemove(((AReptilia) holdSpecies).AncientClass, add);
-                break;
-            default:
+            case Insecta:
+                switch (type) {
+                    case "Lesser Class":
+                        ((AInsecta) holdSpecies).setLesserClass(addRemove(((AInsecta) holdSpecies).getLesserClass(), add));
+                        break;
+                    case "Common Class":
+                        ((AInsecta) holdSpecies).setCommonClass(addRemove(((AInsecta) holdSpecies).getCommonClass(), add));
+                        break;
+                    case "Advanced Class":
+                        ((AInsecta) holdSpecies).setAdvancedClass(addRemove(((AInsecta) holdSpecies).getAdvancedClass(), add));
+                        break;
+                    case "Apex Class":
+                        ((AInsecta) holdSpecies).setApexClass(addRemove(((AInsecta) holdSpecies).getApexClass(), add));
+                        break;
+                }
                 break;
         }
     }
@@ -1142,7 +1191,7 @@ public class DatabaseModifier {
      * @throws SQLException
      */
     public static void modifySpecies() throws SQLException {
-        executeSQL("UPDATE CreatedSpecies SET Lifedomain='" + holdSpecies.Lifedomain + "', SpeciesName='" + holdSpecies.SpeciesName + "', Skills='" + holdSpecies.Skills + "', SpeciesModifiers='" + holdSpecies.SpeciesModifiers + "' WHERE SpeciesName='" + modifiedHoldSpecies.SpeciesName + "'");
+        executeSQL("UPDATE CreatedSpecies SET Lifedomain='" + holdSpecies.Lifedomain + "', CharacteristicGroup='" + holdSpecies.CharacteristicGroup + "', SpeciesName='" + holdSpecies.SpeciesName + "', Skills='" + holdSpecies.Skills + "', SpeciesModifiers='" + holdSpecies.SpeciesModifiers + "' WHERE SpeciesName='" + modifiedHoldSpecies.SpeciesName + "'");
         executeSQL("UPDATE CreatedCultures SET SpeciesName='" + holdSpecies.SpeciesName + "' WHERE SpeciesName='" + modifiedHoldSpecies.SpeciesName + "'");
         executeSQL("UPDATE CreatedClasses SET SpeciesName='" + holdSpecies.SpeciesName + "' WHERE SpeciesName='" + modifiedHoldSpecies.SpeciesName + "'");
         executeSQL("UPDATE CreatedHeroes SET SpeciesName='" + holdSpecies.SpeciesName + "' WHERE SpeciesName='" + modifiedHoldSpecies.SpeciesName + "'");
@@ -1333,6 +1382,7 @@ public class DatabaseModifier {
     public static abstract class ASpecies {
 
         private LifedomainValue Lifedomain;
+        private CharacteristicGroup CharacteristicGroup;
         private String SpeciesName, Skills, SpeciesModifiers;
         private int GeneticMutation, EnvironmentalAdaptation, KnowledgeAndScience,
                 LesserTraitsAndPowersOfLight, GreaterTraitsAndPowersOfLight,
@@ -1400,6 +1450,20 @@ public class DatabaseModifier {
          */
         public void setLifedomain(LifedomainValue Lifedomain) {
             this.Lifedomain = Lifedomain;
+        }
+
+        /**
+         * @return the CharacteristicGroup
+         */
+        public CharacteristicGroup getCharacteristicGroup() {
+            return CharacteristicGroup;
+        }
+
+        /**
+         * @param CharacteristicGroup the CharacteristicGroup to set
+         */
+        public void setCharacteristicGroup(CharacteristicGroup CharacteristicGroup) {
+            this.CharacteristicGroup = CharacteristicGroup;
         }
 
         /**
@@ -1837,12 +1901,66 @@ public class DatabaseModifier {
          */
         public AHumanoid() {
         }
-    ;
 
+        /**
+         * @return the StandardClass
+         */
+        public int getStandardClass() {
+            return StandardClass;
+        }
+
+        /**
+         * @param StandardClass the StandardClass to set
+         */
+        public void setStandardClass(int StandardClass) {
+            this.StandardClass = StandardClass;
+        }
+
+        /**
+         * @return the EliteClass
+         */
+        public int getEliteClass() {
+            return EliteClass;
+        }
+
+        /**
+         * @param EliteClass the EliteClass to set
+         */
+        public void setEliteClass(int EliteClass) {
+            this.EliteClass = EliteClass;
+        }
+
+        /**
+         * @return the LeaderClass
+         */
+        public int getLeaderClass() {
+            return LeaderClass;
+        }
+
+        /**
+         * @param LeaderClass the LeaderClass to set
+         */
+        public void setLeaderClass(int LeaderClass) {
+            this.LeaderClass = LeaderClass;
+        }
+
+        /**
+         * @return the UniqueClass
+         */
+        public int getUniqueClass() {
+            return UniqueClass;
+        }
+
+        /**
+         * @param UniqueClass the UniqueClass to set
+         */
+        public void setUniqueClass(int UniqueClass) {
+            this.UniqueClass = UniqueClass;
+        }
     }
 
     /**
-     *AFey
+     * AFey
      */
     public static class AFey extends ASpecies {
 
@@ -1854,8 +1972,6 @@ public class DatabaseModifier {
          */
         public AFey() {
         }
-
-        ;
 
         /**
          * @return the MainDomain
@@ -1885,6 +2001,48 @@ public class DatabaseModifier {
             this.SecondaryDomain = SecondaryDomain;
         }
 
+        /**
+         * @return the DiscipleClass
+         */
+        public int getDiscipleClass() {
+            return DiscipleClass;
+        }
+
+        /**
+         * @param DiscipleClass the DiscipleClass to set
+         */
+        public void setDiscipleClass(int DiscipleClass) {
+            this.DiscipleClass = DiscipleClass;
+        }
+
+        /**
+         * @return the ArchlordClass
+         */
+        public int getArchlordClass() {
+            return ArchlordClass;
+        }
+
+        /**
+         * @param ArchlordClass the ArchlordClass to set
+         */
+        public void setArchlordClass(int ArchlordClass) {
+            this.ArchlordClass = ArchlordClass;
+        }
+
+        /**
+         * @return the ParagonClass
+         */
+        public int getParagonClass() {
+            return ParagonClass;
+        }
+
+        /**
+         * @param ParagonClass the ParagonClass to set
+         */
+        public void setParagonClass(int ParagonClass) {
+            this.ParagonClass = ParagonClass;
+        }
+
     }
 
     /**
@@ -1901,8 +2059,6 @@ public class DatabaseModifier {
         public AReptilia() {
         }
 
-        ;
-
         /**
          * @return the MainLineage
          */
@@ -1915,6 +2071,62 @@ public class DatabaseModifier {
          */
         public void setMainLineage(MainLineageValue MainLineage) {
             this.MainLineage = MainLineage;
+        }
+
+        /**
+         * @return the LesserClass
+         */
+        public int getLesserClass() {
+            return LesserClass;
+        }
+
+        /**
+         * @param LesserClass the LesserClass to set
+         */
+        public void setLesserClass(int LesserClass) {
+            this.LesserClass = LesserClass;
+        }
+
+        /**
+         * @return the CommonClass
+         */
+        public int getCommonClass() {
+            return CommonClass;
+        }
+
+        /**
+         * @param CommonClass the CommonClass to set
+         */
+        public void setCommonClass(int CommonClass) {
+            this.CommonClass = CommonClass;
+        }
+
+        /**
+         * @return the RareClass
+         */
+        public int getRareClass() {
+            return RareClass;
+        }
+
+        /**
+         * @param RareClass the RareClass to set
+         */
+        public void setRareClass(int RareClass) {
+            this.RareClass = RareClass;
+        }
+
+        /**
+         * @return the AncientClass
+         */
+        public int getAncientClass() {
+            return AncientClass;
+        }
+
+        /**
+         * @param AncientClass the AncientClass to set
+         */
+        public void setAncientClass(int AncientClass) {
+            this.AncientClass = AncientClass;
         }
 
     }
@@ -1933,8 +2145,6 @@ public class DatabaseModifier {
          */
         public ABiest() {
         }
-
-        ;
 
         /**
          * @return the MainKingdom
@@ -1964,6 +2174,62 @@ public class DatabaseModifier {
             this.MainRegion = MainRegion;
         }
 
+        /**
+         * @return the CommonClass
+         */
+        public int getCommonClass() {
+            return CommonClass;
+        }
+
+        /**
+         * @param CommonClass the CommonClass to set
+         */
+        public void setCommonClass(int CommonClass) {
+            this.CommonClass = CommonClass;
+        }
+
+        /**
+         * @return the GreaterClass
+         */
+        public int getGreaterClass() {
+            return GreaterClass;
+        }
+
+        /**
+         * @param GreaterClass the GreaterClass to set
+         */
+        public void setGreaterClass(int GreaterClass) {
+            this.GreaterClass = GreaterClass;
+        }
+
+        /**
+         * @return the LeaderClass
+         */
+        public int getLeaderClass() {
+            return LeaderClass;
+        }
+
+        /**
+         * @param LeaderClass the LeaderClass to set
+         */
+        public void setLeaderClass(int LeaderClass) {
+            this.LeaderClass = LeaderClass;
+        }
+
+        /**
+         * @return the LegendaryClass
+         */
+        public int getLegendaryClass() {
+            return LegendaryClass;
+        }
+
+        /**
+         * @param LegendaryClass the LegendaryClass to set
+         */
+        public void setLegendaryClass(int LegendaryClass) {
+            this.LegendaryClass = LegendaryClass;
+        }
+
     }
 
     /**
@@ -1980,8 +2246,6 @@ public class DatabaseModifier {
          */
         public AInsecta() {
         }
-
-        ;
 
         /**
          * @return the MainClasification
@@ -2009,6 +2273,62 @@ public class DatabaseModifier {
          */
         public void setMainOrder(MainOrderValue MainOrder) {
             this.MainOrder = MainOrder;
+        }
+
+        /**
+         * @return the LesserClass
+         */
+        public int getLesserClass() {
+            return LesserClass;
+        }
+
+        /**
+         * @param LesserClass the LesserClass to set
+         */
+        public void setLesserClass(int LesserClass) {
+            this.LesserClass = LesserClass;
+        }
+
+        /**
+         * @return the CommonClass
+         */
+        public int getCommonClass() {
+            return CommonClass;
+        }
+
+        /**
+         * @param CommonClass the CommonClass to set
+         */
+        public void setCommonClass(int CommonClass) {
+            this.CommonClass = CommonClass;
+        }
+
+        /**
+         * @return the AdvancedClass
+         */
+        public int getAdvancedClass() {
+            return AdvancedClass;
+        }
+
+        /**
+         * @param AdvancedClass the AdvancedClass to set
+         */
+        public void setAdvancedClass(int AdvancedClass) {
+            this.AdvancedClass = AdvancedClass;
+        }
+
+        /**
+         * @return the ApexClass
+         */
+        public int getApexClass() {
+            return ApexClass;
+        }
+
+        /**
+         * @param ApexClass the ApexClass to set
+         */
+        public void setApexClass(int ApexClass) {
+            this.ApexClass = ApexClass;
         }
 
     }

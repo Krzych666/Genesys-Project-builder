@@ -296,22 +296,25 @@ public class BuilderCORE {
     /**
      *
      * @param lifedomain
+     * @param characteristicGroup
      * @return
      * @throws java.sql.SQLException
      */
-    public String[] getCharacteristics(String lifedomain) throws SQLException {
+    public String[] getCharacteristics(String lifedomain, String characteristicGroup) throws SQLException {
         String[] outputValues = new String[16];
         int[] CharacteristicModifiers = {BuilderFXMLController.HOLD_MODIFIERS.getStrengthModifier(), BuilderFXMLController.HOLD_MODIFIERS.getToughnessModifier(), BuilderFXMLController.HOLD_MODIFIERS.getMovementModifier(), BuilderFXMLController.HOLD_MODIFIERS.getMartialModifier(), BuilderFXMLController.HOLD_MODIFIERS.getRangedModifier(), BuilderFXMLController.HOLD_MODIFIERS.getDefenseModifier(), BuilderFXMLController.HOLD_MODIFIERS.getDisciplineModifier(), BuilderFXMLController.HOLD_MODIFIERS.getWillpowerModifier(), BuilderFXMLController.HOLD_MODIFIERS.getCommandModifier(), BuilderFXMLController.HOLD_MODIFIERS.getWoundsModifier(), BuilderFXMLController.HOLD_MODIFIERS.getAttacksModifier(), BuilderFXMLController.HOLD_MODIFIERS.getSizeModifier(), BuilderFXMLController.HOLD_MODIFIERS.getMTModifier(), BuilderFXMLController.HOLD_MODIFIERS.getRTModifier(), BuilderFXMLController.HOLD_MODIFIERS.getMoraleModifier()};
         for (int j = 0; j < CHARACTERISTICS.length; j++) {
             if ("Size".equals(CHARACTERISTICS[j]) && j < 12) {
                 chooseConnection(UseCases.COREdb);
-                PreparedStatement stmt = conn.prepareStatement("SELECT " + CHARACTERISTICS[j] + " FROM StartingCharacteristics WHERE LifeDomain = ?");
+                PreparedStatement stmt = conn.prepareStatement("SELECT " + CHARACTERISTICS[j] + " FROM StartingCharacteristics WHERE LifeDomain = ? AND CharacteristicGroup = ?");
                 stmt.setString(1, lifedomain);
+                stmt.setString(2, characteristicGroup);
                 outputValues[j] = SIZES[(Integer.parseInt(getValue(stmt, CHARACTERISTICS[j])) + CharacteristicModifiers[j])];
             } else if (j < 12) {
                 chooseConnection(UseCases.COREdb);
-                PreparedStatement stmt1 = conn.prepareStatement("SELECT " + CHARACTERISTICS[j] + " FROM StartingCharacteristics WHERE LifeDomain = ?");
+                PreparedStatement stmt1 = conn.prepareStatement("SELECT " + CHARACTERISTICS[j] + " FROM StartingCharacteristics WHERE LifeDomain = ? AND CharacteristicGroup = ?");
                 stmt1.setString(1, lifedomain);
+                stmt1.setString(2, characteristicGroup);
                 outputValues[j] = Integer.toString(Integer.parseInt(getValue(stmt1, CHARACTERISTICS[j])) + CharacteristicModifiers[j]);
             }
             if (j == 12) {
@@ -335,11 +338,15 @@ public class BuilderCORE {
      */
     public static ObservableList mergeListViews(ListView first, ListView second) {
         ObservableList lst = FXCollections.observableArrayList();
-        for (int i = 0; i < first.getItems().size(); i++) {
-            lst.add(first.getItems().get(i));
+        if (first.getItems() != null) {
+            for (int i = 0; i < first.getItems().size(); i++) {
+                lst.add(first.getItems().get(i));
+            }
         }
-        for (int i = 0; i < second.getItems().size(); i++) {
-            lst.add(second.getItems().get(i));
+        if (second.getItems() != null) {
+            for (int i = 0; i < second.getItems().size(); i++) {
+                lst.add(second.getItems().get(i));
+            }
         }
         return lst;
     }
@@ -427,15 +434,58 @@ public class BuilderCORE {
              */
             Insecta("Insecta");
 
-            private String lfdmn;
+            private String lifedomainvalue;
 
-            private LifedomainValue(String stringVal) {
-                lfdmn = stringVal;
+            private LifedomainValue(String lifedomainvalue) {
+                this.lifedomainvalue = lifedomainvalue;
             }
 
             @Override
             public String toString() {
-                return lfdmn;
+                return this.lifedomainvalue;
+            }
+        }
+
+        public enum CharacteristicGroup {
+            standard("standard"),
+            Insecta("Insecta"),
+            Ursidae("Ursidae"),
+            CanusLupis("Canus Lupis"),
+            AvianAves("Avian Aves"),
+            Bor("Bor"),
+            Ovis("Ovis"),
+            Taurus("Taurus"),
+            Feline("Feline"),
+            Vermin("Vermin"),
+            Caballis("Caballis"),
+            Ichthyes("Ichthyes"),
+            Arachnea("Arachnea"),
+            Crustacea("Crustacea"),
+            Myriapoda("Myriapoda");
+
+            private String characteristicgroup;
+
+            private CharacteristicGroup(String characteristicgroup) {
+                this.characteristicgroup = characteristicgroup;
+            }
+
+            @Override
+            public String toString() {
+                return this.characteristicgroup;
+            }
+
+            /**
+             *
+             * @param characteristicgroup
+             * @return
+             */
+            public static CharacteristicGroup getEnum(String characteristicgroup) {
+                for (CharacteristicGroup b : CharacteristicGroup.values()) {
+                    if (b.characteristicgroup.equalsIgnoreCase(characteristicgroup)) {
+                        return b;
+                    }
+                }
+                return null;
             }
         }
 
@@ -457,10 +507,10 @@ public class BuilderCORE {
              */
             Twilight("Shadows of Twilight");
 
-            private String mdv;
+            private String maindomainvalue;
 
-            private MainDomainValue(String mdv) {
-                this.mdv = mdv;
+            private MainDomainValue(String maindomainvalue) {
+                this.maindomainvalue = maindomainvalue;
             }
 
             /**
@@ -468,17 +518,17 @@ public class BuilderCORE {
              * @return
              */
             public String getText() {
-                return this.mdv;
+                return this.maindomainvalue;
             }
 
             /**
              *
-             * @param mdv
+             * @param maindomainvalue
              * @return
              */
-            public static MainDomainValue getEnum(String mdv) {
+            public static MainDomainValue getEnum(String maindomainvalue) {
                 for (MainDomainValue b : MainDomainValue.values()) {
-                    if (b.mdv.equalsIgnoreCase(mdv)) {
+                    if (b.maindomainvalue.equalsIgnoreCase(maindomainvalue)) {
                         return b;
                     }
                 }
@@ -700,6 +750,111 @@ public class BuilderCORE {
                 }
                 return null;
             }
+        }
+
+        public enum primaryChooserValue {
+            NONE("-None-"),
+            Light("Path of Light"),
+            Darkness("Path of Darkness"),
+            Twilight("Shadows of Twilight"),
+            Ursidae("Ursidae"),
+            CanusLupis("Canus Lupis"),
+            AvianAves("Avian Aves"),
+            Bor("Bor"),
+            Ovis("Ovis"),
+            Taurus("Taurus"),
+            Feline("Feline"),
+            Vermin("Vermin"),
+            Caballis("Caballis"),
+            Ichthyes("Ichthyes"),
+            Arachnea("Arachnea"),
+            Crustacea("Crustacea"),
+            Insecta("Insecta"),
+            Myriapoda("Myriapoda");
+
+            private String primarychooservalue;
+
+            private primaryChooserValue(String primarychooservalue) {
+                this.primarychooservalue = primarychooservalue;
+            }
+
+            /**
+             *
+             * @return
+             */
+            public String getText() {
+                return this.primarychooservalue;
+            }
+
+            /**
+             *
+             * @param primarychooservalue
+             * @return
+             */
+            public static primaryChooserValue getEnum(String primarychooservalue) {
+                for (primaryChooserValue b : primaryChooserValue.values()) {
+                    if (b.primarychooservalue.equalsIgnoreCase(primarychooservalue)) {
+                        return b;
+                    }
+                }
+                return null;
+            }
+        }
+
+        public enum secondaryChooserValue {
+            NONE("-None-"),
+            Light("Path of Light"),
+            Darkness("Path of Darkness"),
+            Caverns("Caverns"),
+            Desert("Desert"),
+            Forests("Forests"),
+            Marsh("Marsh"),
+            Mountains("Mountains"),
+            Moon("Moon"),
+            Oceans("Oceans"),
+            Plains("Plains"),
+            Sky("Sky"),
+            Tundra("Tundra"),
+            Arachnid("Arachnid"),
+            Scorpionoid("Scorpionoid"),
+            Decapod("Decapod"),
+            Isopod("Isopod"),
+            Coleoptera("Coleoptera"),
+            Dipteran("Dipteran"),
+            Formicadae("Formicadae"),
+            Mantid("Mantid"),
+            Vespidae("Vespidae"),
+            Centipedea("Centipedea"),
+            Millipedea("Millipedea");
+
+            private String secondarychooservalue;
+
+            private secondaryChooserValue(String secondarychooservalue) {
+                this.secondarychooservalue = secondarychooservalue;
+            }
+
+            /**
+             *
+             * @return
+             */
+            public String getText() {
+                return this.secondarychooservalue;
+            }
+
+            /**
+             *
+             * @param secondarychooservalue
+             * @return
+             */
+            public static secondaryChooserValue getEnum(String secondarychooservalue) {
+                for (secondaryChooserValue b : secondaryChooserValue.values()) {
+                    if (b.secondarychooservalue.equalsIgnoreCase(secondarychooservalue)) {
+                        return b;
+                    }
+                }
+                return null;
+            }
+
         }
 
         /**
