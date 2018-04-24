@@ -26,6 +26,8 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.ListView;
 import static genesys.project.builder.BuilderCORE.chooseConnection;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  *
@@ -856,7 +858,6 @@ public class DatabaseModifier {
         return tmp;
     }
 
-
     /**
      *
      * @param Skill
@@ -1404,9 +1405,20 @@ public class DatabaseModifier {
      */
     public static abstract class ASpecies {
 
+        @Getter
+        @Setter
         private LifedomainValue Lifedomain;
+
+        @Getter
+        @Setter
         private CharacteristicGroup CharacteristicGroup;
+
+        @Getter
+        @Setter
         private String SpeciesName, Skills, SpeciesModifiers;
+
+        @Getter
+        @Setter
         private int GeneticMutation, EnvironmentalAdaptation, KnowledgeAndScience,
                 LesserTraitsAndPowersOfLight, GreaterTraitsAndPowersOfLight,
                 LesserTraitsAndPowersOfDarkness, GreaterTraitsAndPowersOfDarkness,
@@ -1414,6 +1426,9 @@ public class DatabaseModifier {
                 ReptiliaLineage, EnvironmentalAdaptability, ExtremisAffinity,
                 BiestialKingdoms, RegionalTraits, SpiritualAndScientificKnowledge,
                 Clasification, Order, GeneticMorphology, Knowledge;
+
+        @Getter
+        @Setter
         private int NumberOfSkills, MaxNumberOfLowClases, MaxNumberOfMidClases, MaxNumberOfHigClases;
 
         /**
@@ -1445,154 +1460,12 @@ public class DatabaseModifier {
 
         /**
          *
-         * @return
-         */
-        public String getSpeciesName() {
-            return SpeciesName;
-        }
-
-        /**
-         *
-         * @param SpeciesName
-         */
-        public void setSpeciesName(String SpeciesName) {
-            this.SpeciesName = SpeciesName;
-        }
-
-        /**
-         *
-         * @return
-         */
-        public LifedomainValue getLifedomain() {
-            return Lifedomain;
-        }
-
-        /**
-         *
-         * @param Lifedomain
-         */
-        public void setLifedomain(LifedomainValue Lifedomain) {
-            this.Lifedomain = Lifedomain;
-        }
-
-        /**
-         * @return the CharacteristicGroup
-         */
-        public CharacteristicGroup getCharacteristicGroup() {
-            return CharacteristicGroup;
-        }
-
-        /**
-         * @param CharacteristicGroup the CharacteristicGroup to set
-         */
-        public void setCharacteristicGroup(CharacteristicGroup CharacteristicGroup) {
-            this.CharacteristicGroup = CharacteristicGroup;
-        }
-
-        /**
-         *
-         * @return
-         */
-        public String getSkills() {
-            return Skills;
-        }
-
-        /**
-         *
-         * @param Skills
-         */
-        public void setSkills(String Skills) {
-            this.Skills = Skills;
-        }
-
-        /**
-         *
          * @param Skills
          * @return
          */
         public String addSkills(String Skills) {
             this.Skills += Skills;
             return this.Skills;
-        }
-
-        /**
-         *
-         * @return
-         */
-        public int getNumberOfSkills() {
-            return NumberOfSkills;
-        }
-
-        /**
-         *
-         * @param NumberOfSkills
-         */
-        public void setNumberOfSkills(int NumberOfSkills) {
-            this.NumberOfSkills = NumberOfSkills;
-        }
-
-        /**
-         *
-         * @return
-         */
-        public String getSpeciesModifiers() {
-            return SpeciesModifiers;
-        }
-
-        /**
-         *
-         * @param SpeciesModifiers
-         */
-        public void setSpeciesModifiers(String SpeciesModifiers) {
-            this.SpeciesModifiers = SpeciesModifiers;
-        }
-
-        /**
-         *
-         * @return
-         */
-        public int getGeneticMutation() {
-            return GeneticMutation;
-        }
-
-        /**
-         *
-         * @param GeneticMutation
-         */
-        public void setGeneticMutation(int GeneticMutation) {
-            this.GeneticMutation = GeneticMutation;
-        }
-
-        /**
-         *
-         * @return
-         */
-        public int getEnvironmentalAdaptation() {
-            return EnvironmentalAdaptation;
-        }
-
-        /**
-         *
-         * @param EnvironmentalAdaptation
-         */
-        public void setEnvironmentalAdaptation(int EnvironmentalAdaptation) {
-            this.EnvironmentalAdaptation = EnvironmentalAdaptation;
-        }
-
-        /**
-         *
-         * @return
-         */
-        public int getKnowledgeAndScience() {
-            return KnowledgeAndScience;
-        }
-
-        /**
-         *
-         * @param KnowledgeAndScience
-         */
-        public void setKnowledgeAndScience(int KnowledgeAndScience) {
-            this.KnowledgeAndScience = KnowledgeAndScience;
         }
 
         /**
@@ -1611,265 +1484,6 @@ public class DatabaseModifier {
             this.GreaterTraitsAndPowersOfDarkness = GreaterTraitsAndPowersOfDarkness;
             this.LesserTraitsAndPowersOfTwilight = LesserTraitsAndPowersOfTwilight;
             this.GreaterTraitsAndPowersOfTwilight = GreaterTraitsAndPowersOfTwilight;
-        }
-
-        /**
-         *
-         * @return
-         */
-        public int getLesserTraitsAndPowersOfLight() {
-            return LesserTraitsAndPowersOfLight;
-        }
-
-        /**
-         *
-         * @param LesserTraitsAndPowersOfLight
-         */
-        public void setLesserTraitsAndPowersOfLight(int LesserTraitsAndPowersOfLight) {
-            this.LesserTraitsAndPowersOfLight = LesserTraitsAndPowersOfLight;
-        }
-
-        /**
-         *
-         * @return
-         */
-        public int getGreaterTraitsAndPowersOfLight() {
-            return GreaterTraitsAndPowersOfLight;
-        }
-
-        /**
-         *
-         * @param GreaterTraitsAndPowersOfLight
-         */
-        public void setGreaterTraitsAndPowersOfLight(int GreaterTraitsAndPowersOfLight) {
-            this.GreaterTraitsAndPowersOfLight = GreaterTraitsAndPowersOfLight;
-        }
-
-        /**
-         *
-         * @return
-         */
-        public int getLesserTraitsAndPowersOfDarkness() {
-            return LesserTraitsAndPowersOfDarkness;
-        }
-
-        /**
-         *
-         * @param LesserTraitsAndPowersOfDarkness
-         */
-        public void setLesserTraitsAndPowersOfDarkness(int LesserTraitsAndPowersOfDarkness) {
-            this.LesserTraitsAndPowersOfDarkness = LesserTraitsAndPowersOfDarkness;
-        }
-
-        /**
-         *
-         * @return
-         */
-        public int getGreaterTraitsAndPowersOfDarkness() {
-            return GreaterTraitsAndPowersOfDarkness;
-        }
-
-        /**
-         *
-         * @param GreaterTraitsAndPowersOfDarkness
-         */
-        public void setGreaterTraitsAndPowersOfDarkness(int GreaterTraitsAndPowersOfDarkness) {
-            this.GreaterTraitsAndPowersOfDarkness = GreaterTraitsAndPowersOfDarkness;
-        }
-
-        /**
-         *
-         * @return
-         */
-        public int getLesserTraitsAndPowersOfTwilight() {
-            return LesserTraitsAndPowersOfTwilight;
-        }
-
-        /**
-         *
-         * @param LesserTraitsAndPowersOfTwilight
-         */
-        public void setLesserTraitsAndPowersOfTwilight(int LesserTraitsAndPowersOfTwilight) {
-            this.LesserTraitsAndPowersOfTwilight = LesserTraitsAndPowersOfTwilight;
-        }
-
-        /**
-         *
-         * @return
-         */
-        public int getGreaterTraitsAndPowersOfTwilight() {
-            return GreaterTraitsAndPowersOfTwilight;
-        }
-
-        /**
-         *
-         * @param GreaterTraitsAndPowersOfTwilight
-         */
-        public void setGreaterTraitsAndPowersOfTwilight(int GreaterTraitsAndPowersOfTwilight) {
-            this.GreaterTraitsAndPowersOfTwilight = GreaterTraitsAndPowersOfTwilight;
-        }
-
-        /**
-         *
-         * @return
-         */
-        public int getTraitsFromDraconicLineage() {
-            return ReptiliaLineage;
-        }
-
-        /**
-         *
-         * @param TraitsFromDraconicLineage
-         */
-        public void setTraitsFromDraconicLineage(int TraitsFromDraconicLineage) {
-            this.ReptiliaLineage = TraitsFromDraconicLineage;
-        }
-
-        /**
-         * @return the BiestialKingdoms
-         */
-        public int getBiestialKingdoms() {
-            return BiestialKingdoms;
-        }
-
-        /**
-         * @param BiestialKingdoms the BiestialKingdoms to set
-         */
-        public void setBiestialKingdoms(int BiestialKingdoms) {
-            this.BiestialKingdoms = BiestialKingdoms;
-        }
-
-        /**
-         * @return the RegionalTraits
-         */
-        public int getRegionalTraits() {
-            return RegionalTraits;
-        }
-
-        /**
-         * @param RegionalTraits the RegionalTraits to set
-         */
-        public void setRegionalTraits(int RegionalTraits) {
-            this.RegionalTraits = RegionalTraits;
-        }
-
-        /**
-         * @return the SpiritualAndScientificKnowledge
-         */
-        public int getSpiritualAndScientificKnowledge() {
-            return SpiritualAndScientificKnowledge;
-        }
-
-        /**
-         * @param SpiritualAndScientificKnowledge the
-         * SpiritualAndScientificKnowledge to set
-         */
-        public void setSpiritualAndScientificKnowledge(int SpiritualAndScientificKnowledge) {
-            this.SpiritualAndScientificKnowledge = SpiritualAndScientificKnowledge;
-        }
-
-        /**
-         * @return the Clasification
-         */
-        public int getClasification() {
-            return Clasification;
-        }
-
-        /**
-         * @param Clasification the Clasification to set
-         */
-        public void setClasification(int Clasification) {
-            this.Clasification = Clasification;
-        }
-
-        /**
-         * @return the Order
-         */
-        public int getOrder() {
-            return Order;
-        }
-
-        /**
-         * @param Order the Order to set
-         */
-        public void setOrder(int Order) {
-            this.Order = Order;
-        }
-
-        /**
-         * @return the GeneticMorphology
-         */
-        public int getGeneticMorphology() {
-            return GeneticMorphology;
-        }
-
-        /**
-         * @param GeneticMorphology the GeneticMorphology to set
-         */
-        public void setGeneticMorphology(int GeneticMorphology) {
-            this.GeneticMorphology = GeneticMorphology;
-        }
-
-        /**
-         * @return the Knowledge
-         */
-        public int getKnowledge() {
-            return Knowledge;
-        }
-
-        /**
-         * @param Knowledge the Knowledge to set
-         */
-        public void setKnowledge(int Knowledge) {
-            this.Knowledge = Knowledge;
-        }
-
-        /**
-         *
-         * @return
-         */
-        public int getMaxNumberOfLowClases() {
-            return MaxNumberOfLowClases;
-        }
-
-        /**
-         *
-         * @param MaxNumberOfLowClases
-         */
-        public void setMaxNumberOfLowClases(int MaxNumberOfLowClases) {
-            this.MaxNumberOfLowClases = MaxNumberOfLowClases;
-        }
-
-        /**
-         *
-         * @return
-         */
-        public int getMaxNumberOfMidClases() {
-            return MaxNumberOfMidClases;
-        }
-
-        /**
-         *
-         * @param MaxNumberOfMidClases
-         */
-        public void setMaxNumberOfMidClases(int MaxNumberOfMidClases) {
-            this.MaxNumberOfMidClases = MaxNumberOfMidClases;
-        }
-
-        /**
-         *
-         * @return
-         */
-        public int getMaxNumberOfHigClases() {
-            return MaxNumberOfHigClases;
-        }
-
-        /**
-         *
-         * @param MaxNumberOfHigClases
-         */
-        public void setMaxNumberOfHigClases(int MaxNumberOfHigClases) {
-            this.MaxNumberOfHigClases = MaxNumberOfHigClases;
         }
 
         /**
@@ -1917,6 +1531,8 @@ public class DatabaseModifier {
      */
     public static class AHumanoid extends ASpecies {
 
+        @Getter
+        @Setter
         private int StandardClass, EliteClass, LeaderClass, UniqueClass;
 
         /**
@@ -1925,61 +1541,6 @@ public class DatabaseModifier {
         public AHumanoid() {
         }
 
-        /**
-         * @return the StandardClass
-         */
-        public int getStandardClass() {
-            return StandardClass;
-        }
-
-        /**
-         * @param StandardClass the StandardClass to set
-         */
-        public void setStandardClass(int StandardClass) {
-            this.StandardClass = StandardClass;
-        }
-
-        /**
-         * @return the EliteClass
-         */
-        public int getEliteClass() {
-            return EliteClass;
-        }
-
-        /**
-         * @param EliteClass the EliteClass to set
-         */
-        public void setEliteClass(int EliteClass) {
-            this.EliteClass = EliteClass;
-        }
-
-        /**
-         * @return the LeaderClass
-         */
-        public int getLeaderClass() {
-            return LeaderClass;
-        }
-
-        /**
-         * @param LeaderClass the LeaderClass to set
-         */
-        public void setLeaderClass(int LeaderClass) {
-            this.LeaderClass = LeaderClass;
-        }
-
-        /**
-         * @return the UniqueClass
-         */
-        public int getUniqueClass() {
-            return UniqueClass;
-        }
-
-        /**
-         * @param UniqueClass the UniqueClass to set
-         */
-        public void setUniqueClass(int UniqueClass) {
-            this.UniqueClass = UniqueClass;
-        }
     }
 
     /**
@@ -1987,83 +1548,18 @@ public class DatabaseModifier {
      */
     public static class AFey extends ASpecies {
 
+        @Getter
+        @Setter
         private MainDomainValue MainDomain, SecondaryDomain;
+
+        @Getter
+        @Setter
         private int DiscipleClass, ArchlordClass, ParagonClass;
 
         /**
          * AFey
          */
         public AFey() {
-        }
-
-        /**
-         * @return the MainDomain
-         */
-        public MainDomainValue getMainDomain() {
-            return MainDomain;
-        }
-
-        /**
-         * @param MainDomain the MainDomain to set
-         */
-        public void setMainDomain(MainDomainValue MainDomain) {
-            this.MainDomain = MainDomain;
-        }
-
-        /**
-         * @return the SecondaryDomain
-         */
-        public MainDomainValue getSecondaryDomain() {
-            return SecondaryDomain;
-        }
-
-        /**
-         * @param SecondaryDomain the SecondaryDomain to set
-         */
-        public void setSecondaryDomain(MainDomainValue SecondaryDomain) {
-            this.SecondaryDomain = SecondaryDomain;
-        }
-
-        /**
-         * @return the DiscipleClass
-         */
-        public int getDiscipleClass() {
-            return DiscipleClass;
-        }
-
-        /**
-         * @param DiscipleClass the DiscipleClass to set
-         */
-        public void setDiscipleClass(int DiscipleClass) {
-            this.DiscipleClass = DiscipleClass;
-        }
-
-        /**
-         * @return the ArchlordClass
-         */
-        public int getArchlordClass() {
-            return ArchlordClass;
-        }
-
-        /**
-         * @param ArchlordClass the ArchlordClass to set
-         */
-        public void setArchlordClass(int ArchlordClass) {
-            this.ArchlordClass = ArchlordClass;
-        }
-
-        /**
-         * @return the ParagonClass
-         */
-        public int getParagonClass() {
-            return ParagonClass;
-        }
-
-        /**
-         * @param ParagonClass the ParagonClass to set
-         */
-        public void setParagonClass(int ParagonClass) {
-            this.ParagonClass = ParagonClass;
         }
 
     }
@@ -2073,83 +1569,18 @@ public class DatabaseModifier {
      */
     public static class AReptilia extends ASpecies {
 
+        @Getter
+        @Setter
         private MainLineageValue MainLineage;
+
+        @Getter
+        @Setter
         private int LesserClass, CommonClass, RareClass, AncientClass;
 
         /**
          * AReptilia
          */
         public AReptilia() {
-        }
-
-        /**
-         * @return the MainLineage
-         */
-        public MainLineageValue getMainLineage() {
-            return MainLineage;
-        }
-
-        /**
-         * @param MainLineage the MainLineage to set
-         */
-        public void setMainLineage(MainLineageValue MainLineage) {
-            this.MainLineage = MainLineage;
-        }
-
-        /**
-         * @return the LesserClass
-         */
-        public int getLesserClass() {
-            return LesserClass;
-        }
-
-        /**
-         * @param LesserClass the LesserClass to set
-         */
-        public void setLesserClass(int LesserClass) {
-            this.LesserClass = LesserClass;
-        }
-
-        /**
-         * @return the CommonClass
-         */
-        public int getCommonClass() {
-            return CommonClass;
-        }
-
-        /**
-         * @param CommonClass the CommonClass to set
-         */
-        public void setCommonClass(int CommonClass) {
-            this.CommonClass = CommonClass;
-        }
-
-        /**
-         * @return the RareClass
-         */
-        public int getRareClass() {
-            return RareClass;
-        }
-
-        /**
-         * @param RareClass the RareClass to set
-         */
-        public void setRareClass(int RareClass) {
-            this.RareClass = RareClass;
-        }
-
-        /**
-         * @return the AncientClass
-         */
-        public int getAncientClass() {
-            return AncientClass;
-        }
-
-        /**
-         * @param AncientClass the AncientClass to set
-         */
-        public void setAncientClass(int AncientClass) {
-            this.AncientClass = AncientClass;
         }
 
     }
@@ -2159,98 +1590,22 @@ public class DatabaseModifier {
      */
     public static class ABiest extends ASpecies {
 
+        @Getter
+        @Setter
         private MainKingdomValue MainKingdom;
+
+        @Getter
+        @Setter
         private MainRegionValue MainRegion;
+
+        @Getter
+        @Setter
         private int CommonClass, GreaterClass, LeaderClass, LegendaryClass;
 
         /**
          * ABiest
          */
         public ABiest() {
-        }
-
-        /**
-         * @return the MainKingdom
-         */
-        public MainKingdomValue getMainKingdom() {
-            return MainKingdom;
-        }
-
-        /**
-         * @param MainKingdom the MainKingdom to set
-         */
-        public void setMainKingdom(MainKingdomValue MainKingdom) {
-            this.MainKingdom = MainKingdom;
-        }
-
-        /**
-         * @return the MainRegion
-         */
-        public MainRegionValue getMainRegion() {
-            return MainRegion;
-        }
-
-        /**
-         * @param MainRegion the MainRegion to set
-         */
-        public void setMainRegion(MainRegionValue MainRegion) {
-            this.MainRegion = MainRegion;
-        }
-
-        /**
-         * @return the CommonClass
-         */
-        public int getCommonClass() {
-            return CommonClass;
-        }
-
-        /**
-         * @param CommonClass the CommonClass to set
-         */
-        public void setCommonClass(int CommonClass) {
-            this.CommonClass = CommonClass;
-        }
-
-        /**
-         * @return the GreaterClass
-         */
-        public int getGreaterClass() {
-            return GreaterClass;
-        }
-
-        /**
-         * @param GreaterClass the GreaterClass to set
-         */
-        public void setGreaterClass(int GreaterClass) {
-            this.GreaterClass = GreaterClass;
-        }
-
-        /**
-         * @return the LeaderClass
-         */
-        public int getLeaderClass() {
-            return LeaderClass;
-        }
-
-        /**
-         * @param LeaderClass the LeaderClass to set
-         */
-        public void setLeaderClass(int LeaderClass) {
-            this.LeaderClass = LeaderClass;
-        }
-
-        /**
-         * @return the LegendaryClass
-         */
-        public int getLegendaryClass() {
-            return LegendaryClass;
-        }
-
-        /**
-         * @param LegendaryClass the LegendaryClass to set
-         */
-        public void setLegendaryClass(int LegendaryClass) {
-            this.LegendaryClass = LegendaryClass;
         }
 
     }
@@ -2260,98 +1615,22 @@ public class DatabaseModifier {
      */
     public static class AInsecta extends ASpecies {
 
+        @Getter
+        @Setter
         private MainClasificationValue MainClasification;
+
+        @Getter
+        @Setter
         private MainOrderValue MainOrder;
+
+        @Getter
+        @Setter
         private int LesserClass, CommonClass, AdvancedClass, ApexClass;
 
         /**
          * AInsecta
          */
         public AInsecta() {
-        }
-
-        /**
-         * @return the MainClasification
-         */
-        public MainClasificationValue getMainClasification() {
-            return MainClasification;
-        }
-
-        /**
-         * @param MainClasification the MainClasification to set
-         */
-        public void setMainClasification(MainClasificationValue MainClasification) {
-            this.MainClasification = MainClasification;
-        }
-
-        /**
-         * @return the MainOrder
-         */
-        public MainOrderValue getMainOrder() {
-            return MainOrder;
-        }
-
-        /**
-         * @param MainOrder the MainOrder to set
-         */
-        public void setMainOrder(MainOrderValue MainOrder) {
-            this.MainOrder = MainOrder;
-        }
-
-        /**
-         * @return the LesserClass
-         */
-        public int getLesserClass() {
-            return LesserClass;
-        }
-
-        /**
-         * @param LesserClass the LesserClass to set
-         */
-        public void setLesserClass(int LesserClass) {
-            this.LesserClass = LesserClass;
-        }
-
-        /**
-         * @return the CommonClass
-         */
-        public int getCommonClass() {
-            return CommonClass;
-        }
-
-        /**
-         * @param CommonClass the CommonClass to set
-         */
-        public void setCommonClass(int CommonClass) {
-            this.CommonClass = CommonClass;
-        }
-
-        /**
-         * @return the AdvancedClass
-         */
-        public int getAdvancedClass() {
-            return AdvancedClass;
-        }
-
-        /**
-         * @param AdvancedClass the AdvancedClass to set
-         */
-        public void setAdvancedClass(int AdvancedClass) {
-            this.AdvancedClass = AdvancedClass;
-        }
-
-        /**
-         * @return the ApexClass
-         */
-        public int getApexClass() {
-            return ApexClass;
-        }
-
-        /**
-         * @param ApexClass the ApexClass to set
-         */
-        public void setApexClass(int ApexClass) {
-            this.ApexClass = ApexClass;
         }
 
     }
@@ -2361,7 +1640,12 @@ public class DatabaseModifier {
      */
     public static class ACulture {
 
+        @Getter
+        @Setter
         private String SpeciesName, CultureName;
+
+        @Getter
+        @Setter
         private int Age;
 
         /**
@@ -2386,52 +1670,6 @@ public class DatabaseModifier {
          *
          * @return
          */
-        public String getSpeciesName() {
-            return SpeciesName;
-        }
-
-        /**
-         *
-         * @param SpeciesName
-         */
-        public void setSpeciesName(String SpeciesName) {
-            this.SpeciesName = SpeciesName;
-        }
-
-        /**
-         *
-         * @return
-         */
-        public String getCultureName() {
-            return CultureName;
-        }
-
-        /**
-         *
-         * @param CultureName
-         */
-        public void setCultureName(String CultureName) {
-            this.CultureName = CultureName;
-        }
-
-        /**
-         * @return the Age
-         */
-        public int getAge() {
-            return Age;
-        }
-
-        /**
-         * @param Age the Age to set
-         */
-        public void setAge(int Age) {
-            this.Age = Age;
-        }
-
-        /**
-         *
-         * @return
-         */
         public ACulture getClone() {
             ACulture aClone = new ACulture(this.SpeciesName, this.CultureName, this.Age);
             return aClone;
@@ -2443,6 +1681,8 @@ public class DatabaseModifier {
      */
     public static class AClass {
 
+        @Getter
+        @Setter
         private String ClassName, Skills, SpeciesName, CultureName, Advancements, Type, BasedOn, AdditionalCost;
 
         /**
@@ -2454,90 +1694,12 @@ public class DatabaseModifier {
 
         /**
          *
+         * @param Skills
          * @return
          */
-        public String getClassName() {
-            return ClassName;
-        }
-
-        /**
-         *
-         * @param ClassName
-         */
-        public void setClassName(String ClassName) {
-            this.ClassName = ClassName;
-        }
-
-        /**
-         *
-         * @return
-         */
-        public String getSkills() {
-            return Skills;
-        }
-
-        /**
-         *
-         * @param Skills
-         */
-        public void setSkills(String Skills) {
-            this.Skills = Skills;
-        }
-
-        /**
-         *
-         * @param Skills
-         */
-        public void addSkills(String Skills) {
+        public String addSkills(String Skills) {
             this.Skills += Skills;
-        }
-
-        /**
-         *
-         * @return
-         */
-        public String getBasedOn() {
-            return BasedOn;
-        }
-
-        /**
-         *
-         * @param BasedOn
-         */
-        public void setBasedOn(String BasedOn) {
-            this.BasedOn = BasedOn;
-        }
-
-        /**
-         *
-         * @return
-         */
-        public String getType() {
-            return Type;
-        }
-
-        /**
-         *
-         * @param Type
-         */
-        public void setType(String Type) {
-            this.Type = Type;
-        }
-
-        /**
-         *
-         * @return
-         */
-        public String getAdditionalCost() {
-            return AdditionalCost;
-        }
-
-        /**
-         *
-         * @param AdditionalCost
-         */
-        public void setAdditionalCost(String AdditionalCost) {
-            this.AdditionalCost = AdditionalCost;
+            return this.Skills;
         }
 
         /**
@@ -2563,23 +1725,9 @@ public class DatabaseModifier {
      */
     public static class AHero {
 
+        @Getter
+        @Setter
         private String HeroName, SpeciesName, CultureName, Advancements, BasedOn, AdditionalCost;
-
-        /**
-         *
-         * @return
-         */
-        public String getHeroName() {
-            return HeroName;
-        }
-
-        /**
-         *
-         * @param HeroName
-         */
-        public void setHeroName(String HeroName) {
-            this.HeroName = HeroName;
-        }
 
         /**
          *
@@ -2596,23 +1744,9 @@ public class DatabaseModifier {
      */
     public static class AProgress {
 
+        @Getter
+        @Setter
         private String SpeciesName, CultureName, ProgressName, Progress;
-
-        /**
-         *
-         * @return
-         */
-        public String getProgressName() {
-            return ProgressName;
-        }
-
-        /**
-         *
-         * @param ProgressName
-         */
-        public void setProgressName(String ProgressName) {
-            this.ProgressName = ProgressName;
-        }
 
         /**
          *
@@ -2629,23 +1763,9 @@ public class DatabaseModifier {
      */
     public static class ARoster {
 
+        @Getter
+        @Setter
         private String RosterName, SpeciesName, CultureName, Roster;
-
-        /**
-         *
-         * @return
-         */
-        public String getRosterName() {
-            return RosterName;
-        }
-
-        /**
-         *
-         * @param RosterName
-         */
-        public void setRosterName(String RosterName) {
-            this.RosterName = RosterName;
-        }
 
         /**
          *
