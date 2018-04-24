@@ -5,8 +5,9 @@
  */
 package genesys.project.fxml;
 
+import genesys.project.builder.AvailableSkillsLister;
 import genesys.project.builder.BuilderCORE;
-import genesys.project.builder.BuilderCORE.Enmuerations.UseCases;
+import genesys.project.builder.Enums.Enmuerations.UseCases;
 import genesys.project.builder.DatabaseModifier;
 import genesys.project.builder.GenesysProjectBuilder;
 import java.net.URL;
@@ -22,6 +23,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
 import static genesys.project.builder.BuilderCORE.chooseConnection;
+import javafx.util.Callback;
 
 /**
  * FXML Controller class
@@ -212,6 +214,35 @@ public class ClassCreatorWindowController implements Initializable {
         }
     }
 
+    private void setAvailableSkills(ObservableList exclude) throws SQLException {
+        availableSkillsList1.setItems(AvailableSkillsLister.getAvailableSkills(DatabaseModifier.holdSpecies.getLifedomain(), DatabaseModifier.holdCulture.getAge(), skillSubSetChooser2.getSelectionModel().getSelectedItem().toString(), exclude));
+        availableSkillsList1.setCellFactory(new Callback<ListView<String>, ListCell<String>>() {
+            @Override
+            public ListCell<String> call(ListView<String> param) {
+                return new ListCell<String>() {
+                    @Override
+                    protected void updateItem(String item, boolean empty) {
+                        super.updateItem(item, empty);
+                        if (" ".equals(item)
+                                || "--Primary Traits--".equals(item)
+                                || "--Secondary Traits--".equals(item)
+                                || "--Lesser Traits--".equals(item)
+                                || "--Greater Traits--".equals(item)
+                                || "--Lesser Powers--".equals(item)
+                                || "--Greater Powers--".equals(item)
+                                || "--Ancestral Traits--".equals(item)
+                                || "--Reptilian Lineage--".equals(item)) {
+                            setDisable(true);
+                        } else {
+                            setDisable(false);
+                        }
+                        setText(item);
+                    }
+                };
+            }
+        });
+    }
+
     /**
      *
      * @throws SQLException
@@ -220,10 +251,7 @@ public class ClassCreatorWindowController implements Initializable {
     public void basedOnChooserItemStateChangedActions() throws SQLException {
         DatabaseModifier.holdClass[DatabaseModifier.b].setBasedOn(basedOnChooser.getSelectionModel().getSelectedItem().toString());
         showBase();
-        chooseConnection(UseCases.COREdb);
-        PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT SkillName FROM Skills WHERE LifeDomainTree2 = ?");
-        stmt.setString(1, skillSubSetChooser2.getSelectionModel().getSelectedItem().toString());
-        availableSkillsList1.setItems(BuilderCORE.getData(stmt, "SkillName", BuilderCORE.mergeListViews(skillsList2, skillsList4)));
+        setAvailableSkills(BuilderCORE.mergeListViews(skillsList2, skillsList4));
     }
 
     /**
@@ -234,10 +262,7 @@ public class ClassCreatorWindowController implements Initializable {
     public void classTypeChooserItemStateChangedActions() throws SQLException {
         DatabaseModifier.holdClass[DatabaseModifier.b].setType(classTypeChooser.getSelectionModel().getSelectedItem().toString());
         showBase();
-        chooseConnection(UseCases.COREdb);
-        PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT SkillName FROM Skills WHERE LifeDomainTree2 = ?");
-        stmt.setString(1, skillSubSetChooser2.getSelectionModel().getSelectedItem().toString());
-        availableSkillsList1.setItems(BuilderCORE.getData(stmt, "SkillName", BuilderCORE.mergeListViews(skillsList2, skillsList4)));
+        setAvailableSkills(BuilderCORE.mergeListViews(skillsList2, skillsList4));
     }
 
     /**
@@ -264,10 +289,7 @@ public class ClassCreatorWindowController implements Initializable {
             skillSubSetChooser2.setItems(DatabaseModifier.getSubSkillSet(skillSetChooser2.getSelectionModel().getSelectedItem().toString()));
             skillSubSetChooser2.getSelectionModel().select(0);
         }
-        chooseConnection(UseCases.COREdb);
-        PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT SkillName FROM Skills WHERE LifeDomainTree2 = ?");
-        stmt.setString(1, skillSubSetChooser2.getSelectionModel().getSelectedItem().toString());
-        availableSkillsList1.setItems(BuilderCORE.getData(stmt, "SkillName", BuilderCORE.mergeListViews(skillsList2, skillsList4)));
+        setAvailableSkills(BuilderCORE.mergeListViews(skillsList2, skillsList4));
     }
 
     /**
@@ -278,10 +300,7 @@ public class ClassCreatorWindowController implements Initializable {
     public void moveSkillButton2Actions() throws SQLException {
         moveSkill1();
         availableSkillsList1.getSelectionModel().clearSelection();
-        chooseConnection(UseCases.COREdb);
-        PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT SkillName FROM Skills WHERE LifeDomainTree2 = ?");
-        stmt.setString(1, skillSubSetChooser2.getSelectionModel().getSelectedItem().toString());
-        availableSkillsList1.setItems(BuilderCORE.getData(stmt, "SkillName", BuilderCORE.mergeListViews(skillsList2, skillsList4)));
+        setAvailableSkills(BuilderCORE.mergeListViews(skillsList2, skillsList4));
         showBase();
         /*skillList 2 or 4 set?*/
         DatabaseModifier.getAddedSkills(DatabaseModifier.holdClass[DatabaseModifier.b].getSkills() + DatabaseModifier.holdSpecies.getSkills());
@@ -318,16 +337,10 @@ public class ClassCreatorWindowController implements Initializable {
         String tex = Integer.toString(cost);
         pointsPerModelValue2.setText(tex);
         populateLabels();
-        chooseConnection(UseCases.COREdb);
-        PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT SkillName FROM Skills WHERE LifeDomainTree2 = ?");
-        stmt.setString(1, skillSubSetChooser2/**
-                 * was it skillSubSetChooser?*
-                 */
-                .getSelectionModel().getSelectedItem().toString());
-        availableSkillsList1.setItems(BuilderCORE.getData(stmt, "SkillName", skillsList2.getItems()/**
+        setAvailableSkills(skillsList2.getItems()/**
          * was it skillsList1? or4?*
          */
-        ));
+        );
     }
 
     /**
@@ -395,7 +408,7 @@ public class ClassCreatorWindowController implements Initializable {
             speciesList.getSelectionModel().clearSelection();
         } else {
             DatabaseModifier.numberOfClases++;
-            DatabaseModifier.recognizeClassDo(DatabaseModifier.holdSpecies.getLifedomain(),DatabaseModifier.holdClass[DatabaseModifier.b].getType(), true);
+            DatabaseModifier.recognizeClassDo(DatabaseModifier.holdSpecies.getLifedomain(), DatabaseModifier.holdClass[DatabaseModifier.b].getType(), true);
             DatabaseModifier.holdClass[DatabaseModifier.b].setClassName(nameInputField2.getText());
             classList1.getItems().add(DatabaseModifier.holdClass[DatabaseModifier.b].getClassName());
             classesLeft3b.setText(DatabaseModifier.classLeftModify());
@@ -501,9 +514,6 @@ public class ClassCreatorWindowController implements Initializable {
             skillSetChooser2.getSelectionModel().select(0);
             skillSubSetChooser2.setItems(DatabaseModifier.getSubSkillSet(skillSetChooser2.getSelectionModel().getSelectedItem().toString()));
             skillSubSetChooser2.getSelectionModel().select(0);
-            chooseConnection(UseCases.COREdb);
-            PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT SkillName FROM Skills WHERE LifeDomainTree2 = ?");
-            stmt.setString(1, skillSubSetChooser2.getSelectionModel().getSelectedItem().toString());
             if (DatabaseModifier.classIsModyfying) {
                 createFinish2.setText("Modify Class");
                 nameInputField2.setText(DatabaseModifier.holdClass[0].getClassName());
@@ -511,7 +521,7 @@ public class ClassCreatorWindowController implements Initializable {
                 classTypeChooser.getSelectionModel().select(DatabaseModifier.holdClass[0].getType());
                 skillsList2.setItems(DatabaseModifier.getAddedSkills(DatabaseModifier.holdClass[0].getSkills()));
                 showBase();
-                availableSkillsList1.setItems(BuilderCORE.getData(stmt, "SkillName", BuilderCORE.mergeListViews(skillsList2, skillsList4)));
+                setAvailableSkills(BuilderCORE.mergeListViews(skillsList2, skillsList4));
             } else {
                 createFinish2.setText("Add Class");
                 nameInputField2.setText(">enter name here<");
@@ -520,7 +530,7 @@ public class ClassCreatorWindowController implements Initializable {
                 DatabaseModifier.holdClass[DatabaseModifier.b].setType(classTypeChooser.getSelectionModel().getSelectedItem().toString());
                 DatabaseModifier.searchFreeClassSpot();
                 DatabaseModifier.holdClass[DatabaseModifier.b].setAdditionalCost("0");
-                availableSkillsList1.setItems(BuilderCORE.getData(stmt, "SkillName", DatabaseModifier.excludeSkills.getItems()));
+                setAvailableSkills(DatabaseModifier.excludeSkills.getItems());
                 showBase();
             }
 

@@ -6,7 +6,7 @@
 package genesys.project.fxml;
 
 import genesys.project.builder.BuilderCORE;
-import genesys.project.builder.BuilderCORE.Enmuerations.LifedomainValue;
+import genesys.project.builder.Enums.Enmuerations.LifedomainValue;
 import genesys.project.builder.DatabaseModifier;
 import genesys.project.builder.GenesysProjectBuilder;
 import java.io.IOException;

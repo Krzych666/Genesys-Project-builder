@@ -6,7 +6,6 @@
 package genesys.project.fxml;
 
 import genesys.project.builder.BuilderCORE;
-import genesys.project.builder.BuilderCORE.Enmuerations.*;
 import genesys.project.builder.DatabaseModifier;
 import java.io.IOException;
 import java.net.URL;
@@ -25,6 +24,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
 import static genesys.project.builder.BuilderCORE.chooseConnection;
+import genesys.project.builder.Enums.Enmuerations.UseCases;
 
 /**
  * FXML Controller class
@@ -286,7 +286,8 @@ public class DuplicateWindowController implements Initializable {
             chooseConnection(UseCases.Userdb);
             PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT CultureName FROM CreatedCultures WHERE SpeciesName =?");
             stmt.setString(1, selSpecies);
-            tmp.addAll(BuilderCORE.getData(stmt, "CultureName", null));
+            String[] columns = {"CultureName"};
+            tmp.addAll(BuilderCORE.getData(stmt, columns, null));
             for (int i = 0; i < tmp.size(); i++) {
                 DatabaseModifier.executeSQL("INSERT INTO `CreatedCultures`(CultureName,SpeciesName) VALUES ('" + tmp.get(i) + "','" + duplicateNewNameValue.getText() + "');");
             }
@@ -301,11 +302,13 @@ public class DuplicateWindowController implements Initializable {
             chooseConnection(UseCases.Userdb);
             PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT ClassName FROM CreatedClasses WHERE SpeciesName =?");
             stmt.setString(1, selSpecies);
-            ObservableList lst = BuilderCORE.getData(stmt, "ClassName", null);
+            String[] columns = {"ClassName"};
+            ObservableList lst = BuilderCORE.getData(stmt, columns, null);
             chooseConnection(UseCases.Userdb);
             PreparedStatement stmt1 = BuilderCORE.getConnection().prepareStatement("SELECT CultureName FROM CreatedClasses WHERE SpeciesName =?");
             stmt1.setString(1, selSpecies);
-            ObservableList lst1 = BuilderCORE.getData(stmt1, "CultureName", null);
+            String[] columns1 = {"CultureName"};
+            ObservableList lst1 = BuilderCORE.getData(stmt1, columns1, null);
             for (int i = 0; i < lst.size(); i++) {
                 int[] tablesint = {1, 3, 4, 5, 6};
                 String[] tmp = new String[7];
@@ -327,7 +330,8 @@ public class DuplicateWindowController implements Initializable {
             PreparedStatement stmt3 = BuilderCORE.getConnection().prepareStatement("SELECT ClassName FROM CreatedClasses WHERE SpeciesName =? AND CultureName =?");
             stmt3.setString(1, selSpecies);
             stmt3.setString(2, selCulture);
-            ObservableList lst = BuilderCORE.getData(stmt3, "ClassName", null);
+            String[] columns = {"ClassName"};
+            ObservableList lst = BuilderCORE.getData(stmt3, columns, null);
             for (int i = 0; i < lst.size(); i++) {
                 String[] tmp = new String[6];
                 tmp[0] = lst.get(i).toString();
@@ -363,11 +367,13 @@ public class DuplicateWindowController implements Initializable {
             chooseConnection(UseCases.Userdb);
             PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT HeroName FROM CreatedHeroes WHERE SpeciesName =?");
             stmt.setString(1, selSpecies);
-            ObservableList lst = BuilderCORE.getData(stmt, "HeroName", null);
+            String[] columns = {"HeroName"};
+            ObservableList lst = BuilderCORE.getData(stmt, columns, null);
             chooseConnection(UseCases.Userdb);
             PreparedStatement stmt1 = BuilderCORE.getConnection().prepareStatement("SELECT CultureName FROM CreatedHeroes WHERE SpeciesName =?");
             stmt1.setString(1, selSpecies);
-            ObservableList lst1 = BuilderCORE.getData(stmt1, "CultureName", null);
+            String[] columns1 = {"CultureName"};
+            ObservableList lst1 = BuilderCORE.getData(stmt1, columns1, null);
             for (int i = 0; i < lst.size(); i++) {
                 String[] tmp = new String[5];
                 tmp[0] = lst.get(i).toString();
@@ -388,7 +394,8 @@ public class DuplicateWindowController implements Initializable {
             PreparedStatement stmt3 = BuilderCORE.getConnection().prepareStatement("SELECT HeroName FROM CreatedHeroes WHERE SpeciesName =? AND CultureName =?");
             stmt3.setString(1, selSpecies);
             stmt3.setString(2, selCulture);
-            ObservableList lst = BuilderCORE.getData(stmt3, "HeroName", null);
+            String[] columns3 = {"HeroName"};
+            ObservableList lst = BuilderCORE.getData(stmt3, columns3, null);
             for (int i = 0; i < lst.size(); i++) {
                 String[] tmp = new String[4];
                 tmp[0] = lst.get(i).toString();
@@ -424,11 +431,13 @@ public class DuplicateWindowController implements Initializable {
             chooseConnection(UseCases.Userdb);
             PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT ProgressName FROM CreatedProgress WHERE SpeciesName =?");
             stmt.setString(1, selSpecies);
-            ObservableList lst = BuilderCORE.getData(stmt, "ProgressName", null);
+            String[] columns = {"ProgressName"};
+            ObservableList lst = BuilderCORE.getData(stmt, columns, null);
             chooseConnection(UseCases.Userdb);
             PreparedStatement stmt1 = BuilderCORE.getConnection().prepareStatement("SELECT CultureName FROM CreatedProgress WHERE SpeciesName =?");
             stmt1.setString(1, selSpecies);
-            ObservableList lst1 = BuilderCORE.getData(stmt1, "CultureName", null);
+            String[] columns1 = {"CultureName"};
+            ObservableList lst1 = BuilderCORE.getData(stmt1, columns1, null);
             for (int i = 0; i < lst.size(); i++) {
                 String[] tmp = new String[3];
                 tmp[0] = lst.get(i).toString();
@@ -446,7 +455,8 @@ public class DuplicateWindowController implements Initializable {
             PreparedStatement stmt3 = BuilderCORE.getConnection().prepareStatement("SELECT ProgressName FROM CreatedProgress WHERE SpeciesName =? AND CultureName =?");
             stmt3.setString(1, selSpecies);
             stmt3.setString(2, selCulture);
-            ObservableList lst = BuilderCORE.getData(stmt3, "ProgressName", null);
+            String[] columns3 = {"ProgressName"};
+            ObservableList lst = BuilderCORE.getData(stmt3, columns3, null);
             for (int i = 0; i < lst.size(); i++) {
                 String[] tmp = new String[2];
                 tmp[0] = lst.get(i).toString();
@@ -476,11 +486,13 @@ public class DuplicateWindowController implements Initializable {
             chooseConnection(UseCases.Userdb);
             PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT RosterName FROM CreatedRosters WHERE SpeciesName =?");
             stmt.setString(1, selSpecies);
-            ObservableList lst = BuilderCORE.getData(stmt, "RosterName", null);
+            String[] columns = {"RosterName"};
+            ObservableList lst = BuilderCORE.getData(stmt, columns, null);
             chooseConnection(UseCases.Userdb);
             PreparedStatement stmt1 = BuilderCORE.getConnection().prepareStatement("SELECT CultureName FROM CreatedRosters WHERE SpeciesName =?");
             stmt1.setString(1, selSpecies);
-            ObservableList lst1 = BuilderCORE.getData(stmt1, "CultureName", null);
+            String[] columns1 = {"CultureName"};
+            ObservableList lst1 = BuilderCORE.getData(stmt1, columns1, null);
             for (int i = 0; i < lst.size(); i++) {
                 String[] tmp = new String[3];
                 tmp[0] = lst.get(i).toString();
@@ -498,7 +510,8 @@ public class DuplicateWindowController implements Initializable {
             PreparedStatement stmt3 = BuilderCORE.getConnection().prepareStatement("SELECT RosterName FROM CreatedRosters WHERE SpeciesName =? AND CultureName =?");
             stmt3.setString(1, selSpecies);
             stmt3.setString(2, selCulture);
-            ObservableList lst = BuilderCORE.getData(stmt3, "RosterName", null);
+            String[] columns3 = {"RosterName"};
+            ObservableList lst = BuilderCORE.getData(stmt3, columns3, null);
             for (int i = 0; i < lst.size(); i++) {
                 String[] tmp = new String[2];
                 tmp[0] = lst.get(i).toString();

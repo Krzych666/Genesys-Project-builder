@@ -6,11 +6,11 @@
 package genesys.project.fxml;
 
 import genesys.project.builder.BuilderCORE;
-import genesys.project.builder.BuilderCORE.Enmuerations.Creators;
-import genesys.project.builder.BuilderCORE.Enmuerations.LifedomainValue;
-import genesys.project.builder.BuilderCORE.Enmuerations.MainDomainValue;
-import genesys.project.builder.BuilderCORE.Enmuerations.MainLineageValue;
-import genesys.project.builder.BuilderCORE.Enmuerations.UseCases;
+import genesys.project.builder.Enums.Enmuerations.Creators;
+import genesys.project.builder.Enums.Enmuerations.LifedomainValue;
+import genesys.project.builder.Enums.Enmuerations.MainDomainValue;
+import genesys.project.builder.Enums.Enmuerations.MainLineageValue;
+import genesys.project.builder.Enums.Enmuerations.UseCases;
 import static genesys.project.builder.BuilderCORE.chooseConnection;
 import genesys.project.builder.DatabaseModifier;
 import genesys.project.builder.GenesysProjectBuilder;

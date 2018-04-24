@@ -6,11 +6,11 @@
 package genesys.project.fxml;
 
 import genesys.project.builder.BuilderCORE;
-import genesys.project.builder.BuilderCORE.Enmuerations.DBTables;
-import genesys.project.builder.BuilderCORE.Enmuerations.MainDomainValue;
-import genesys.project.builder.BuilderCORE.Enmuerations.MainLineageValue;
-import genesys.project.builder.BuilderCORE.Enmuerations.Modificators;
-import genesys.project.builder.BuilderCORE.Enmuerations.UseCases;
+import genesys.project.builder.Enums.Enmuerations.DBTables;
+import genesys.project.builder.Enums.Enmuerations.MainDomainValue;
+import genesys.project.builder.Enums.Enmuerations.MainLineageValue;
+import genesys.project.builder.Enums.Enmuerations.Modificators;
+import genesys.project.builder.Enums.Enmuerations.UseCases;
 import static genesys.project.builder.BuilderCORE.chooseConnection;
 import genesys.project.builder.DatabaseModifier;
 import java.io.IOException;

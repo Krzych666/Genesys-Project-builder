@@ -5,18 +5,19 @@
  */
 package genesys.project.fxml;
 
+import genesys.project.builder.AvailableSkillsLister;
 import genesys.project.builder.BuilderCORE;
-import genesys.project.builder.BuilderCORE.Enmuerations.MainClasificationValue;
-import genesys.project.builder.BuilderCORE.Enmuerations.MainDomainValue;
-import genesys.project.builder.BuilderCORE.Enmuerations.MainKingdomValue;
-import genesys.project.builder.BuilderCORE.Enmuerations.MainLineageValue;
-import genesys.project.builder.BuilderCORE.Enmuerations.MainOrderValue;
-import genesys.project.builder.BuilderCORE.Enmuerations.MainRegionValue;
-import genesys.project.builder.BuilderCORE.Enmuerations.UseCases;
-import genesys.project.builder.BuilderCORE.Enmuerations.primaryChooserValue;
-import genesys.project.builder.BuilderCORE.Enmuerations.secondaryChooserValue;
-import static genesys.project.builder.BuilderCORE.Enmuerations.primaryChooserValue.*;
-import static genesys.project.builder.BuilderCORE.Enmuerations.secondaryChooserValue.*;
+import genesys.project.builder.Enums.Enmuerations;
+import genesys.project.builder.Enums.Enmuerations.MainClasificationValue;
+import genesys.project.builder.Enums.Enmuerations.MainDomainValue;
+import genesys.project.builder.Enums.Enmuerations.MainKingdomValue;
+import genesys.project.builder.Enums.Enmuerations.MainLineageValue;
+import genesys.project.builder.Enums.Enmuerations.MainOrderValue;
+import genesys.project.builder.Enums.Enmuerations.MainRegionValue;
+import genesys.project.builder.Enums.Enmuerations.primaryChooserValue;
+import genesys.project.builder.Enums.Enmuerations.secondaryChooserValue;
+import static genesys.project.builder.Enums.Enmuerations.primaryChooserValue.*;
+import static genesys.project.builder.Enums.Enmuerations.secondaryChooserValue.*;
 import genesys.project.builder.DatabaseModifier;
 import genesys.project.builder.DatabaseModifier.AFey;
 import genesys.project.builder.DatabaseModifier.AReptilia;
@@ -27,7 +28,6 @@ import java.io.IOException;
 import static java.lang.Integer.max;
 import static java.lang.Integer.min;
 import java.net.URL;
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
@@ -38,15 +38,16 @@ import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import static genesys.project.builder.BuilderCORE.chooseConnection;
 import javafx.collections.FXCollections;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.util.Callback;
 
 /**
  * FXML Controller class
@@ -239,14 +240,40 @@ public class SpeciesCreatorWindowController implements Initializable {
         skillSetChooser.getSelectionModel().select(0);
         skillSubSetChooser.setItems(DatabaseModifier.getSubSkillSet(skillSetChooser.getSelectionModel().getSelectedItem().toString()));
         skillSubSetChooser.getSelectionModel().select(0);
-        chooseConnection(UseCases.COREdb);
-        PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT SkillName FROM Skills WHERE LifeDomainTree2 = ?");
-        stmt.setString(1, skillSubSetChooser.getSelectionModel().getSelectedItem().toString());
-        availableSkillsList.setItems(BuilderCORE.getData(stmt, "SkillName", skillsList1.getItems()));
+        setAvailableSkills();
         pointsPerModelValue1.setText("0");
         populateLabels();
         skillsLeft1a.setText(DatabaseModifier.skillsCanTake());
         skillsLeft1b.setText(DatabaseModifier.skillsLeftModify("0", true));
+    }
+
+    void setAvailableSkills() throws SQLException {
+        availableSkillsList.setItems(AvailableSkillsLister.getAvailableSkills(DatabaseModifier.holdSpecies.getLifedomain(), DatabaseModifier.holdCulture.getAge(), skillSubSetChooser.getSelectionModel().getSelectedItem().toString(), skillsList1.getItems()));
+        availableSkillsList.setCellFactory(new Callback<ListView<String>, ListCell<String>>() {
+            @Override
+            public ListCell<String> call(ListView<String> param) {
+                return new ListCell<String>() {
+                    @Override
+                    protected void updateItem(String item, boolean empty) {
+                        super.updateItem(item, empty);
+                        if (" ".equals(item)
+                                || "--Primary Traits--".equals(item)
+                                || "--Secondary Traits--".equals(item)
+                                || "--Lesser Traits--".equals(item)
+                                || "--Greater Traits--".equals(item)
+                                || "--Lesser Powers--".equals(item)
+                                || "--Greater Powers--".equals(item)
+                                || "--Ancestral Traits--".equals(item)
+                                || "--Reptilian Lineage--".equals(item)) {
+                            setDisable(true);
+                        } else {
+                            setDisable(false);
+                        }
+                        setText(item);
+                    }
+                };
+            }
+        });
     }
 
     /**
@@ -276,10 +303,7 @@ public class SpeciesCreatorWindowController implements Initializable {
         populateLabels();
         skillSetChooser.setItems(DatabaseModifier.getSkillSet());
         skillSetChooser.getSelectionModel().select(0);
-        chooseConnection(UseCases.COREdb);
-        PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT SkillName FROM Skills WHERE LifeDomainTree2 = ?");
-        stmt.setString(1, skillSubSetChooser.getSelectionModel().getSelectedItem().toString());
-        availableSkillsList.setItems(BuilderCORE.getData(stmt, "SkillName", skillsList1.getItems()));
+        setAvailableSkills();
     }
 
     /**
@@ -368,17 +392,17 @@ public class SpeciesCreatorWindowController implements Initializable {
             case Caballis:
             case Ichthyes:
                 ((DatabaseModifier.ABiest) DatabaseModifier.holdSpecies).setMainKingdom(MainKingdomValue.getEnum(primaryChooser.getSelectionModel().getSelectedItem().toString()));
-                DatabaseModifier.holdSpecies.setCharacteristicGroup(BuilderCORE.Enmuerations.CharacteristicGroup.getEnum(primaryChooser.getSelectionModel().getSelectedItem().toString()));
+                DatabaseModifier.holdSpecies.setCharacteristicGroup(Enmuerations.CharacteristicGroup.getEnum(primaryChooser.getSelectionModel().getSelectedItem().toString()));
                 break;
             case Arachnea:
             case Crustacea:
             case Insecta:
             case Myriapoda:
                 ((DatabaseModifier.AInsecta) DatabaseModifier.holdSpecies).setMainClasification(MainClasificationValue.getEnum(primaryChooser.getSelectionModel().getSelectedItem().toString()));
-                DatabaseModifier.holdSpecies.setCharacteristicGroup(BuilderCORE.Enmuerations.CharacteristicGroup.getEnum(primaryChooser.getSelectionModel().getSelectedItem().toString()));
+                DatabaseModifier.holdSpecies.setCharacteristicGroup(Enmuerations.CharacteristicGroup.getEnum(primaryChooser.getSelectionModel().getSelectedItem().toString()));
                 break;
             case NONE:
-                DatabaseModifier.holdSpecies.setCharacteristicGroup(BuilderCORE.Enmuerations.CharacteristicGroup.standard);
+                DatabaseModifier.holdSpecies.setCharacteristicGroup(Enmuerations.CharacteristicGroup.standard);
                 break;
             default:
                 break;
@@ -459,10 +483,7 @@ public class SpeciesCreatorWindowController implements Initializable {
         String tex = Integer.toString(cost);
         pointsPerModelValue1.setText(tex);
         populateLabels();
-        chooseConnection(UseCases.COREdb);
-        PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT SkillName FROM Skills WHERE LifeDomainTree2 = ?");
-        stmt.setString(1, skillSubSetChooser.getSelectionModel().getSelectedItem().toString());
-        availableSkillsList.setItems(BuilderCORE.getData(stmt, "SkillName", skillsList1.getItems()));
+        setAvailableSkills();
         DatabaseModifier.holdSpecies.setNumberOfSkills(DatabaseModifier.holdSpecies.getSkills().split(";").length);
         subSkillsList1.getItems().clear();
         subSkillText1.setText("");
@@ -492,10 +513,7 @@ public class SpeciesCreatorWindowController implements Initializable {
             skillSubSetChooser.setItems(DatabaseModifier.getSubSkillSet(skillSetChooser.getSelectionModel().getSelectedItem().toString()));
             skillSubSetChooser.getSelectionModel().select(0);
         }
-        chooseConnection(UseCases.COREdb);
-        PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT SkillName FROM Skills WHERE LifeDomainTree2 = ?");
-        stmt.setString(1, skillSubSetChooser.getSelectionModel().getSelectedItem().toString());
-        availableSkillsList.setItems(BuilderCORE.getData(stmt, "SkillName", skillsList1.getItems()));
+        setAvailableSkills();
     }
 
     /**
@@ -599,7 +617,7 @@ public class SpeciesCreatorWindowController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         this.valuesLabels = new Label[]{strengthValue1, toughnessValue1, movementValue1, martialValue1, rangedValue1, defenseValue1, disciplineValue1, willpowerValue1, commandValue1, woundsValue1, attacksValue1, sizeValue1, mTValue1, rTValue1, moraleValue1};
-
+        DatabaseModifier.holdCulture.setAge(1);
         try {
             createSpecies();
         } catch (IOException | SQLException ex) {

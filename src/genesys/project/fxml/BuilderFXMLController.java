@@ -6,10 +6,10 @@
 package genesys.project.fxml;
 
 import genesys.project.builder.BuilderCORE;
-import genesys.project.builder.BuilderCORE.Enmuerations.LifedomainValue;
-import genesys.project.builder.BuilderCORE.Enmuerations.CharacteristicGroup;
-import genesys.project.builder.BuilderCORE.Enmuerations.UseCases;
-import genesys.project.builder.BuilderCORE.TheModifiers;
+import genesys.project.builder.Enums.Enmuerations.LifedomainValue;
+import genesys.project.builder.Enums.Enmuerations.CharacteristicGroup;
+import genesys.project.builder.Enums.Enmuerations.UseCases;
+import genesys.project.builder.Enums.TheModifiers;
 import genesys.project.builder.GenesysProjectBuilder;
 import java.io.IOException;
 import java.net.URL;
@@ -318,7 +318,8 @@ public class BuilderFXMLController implements Initializable {
             chooseConnection(UseCases.Userdb);
             PreparedStatement stmt3 = BuilderCORE.getConnection().prepareStatement("SELECT CultureName FROM CreatedCultures WHERE SpeciesName = ?");
             stmt3.setString(1, speciesList.getSelectionModel().getSelectedItem().toString());
-            culturesList.setItems(BuilderCORE.getData(stmt3, "CultureName", null));
+            String[] columns = {"CultureName"};
+            culturesList.setItems(BuilderCORE.getData(stmt3, columns, null));
             int cost = baseCost(currentLifeDomain, speciesList.getSelectionModel().getSelectedItem().toString(),
                     null/*culturesList.getSelectionModel().getSelectedItem().toString()*/,
                     null/*classList.getSelectionModel().getSelectedItem().toString()*/,
@@ -345,23 +346,27 @@ public class BuilderFXMLController implements Initializable {
             PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT ClassName FROM CreatedClasses WHERE SpeciesName = ? AND (CultureName = ? OR CultureName is null)");
             stmt.setString(1, speciesList.getSelectionModel().getSelectedItem().toString());
             stmt.setString(2, culturesList.getSelectionModel().getSelectedItem().toString());
-            tmp.addAll(BuilderCORE.getData(stmt, "ClassName", null));
+            String[] columns = {"ClassName"};
+            tmp.addAll(BuilderCORE.getData(stmt, columns, null));
             classList.setItems(tmp);
             chooseConnection(UseCases.Userdb);
             PreparedStatement stmt1 = BuilderCORE.getConnection().prepareStatement("SELECT ProgressName FROM CreatedProgress WHERE SpeciesName = ? AND CultureName = ?");
             stmt1.setString(1, speciesList.getSelectionModel().getSelectedItem().toString());
             stmt1.setString(2, culturesList.getSelectionModel().getSelectedItem().toString());
-            cultureProgressList.setItems(BuilderCORE.getData(stmt1, "ProgressName", null));
+            String[] columns1 = {"ProgressName"};
+            cultureProgressList.setItems(BuilderCORE.getData(stmt1, columns1, null));
             chooseConnection(UseCases.Userdb);
             PreparedStatement stmt2 = BuilderCORE.getConnection().prepareStatement("SELECT HeroName FROM CreatedHeroes WHERE SpeciesName = ? AND CultureName = ?");
             stmt2.setString(1, speciesList.getSelectionModel().getSelectedItem().toString());
             stmt2.setString(2, culturesList.getSelectionModel().getSelectedItem().toString());
-            heroesList.setItems(BuilderCORE.getData(stmt2, "HeroName", null));
+            String[] columns2 = {"HeroName"};
+            heroesList.setItems(BuilderCORE.getData(stmt2, columns2, null));
             chooseConnection(UseCases.Userdb);
             PreparedStatement stmt3 = BuilderCORE.getConnection().prepareStatement("SELECT RosterName FROM CreatedRosters WHERE SpeciesName = ? AND CultureName = ?");
             stmt3.setString(1, speciesList.getSelectionModel().getSelectedItem().toString());
             stmt3.setString(2, culturesList.getSelectionModel().getSelectedItem().toString());
-            rostersList.setItems(BuilderCORE.getData(stmt3, "RosterName", null));
+            String[] columns3 = {"RosterName"};
+            rostersList.setItems(BuilderCORE.getData(stmt3, columns3, null));
             populateLabels();
         }
         subSkillsList.getItems().clear();
