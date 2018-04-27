@@ -275,7 +275,7 @@ public class ClassCreatorWindowController implements Initializable {
             skillSetChooser2.setItems(DatabaseModifier.getSkillSet());
             skillSetChooser2.getSelectionModel().select(0);
         }
-        skillSubSetChooser2.setItems(DatabaseModifier.getSubSkillSet(skillSetChooser2.getSelectionModel().getSelectedItem().toString()));
+        skillSubSetChooser2.setItems(DatabaseModifier.getSubSkillSet(skillSetChooser2.getSelectionModel().getSelectedItem().toString(), DatabaseModifier.holdSpecies.getCharacteristicGroup().toString(), null)); //TODO beast envir
         skillSubSetChooser2.getSelectionModel().select(0);
     }
 
@@ -286,7 +286,7 @@ public class ClassCreatorWindowController implements Initializable {
     @FXML
     public void skillSubSetChooser2ItemStateChangedActions() throws SQLException {
         if (skillSubSetChooser2.getSelectionModel().isEmpty()) {
-            skillSubSetChooser2.setItems(DatabaseModifier.getSubSkillSet(skillSetChooser2.getSelectionModel().getSelectedItem().toString()));
+            skillSubSetChooser2.setItems(DatabaseModifier.getSubSkillSet(skillSetChooser2.getSelectionModel().getSelectedItem().toString(), DatabaseModifier.holdSpecies.getCharacteristicGroup().toString(), null)); //TODO beast envir
             skillSubSetChooser2.getSelectionModel().select(0);
         }
         setAvailableSkills(BuilderCORE.mergeListViews(skillsList2, skillsList4));
@@ -512,7 +512,7 @@ public class ClassCreatorWindowController implements Initializable {
             populateDropdownsClassType();
             skillSetChooser2.setItems(DatabaseModifier.getSkillSet());
             skillSetChooser2.getSelectionModel().select(0);
-            skillSubSetChooser2.setItems(DatabaseModifier.getSubSkillSet(skillSetChooser2.getSelectionModel().getSelectedItem().toString()));
+            skillSubSetChooser2.setItems(DatabaseModifier.getSubSkillSet(skillSetChooser2.getSelectionModel().getSelectedItem().toString(), DatabaseModifier.holdSpecies.getCharacteristicGroup().toString(), null)); //TODO beast envir
             skillSubSetChooser2.getSelectionModel().select(0);
             if (DatabaseModifier.classIsModyfying) {
                 createFinish2.setText("Modify Class");

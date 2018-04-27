@@ -184,6 +184,7 @@ public class SpeciesCreatorWindowController implements Initializable {
     private ListView speciesList;
     private Label[] valuesLabels;
     private Boolean simplifyToCoreSkills;
+    private String primaryChooserString = "", secondaryChooserString = "";
 
     /**
      *
@@ -227,18 +228,22 @@ public class SpeciesCreatorWindowController implements Initializable {
                 skillSetText.setText(BuilderCORE.BIESTSKILS);
                 skillSubSetText.setText(BuilderCORE.BIESTSUBSKILS);
                 ((ABiest) DatabaseModifier.holdSpecies).setMainKingdom(MainKingdomValue.NONE);
+                primaryChooserString = MainKingdomValue.NONE.getText();
                 ((ABiest) DatabaseModifier.holdSpecies).setMainRegion(MainRegionValue.NONE);
+                secondaryChooserString = MainRegionValue.NONE.getText();
                 break;
             case Insecta:
                 skillSetText.setText(BuilderCORE.INSECTASKILS);
                 skillSubSetText.setText(BuilderCORE.INSECTASUBSKILS);
                 ((AInsecta) DatabaseModifier.holdSpecies).setMainClasification(MainClasificationValue.NONE);
                 ((AInsecta) DatabaseModifier.holdSpecies).setMainOrder(MainOrderValue.NONE);
+                primaryChooserString = MainClasificationValue.NONE.getText();
+                secondaryChooserString = MainOrderValue.NONE.getText();
                 break;
         }
         skillSetChooser.setItems(DatabaseModifier.getSkillSet());
         skillSetChooser.getSelectionModel().select(0);
-        skillSubSetChooser.setItems(DatabaseModifier.getSubSkillSet(skillSetChooser.getSelectionModel().getSelectedItem().toString()));
+        skillSubSetChooser.setItems(DatabaseModifier.getSubSkillSet(skillSetChooser.getSelectionModel().getSelectedItem().toString(), primaryChooserString, secondaryChooserString));
         skillSubSetChooser.getSelectionModel().select(0);
         setAvailableSkills();
         pointsPerModelValue1.setText("0");
@@ -393,6 +398,7 @@ public class SpeciesCreatorWindowController implements Initializable {
             case Ichthyes:
                 ((DatabaseModifier.ABiest) DatabaseModifier.holdSpecies).setMainKingdom(MainKingdomValue.getEnum(primaryChooser.getSelectionModel().getSelectedItem().toString()));
                 DatabaseModifier.holdSpecies.setCharacteristicGroup(Enmuerations.CharacteristicGroup.getEnum(primaryChooser.getSelectionModel().getSelectedItem().toString()));
+                primaryChooserString = primaryChooser.getSelectionModel().getSelectedItem().toString();
                 break;
             case Arachnea:
             case Crustacea:
@@ -400,9 +406,11 @@ public class SpeciesCreatorWindowController implements Initializable {
             case Myriapoda:
                 ((DatabaseModifier.AInsecta) DatabaseModifier.holdSpecies).setMainClasification(MainClasificationValue.getEnum(primaryChooser.getSelectionModel().getSelectedItem().toString()));
                 DatabaseModifier.holdSpecies.setCharacteristicGroup(Enmuerations.CharacteristicGroup.getEnum(primaryChooser.getSelectionModel().getSelectedItem().toString()));
+                primaryChooserString = primaryChooser.getSelectionModel().getSelectedItem().toString();
                 break;
             case NONE:
                 DatabaseModifier.holdSpecies.setCharacteristicGroup(Enmuerations.CharacteristicGroup.standard);
+                primaryChooserString = primaryChooser.getSelectionModel().getSelectedItem().toString();
                 break;
             default:
                 break;
@@ -410,7 +418,6 @@ public class SpeciesCreatorWindowController implements Initializable {
 
         skillsLeft1a.setText(DatabaseModifier.skillsCanTake());
         wipeSkills();
-
     }
 
     /**
@@ -436,6 +443,7 @@ public class SpeciesCreatorWindowController implements Initializable {
             case Reptilia:
                 break;
             case Biest:
+                secondaryChooserString = secondaryChooser.getSelectionModel().getSelectedItem().toString();
                 break;
             case Insecta:
                 break;
@@ -499,7 +507,7 @@ public class SpeciesCreatorWindowController implements Initializable {
             skillSetChooser.setItems(DatabaseModifier.getSkillSet());
             skillSetChooser.getSelectionModel().select(0);
         }
-        skillSubSetChooser.setItems(DatabaseModifier.getSubSkillSet(skillSetChooser.getSelectionModel().getSelectedItem().toString()));
+        skillSubSetChooser.setItems(DatabaseModifier.getSubSkillSet(skillSetChooser.getSelectionModel().getSelectedItem().toString(), primaryChooserString, secondaryChooserString));
         skillSubSetChooser.getSelectionModel().select(0);
     }
 
@@ -510,7 +518,7 @@ public class SpeciesCreatorWindowController implements Initializable {
     @FXML
     public void skillSubSetChooserItemStateChangedActions() throws SQLException {
         if (skillSubSetChooser.getSelectionModel().isEmpty()) {
-            skillSubSetChooser.setItems(DatabaseModifier.getSubSkillSet(skillSetChooser.getSelectionModel().getSelectedItem().toString()));
+            skillSubSetChooser.setItems(DatabaseModifier.getSubSkillSet(skillSetChooser.getSelectionModel().getSelectedItem().toString(), primaryChooserString, secondaryChooserString));
             skillSubSetChooser.getSelectionModel().select(0);
         }
         setAvailableSkills();

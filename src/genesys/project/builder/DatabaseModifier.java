@@ -847,15 +847,22 @@ public class DatabaseModifier {
         return null;
     }
 
-    public static ObservableList<String> getSubSkillSet(String SkillBranch) throws SQLException {
+    public static ObservableList<String> getSubSkillSet(String SkillBranch, String onlyPrimaryChooser, String onlySecondaryChooser) throws SQLException {
+        ObservableList<String> tmp = FXCollections.observableArrayList();
         chooseConnection(UseCases.COREdb);
-        PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT DISTINCT LifeDomainTree2 FROM Skills WHERE LifeDomainTree1 = ?");
-        stmt.setString(1, SkillBranch);
+        PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT DISTINCT LifeDomainTree2 FROM Skills WHERE LifeDomain = ? AND LifeDomainTree1 = ?");
+        stmt.setString(1, holdSpecies.Lifedomain.name());
+        stmt.setString(2, SkillBranch);
         String[] columns = {"LifeDomainTree2"};
-        ObservableList<String> tmp = BuilderCORE.getData(stmt, columns, null);
+        tmp = BuilderCORE.getData(stmt, columns, null);
+        if (onlyPrimaryChooser != null && !onlyPrimaryChooser.equals("") && !onlyPrimaryChooser.equals("standard") && tmp.contains(onlyPrimaryChooser)) {
+            return FXCollections.observableArrayList(onlyPrimaryChooser);
+        }
+        if (onlySecondaryChooser != null && !onlySecondaryChooser.equals("") && !onlySecondaryChooser.equals("standard") && tmp.contains(onlySecondaryChooser)) {
+            return FXCollections.observableArrayList(onlySecondaryChooser);
+        }
         return tmp;
     }
-
 
     /**
      *
@@ -941,51 +948,43 @@ public class DatabaseModifier {
             default:
                 break;
         }
-        String fintex = "";
-        if (holdSpecies.Lifedomain == LifedomainValue.Humanoid) {
-            if (!arcana) {
-                fintex = holdSpecies.GeneticMutation + "\n" + holdSpecies.EnvironmentalAdaptation + "\n" + holdSpecies.KnowledgeAndScience + "\n";
-            } else {
-                fintex = holdSpecies.GeneticMutation + "\n" + holdSpecies.EnvironmentalAdaptation + "\n" + holdSpecies.KnowledgeAndScience + "\n"; //TODO add fey skills
-            }
+        switch (holdSpecies.Lifedomain) {
+            case Humanoid:
+                if (!arcana) {
+                    return holdSpecies.GeneticMutation + "\n" + holdSpecies.EnvironmentalAdaptation + "\n" + holdSpecies.KnowledgeAndScience + "\n";
+                } else {
+                    return holdSpecies.GeneticMutation + "\n" + holdSpecies.EnvironmentalAdaptation + "\n" + holdSpecies.KnowledgeAndScience + "\n"; //TODO add fey skills
+                }
+            case Fey:
+                switch (((AFey) holdSpecies).getMainDomain()) {
+                    case Light:
+                        if (!outcasts) {
+                            return holdSpecies.LesserTraitsAndPowersOfLight + "\n" + holdSpecies.GreaterTraitsAndPowersOfLight + "\n" + holdSpecies.LesserTraitsAndPowersOfTwilight + "\n";
+                        } else {
+                            return holdSpecies.LesserTraitsAndPowersOfLight + "\n" + holdSpecies.GreaterTraitsAndPowersOfLight + "\n" + holdSpecies.KnowledgeAndScience + "\n" + holdSpecies.EnvironmentalAdaptation + "\n";
+                        }
+                    case Darkness:
+                        if (!outcasts) {
+                            return holdSpecies.LesserTraitsAndPowersOfDarkness + "\n" + holdSpecies.GreaterTraitsAndPowersOfDarkness + "\n" + holdSpecies.LesserTraitsAndPowersOfTwilight + "\n";
+                        } else {
+                            return holdSpecies.LesserTraitsAndPowersOfDarkness + "\n" + holdSpecies.GreaterTraitsAndPowersOfDarkness + "\n" + holdSpecies.KnowledgeAndScience + "\n" + holdSpecies.EnvironmentalAdaptation + "\n";
+                        }
+                    case Twilight:
+                        if (!outcasts) {
+                            return holdSpecies.LesserTraitsAndPowersOfTwilight + "\n" + holdSpecies.GreaterTraitsAndPowersOfTwilight + "\n" + max(holdSpecies.LesserTraitsAndPowersOfLight, holdSpecies.LesserTraitsAndPowersOfDarkness) + "\n";
+                        } else {
+                            return holdSpecies.LesserTraitsAndPowersOfTwilight + "\n" + holdSpecies.GreaterTraitsAndPowersOfTwilight + "\n" + holdSpecies.KnowledgeAndScience + "\n" + holdSpecies.EnvironmentalAdaptation + "\n";
+                        }
+                }
+                break;
+            case Reptilia:
+                return holdSpecies.ReptiliaLineage + "\n" + holdSpecies.EnvironmentalAdaptability + "\n" + holdSpecies.ExtremisAffinity + "\n";
+            case Biest:
+                return holdSpecies.getBiestialKingdoms() + "\n" + holdSpecies.getRegionalTraits() + "\n" + holdSpecies.GeneticMutation + "\n" + holdSpecies.EnvironmentalAdaptation + "\n" + holdSpecies.getSpiritualAndScientificKnowledge() + "\n";
+            case Insecta:
+                return holdSpecies.getOrder() + "\n" + holdSpecies.getGeneticMorphology() + "\n" + holdSpecies.EnvironmentalAdaptation + "\n" + holdSpecies.getKnowledge() + "\n";
         }
-        if (holdSpecies.Lifedomain == LifedomainValue.Fey) {
-            switch (((AFey) holdSpecies).getMainDomain()) {
-                case Light:
-                    if (!outcasts) {
-                        fintex = holdSpecies.LesserTraitsAndPowersOfLight + "\n" + holdSpecies.GreaterTraitsAndPowersOfLight + "\n" + holdSpecies.LesserTraitsAndPowersOfTwilight + "\n";
-                    } else {
-                        fintex = holdSpecies.LesserTraitsAndPowersOfLight + "\n" + holdSpecies.GreaterTraitsAndPowersOfLight + "\n" + holdSpecies.KnowledgeAndScience + "\n" + holdSpecies.EnvironmentalAdaptation + "\n";
-                    }
-                    break;
-                case Darkness:
-                    if (!outcasts) {
-                        fintex = holdSpecies.LesserTraitsAndPowersOfDarkness + "\n" + holdSpecies.GreaterTraitsAndPowersOfDarkness + "\n" + holdSpecies.LesserTraitsAndPowersOfTwilight + "\n";
-                    } else {
-                        fintex = holdSpecies.LesserTraitsAndPowersOfDarkness + "\n" + holdSpecies.GreaterTraitsAndPowersOfDarkness + "\n" + holdSpecies.KnowledgeAndScience + "\n" + holdSpecies.EnvironmentalAdaptation + "\n";
-                    }
-                    break;
-                case Twilight:
-                    if (!outcasts) {
-                        fintex = holdSpecies.LesserTraitsAndPowersOfTwilight + "\n" + holdSpecies.GreaterTraitsAndPowersOfTwilight + "\n" + max(holdSpecies.LesserTraitsAndPowersOfLight, holdSpecies.LesserTraitsAndPowersOfDarkness) + "\n";
-                    } else {
-                        fintex = holdSpecies.LesserTraitsAndPowersOfTwilight + "\n" + holdSpecies.GreaterTraitsAndPowersOfTwilight + "\n" + holdSpecies.KnowledgeAndScience + "\n" + holdSpecies.EnvironmentalAdaptation + "\n";
-                    }
-                    break;
-            }
-        }
-        if (holdSpecies.Lifedomain == LifedomainValue.Reptilia) {
-            fintex = holdSpecies.ReptiliaLineage + "\n" + holdSpecies.EnvironmentalAdaptability + "\n" + holdSpecies.ExtremisAffinity + "\n";
-        }
-
-        if (holdSpecies.Lifedomain == LifedomainValue.Biest) {
-            fintex = holdSpecies.getBiestialKingdoms() + "\n" + holdSpecies.getRegionalTraits() + "\n" + holdSpecies.GeneticMutation + "\n" + holdSpecies.EnvironmentalAdaptation + "\n" + holdSpecies.getSpiritualAndScientificKnowledge() + "\n";
-        }
-        if (holdSpecies.Lifedomain == LifedomainValue.Insecta) {
-            fintex = holdSpecies.getOrder() + "\n" + holdSpecies.getGeneticMorphology() + "\n" + holdSpecies.EnvironmentalAdaptation + "\n" + holdSpecies.getKnowledge() + "\n";
-        }
-
-        return fintex;
+        return "";
     }
 
     /**
