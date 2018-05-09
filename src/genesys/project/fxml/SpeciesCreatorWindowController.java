@@ -229,8 +229,8 @@ public class SpeciesCreatorWindowController implements Initializable {
                 skillSubSetText.setText(BuilderCORE.BIESTSUBSKILS);
                 ((ABiest) DatabaseModifier.holdSpecies).setMainKingdom(MainKingdomValue.NONE);
                 primaryChooserString = MainKingdomValue.NONE.getText();
-                ((ABiest) DatabaseModifier.holdSpecies).setMainRegion(MainRegionValue.NONE);
-                secondaryChooserString = MainRegionValue.NONE.getText();
+                ((ABiest) DatabaseModifier.holdSpecies).setMainRegion(MainRegionValue.Caverns);
+                secondaryChooserString = MainRegionValue.Caverns.getText();
                 break;
             case Insecta:
                 skillSetText.setText(BuilderCORE.INSECTASKILS);

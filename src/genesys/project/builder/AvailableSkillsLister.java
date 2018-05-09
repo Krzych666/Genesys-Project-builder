@@ -5,7 +5,6 @@ import genesys.project.builder.Enums.Enmuerations.LifeDomainTree2Values;
 import static genesys.project.builder.BuilderCORE.chooseConnection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.collections.FXCollections;
@@ -308,7 +307,6 @@ public class AvailableSkillsLister {
                                 break;
                         }
                         data = BuilderCORE.getData(stmt2, columns, IgnoreSkillsList);
-                        System.out.println(Arrays.toString(data.toArray()));
                         if (!data.isEmpty()) {
                             switch (lifeDomainTree1Value) {
                                 case BiestialKingdoms:
