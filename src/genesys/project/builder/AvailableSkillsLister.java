@@ -42,12 +42,14 @@ public class AvailableSkillsLister {
     public static ObservableList<String> getAvailableSkills(Enums.Enmuerations.LifedomainValue lifeDomain, int maxAge, String skillSubSet, ObservableList IgnoreSkillsList) throws SQLException {
         ObservableList<String> tmp = FXCollections.observableArrayList();
         ObservableList<String> lifeDomainTree3 = FXCollections.observableArrayList();
+        ObservableList data = FXCollections.observableArrayList();
         chooseConnection(Enums.Enmuerations.UseCases.COREdb);
         PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT DISTINCT LifeDomainTree1 FROM Skills WHERE LifeDomain = ? AND LifeDomainTree2 = ? AND Age <= ?");
         stmt.setString(1, lifeDomain.toString());
         stmt.setString(2, skillSubSet);
         stmt.setInt(3, maxAge);
-        lifeDomainTree1Value = LifeDomainTree1Values.getEnum(BuilderCORE.getData(stmt, columns2, null).get(0).toString());
+        data = BuilderCORE.getData(stmt, columns2, null);
+        lifeDomainTree1Value = LifeDomainTree1Values.getEnum(data.get(0).toString());
         lifeDomainTree2Value = LifeDomainTree2Values.getEnum(skillSubSet);
 
         if (!IgnoreSkillsList.isEmpty()) {
@@ -58,27 +60,36 @@ public class AvailableSkillsLister {
                 stmt1.setString(2, reptiliaSpecific[1]);
                 stmt1.setString(3, IgnoreSkillsList.get(i).toString().split(" \\(p")[0]);
                 stmt1.setInt(4, maxAge);
-                lifeDomainTree3.addAll(BuilderCORE.getData(stmt1, columns1, null));
+                data = BuilderCORE.getData(stmt1, columns1, null);
+                lifeDomainTree3.addAll(data);
             }
         }
         switch (lifeDomain) {
             case Humanoid:
-                tmp.add("--" + basic[0] + "--");
                 chooseConnection(Enums.Enmuerations.UseCases.COREdb);
                 stmt = BuilderCORE.getConnection().prepareStatement("SELECT DISTINCT SkillName FROM Skills WHERE LifeDomainTree2 = ? AND LifeDomainTree3 = ? AND Age <= ?");
                 stmt.setString(1, skillSubSet);
                 stmt.setString(2, basic[0]);
                 stmt.setInt(3, maxAge);
-                tmp.addAll(BuilderCORE.getData(stmt, columns, IgnoreSkillsList));
+                data = BuilderCORE.getData(stmt, columns, IgnoreSkillsList);
+                if (!data.isEmpty()) {
+                    tmp.add("--" + basic[0] + "--");
+                    tmp.addAll(data);
+                    tmp.add(" ");
+                }
                 break;
             case Fey:
-                tmp.add("--" + basic[1] + "--");
                 chooseConnection(Enums.Enmuerations.UseCases.COREdb);
                 stmt = BuilderCORE.getConnection().prepareStatement("SELECT DISTINCT SkillName FROM Skills WHERE LifeDomainTree2 = ? AND LifeDomainTree3 = ? AND Age <= ?");
                 stmt.setString(1, skillSubSet);
                 stmt.setString(2, basic[1]);
                 stmt.setInt(3, maxAge);
-                tmp.addAll(BuilderCORE.getData(stmt, columns, IgnoreSkillsList));
+                data = BuilderCORE.getData(stmt, columns, IgnoreSkillsList);
+                if (!data.isEmpty()) {
+                    tmp.add("--" + basic[1] + "--");
+                    tmp.addAll(data);
+                    tmp.add(" ");
+                }
                 break;
             case Reptilia:
                 if (IgnoreSkillsList.isEmpty()) {
@@ -87,9 +98,12 @@ public class AvailableSkillsLister {
                     stmt.setString(1, skillSubSet);
                     stmt.setString(2, reptiliaSpecific[1]);
                     stmt.setInt(3, maxAge);
-                    tmp.add("--" + reptiliaSpecific[1] + "--");
-                    tmp.addAll(BuilderCORE.getData(stmt, columns, IgnoreSkillsList));
-                    tmp.add(" ");
+                    data = BuilderCORE.getData(stmt, columns, IgnoreSkillsList);
+                    if (!data.isEmpty()) {
+                        tmp.add("--" + reptiliaSpecific[1] + "--");
+                        tmp.addAll(data);
+                        tmp.add(" ");
+                    }
                 } else if ((!lifeDomainTree3.contains(reptiliaSpecific[1])) || (IgnoreSkillsList.stream().anyMatch(skill -> {
                     ObservableList<String> tmp3 = FXCollections.observableArrayList();
                     try {
@@ -109,76 +123,91 @@ public class AvailableSkillsLister {
                     stmt.setString(1, skillSubSet);
                     stmt.setString(2, reptiliaSpecific[1]);
                     stmt.setInt(3, maxAge);
-                    tmp.add("--" + reptiliaSpecific[1] + "--");
-                    tmp.addAll(BuilderCORE.getData(stmt, columns, IgnoreSkillsList));
-                    tmp.add(" ");
+                    data = BuilderCORE.getData(stmt, columns, IgnoreSkillsList);
+                    if (!data.isEmpty()) {
+                        tmp.add("--" + reptiliaSpecific[1] + "--");
+                        tmp.addAll(data);
+                        tmp.add(" ");
+                    }
                 }
-                tmp.add("--" + basic[1] + "--");
                 chooseConnection(Enums.Enmuerations.UseCases.COREdb);
                 stmt = BuilderCORE.getConnection().prepareStatement("SELECT DISTINCT SkillName FROM Skills WHERE LifeDomainTree2 = ? AND LifeDomainTree3 = ? AND Age <= ?");
                 stmt.setString(1, skillSubSet);
                 stmt.setString(2, basic[1]);
                 stmt.setInt(3, maxAge);
-                tmp.addAll(BuilderCORE.getData(stmt, columns, IgnoreSkillsList));
+                data = BuilderCORE.getData(stmt, columns, IgnoreSkillsList);
+                if (!data.isEmpty()) {
+                    tmp.add("--" + basic[1] + "--");
+                    tmp.addAll(data);
+                    tmp.add(" ");
+                }
                 break;
             case Biest:
-                switch (lifeDomainTree1Value) {
-                    case BiestialKingdoms:
-                    case RegionalTraits:
-                        tmp.add("--" + basic[1] + "--");
-                        break;
-                    case GeneticMutation:
-                    case EnvironmentalAdaptability:
-                    case SpiritualandScientificKnowledge:
-                        tmp.add("--" + basic[0] + "--");
-                        break;
-                    default:
-                        break;
-                }
                 chooseConnection(Enums.Enmuerations.UseCases.COREdb);
                 stmt = BuilderCORE.getConnection().prepareStatement("SELECT DISTINCT SkillName FROM Skills WHERE LifeDomainTree2 = ? AND (LifeDomainTree3 = ? OR LifeDomainTree3 = ?) AND Age <= ?");
                 stmt.setString(1, skillSubSet);
                 stmt.setString(2, basic[0]);
                 stmt.setString(3, basic[1]);
                 stmt.setInt(4, maxAge);
-                tmp.addAll(BuilderCORE.getData(stmt, columns, IgnoreSkillsList));
+                data = BuilderCORE.getData(stmt, columns, IgnoreSkillsList);
+                if (!data.isEmpty()) {
+                    switch (lifeDomainTree1Value) {
+                        case BiestialKingdoms:
+                        case RegionalTraits:
+                            tmp.add("--" + basic[1] + "--");
+                            break;
+                        case GeneticMutation:
+                        case EnvironmentalAdaptability:
+                        case SpiritualandScientificKnowledge:
+                            tmp.add("--" + basic[0] + "--");
+                            break;
+                        default:
+                            break;
+                    }
+                    tmp.addAll(data);
+                    tmp.add(" ");
+                }
                 break;
             case Insecta:
-                switch (lifeDomainTree1Value) {
-                    case Arachnea:
-                    case Crustacea:
-                    case Insecta:
-                    case Myriapoda:
-                    case GeneticMorphology:
-                    case EnvironmentalAdaptation:
-                        tmp.add("--" + basic[1] + "--");
-                        break;
-                    case GeneticMutation:
-                        tmp.add("--" + basic[0] + "--");
-                        break;
-                    default:
-                        break;
-                }
-                switch (lifeDomainTree2Value) {
-                    case Eusociality:
-                    case Combat:
-                        tmp.add("--" + basic[1] + "--");
-                        break;
-                    case EnvironmentalExtremes:
-                    case AdvancedKnowledge:
-                    case PsychiccNodes:
-                        tmp.add("--" + basic[0] + "--");
-                        break;
-                    default:
-                        break;
-                }
                 chooseConnection(Enums.Enmuerations.UseCases.COREdb);
                 stmt = BuilderCORE.getConnection().prepareStatement("SELECT DISTINCT SkillName FROM Skills WHERE LifeDomainTree2 = ? AND (LifeDomainTree3 = ? OR LifeDomainTree3 = ?) AND Age <= ?");
                 stmt.setString(1, skillSubSet);
                 stmt.setString(2, basic[0]);
                 stmt.setString(3, basic[1]);
                 stmt.setInt(4, maxAge);
-                tmp.addAll(BuilderCORE.getData(stmt, columns, IgnoreSkillsList));
+                data = BuilderCORE.getData(stmt, columns, IgnoreSkillsList);
+                if (!data.isEmpty()) {
+                    switch (lifeDomainTree1Value) {
+                        case Arachnea:
+                        case Crustacea:
+                        case Insecta:
+                        case Myriapoda:
+                        case GeneticMorphology:
+                        case EnvironmentalAdaptation:
+                            tmp.add("--" + basic[1] + "--");
+                            break;
+                        case GeneticMutation:
+                            tmp.add("--" + basic[0] + "--");
+                            break;
+                        default:
+                            break;
+                    }
+                    switch (lifeDomainTree2Value) {
+                        case Eusociality:
+                        case Combat:
+                            tmp.add("--" + basic[1] + "--");
+                            break;
+                        case EnvironmentalExtremes:
+                        case AdvancedKnowledge:
+                        case PsychiccNodes:
+                            tmp.add("--" + basic[0] + "--");
+                            break;
+                        default:
+                            break;
+                    }
+                    tmp.addAll(data);
+                    tmp.add(" ");
+                }
                 break;
             default:
                 break;
@@ -193,9 +222,11 @@ public class AvailableSkillsLister {
                         stmt2.setString(1, skillSubSet);
                         stmt2.setString(2, basic[3]);
                         stmt2.setInt(3, maxAge);
-                        tmp.add(" ");
-                        tmp.add("--" + basic[3] + "--");
-                        tmp.addAll(BuilderCORE.getData(stmt2, columns, IgnoreSkillsList));
+                        data = BuilderCORE.getData(stmt2, columns, IgnoreSkillsList);
+                        if (!data.isEmpty()) {
+                            tmp.add("--" + basic[3] + "--");
+                            tmp.addAll(data);
+                        }
                     }
                     break;
                 case Fey:
@@ -210,8 +241,10 @@ public class AvailableSkillsLister {
                         if (lifeDomainTree3.contains(basic[4])) {
                             stmt2.setString(4, basic[5]);
                         }
-                        tmp.add(" ");
-                        tmp.addAll(BuilderCORE.getData(stmt2, columns, IgnoreSkillsList));
+                        data = BuilderCORE.getData(stmt2, columns, IgnoreSkillsList);
+                        if (!data.isEmpty()) {
+                            tmp.addAll(data);
+                        }
                     }
                     break;
                 case Reptilia:
@@ -235,9 +268,12 @@ public class AvailableSkillsLister {
                         stmt2.setString(1, skillSubSet);
                         stmt2.setString(2, basic[4]);
                         stmt2.setInt(3, maxAge);
-                        tmp.add(" ");
-                        tmp.add("--" + basic[4] + "--");
-                        tmp.addAll(BuilderCORE.getData(stmt2, columns, IgnoreSkillsList));
+                        data = BuilderCORE.getData(stmt2, columns, IgnoreSkillsList);
+                        if (!data.isEmpty()) {
+                            tmp.add("--" + basic[4] + "--");
+                            tmp.addAll(data);
+                            tmp.add(" ");
+                        }
                     }
                     if (traitNumbers[1] / 2 >= traitNumbers[2] + 1) {
                         chooseConnection(Enums.Enmuerations.UseCases.COREdb);
@@ -245,40 +281,54 @@ public class AvailableSkillsLister {
                         stmt2.setString(1, skillSubSet);
                         stmt2.setString(2, reptiliaSpecific[0]);
                         stmt2.setInt(3, maxAge);
-                        tmp.add(" ");
-                        tmp.add("--" + reptiliaSpecific[0] + "--");
-                        tmp.addAll(BuilderCORE.getData(stmt2, columns, IgnoreSkillsList));
+                        data = BuilderCORE.getData(stmt2, columns, IgnoreSkillsList);
+                        if (!data.isEmpty()) {
+                            tmp.add("--" + reptiliaSpecific[0] + "--");
+                            tmp.addAll(data);
+                        }
                     }
                     break;
                 case Biest:
                     if (lifeDomainTree3.contains(basic[0]) || lifeDomainTree3.contains(basic[1])) {
-                        tmp.add(" ");
+
                         chooseConnection(Enums.Enmuerations.UseCases.COREdb);
                         stmt2 = BuilderCORE.getConnection().prepareStatement("SELECT DISTINCT SkillName FROM Skills WHERE LifeDomainTree2 = ? AND LifeDomainTree3 = ? AND Age <= ?");
                         stmt2.setString(1, skillSubSet);
+                        stmt2.setInt(3, maxAge);
                         switch (lifeDomainTree1Value) {
                             case BiestialKingdoms:
                             case RegionalTraits:
-                                tmp.add("--" + basic[4] + "--");
                                 stmt2.setString(2, basic[4]);
                                 break;
                             case GeneticMutation:
                             case EnvironmentalAdaptability:
                             case SpiritualandScientificKnowledge:
-                                tmp.add("--" + basic[3] + "--");
                                 stmt2.setString(2, basic[3]);
                                 break;
                         }
-                        stmt2.setInt(3, maxAge);
-                        tmp.addAll(BuilderCORE.getData(stmt2, columns, IgnoreSkillsList));
-                        break;
+                        data = BuilderCORE.getData(stmt2, columns, IgnoreSkillsList);
+                        if (!data.isEmpty()) {
+                            switch (lifeDomainTree1Value) {
+                                case BiestialKingdoms:
+                                case RegionalTraits:
+                                    tmp.add("--" + basic[4] + "--");
+                                    break;
+                                case GeneticMutation:
+                                case EnvironmentalAdaptability:
+                                case SpiritualandScientificKnowledge:
+                                    tmp.add("--" + basic[3] + "--");
+                                    break;
+                            }
+                            tmp.addAll(data);
+                        }
                     }
+                    break;
                 case Insecta:
                     if (lifeDomainTree3.contains(basic[0]) || lifeDomainTree3.contains(basic[1])) {
-                        tmp.add(" ");
                         chooseConnection(Enums.Enmuerations.UseCases.COREdb);
                         stmt2 = BuilderCORE.getConnection().prepareStatement("SELECT DISTINCT SkillName FROM Skills WHERE LifeDomainTree2 = ? AND LifeDomainTree3 = ? AND Age <= ?");
                         stmt2.setString(1, skillSubSet);
+                        stmt2.setInt(3, maxAge);
                         switch (lifeDomainTree1Value) {
                             case Arachnea:
                             case Crustacea:
@@ -286,11 +336,9 @@ public class AvailableSkillsLister {
                             case Myriapoda:
                             case GeneticMorphology:
                             case EnvironmentalAdaptation:
-                                tmp.add("--" + basic[4] + "--");
                                 stmt2.setString(2, basic[4]);
                                 break;
                             case GeneticMutation:
-                                tmp.add("--" + basic[3] + "--");
                                 stmt2.setString(2, basic[3]);
                                 break;
                             default:
@@ -299,22 +347,50 @@ public class AvailableSkillsLister {
                         switch (lifeDomainTree2Value) {
                             case Eusociality:
                             case Combat:
-                                tmp.add("--" + basic[4] + "--");
                                 stmt2.setString(2, basic[4]);
                                 break;
                             case EnvironmentalExtremes:
                             case AdvancedKnowledge:
                             case PsychiccNodes:
-                                tmp.add("--" + basic[3] + "--");
                                 stmt2.setString(2, basic[3]);
                                 break;
                             default:
                                 break;
                         }
-                        stmt2.setInt(3, maxAge);
-                        tmp.addAll(BuilderCORE.getData(stmt2, columns, IgnoreSkillsList));
-                        break;
+                        data = BuilderCORE.getData(stmt2, columns, IgnoreSkillsList);
+                        if (!data.isEmpty()) {
+                            switch (lifeDomainTree1Value) {
+                                case Arachnea:
+                                case Crustacea:
+                                case Insecta:
+                                case Myriapoda:
+                                case GeneticMorphology:
+                                case EnvironmentalAdaptation:
+                                    tmp.add("--" + basic[4] + "--");
+                                    break;
+                                case GeneticMutation:
+                                    tmp.add("--" + basic[3] + "--");
+                                    break;
+                                default:
+                                    break;
+                            }
+                            switch (lifeDomainTree2Value) {
+                                case Eusociality:
+                                case Combat:
+                                    tmp.add("--" + basic[4] + "--");
+                                    break;
+                                case EnvironmentalExtremes:
+                                case AdvancedKnowledge:
+                                case PsychiccNodes:
+                                    tmp.add("--" + basic[3] + "--");
+                                    break;
+                                default:
+                                    break;
+                            }
+                            tmp.addAll(data);
+                        }
                     }
+                    break;
             }
         }
         return tmp;

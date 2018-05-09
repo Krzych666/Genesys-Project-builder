@@ -260,8 +260,7 @@ public class Enums {
         }
 
         public enum CharacteristicGroup {
-            standard("standard"),
-            Insecta("Insecta"),
+            standard("standard"),            
             Ursidae("Ursidae"),
             CanusLupis("Canus Lupis"),
             AvianAves("Avian Aves"),
@@ -274,6 +273,7 @@ public class Enums {
             Ichthyes("Ichthyes"),
             Arachnea("Arachnea"),
             Crustacea("Crustacea"),
+            Insecta("Insecta"),
             Myriapoda("Myriapoda");
 
             private String characteristicgroup;
