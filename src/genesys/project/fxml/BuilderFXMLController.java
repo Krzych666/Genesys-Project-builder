@@ -571,7 +571,9 @@ public class BuilderFXMLController implements Initializable {
             stmt3.setString(2, culture);
             stmt3.setString(3, classname);
             String basedOn = BuilderCORE.getValue(stmt3, "BasedOn");
-            points += a * baseCost(lifeDomain, species, culture, basedOn, points);
+            if (basedOn != null && !basedOn.equals("null") && !basedOn.equals("")) {
+                points += a * baseCost(lifeDomain, species, culture, basedOn, points);
+            }
             for (String lst1 : lst) {
                 chooseConnection(UseCases.COREdb);
                 PreparedStatement stmt2 = BuilderCORE.getConnection().prepareStatement("SELECT PointCost FROM Skills WHERE SkillName = ?");
@@ -621,7 +623,8 @@ public class BuilderFXMLController implements Initializable {
             stmt7.setString(1, species);
             stmt7.setString(2, culture);
             stmt7.setString(3, selHero);
-            if (BuilderCORE.getValue(stmt7, "BasedOn").equals(classname)) {
+            String basedOn = BuilderCORE.getValue(stmt7, "BasedOn");
+            if (basedOn != null && !basedOn.equals("null") && !basedOn.equals("") && basedOn.equals(classname)) {
                 chooseConnection(UseCases.Userdb);
                 PreparedStatement stmt8 = BuilderCORE.getConnection().prepareStatement("SELECT AdditionalCost FROM CreatedHeroes WHERE SpeciesName = ? AND CultureName = ? AND HeroName = ?");
                 stmt8.setString(1, species);
@@ -671,7 +674,7 @@ public class BuilderFXMLController implements Initializable {
                 if (tmp[1][i].contains("Increase")) {
                     a = 0;
                 }
-                if (tmp[1][i].contains("Decrease") || tmp[1][i].contains("Model Size")|| tmp[1][i].contains("Increase Size")) {
+                if (tmp[1][i].contains("Decrease") || tmp[1][i].contains("Model Size") || tmp[1][i].contains("Increase Size")) {
                     a = 1;
                 }
                 for (int u = 0; u < wheretabl.size(); u++) {
@@ -800,7 +803,7 @@ public class BuilderFXMLController implements Initializable {
      */
     public void populateLabels() throws SQLException {
         for (int i = 0; i < valuesLabels.length; i++) {
-            valuesLabels[i].setText(GenesysProjectBuilder.CORE.getCharacteristics(currentLifeDomain.toString(),currentCharacteristicGroup.toString())[i]);
+            valuesLabels[i].setText(GenesysProjectBuilder.CORE.getCharacteristics(currentLifeDomain.toString(), currentCharacteristicGroup.toString())[i]);
         }
     }
 

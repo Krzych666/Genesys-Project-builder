@@ -26,6 +26,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.ListView;
 import static genesys.project.builder.BuilderCORE.chooseConnection;
+import java.util.Arrays;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -234,8 +235,8 @@ public class DatabaseModifier {
         }
         fullSkillList1 = "";
         ruledskills.clear();
-        String[] lst = HoldSkills.split(";");
-        String[] lstref = HoldSkills.split(";");
+        String[] lst = HoldSkills.split(",");
+        String[] lstref = HoldSkills.split(",");
         for (int i = 0; i < lst.length; i++) {
             if (!lstref[i].equals("")) {
                 chooseConnection(UseCases.COREdb);
@@ -283,7 +284,7 @@ public class DatabaseModifier {
         if (name.equals(BuilderCORE.BASE)) {
             fullSkillList1 += holdSpecies.getSkills();
         } else {
-            for (int i = 0; i < numberOfClases; i++) {
+            for (int i = 0; i < holdClass.length; i++) {
                 if (holdClass[i].getClassName().equals(name)) {
                     if (holdClass[i].getSkills() != null && !holdClass[i].getSkills().equals("null,") && !holdClass[i].getSkills().equals("") && !holdClass[i].getSkills().equals(";")) {
                         fullSkillList1 += holdClass[i].getSkills() + getBaseAddedSkills(holdClass[i].getBasedOn());
@@ -328,7 +329,7 @@ public class DatabaseModifier {
             }
             if (!"".equals(classname[bb].Type) && !"null".equals(classname[bb].Type) && !(BuilderCORE.BASE.equals(classList1Holder))) {
                 if (classname[bb].BasedOn != null && !classname[bb].BasedOn.equals(BuilderCORE.BASE) && !BuilderCORE.BASE.equals(classList1Holder)) {
-                    String[] lst = ((classname[bb].Skills).split(";"));
+                    String[] lst = ((classname[bb].Skills).split(","));
                     for (int s = 0; s < classname.length; s++) {
                         if (classname[bb].BasedOn.equals(classname[s].ClassName)) {
                             source = s;
@@ -348,7 +349,7 @@ public class DatabaseModifier {
                         }
                     }
                 } else if (classname[bb].BasedOn != null && classname[bb].BasedOn.equals(BuilderCORE.BASE) && !BuilderCORE.BASE.equals(classList1Holder) && !"".equals(classname[bb].Skills) && !",".equals(classname[bb].Skills)) {
-                    String[] lst = ((classname[bb].Skills).split(";"));
+                    String[] lst = ((classname[bb].Skills).split(","));
                     for (String lst1 : lst) {
                         chooseConnection(UseCases.COREdb);
                         PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT PointCost FROM Skills WHERE SkillName = ?");
@@ -361,7 +362,7 @@ public class DatabaseModifier {
                     }
                 }
                 if (!"".equals(species.Skills) && classname[bb].BasedOn.equals(BuilderCORE.BASE)) {
-                    String[] lst = (species.Skills.split(";"));
+                    String[] lst = (species.Skills.split(","));
                     for (String lst1 : lst) {
                         chooseConnection(UseCases.COREdb);
                         PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT PointCost FROM Skills WHERE SkillName = ?");
@@ -374,7 +375,7 @@ public class DatabaseModifier {
                     }
                 }
             } else {
-                String[] lst = (species.Skills.split(";"));
+                String[] lst = (species.Skills.split(","));
                 for (String lst1 : lst) {
                     chooseConnection(UseCases.COREdb);
                     PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT PointCost FROM Skills WHERE SkillName = ?");
@@ -387,7 +388,7 @@ public class DatabaseModifier {
                 }
             }
         } else if (!"".equals(species.Skills)) {
-            String[] lst = (species.Skills.split(";"));
+            String[] lst = (species.Skills.split(","));
             for (String lst1 : lst) {
                 chooseConnection(UseCases.COREdb);
                 PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT PointCost FROM Skills WHERE SkillName = ?");
@@ -529,7 +530,7 @@ public class DatabaseModifier {
             executeSQL("INSERT INTO `CreatedSpecies`(LifeDomain,CharacteristicGroup,SpeciesName,Skills,SpeciesModifiers) VALUES ('" + holdSpecies.Lifedomain.toString() + "','" + holdSpecies.CharacteristicGroup.toString() + "','" + holdSpecies.SpeciesName + "','" + holdSpecies.Skills + "','" + SpMod + "');");
         }
         executeSQL("INSERT INTO `CreatedCultures`(CultureName,SpeciesName) VALUES ('" + holdCulture.CultureName + "','" + holdCulture.SpeciesName + "');");
-        for (int i = 0; i < numberOfClases; i++) {
+        for (int i = 0; i < holdClass.length; i++) {
             if (holdClass[i].getSkills().length() > 2) {
                 holdClass[i].setSkills(holdClass[i].getSkills().substring(0, holdClass[i].getSkills().length() - 1));
             }
@@ -994,7 +995,7 @@ public class DatabaseModifier {
      */
     public static void searchFreeClassSpot() {
         b = 0;
-        for (int i = 0; i < numberOfClases; i++) {
+        for (int i = 0; i < holdClass.length; i++) {
             if (holdClass[i].ClassName == null || "".equals(holdClass[i].ClassName)) {
                 b = i;
                 i = numberOfClases;
@@ -1038,16 +1039,20 @@ public class DatabaseModifier {
         chooseConnection(UseCases.Userdb);
         PreparedStatement stmt1 = BuilderCORE.getConnection().prepareStatement("SELECT LifeDomain FROM CreatedSpecies WHERE SpeciesName =?");
         stmt1.setString(1, selSpecies);
-        holdSpecies.Lifedomain = LifedomainValue.valueOf(BuilderCORE.getValue(stmt1, "LifeDomain"));
-        holdSpecies.SpeciesName = selSpecies;
+        holdSpecies.setLifedomain(LifedomainValue.valueOf(BuilderCORE.getValue(stmt1, "LifeDomain")));
         chooseConnection(UseCases.Userdb);
-        PreparedStatement stmt2 = BuilderCORE.getConnection().prepareStatement("SELECT Skills FROM CreatedSpecies WHERE SpeciesName =?");
+        PreparedStatement stmt2 = BuilderCORE.getConnection().prepareStatement("SELECT CharacteristicGroup FROM CreatedSpecies WHERE SpeciesName =?");
         stmt2.setString(1, selSpecies);
-        holdSpecies.Skills = BuilderCORE.getValue(stmt2, "Skills");
+        holdSpecies.setCharacteristicGroup(CharacteristicGroup.valueOf(BuilderCORE.getValue(stmt2, "CharacteristicGroup")));
+        holdSpecies.setSpeciesName(selSpecies);
         chooseConnection(UseCases.Userdb);
-        PreparedStatement stmt3 = BuilderCORE.getConnection().prepareStatement("SELECT SpeciesModifiers FROM CreatedSpecies WHERE SpeciesName =?");
+        PreparedStatement stmt3 = BuilderCORE.getConnection().prepareStatement("SELECT Skills FROM CreatedSpecies WHERE SpeciesName =?");
         stmt3.setString(1, selSpecies);
-        holdSpecies.SpeciesModifiers = BuilderCORE.getValue(stmt3, "SpeciesModifiers");
+        holdSpecies.setSkills(BuilderCORE.getValue(stmt3, "Skills"));
+        chooseConnection(UseCases.Userdb);
+        PreparedStatement stmt4 = BuilderCORE.getConnection().prepareStatement("SELECT SpeciesModifiers FROM CreatedSpecies WHERE SpeciesName =?");
+        stmt4.setString(1, selSpecies);
+        holdSpecies.setSpeciesModifiers(BuilderCORE.getValue(stmt4, "SpeciesModifiers"));
         modifiedHoldSpecies = holdSpecies.getClone();
     }
 
@@ -1077,39 +1082,39 @@ public class DatabaseModifier {
      * @throws SQLException
      */
     public static void loadClass(String selSpecies, String selCulture, String selClass, int a) throws SQLException {
-        holdClass[a].ClassName = selClass;
+        holdClass[a].setClassName(selClass);
         chooseConnection(UseCases.Userdb);
         PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT Skills FROM CreatedClasses WHERE SpeciesName=? AND CultureName =? AND ClassName =?");
         stmt.setString(1, selSpecies);
         stmt.setString(2, selCulture);
         stmt.setString(3, selClass);
-        holdClass[a].Skills = BuilderCORE.getValue(stmt, "Skills") + ",";
-        holdClass[a].SpeciesName = selSpecies;
-        holdClass[a].CultureName = selCulture;
+        holdClass[a].setSkills(BuilderCORE.getValue(stmt, "Skills") + ",");
+        holdClass[a].setSpeciesName(selSpecies);
+        holdClass[a].setCultureName(selCulture);
         chooseConnection(UseCases.Userdb);
         PreparedStatement stmt1 = BuilderCORE.getConnection().prepareStatement("SELECT Advancements FROM CreatedClasses WHERE SpeciesName=? AND CultureName =? AND ClassName =?");
         stmt1.setString(1, selSpecies);
         stmt1.setString(2, selCulture);
         stmt1.setString(3, selClass);
-        holdClass[a].Advancements = BuilderCORE.getValue(stmt1, "Advancements");
+        holdClass[a].setAdvancements(BuilderCORE.getValue(stmt1, "Advancements"));
         chooseConnection(UseCases.Userdb);
         PreparedStatement stmt2 = BuilderCORE.getConnection().prepareStatement("SELECT Type FROM CreatedClasses WHERE SpeciesName=? AND CultureName =? AND ClassName =?");
         stmt2.setString(1, selSpecies);
         stmt2.setString(2, selCulture);
         stmt2.setString(3, selClass);
-        holdClass[a].Type = BuilderCORE.getValue(stmt2, "Type");
+        holdClass[a].setType(BuilderCORE.getValue(stmt2, "Type"));
         chooseConnection(UseCases.Userdb);
         PreparedStatement stmt3 = BuilderCORE.getConnection().prepareStatement("SELECT BasedOn FROM CreatedClasses WHERE SpeciesName=? AND CultureName =? AND ClassName =?");
         stmt3.setString(1, selSpecies);
         stmt3.setString(2, selCulture);
         stmt3.setString(3, selClass);
-        holdClass[a].BasedOn = BuilderCORE.getValue(stmt3, "BasedOn");
+        holdClass[a].setBasedOn(BuilderCORE.getValue(stmt3, "BasedOn"));
         chooseConnection(UseCases.Userdb);
         PreparedStatement stmt4 = BuilderCORE.getConnection().prepareStatement("SELECT AdditionalCost FROM CreatedClasses WHERE SpeciesName=? AND CultureName =? AND ClassName =?");
         stmt4.setString(1, selSpecies);
         stmt4.setString(2, selCulture);
         stmt4.setString(3, selClass);
-        holdClass[a].AdditionalCost = BuilderCORE.getValue(stmt4, "AdditionalCost");
+        holdClass[a].setAdditionalCost(BuilderCORE.getValue(stmt4, "AdditionalCost"));
         modifiedHoldClass = new AClass[holdClass.length];
         modifiedHoldClass[a] = holdClass[a].getClone();
     }
@@ -1219,15 +1224,15 @@ public class DatabaseModifier {
 
     private static void checkClassSkillsSpecies() throws SQLException {
         StringBuilder newFoundSkills = new StringBuilder();
-        for (String split1 : holdSpecies.getSkills().split(";")) {
+        for (String split1 : holdSpecies.getSkills().split(",")) {
             boolean present = false;
-            for (String split : modifiedHoldSpecies.getSkills().split(";")) {
+            for (String split : modifiedHoldSpecies.getSkills().split(",")) {
                 if (split.equals(split1)) {
                     present = true;
                 }
             }
             if (!present) {
-                newFoundSkills.append(split1).append(";");
+                newFoundSkills.append(split1).append(",");
             }
         }
         String deleteSkills = newFoundSkills.toString();
@@ -1254,12 +1259,12 @@ public class DatabaseModifier {
                 stmt2.setString(3, tmpClass.get(ii).toString());
                 String tmpSkill = BuilderCORE.getValue(stmt2, "Skills");
                 String tmpSkillRep = tmpSkill;
-                for (String split : deleteSkills.split(";")) {
+                for (String split : deleteSkills.split(",")) {
                     tmpSkillRep = tmpSkillRep.replace(split, "");
                 }
                 if (tmpSkillRep != null && !tmpSkillRep.equals("")) {
-                    tmpSkillRep = tmpSkillRep.replace(";;", ";");
-                    if (tmpSkillRep.endsWith(";")) {
+                    tmpSkillRep = tmpSkillRep.replace(",,", ",");
+                    if (tmpSkillRep.endsWith(",")) {
                         tmpSkillRep = tmpSkillRep.substring(0, tmpSkillRep.length() - 1);
                     }
                 }
@@ -1303,7 +1308,7 @@ public class DatabaseModifier {
      * @throws java.sql.SQLException
      */
     public static void modifyClass(int a) throws SQLException {
-        if (holdClass[a].Skills.endsWith(";")) {
+        if (holdClass[a].Skills.endsWith(",")) {
             holdClass[a].Skills = holdClass[a].Skills.substring(0, holdClass[a].Skills.length() - 1);
         }
         executeSQL("UPDATE CreatedClasses SET ClassName='" + holdClass[a].ClassName + "', Skills='" + holdClass[a].Skills + "', SpeciesName='" + holdClass[a].SpeciesName + "', CultureName='" + holdClass[a].CultureName + "', Advancements='" + holdClass[a].Advancements + "', Type='" + holdClass[a].Type + "', BasedOn='" + holdClass[a].BasedOn + "', AdditionalCost='" + holdClass[a].AdditionalCost + "' WHERE SpeciesName='" + modifiedHoldClass[a].SpeciesName + "' AND CultureName='" + modifiedHoldClass[a].CultureName + "' AND ClassName='" + modifiedHoldClass[a].ClassName + "'");
@@ -1313,15 +1318,15 @@ public class DatabaseModifier {
 
     private static void checkClassSkillsBasedon(int a) throws SQLException {
         StringBuilder newFoundSkills = new StringBuilder();
-        for (String split1 : holdClass[a].getSkills().split(";")) {
+        for (String split1 : holdClass[a].getSkills().split(",")) {
             boolean present = false;
-            for (String split : modifiedHoldClass[a].getSkills().split(";")) {
+            for (String split : modifiedHoldClass[a].getSkills().split(",")) {
                 if (split.equals(split1)) {
                     present = true;
                 }
             }
             if (!present) {
-                newFoundSkills.append(split1).append(";");
+                newFoundSkills.append(split1).append(",");
             }
         }
         String deleteSkills = newFoundSkills.toString();
@@ -1340,12 +1345,12 @@ public class DatabaseModifier {
             stmt2.setString(3, tmpBased.get(i).toString());
             String tmpSkill = BuilderCORE.getValue(stmt2, "Skills");
             String tmpSkillRep = tmpSkill;
-            for (String split : deleteSkills.split(";")) {
+            for (String split : deleteSkills.split(",")) {
                 tmpSkillRep = tmpSkillRep.replace(split, "");
             }
             if (tmpSkillRep != null && !tmpSkillRep.equals("")) {
                 tmpSkillRep = tmpSkillRep.replace(",,", ",");
-                if (tmpSkillRep.endsWith(";")) {
+                if (tmpSkillRep.endsWith(",")) {
                     tmpSkillRep = tmpSkillRep.substring(0, tmpSkillRep.length() - 1);
                 }
             }

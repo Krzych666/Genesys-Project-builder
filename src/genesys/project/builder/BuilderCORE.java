@@ -130,6 +130,8 @@ public class BuilderCORE {
      * INSECTASUBSKILS = "Order"
      */
     public static final String INSECTASUBSKILS = "Order";
+    
+     public static final String[] GAME_TYPES = {"Standard Play", "Hero Play"};
 
     public static void main(String[] args) {
 

@@ -8,6 +8,7 @@ package genesys.project.fxml;
 import genesys.project.builder.BuilderCORE;
 import genesys.project.builder.Enums.Enmuerations.LifedomainValue;
 import genesys.project.builder.DatabaseModifier;
+import static genesys.project.builder.DatabaseModifier.holdClass;
 import genesys.project.builder.GenesysProjectBuilder;
 import java.io.IOException;
 import java.net.URL;
@@ -158,7 +159,7 @@ public class CreateHoldWindowController implements Initializable {
                 basedOnValue3.setText("");
                 cost = DatabaseModifier.baseAddedCost(DatabaseModifier.holdSpecies.getLifedomain(), DatabaseModifier.holdSpecies, null, 0, 0);
             } else {
-                for (int i = 0; i < DatabaseModifier.numberOfClases; i++) {
+                for (int i = 0; i < DatabaseModifier.holdClass.length; i++) {
                     if (DatabaseModifier.holdClass[i].getClassName().equals(classList1.getSelectionModel().getSelectedItem().toString())) {
                         DatabaseModifier.b = i;
                     }
@@ -203,7 +204,7 @@ public class CreateHoldWindowController implements Initializable {
     public void createSpeciesFinalButtonActions() throws SQLException {
         if (DatabaseModifier.isModyfyinfg) {
             DatabaseModifier.isModyfyinfg = !DatabaseModifier.isModyfyinfg;
-            for (int i = 0; i < DatabaseModifier.numberOfClases; i++) {
+            for (int i = 0; i < DatabaseModifier.holdClass.length; i++) {
                 if (DatabaseModifier.holdClass[i].getSkills().length() > 2) {
                     DatabaseModifier.holdClass[i].setSkills(DatabaseModifier.holdClass[i].getSkills().substring(0, DatabaseModifier.holdClass[i].getSkills().length() - 1));
                 }
@@ -237,7 +238,7 @@ public class CreateHoldWindowController implements Initializable {
             tmp.add("<lesser species>");
             tmp.add("<greater species>");
         }
-        for (int i = 0; i < DatabaseModifier.numberOfClases; i++) {
+        for (int i = 0; i < DatabaseModifier.holdClass.length; i++) {
             tmp.add(DatabaseModifier.holdClass[i].getClassName());
         }
         classList1.setItems(tmp);

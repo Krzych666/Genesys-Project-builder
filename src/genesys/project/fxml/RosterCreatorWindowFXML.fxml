@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.net.URL?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane id="AnchorPane" prefHeight="652.0" prefWidth="792.0" styleClass="mainFxmlClass" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/9" fx:controller="genesys.project.fxml.RosterCreatorWindowController">
+    <stylesheets>
+        <URL value="@builderfxml.css" />
+    </stylesheets>
+    <children>
+      <Label fx:id="pointsPerModelText" layoutX="15.0" layoutY="149.0" text="Points per Model:" />
+      <Label fx:id="pointsPerModelValue" layoutX="109.0" layoutY="149.0" prefHeight="17.0" prefWidth="37.0" />
+      <Label fx:id="woundsText" layoutX="160.0" layoutY="149.0" text="Wounds:" />
+      <Label fx:id="woundsValue" layoutX="207.0" layoutY="149.0" prefHeight="17.0" prefWidth="37.0" />
+      <Label fx:id="sizeText" layoutX="251.0" layoutY="149.0" text="Size:" />
+      <Label fx:id="sizeValue" layoutX="275.0" layoutY="149.0" prefHeight="17.0" prefWidth="37.0" />
+      <Label fx:id="attacksText" layoutX="321.0" layoutY="149.0" text="Attacks:" />
+      <Label fx:id="attacksValue" layoutX="363.0" layoutY="149.0" prefHeight="17.0" prefWidth="37.0" />
+      <Label fx:id="characteristicsText" layoutX="147.0" layoutY="175.0" text="Characteristics" />
+      <Label fx:id="strengthText" layoutX="25.0" layoutY="203.0" text="Strength:" />
+      <Label fx:id="strengthValue" layoutX="74.0" layoutY="203.0" prefHeight="17.0" prefWidth="37.0" />
+      <Label fx:id="toughnessText" layoutX="137.0" layoutY="203.0" text="Toughness:" />
+      <Label fx:id="toughnessValue" layoutX="197.0" layoutY="203.0" prefHeight="17.0" prefWidth="37.0" />
+      <Label fx:id="movementText" layoutX="263.0" layoutY="203.0" text="Movement:" />
+      <Label fx:id="movementValue" layoutX="324.0" layoutY="203.0" prefHeight="17.0" prefWidth="37.0" />
+      <Label fx:id="martialText" layoutX="31.0" layoutY="234.0" text="Martial:" />
+      <Label fx:id="martialValue" layoutX="80.0" layoutY="234.0" prefHeight="17.0" prefWidth="37.0" />
+      <Label fx:id="rangedText" layoutX="155.0" layoutY="234.0" text="Ranged:" />
+      <Label fx:id="rangedValue" layoutX="209.0" layoutY="234.0" prefHeight="17.0" prefWidth="37.0" />
+      <Label fx:id="defenseText" layoutX="274.0" layoutY="234.0" text="Defense:" />
+      <Label fx:id="defenseValue" layoutX="335.0" layoutY="234.0" prefHeight="17.0" prefWidth="37.0" />
+      <Label fx:id="disciplineText" layoutX="24.0" layoutY="264.0" text="Discipline:" />
+      <Label fx:id="disciplineValue" layoutX="82.0" layoutY="264.0" prefHeight="17.0" prefWidth="37.0" />
+      <Label fx:id="willpowerText" layoutX="149.0" layoutY="264.0" text="Willpower:" />
+      <Label fx:id="willpowerValue" layoutX="209.0" layoutY="264.0" prefHeight="17.0" prefWidth="37.0" />
+      <Label fx:id="commandText" layoutX="271.0" layoutY="264.0" text="Command:" />
+      <Label fx:id="commandValue" layoutX="332.0" layoutY="264.0" prefHeight="17.0" prefWidth="37.0" />
+      <Label fx:id="mTText" layoutX="19.0" layoutY="323.0" text="Martial (MT):" />
+      <Label fx:id="mTValue" layoutX="87.0" layoutY="323.0" prefHeight="17.0" prefWidth="37.0" />
+      <Label fx:id="rTText" layoutX="145.0" layoutY="323.0" text="Ranged (RT):" />
+      <Label fx:id="rTValue" layoutX="216.0" layoutY="323.0" prefHeight="17.0" prefWidth="37.0" />
+      <Label fx:id="moraleText" layoutX="284.0" layoutY="323.0" text="Morale:" />
+      <Label fx:id="moraleValue" layoutX="326.0" layoutY="323.0" prefHeight="17.0" prefWidth="37.0" />
+      <Label fx:id="targetNumbersText" layoutX="134.0" layoutY="298.0" text="Target Numbers" />
+      <Label fx:id="skillsText" layoutX="165.0" layoutY="365.0" text="Skills" />
+      <Label fx:id="lifeDomainText" layoutX="12.0" layoutY="14.0" text="Life Domain:" />
+      <Label fx:id="lifeDomainValue" layoutX="87.0" layoutY="14.0" prefHeight="17.0" prefWidth="149.0" />
+      <Label fx:id="speciesNameText" layoutX="32.0" layoutY="41.0" text="Species:" />
+      <Label fx:id="speciesNameValue" layoutX="87.0" layoutY="41.0" prefHeight="17.0" prefWidth="149.0" />
+      <Label fx:id="classTypeText" layoutX="16.0" layoutY="73.0" text="Class Type:" />
+      <Label fx:id="classTypeValue" layoutX="91.0" layoutY="73.0" prefHeight="17.0" prefWidth="149.0" />
+      <Label fx:id="basedOnText" layoutX="19.0" layoutY="108.0" text="Based on:" />
+      <Label fx:id="basedOnValue" layoutX="91.0" layoutY="108.0" prefHeight="17.0" prefWidth="149.0" />
+      <ListView fx:id="skillsList" layoutX="17.0" layoutY="382.0" prefHeight="200.0" prefWidth="338.0" />
+      <Label fx:id="clasesLabel" layoutX="419.0" layoutY="14.0" prefHeight="17.0" prefWidth="262.0" text="Classes" />
+      <ListView fx:id="classList" layoutX="419.0" layoutY="41.0" onMouseClicked="#classListMousePressedActions" prefHeight="268.0" prefWidth="262.0" />
+   </children>
+</AnchorPane>

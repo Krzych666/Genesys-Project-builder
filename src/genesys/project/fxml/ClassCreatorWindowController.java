@@ -23,6 +23,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
 import static genesys.project.builder.BuilderCORE.chooseConnection;
+import static genesys.project.builder.DatabaseModifier.holdClass;
 import javafx.util.Callback;
 
 /**
@@ -349,7 +350,7 @@ public class ClassCreatorWindowController implements Initializable {
     public void populateBasedOnClasses() {
         ObservableList lst = FXCollections.observableArrayList();
         lst.add("<base species>");
-        for (int i = 1; i < DatabaseModifier.numberOfClases + 1; i++) {
+        for (int i = 1; i < DatabaseModifier.holdClass.length + 1; i++) {
             lst.add(DatabaseModifier.holdClass[i - 1].getClassName());
         }
         basedOnChooser.setItems(lst);

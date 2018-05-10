@@ -25,7 +25,7 @@ public class CreateWindowWhatController implements Initializable {
 
     /**
      * @FXML private CreateWindowWhat = new javax.swing.JDialog;
- *
+     *
      */
     @FXML
     private Button newSpecies;
@@ -35,16 +35,22 @@ public class CreateWindowWhatController implements Initializable {
     private Button newRoster;
 
     /**
-     *createSpeciesStage
+     * createSpeciesStage
      */
     public Stage createSpeciesStage = new Stage();
     private CreateSpeciesController createSpeciesController;
 
     /**
-     *createCultureStage
+     * createCultureStage
      */
     public Stage createCultureStage = new Stage();
     private CreateCultureController createCultureController;
+
+    /**
+     * createRosterStage
+     */
+    public Stage createRosterStage = new Stage();
+    private CreateRosterController createRosterController;
 
     private ListView speciesList;
 
@@ -83,12 +89,24 @@ public class CreateWindowWhatController implements Initializable {
     }
 
     @FXML
-    private void newRosterAcrions() {
-
+    private void newRosterAcrions() throws IOException {
+        Stage stage = (Stage) newRoster.getScene().getWindow();
+        stage.hide();
+        if (createRosterStage.isShowing()) {
+            createRosterStage.requestFocus();
+        } else {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/genesys/project/fxml/CreateRosterFXML.fxml"));
+            Parent root = loader.load();
+            Scene scene = new Scene(root);
+            createRosterController = loader.getController();
+            createRosterStage.setScene(scene);
+            createRosterStage.show();
+        }
     }
 
     /**
      * Initializes the controller class.
+     *
      * @param url
      * @param rb
      */
