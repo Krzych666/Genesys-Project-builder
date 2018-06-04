@@ -20,7 +20,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.EventHandler;
 import javafx.scene.control.ListView;
+import javafx.scene.control.TextField;
+import javafx.scene.input.KeyEvent;
 
 /**
  *
@@ -130,8 +133,10 @@ public class BuilderCORE {
      * INSECTASUBSKILS = "Order"
      */
     public static final String INSECTASUBSKILS = "Order";
+
+    public static final String[] GAME_TYPES = {"Standard Play", "Hero Play"};
     
-     public static final String[] GAME_TYPES = {"Standard Play", "Hero Play"};
+    public static final String[] EQUIPMENT_TYPES = {"Weapon", "Armor", "Other"};
 
     public static void main(String[] args) {
 
@@ -168,7 +173,7 @@ public class BuilderCORE {
         Connection cCORE = null;
         try {
             Class.forName("org.sqlite.JDBC");
-            cCORE = DriverManager.getConnection("jdbc:sqlite:GenPr_CORE.db");
+            cCORE = DriverManager.getConnection("jdbc:sqlite:src\\genesys\\project\\database\\GenPr_CORE.db");
         } catch (ClassNotFoundException | SQLException e) {
             System.err.println(e.getClass().getName() + ": " + e.getMessage());
         }
@@ -183,7 +188,7 @@ public class BuilderCORE {
         Connection cUserData = null;
         try {
             Class.forName("org.sqlite.JDBC");
-            cUserData = DriverManager.getConnection("jdbc:sqlite:GenPr_UserData.db");
+            cUserData = DriverManager.getConnection("jdbc:sqlite:src\\genesys\\project\\database\\GenPr_UserData.db");
         } catch (ClassNotFoundException | SQLException e) {
             System.err.println(e.getClass().getName() + ": " + e.getMessage());
         }
@@ -410,4 +415,26 @@ public class BuilderCORE {
         stmt.setString(1, subSkill);
         return getValue(stmt, "SkillRuleExplanation");
     }
+
+    /**
+     * Numeric Validation Limit the characters to maxLengh AND to ONLY DigitS
+     *
+     * @param max_Lengh
+     * @return
+     */
+    public static EventHandler<KeyEvent> numeric_Validation(final Integer max_Lengh) {
+        return new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent e) {
+                TextField txt_TextField = (TextField) e.getSource();
+                if (txt_TextField.getText().length() >= max_Lengh) {
+                    e.consume();
+                }
+                if (!e.getCharacter().matches("[0-9]")) {
+                    e.consume();
+                }
+            }
+        };
+    }
+
 }

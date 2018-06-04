@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import java.net.URL?>
+<?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane id="AnchorPane" prefHeight="652.0" prefWidth="792.0" styleClass="mainFxmlClass" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/9" fx:controller="genesys.project.fxml.RosterCreatorWindowController">
+<AnchorPane id="AnchorPane" prefHeight="695.0" prefWidth="1225.0" styleClass="mainFxmlClass" xmlns="http://javafx.com/javafx/9" xmlns:fx="http://javafx.com/fxml/1" fx:controller="genesys.project.fxml.RosterCreatorWindowController">
     <stylesheets>
         <URL value="@builderfxml.css" />
     </stylesheets>
@@ -54,7 +55,16 @@
       <Label fx:id="basedOnText" layoutX="19.0" layoutY="108.0" text="Based on:" />
       <Label fx:id="basedOnValue" layoutX="91.0" layoutY="108.0" prefHeight="17.0" prefWidth="149.0" />
       <ListView fx:id="skillsList" layoutX="17.0" layoutY="382.0" prefHeight="200.0" prefWidth="338.0" />
-      <Label fx:id="clasesLabel" layoutX="419.0" layoutY="14.0" prefHeight="17.0" prefWidth="262.0" text="Classes" />
+      <Label fx:id="clasesLabel" layoutX="530.0" layoutY="23.0" prefHeight="17.0" prefWidth="40.0" text="Classes" />
       <ListView fx:id="classList" layoutX="419.0" layoutY="41.0" onMouseClicked="#classListMousePressedActions" prefHeight="268.0" prefWidth="262.0" />
+      <Button fx:id="addUnitButton" layoutX="681.0" layoutY="41.0" mnemonicParsing="false" onAction="#addUnitActions" prefHeight="268.0" prefWidth="40.0" text="Add" wrapText="true" />
+      <Label fx:id="maxPointsText" layoutX="419.0" layoutY="348.0" text="Maximum points:" />
+      <Label fx:id="currentPointsText" layoutX="419.0" layoutY="374.0" text="Current points:" />
+      <Label fx:id="maxPointsValue" alignment="CENTER_RIGHT" contentDisplay="RIGHT" layoutX="522.0" layoutY="348.0" prefHeight="17.0" prefWidth="40.0" text="0" />
+      <Label fx:id="currentPointsValue" alignment="CENTER_RIGHT" contentDisplay="RIGHT" layoutX="522.0" layoutY="374.0" prefHeight="17.0" prefWidth="40.0" text="0" />
+      <Button fx:id="createRosterFinalButton" layoutX="46.0" layoutY="625.0" mnemonicParsing="false" onAction="#createRosterFinalButtonActions" prefHeight="56.0" prefWidth="262.0" text="Create" />
+      <Button fx:id="cancelCreateRosterButton" layoutX="354.0" layoutY="625.0" mnemonicParsing="false" onAction="#cancelCreateRosterButtonActions" prefHeight="56.0" prefWidth="262.0" text="Cancel" />
+      <ListView fx:id="Roster" layoutX="732.0" layoutY="41.0" prefHeight="575.0" prefWidth="484.0" />
+      <Button fx:id="removeSelectedButton" layoutX="1075.0" layoutY="10.0" mnemonicParsing="false" onAction="#removeSelectedButtonActions" prefHeight="25.0" prefWidth="136.0" text="Remove selected" />
    </children>
 </AnchorPane>

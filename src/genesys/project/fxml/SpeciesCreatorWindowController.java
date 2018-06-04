@@ -469,12 +469,12 @@ public class SpeciesCreatorWindowController implements Initializable {
                 DatabaseModifier.holdSpecies.addSkills(";");
             }
         }
-        if (availableSkillsList.getSelectionModel().getSelectedItem() != null) {
+        if (!availableSkillsList.getSelectionModel().isEmpty()) {
             skillsLeft1b.setText(DatabaseModifier.skillsLeftModify(availableSkillsList.getSelectionModel().getSelectedItem().toString(), true));
             DatabaseModifier.holdSpecies.addSkills(availableSkillsList.getSelectionModel().getSelectedItem().toString());
             DatabaseModifier.holdSpecies.addSkills(";");
         }
-        if (skillsList1.getSelectionModel().getSelectedItem() != null) {
+        if (!skillsList1.getSelectionModel().isEmpty()) {
             skillsLeft1b.setText(DatabaseModifier.skillsLeftModify(skillsList1.getSelectionModel().getSelectedItem().toString().split(" \\(p")[0], false));
             DatabaseModifier.holdSpecies.setSkills(DatabaseModifier.holdSpecies.getSkills().replace(skillsList1.getSelectionModel().getSelectedItem().toString().split(" \\(p")[0] + ";", ""));
         }

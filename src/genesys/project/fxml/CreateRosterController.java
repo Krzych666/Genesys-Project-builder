@@ -18,7 +18,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -45,6 +44,10 @@ public class CreateRosterController implements Initializable {
     private Label cultureChooseLabel;
     @FXML
     private ComboBox cultureChooseDropdown;
+    @FXML
+    private Label rosterNameLabel;
+    @FXML
+    private TextField rosterNameTextField;
     @FXML
     private Label pointsLabel;
     @FXML
@@ -92,6 +95,10 @@ public class CreateRosterController implements Initializable {
         }
         if (!speciesChooseDropdown.getSelectionModel().getSelectedItem().equals("--CHOOSE--") && !cultureChooseDropdown.getSelectionModel().getSelectedItem().equals("--CHOOSE--")) {
             loadSpecies();
+            DatabaseModifier.holdRoster = new DatabaseModifier.ARoster();
+            DatabaseModifier.holdRoster.setRosterName(rosterNameTextField.getText());
+            DatabaseModifier.holdRoster.setSpeciesName(speciesChooseDropdown.getSelectionModel().getSelectedItem().toString());
+            DatabaseModifier.holdRoster.setCultureName(cultureChooseDropdown.getSelectionModel().getSelectedItem().toString());
             Stage stage = (Stage) selectDataForRoster.getScene().getWindow();
             stage.hide();
             if (rosterCreatorWindowStage.isShowing()) {
@@ -101,6 +108,7 @@ public class CreateRosterController implements Initializable {
                 Parent root = loader.load();
                 Scene scene = new Scene(root);
                 rosterCreatorWindowController = loader.getController();
+                rosterCreatorWindowController.setMaxPoints(pointsTextField.getText());
                 rosterCreatorWindowStage.setScene(scene);
                 rosterCreatorWindowStage.show();
             }
@@ -152,28 +160,7 @@ public class CreateRosterController implements Initializable {
         }
         speciesChooseDropdown.getSelectionModel().select(0);
         gameTypeDropdown.getSelectionModel().select(0);
-        pointsTextField.addEventFilter(KeyEvent.KEY_TYPED, numeric_Validation(10));
-    }
-
-    /**
-     * Numeric Validation Limit the characters to maxLengh AND to ONLY DigitS
-     *
-     * @param max_Lengh
-     * @return
-     */
-    public EventHandler<KeyEvent> numeric_Validation(final Integer max_Lengh) {
-        return new EventHandler<KeyEvent>() {
-            @Override
-            public void handle(KeyEvent e) {
-                TextField txt_TextField = (TextField) e.getSource();
-                if (txt_TextField.getText().length() >= max_Lengh) {
-                    e.consume();
-                }
-                if (!e.getCharacter().matches("[0-9]")) {
-                    e.consume();
-                }
-            }
-        };
+        pointsTextField.addEventFilter(KeyEvent.KEY_TYPED, BuilderCORE.numeric_Validation(10));
     }
 
 }

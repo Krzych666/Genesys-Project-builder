@@ -7,20 +7,22 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane id="AnchorPane" prefHeight="302.0" prefWidth="287.0" styleClass="mainFxmlClass" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/9" fx:controller="genesys.project.fxml.CreateRosterController">
+<AnchorPane id="AnchorPane" prefHeight="402.0" prefWidth="287.0" styleClass="mainFxmlClass" xmlns="http://javafx.com/javafx/9" xmlns:fx="http://javafx.com/fxml/1" fx:controller="genesys.project.fxml.CreateRosterController">
     <stylesheets>
         <URL value="@builderfxml.css" />
     </stylesheets>
    <children>
       <ComboBox fx:id="speciesChooseDropdown" layoutX="112.0" layoutY="43.0" onAction="#speciesChooseDropdownItemStateChangedActions" prefWidth="150.0" />
       <ComboBox fx:id="cultureChooseDropdown" layoutX="112.0" layoutY="89.0" prefWidth="150.0" />
-      <TextField fx:id="pointsTextField" layoutX="113.0" layoutY="140.0" />
-      <ComboBox fx:id="gameTypeDropdown" layoutX="113.0" layoutY="188.0" prefWidth="150.0" />
+      <TextField fx:id="pointsTextField" layoutX="113.0" layoutY="188.0" />
+      <ComboBox fx:id="gameTypeDropdown" layoutX="112.0" layoutY="236.0" prefWidth="150.0" />
       <Label fx:id="speciesChooseLabel" layoutX="14.0" layoutY="47.0" text="Species" />
       <Label fx:id="cultureChooseLabel" layoutX="14.0" layoutY="93.0" text="Culture" />
-      <Label fx:id="pointsLabel" layoutX="14.0" layoutY="144.0" text="Points" />
-      <Label fx:id="gameTypeLabel" layoutX="14.0" layoutY="192.0" text="Game Type" />
-      <Button fx:id="selectDataForRoster" layoutX="13.0" layoutY="251.0" mnemonicParsing="false" onAction="#selectDataForRosterActions" prefHeight="37.0" prefWidth="122.0" text="OK" />
-      <Button fx:id="cancelSelectDataForRoster" layoutX="141.0" layoutY="251.0" mnemonicParsing="false" onAction="#cancelSelectDataForRosterActions" prefHeight="37.0" prefWidth="122.0" text="Cancel" />
+      <Label fx:id="pointsLabel" layoutX="13.0" layoutY="192.0" text="Points" />
+      <Label fx:id="gameTypeLabel" layoutX="16.0" layoutY="240.0" text="Game Type" />
+      <Button fx:id="selectDataForRoster" layoutX="13.0" layoutY="288.0" mnemonicParsing="false" onAction="#selectDataForRosterActions" prefHeight="37.0" prefWidth="122.0" text="OK" />
+      <Button fx:id="cancelSelectDataForRoster" layoutX="151.0" layoutY="288.0" mnemonicParsing="false" onAction="#cancelSelectDataForRosterActions" prefHeight="37.0" prefWidth="122.0" text="Cancel" />
+      <Label fx:id="rosterNameLabel" layoutX="13.0" layoutY="142.0" text="Roster Name" />
+      <TextField fx:id="rosterNameTextField" layoutX="113.0" layoutY="138.0" promptText="Enter name" />
    </children>
 </AnchorPane>

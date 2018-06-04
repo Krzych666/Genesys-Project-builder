@@ -26,7 +26,6 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.ListView;
 import static genesys.project.builder.BuilderCORE.chooseConnection;
-import java.util.Arrays;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -539,6 +538,10 @@ public class DatabaseModifier {
         holdSpecies = null;
     }
 
+    public static void writeRosterToDB() {
+        executeSQL("INSERT INTO `CreatedRosters`(RosterName,CultureName,SpeciesName,Roster) VALUES ('" + holdRoster.RosterName + "','" + holdRoster.CultureName + "','" + holdRoster.SpeciesName + "','" + holdRoster.Roster + "');");
+    }
+
     /**
      *
      * @return @throws SQLException
@@ -1022,6 +1025,82 @@ public class DatabaseModifier {
         if (tmp != null) {
             System.arraycopy(tmp, 0, holdClass, 0, numberOfClases);
         }
+    }
+
+    public static ObservableList getItemsNames(String itemType) throws SQLException {
+        ObservableList<String> tmp = FXCollections.observableArrayList();
+        chooseConnection(UseCases.COREdb);
+        PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT " + itemType + "Name FROM Equipment" + itemType + " WHERE Type = ? OR Type = ?");
+        stmt.setString(1, "Primitive");
+        stmt.setString(2, "Common");
+        String[] columns = {itemType + "Name"};
+        tmp.addAll(BuilderCORE.getData(stmt, columns, null));
+        return tmp;
+    }
+
+    public static int getItemCost(String item) throws SQLException {
+        String itemName;
+        if (item.contains("{") && item.endsWith("}")) {
+            itemName = item.split(" \\{")[0];
+        } else {
+            itemName = item;
+        }
+        String itemType = getItemType(itemName);
+        int cost = 0;
+        chooseConnection(UseCases.COREdb);
+        PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT Cost FROM Equipment" + itemType + " WHERE " + itemType + "Name = ?");
+        stmt.setString(1, itemName);
+        String[] columns = {"Cost"};
+        String data = BuilderCORE.getData(stmt, columns, null).get(0).toString();
+        if (data.contains("/")) {
+            data = data.split("/")[0];
+        }
+        cost = Integer.parseInt(data);
+        return cost;
+    }
+
+    public static String getItemType(String itemName) throws SQLException {
+        String[] columns = {"count(*)"};
+        chooseConnection(UseCases.COREdb);
+        PreparedStatement stmt1 = BuilderCORE.getConnection().prepareStatement("SELECT count(*) FROM EquipmentArmor WHERE ArmorName = ?");
+        stmt1.setString(1, itemName);
+        if (BuilderCORE.getData(stmt1, columns, null).get(0).toString().equals("1")) {
+            return "Armor";
+        }
+        chooseConnection(UseCases.COREdb);
+        PreparedStatement stmt2 = BuilderCORE.getConnection().prepareStatement("SELECT count(*) FROM EquipmentWeapon WHERE WeaponName = ?");
+        stmt2.setString(1, itemName);
+        if (BuilderCORE.getData(stmt2, columns, null).get(0).toString().equals("1")) {
+            return "Weapon";
+        }
+        chooseConnection(UseCases.COREdb);
+        PreparedStatement stmt3 = BuilderCORE.getConnection().prepareStatement("SELECT count(*) FROM EquipmentOther WHERE OtherName = ?");
+        stmt3.setString(1, itemName);
+        if (BuilderCORE.getData(stmt3, columns, null).get(0).toString().equals("1")) {
+            return "Other";
+        }
+        return "";
+    }
+
+    public static ObservableList getImprovements(String itemName) throws SQLException {
+        ObservableList<String> tmp = FXCollections.observableArrayList();
+        String type = getItemType(itemName);
+        chooseConnection(UseCases.COREdb);
+        String[] columns = {"ImprovementName"};
+        PreparedStatement stmt = null;
+        switch (type) {
+            case "Armor":
+                stmt = BuilderCORE.getConnection().prepareStatement("SELECT ImprovementName FROM EquipmentImprovements WHERE Type = 'Armor' OR Type = 'Resistance'");
+                break;
+            case "Weapon":
+                stmt = BuilderCORE.getConnection().prepareStatement("SELECT ImprovementName FROM EquipmentImprovements WHERE Type = 'Melee Weapon' OR Type = 'Ranged Weapon' OR Type = 'Extreme Weapons'");
+                break;
+            case "Other":
+                stmt = BuilderCORE.getConnection().prepareStatement("SELECT ImprovementName FROM EquipmentImprovements WHERE Type = 'Other'");
+                break;
+        }
+        tmp.addAll(BuilderCORE.getData(stmt, columns, null));
+        return tmp;
     }
 
     //change to private and do setters/gettera

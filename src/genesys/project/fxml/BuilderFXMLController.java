@@ -86,7 +86,7 @@ public class BuilderFXMLController implements Initializable {
     @FXML
     private TextArea skillFullText;
     @FXML
-    private TextArea fullroster;
+    private ListView fullroster;
     @FXML
     private Button create;
     @FXML
@@ -844,7 +844,7 @@ public class BuilderFXMLController implements Initializable {
             stmt.setString(1, rostersList.getSelectionModel().getSelectedItem().toString());
             stmt.setString(2, speciesList.getSelectionModel().getSelectedItem().toString());
             stmt.setString(3, culturesList.getSelectionModel().getSelectedItem().toString());
-            String roster = BuilderCORE.getValue(stmt, "PointCost");
+            fullroster.getItems().setAll(FXCollections.observableArrayList(BuilderCORE.getValue(stmt, "Roster").split(";")));
         }
     }
 
@@ -856,7 +856,7 @@ public class BuilderFXMLController implements Initializable {
             stmt.setString(1, cultureProgressList.getSelectionModel().getSelectedItem().toString());
             stmt.setString(2, speciesList.getSelectionModel().getSelectedItem().toString());
             stmt.setString(3, culturesList.getSelectionModel().getSelectedItem().toString());
-            String add = BuilderCORE.getValue(stmt, "PointCost");
+            String add = BuilderCORE.getValue(stmt, "Progress");
         }
     }
 
