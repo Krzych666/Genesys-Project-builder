@@ -11,6 +11,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.sql.SQLException;
 import java.util.HashMap;
+import java.util.Map.Entry;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -26,19 +27,22 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
+import javafx.scene.control.CheckBox;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
 import javafx.stage.Stage;
 import javafx.util.Callback;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  *
  * @author krzysztofg
  */
 public class RosterAddUnitController implements Initializable {
-    
+
     @FXML
     private ListView currentEquipmentList;
     @FXML
@@ -65,12 +69,12 @@ public class RosterAddUnitController implements Initializable {
     private Button addSquadButton;
     @FXML
     private Button cancelAddSaquadButton;
-    
+
     private String className;
     private int basePoints;
     private ListView Roster;
     private Label currentPointsValue;
-    private static final HashMap<String, String> IMPROVEMENTS = new HashMap<String, String>();
+    private static final HashMap<String, ImprovementsItem> IMPROVEMENTS = new HashMap<String, ImprovementsItem>();
 
     /**
      * squadSizeChangeActions
@@ -98,7 +102,7 @@ public class RosterAddUnitController implements Initializable {
         availableEquipmentList.getSelectionModel().clearSelection();
         currentEquipmentList.getSelectionModel().clearSelection();
     }
-    
+
     private void moveItem() throws SQLException, NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, ClassNotFoundException {
         if (!availableEquipmentList.getSelectionModel().isEmpty()) {
             currentEquipmentList.getItems().add(availableEquipmentList.getSelectionModel().getSelectedItem() + getImprovements() + " X" + addEquipmentValue.getText());
@@ -109,11 +113,15 @@ public class RosterAddUnitController implements Initializable {
         squadSizeChangeActions();
         IMPROVEMENTS.clear();
     }
-    
+
     private int itemsCost() throws SQLException {
         int cost = 0;
         for (int i = 0; i < currentEquipmentList.getItems().size(); i++) {
-            cost += DatabaseModifier.getItemCost(currentEquipmentList.getItems().get(i).toString().split(" X")[0]) * Integer.parseInt(currentEquipmentList.getItems().get(i).toString().split(" X")[1]);
+            if (currentEquipmentList.getItems().get(i).toString().contains("} X")) {
+                cost += DatabaseModifier.getItemCost(currentEquipmentList.getItems().get(i).toString().split("} X")[0]) * Integer.parseInt(currentEquipmentList.getItems().get(i).toString().split("} X")[1]);
+            } else {
+                cost += DatabaseModifier.getItemCost(currentEquipmentList.getItems().get(i).toString().split(" X")[0]) * Integer.parseInt(currentEquipmentList.getItems().get(i).toString().split(" X")[1]);
+            }
         }
         return cost;
     }
@@ -125,14 +133,16 @@ public class RosterAddUnitController implements Initializable {
      */
     @FXML
     public void equipmentTypeChooserStateChangedActions() throws SQLException {
+        IMPROVEMENTS.clear();
         availableEquipmentList.setItems(DatabaseModifier.getItemsNames(equipmentTypeChooser.getSelectionModel().getSelectedItem().toString()));
     }
-    
+
     @FXML
     public void availableEquipmentListMousePressed() throws SQLException {
+        IMPROVEMENTS.clear();
         generateImprovementsList();
     }
-    
+
     private void generateImprovementsList() throws SQLException {
         ObservableList<String> improvementsObservableList = DatabaseModifier.getImprovements(availableEquipmentList.getSelectionModel().getSelectedItem().toString());
         improvementsList.setItems(improvementsObservableList);
@@ -143,88 +153,68 @@ public class RosterAddUnitController implements Initializable {
             }
         });
     }
-    
+
     static class ImprovementsCell extends ListCell<String> {
-        
-        HBox hbox = new HBox();
-        Label label = new Label("(empty)");
-        Pane pane = new Pane();
-        Button buttonAdd = new Button("+");
-        private TextField numberbox;
-        Button buttonRemove = new Button("-");
-        String lastItem;
-        
+
+        ImprovementsItem improvementsItem;
+
         public ImprovementsCell() {
             super();
-            numberbox = new TextField("0");
-            numberbox.addEventFilter(KeyEvent.KEY_TYPED, BuilderCORE.numeric_Validation(10));
-            numberbox.setMaxWidth(50);
-            hbox.getChildren().addAll(label, pane, buttonAdd, numberbox, buttonRemove);
-            numberbox.setEditable(false);
-            HBox.setHgrow(pane, Priority.ALWAYS);
-            buttonAdd.setOnAction(new EventHandler<ActionEvent>() {
-                
-                @Override
-                public void handle(ActionEvent event) {
-                    if (numberbox.getText().isEmpty() || Integer.parseInt(numberbox.getText()) < 0) {
-                        numberbox.setText("0");
-                    }
-                    numberbox.setText(Integer.toString(Integer.parseInt(numberbox.getText()) + 1));
-                    IMPROVEMENTS.put(label.getText(), numberbox.getText());
-                }
-            });
-            buttonRemove.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    if (numberbox.getText().isEmpty() || Integer.parseInt(numberbox.getText()) < 0) {
-                        numberbox.setText("0");
-                    }
-                    if (Integer.parseInt(numberbox.getText()) > 0) {
-                        numberbox.setText(Integer.toString(Integer.parseInt(numberbox.getText()) - 1));
-                    }
-                    if (numberbox.getText().equals("0")) {
-                        IMPROVEMENTS.remove(label.getText());
-                    } else {
-                        IMPROVEMENTS.put(label.getText(), numberbox.getText());
-                    }
-                    
-                }
-            });
         }
-        
+
         @Override
         protected void updateItem(String item, boolean empty) {
+            if (!empty && improvementsItem != null && item != null) {
+                improvementsItem = IMPROVEMENTS.get(item);
+            }
+            if (improvementsItem == null) {
+                improvementsItem = new ImprovementsItem();
+            }
+
             super.updateItem(item, empty);
             setText(null);  // No text in label of super class
             if (empty) {
-                lastItem = null;
+                improvementsItem.setLastItem(null);
                 setGraphic(null);
             } else {
-                lastItem = item;
-                label.setText(item != null ? item : "<null>");
-                setGraphic(hbox);
+                improvementsItem.setLastItem(item);
+                improvementsItem.getLabel().setText(item != null ? item : "<null>");
+                IMPROVEMENTS.put(improvementsItem.getLabel().getText(), improvementsItem);
+                IMPROVEMENTS.get(improvementsItem.getLabel().getText()).setPosition(getIndex());
+                improvementsItem.getCheckBox().setSelected(IMPROVEMENTS.get(improvementsItem.getLabel().getText()).getCheckBoxSelectionState());
+                improvementsItem.getNumberbox().setText(IMPROVEMENTS.get(improvementsItem.getLabel().getText()).getLabelValue());
+                if (super.getItem().contains("X")) {
+                    improvementsItem.getCheckBox().setVisible(false);
+                    improvementsItem.getButtonAdd().setVisible(true);
+                    improvementsItem.getNumberbox().setVisible(true);
+                    improvementsItem.getButtonRemove().setVisible(true);
+                } else {
+                    improvementsItem.getCheckBox().setVisible(true);
+                    improvementsItem.getButtonAdd().setVisible(false);
+                    improvementsItem.getNumberbox().setVisible(false);
+                    improvementsItem.getButtonRemove().setVisible(false);
+                }
+                setGraphic(improvementsItem.getHbox());
             }
         }
-
-        /**
-         * @return the numberbox
-         */
-        public TextField getNumberbox() {
-            return numberbox;
-        }
-
-        /**
-         * @param numberbox the numberbox to set
-         */
-        public void setNumberbox(TextField numberbox) {
-            this.numberbox = numberbox;
-        }
     }
-    
+
     private String getImprovements() throws NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, ClassNotFoundException {
         StringBuilder tempList = new StringBuilder();
-        if (IMPROVEMENTS.size() > 0) {
-            tempList.append(" ").append(IMPROVEMENTS.toString());
+        tempList.append(" {");
+        IMPROVEMENTS.entrySet().forEach((entry) -> {
+            if (entry.getValue().getCheckBoxSelectionState()) {
+                tempList.append(entry.getKey()).append(", ");
+            }
+            if (Integer.parseInt(entry.getValue().getLabelValue()) > 0) {
+                tempList.append(entry.getKey()).append(entry.getValue().getLabelValue()).append(", ");
+            }
+        });
+        if (tempList.substring(tempList.length() - 2).equals(", ")) {
+            tempList.delete(tempList.length() - 2, tempList.length());
+            tempList.append("}");
+        } else {
+            return "";
         }
         return tempList.toString();
     }
@@ -286,5 +276,102 @@ public class RosterAddUnitController implements Initializable {
             Logger.getLogger(RosterAddUnitController.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
+
+    private static class ImprovementsItem {
+
+        @Getter
+        @Setter
+        int position;
+
+        @Getter
+        @Setter
+        String name = "";
+
+        @Getter
+        @Setter
+        Boolean checkBoxSelectionState = false;
+
+        @Getter
+        @Setter
+        String labelValue = "0";
+
+        @Getter
+        @Setter
+        HBox hbox = new HBox();
+
+        @Getter
+        @Setter
+        Label label = new Label("(empty)");
+
+        @Getter
+        @Setter
+        Pane pane = new Pane();
+
+        @Getter
+        @Setter
+        Button buttonAdd = new Button("+");
+
+        @Getter
+        @Setter
+        private TextField numberbox = new TextField("0");
+
+        @Getter
+        @Setter
+        Button buttonRemove = new Button("-");
+
+        @Getter
+        @Setter
+        String lastItem;
+
+        @Getter
+        @Setter
+        CheckBox checkBox = new CheckBox();
+
+        public ImprovementsItem() {
+            getNumberbox().addEventFilter(KeyEvent.KEY_TYPED, BuilderCORE.numeric_Validation(10));
+            getNumberbox().setMaxWidth(50);
+            getNumberbox().setEditable(false);
+            getHbox().getChildren().addAll(getLabel(), getPane(), getButtonAdd(), getNumberbox(), getButtonRemove(), getCheckBox());
+            HBox.setHgrow(getPane(), Priority.ALWAYS);
+            getButtonAdd().setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    if (getNumberbox().getText().isEmpty() || Integer.parseInt(getNumberbox().getText()) < 0) {
+                        getNumberbox().setText("0");
+                    }
+                    getNumberbox().setText(Integer.toString(Integer.parseInt(getNumberbox().getText()) + 1));
+                    IMPROVEMENTS.get(getLabel().getText()).setName(getLabel().getText());
+                    IMPROVEMENTS.get(getLabel().getText()).setLabelValue(getNumberbox().getText());
+                }
+            });
+            getButtonRemove().setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    if (getNumberbox().getText().isEmpty() || Integer.parseInt(getNumberbox().getText()) < 0) {
+                        getNumberbox().setText("0");
+                    }
+                    if (Integer.parseInt(getNumberbox().getText()) > 0) {
+                        getNumberbox().setText(Integer.toString(Integer.parseInt(getNumberbox().getText()) - 1));
+                    }
+                    if (getNumberbox().getText().equals("0")) {
+                        IMPROVEMENTS.remove(getLabel().getText());
+                    } else {
+                        IMPROVEMENTS.get(getLabel().getText()).setLabelValue(getNumberbox().getText());
+                    }
+
+                }
+            });
+            getCheckBox().setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    if (getCheckBox().isSelected()) {
+                        IMPROVEMENTS.get(getLabel().getText()).setCheckBoxSelectionState(true);
+                    } else {
+                        IMPROVEMENTS.remove(getLabel().getText());
+                    }
+                }
+            }
+            );
+        }
+    }
 }

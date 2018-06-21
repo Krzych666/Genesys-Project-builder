@@ -1040,7 +1040,7 @@ public class DatabaseModifier {
 
     public static int getItemCost(String item) throws SQLException {
         String itemName;
-        if (item.contains("{") && item.endsWith("}")) {
+        if (item.contains("{")) {
             itemName = item.split(" \\{")[0];
         } else {
             itemName = item;
@@ -1082,9 +1082,28 @@ public class DatabaseModifier {
         return "";
     }
 
+    public static String getItemSubType(String type, String itemName) throws SQLException {
+        String[] columns = {"SubType"};
+        chooseConnection(UseCases.COREdb);
+        PreparedStatement stmt = null;
+        switch (type) {
+            case "Armor":
+                stmt = BuilderCORE.getConnection().prepareStatement("SELECT SubType FROM EquipmentArmor WHERE ArmorName = ?");
+                break;
+            case "Weapon":
+                stmt = BuilderCORE.getConnection().prepareStatement("SELECT SubType FROM EquipmentWeapon WHERE WeaponName = ?");
+                break;
+            default:
+                return "";
+        }
+        stmt.setString(1, itemName);
+        return BuilderCORE.getData(stmt, columns, null).get(0).toString();
+    }
+
     public static ObservableList getImprovements(String itemName) throws SQLException {
         ObservableList<String> tmp = FXCollections.observableArrayList();
         String type = getItemType(itemName);
+        String subType = getItemSubType(type, itemName);
         chooseConnection(UseCases.COREdb);
         String[] columns = {"ImprovementName"};
         PreparedStatement stmt = null;
@@ -1093,7 +1112,21 @@ public class DatabaseModifier {
                 stmt = BuilderCORE.getConnection().prepareStatement("SELECT ImprovementName FROM EquipmentImprovements WHERE Type = 'Armor' OR Type = 'Resistance'");
                 break;
             case "Weapon":
-                stmt = BuilderCORE.getConnection().prepareStatement("SELECT ImprovementName FROM EquipmentImprovements WHERE Type = 'Melee Weapon' OR Type = 'Ranged Weapon' OR Type = 'Extreme Weapons'");
+                switch (subType) {
+                    case "Melee":
+                    case "Spear":
+                        stmt = BuilderCORE.getConnection().prepareStatement("SELECT ImprovementName FROM EquipmentImprovements WHERE Type = 'Melee Weapon' OR Type = 'Extreme Weapons'");
+                        break;
+                    case "Throwing":
+                    case "Bow":
+                    case "Crossbow":
+                    case "Alchemy":
+                        stmt = BuilderCORE.getConnection().prepareStatement("SELECT ImprovementName FROM EquipmentImprovements WHERE Type = 'Ranged Weapon' OR Type = 'Extreme Weapons'");
+                        break;
+                    case "Flintlock":
+                        stmt = BuilderCORE.getConnection().prepareStatement("SELECT ImprovementName FROM EquipmentImprovements WHERE Type = 'Ranged Weapon' OR Type = 'Flintlock' OR Type = 'Extreme Weapons'");
+                        break;
+                }
                 break;
             case "Other":
                 stmt = BuilderCORE.getConnection().prepareStatement("SELECT ImprovementName FROM EquipmentImprovements WHERE Type = 'Other'");

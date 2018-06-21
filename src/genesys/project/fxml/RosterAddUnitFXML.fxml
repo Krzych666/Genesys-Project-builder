@@ -19,15 +19,15 @@
       <Label fx:id="totalPointsText" layoutX="14.0" layoutY="297.0" text="Total points" />
       <ListView fx:id="currentEquipmentList" layoutX="14.0" layoutY="84.0" prefHeight="200.0" prefWidth="200.0" />
       <Label layoutX="78.0" layoutY="67.0" text="Equipment" />
-      <Button fx:id="addSquadButton" layoutX="14.0" layoutY="365.0" mnemonicParsing="false" onAction="#addSquadButtonActions" prefHeight="35.0" prefWidth="335.0" text="Add squad" />
-      <Button fx:id="cancelAddSaquadButton" layoutX="537.0" layoutY="365.0" mnemonicParsing="false" onAction="#cancelAddSaquadButtonActions" prefHeight="35.0" prefWidth="335.0" text="Cancel" />
+      <Button fx:id="addSquadButton" layoutX="14.0" layoutY="365.0" mnemonicParsing="false" onAction="#addSquadButtonActions" prefHeight="50.0" prefWidth="422.0" text="Add squad" />
+      <Button fx:id="cancelAddSaquadButton" layoutX="450.0" layoutY="365.0" mnemonicParsing="false" onAction="#cancelAddSaquadButtonActions" prefHeight="50.0" prefWidth="422.0" text="Cancel" />
       <ListView fx:id="availableEquipmentList" layoutX="280.0" layoutY="84.0" onMousePressed="#availableEquipmentListMousePressed" prefHeight="200.0" prefWidth="200.0" />
       <Button fx:id="addEquipmentButton" layoutX="217.0" layoutY="131.0" mnemonicParsing="false" onAction="#addEquipmentButtonActions" prefHeight="50.0" prefWidth="57.0" text="Add for /Delete" wrapText="true" />
       <TextField fx:id="addEquipmentValue" layoutX="218.0" layoutY="184.0" prefHeight="25.0" prefWidth="57.0" />
       <Label layoutX="313.0" layoutY="67.0" text="Available equipment" />
       <Label fx:id="equipmentTypeText" layoutX="280.0" layoutY="28.0" text="Equipment type" />
       <ComboBox fx:id="equipmentTypeChooser" layoutX="374.0" layoutY="24.0" onAction="#equipmentTypeChooserStateChangedActions" prefHeight="25.0" prefWidth="146.0" />
-      <ListView fx:id="improvementsList" layoutX="498.0" layoutY="84.0" prefHeight="200.0" prefWidth="311.0" />
-      <Label layoutX="618.0" layoutY="67.0" text="Improvments" />
+      <ListView fx:id="improvementsList" layoutX="498.0" layoutY="84.0" prefHeight="200.0" prefWidth="358.0" />
+      <Label layoutX="642.0" layoutY="67.0" text="Improvments" />
    </children>
 </AnchorPane>
