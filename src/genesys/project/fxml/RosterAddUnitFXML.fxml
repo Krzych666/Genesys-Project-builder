@@ -27,7 +27,8 @@
       <Label layoutX="313.0" layoutY="67.0" text="Available equipment" />
       <Label fx:id="equipmentTypeText" layoutX="280.0" layoutY="28.0" text="Equipment type" />
       <ComboBox fx:id="equipmentTypeChooser" layoutX="374.0" layoutY="24.0" onAction="#equipmentTypeChooserStateChangedActions" prefHeight="25.0" prefWidth="146.0" />
-      <ListView fx:id="improvementsList" layoutX="498.0" layoutY="84.0" prefHeight="200.0" prefWidth="358.0" />
+      <ListView fx:id="improvementsList" layoutX="498.0" layoutY="84.0" onMousePressed="#improvementsListMousePressed" prefHeight="200.0" prefWidth="358.0" />
       <Label layoutX="642.0" layoutY="67.0" text="Improvments" />
+      <ListView fx:id="improvementsDetailsList" layoutX="280.0" layoutY="297.0" prefHeight="59.0" prefWidth="577.0" />
    </children>
 </AnchorPane>

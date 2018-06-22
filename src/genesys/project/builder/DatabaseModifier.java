@@ -26,6 +26,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.ListView;
 import static genesys.project.builder.BuilderCORE.chooseConnection;
+import java.util.Arrays;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -492,12 +493,7 @@ public class DatabaseModifier {
 
     private static int addRemove(int Skl, Boolean Add) {
         int tmp = Skl;
-        if (Add) {
-            tmp++;
-        }
-        if (!Add) {
-            tmp--;
-        }
+        tmp = Add ? tmp + 1 : tmp - 1;
         return tmp;
     }
 
@@ -1038,14 +1034,9 @@ public class DatabaseModifier {
         return tmp;
     }
 
-    public static int getItemCost(String item) throws SQLException {
+    public static int getItemCost(String item, String itemType) throws SQLException {
         String itemName;
-        if (item.contains("{")) {
-            itemName = item.split(" \\{")[0];
-        } else {
-            itemName = item;
-        }
-        String itemType = getItemType(itemName);
+        itemName = item.contains("{") ? item.split(" \\{")[0] : item;
         int cost = 0;
         chooseConnection(UseCases.COREdb);
         PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT Cost FROM Equipment" + itemType + " WHERE " + itemType + "Name = ?");
@@ -1055,31 +1046,57 @@ public class DatabaseModifier {
         if (data.contains("/")) {
             data = data.split("/")[0];
         }
-        cost = Integer.parseInt(data);
+        cost = Integer.parseInt(data) + getImprovementsCosts(item, itemType);
         return cost;
     }
 
-    public static String getItemType(String itemName) throws SQLException {
-        String[] columns = {"count(*)"};
-        chooseConnection(UseCases.COREdb);
-        PreparedStatement stmt1 = BuilderCORE.getConnection().prepareStatement("SELECT count(*) FROM EquipmentArmor WHERE ArmorName = ?");
-        stmt1.setString(1, itemName);
-        if (BuilderCORE.getData(stmt1, columns, null).get(0).toString().equals("1")) {
-            return "Armor";
+    public static int getImprovementsCosts(String itemWithImprovements, String itemType) throws SQLException {
+        int cost = 0;
+        if (itemWithImprovements.contains("{")) {
+            String itemImprovements = itemWithImprovements.split(" \\{")[1].split("}")[0];
+            String[] improvementsList = itemImprovements.split(", ").length > 1 ? itemImprovements.split(", ") : new String[]{itemImprovements};
+            String[] columns = {"Cost"};
+            int howManyImprovements[] = new int[2];//TODO
+            for (String improvementsList1 : improvementsList) {
+                StringBuilder improvementHelper = new StringBuilder();
+                improvementHelper.append(improvementsList1.contains("X") ? improvementsList1.split("X")[0] + "X" : improvementsList1);
+                chooseConnection(UseCases.COREdb);
+                PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT Cost FROM EquipmentImprovements WHERE ImprovementName = ? AND (Type = ? OR Type = ? OR Type = ?)");
+                stmt.setString(1, improvementHelper.toString());
+                stmt.setString(2, getImprovementTypeBasedOnItemSubtype(getItemSubType(itemType, itemWithImprovements.contains("{") ? itemWithImprovements.split(" \\{")[0] : itemWithImprovements)));
+                stmt.setString(3, "Flintlock");
+                stmt.setString(4, itemType.equals("Weapon") ? "Extreme Weapons" : "Resistance");
+                String stringCost = BuilderCORE.getData(stmt, columns, null).get(0).toString();
+                if (stringCost.contains("/")) {
+                    stringCost = stringCost.split("/")[Integer.parseInt(improvementsList1.split("X")[1]) > stringCost.split("/").length ? stringCost.split("/").length - 1 : Integer.parseInt(improvementsList1.split("X")[1]) - 1];
+                }
+                cost += Integer.parseInt(stringCost);
+            }
         }
+        return cost;
+    }
+
+    /**
+     *
+     * @param itemName
+     * @param improvementName
+     * @param itemType
+     * @return
+     * @throws java.sql.SQLException
+     */
+    public static ObservableList getImprovementDetails(String itemName, String improvementName, String itemType) throws SQLException {
+        String[] columns = {"SpecialRules"};
+        ObservableList<String> tmp = FXCollections.observableArrayList();
         chooseConnection(UseCases.COREdb);
-        PreparedStatement stmt2 = BuilderCORE.getConnection().prepareStatement("SELECT count(*) FROM EquipmentWeapon WHERE WeaponName = ?");
-        stmt2.setString(1, itemName);
-        if (BuilderCORE.getData(stmt2, columns, null).get(0).toString().equals("1")) {
-            return "Weapon";
-        }
-        chooseConnection(UseCases.COREdb);
-        PreparedStatement stmt3 = BuilderCORE.getConnection().prepareStatement("SELECT count(*) FROM EquipmentOther WHERE OtherName = ?");
-        stmt3.setString(1, itemName);
-        if (BuilderCORE.getData(stmt3, columns, null).get(0).toString().equals("1")) {
-            return "Other";
-        }
-        return "";
+        PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT SpecialRules FROM EquipmentImprovements WHERE ImprovementName = ? AND (Type = ? OR Type = ? OR Type = ?)");
+        stmt.setString(1, improvementName);
+        stmt.setString(2, getImprovementTypeBasedOnItemSubtype(getItemSubType(itemType, itemName)));
+        stmt.setString(3, "Flintlock");
+        stmt.setString(4, itemType.equals("Weapon") ? "Extreme Weapons" : "Resistance");
+        String data = BuilderCORE.getData(stmt, columns, null).get(0).toString();
+        String lst[] = data.split(";").length > 1 ? data.split(";") : new String[]{data};
+        tmp.addAll(lst);
+        return tmp;
     }
 
     public static String getItemSubType(String type, String itemName) throws SQLException {
@@ -1097,12 +1114,34 @@ public class DatabaseModifier {
                 return "";
         }
         stmt.setString(1, itemName);
-        return BuilderCORE.getData(stmt, columns, null).get(0).toString();
+        String tmp = BuilderCORE.getData(stmt, columns, null).get(0).toString();
+        return tmp;
     }
 
-    public static ObservableList getImprovements(String itemName) throws SQLException {
+    public static String getImprovementTypeBasedOnItemSubtype(String itemSubType) {
+        switch (itemSubType) {
+            case "Armor":
+            case "Shield":
+                return "Armor";
+            case "Melee":
+            case "Spear":
+                return "Melee Weapon";
+            case "Throwing":
+            case "Bow":
+            case "Crossbow":
+            case "Alchemy":
+                return "Ranged Weapon";
+            case "Flintlock":
+                return "Ranged Weapon";
+            case "Other":
+                return "Other";
+            default:
+                return "";
+        }
+    }
+
+    public static ObservableList getImprovements(String itemName, String type) throws SQLException {
         ObservableList<String> tmp = FXCollections.observableArrayList();
-        String type = getItemType(itemName);
         String subType = getItemSubType(type, itemName);
         chooseConnection(UseCases.COREdb);
         String[] columns = {"ImprovementName"};
