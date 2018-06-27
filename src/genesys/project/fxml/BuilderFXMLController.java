@@ -31,12 +31,19 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 import static genesys.project.builder.BuilderCORE.chooseConnection;
-import javafx.scene.control.Button;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.event.EventType;
+import javafx.scene.Node;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextArea;
+import javafx.scene.input.MouseEvent;
+import javafx.stage.Window;
 
 /**
  * FXML Controller class
@@ -88,49 +95,15 @@ public class BuilderFXMLController implements Initializable {
     @FXML
     private ListView fullroster;
     @FXML
-    private Button create;
-    @FXML
-    private Button delete;
-    @FXML
-    private Button duplicate;
-    @FXML
-    private Button edit;
-    @FXML
-    private Label speciesLabel;
-    @FXML
-    private Label clasesLabel;
-    @FXML
-    private Label culturesLabel;
-    @FXML
-    private Label progressLabel;
-    @FXML
-    private Label rosterLabel;
-    @FXML
-    private Label heroesLabel;
-    @FXML
-    private Label pointsPerModelText;
-    @FXML
-    private Label strengthText;
-    @FXML
     private Label strengthValue;
-    @FXML
-    private Label toughnessText;
     @FXML
     private Label toughnessValue;
     @FXML
-    private Label movementText;
-    @FXML
     private Label movementValue;
-    @FXML
-    private Label martialText;
     @FXML
     private Label martialValue;
     @FXML
-    private Label rangedText;
-    @FXML
     private Label rangedValue;
-    @FXML
-    private Label defenseText;
     @FXML
     private Label defenseValue;
     @FXML
@@ -138,31 +111,13 @@ public class BuilderFXMLController implements Initializable {
     @FXML
     private Label willpowerValue;
     @FXML
-    private Label disciplineText;
-    @FXML
-    private Label willpowerText;
-    @FXML
-    private Label commandText;
-    @FXML
     private Label commandValue;
     @FXML
     private Label mTValue;
     @FXML
     private Label rTValue;
     @FXML
-    private Label mTText;
-    @FXML
-    private Label rTText;
-    @FXML
-    private Label moraleText;
-    @FXML
     private Label moraleValue;
-    @FXML
-    private Label sizeText;
-    @FXML
-    private Label attacksText;
-    @FXML
-    private Label woundsText;
     @FXML
     private Label pointsPerModelValue;
     @FXML
@@ -172,17 +127,7 @@ public class BuilderFXMLController implements Initializable {
     @FXML
     private Label attacksValue;
     @FXML
-    private Label characteristicsText;
-    @FXML
-    private Label targetNumbersText;
-    @FXML
-    private Label skillsText;
-    @FXML
-    private Label classTypeText;
-    @FXML
     private Label classTypeValue;
-    @FXML
-    private Label basedOnText;
     @FXML
     private Label basedOnValue;
     @FXML
@@ -231,72 +176,123 @@ public class BuilderFXMLController implements Initializable {
     private Label[] valuesLabels;
     private Boolean simplifyToCoreSkills;
 
-    @FXML
-    private void editActionPerformed() throws IOException {
-        //BuilderGuiJframe.EditNameOnlyCheckbox.setSelected(false);
-        //DatabaseModifier.PopulateDropdownsSpecies(MainButtons.Edit);
-        if (editWindowStage.isShowing()) {
-            editWindowStage.requestFocus();
-        } else {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/genesys/project/fxml/EditWindowFXML.fxml"));
-            Parent root = loader.load();
-            editWindowController = loader.getController();
-            editWindowController.setSpeciesList(speciesList);
-            Scene scene = new Scene(root);
-            editWindowStage.setScene(scene);
+    MenuItem createIt = new MenuItem("Create new");
+    MenuItem editIt = new MenuItem("Edit selected");
+    MenuItem duplicateIt = new MenuItem("Duplicate selected");
+    MenuItem deleteIt = new MenuItem("Delete selected");
+    final ContextMenu rightClickContextMenu = new ContextMenu(createIt, editIt, duplicateIt, deleteIt);
+
+    private void editActionPerformed(String What) throws IOException, SQLException, CloneNotSupportedException {
+        GenesysProjectBuilder.hideOtherThanMainStage();
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/genesys/project/fxml/EditWindowFXML.fxml"));
+        Parent root = loader.load();
+        editWindowController = loader.getController();
+        editWindowController.setSpeciesAndCultureAndRosterList(speciesList, culturesList, rostersList);
+        Scene scene = new Scene(root);
+        editWindowStage.setScene(scene);
+        if (What.equals("Choose")) {
             editWindowStage.show();
+        } else {
+            editWindowController.editWhat();
         }
     }
 
     @FXML
-    private void createActionPerformed() throws IOException {
-        if (createWindowWhatStage.isShowing()) {
-            createWindowWhatStage.requestFocus();
-        } else {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/genesys/project/fxml/CreateWindowWhatFXML.fxml"));
-            Parent root = loader.load();
-            createWindowWhatController = loader.getController();
-            createWindowWhatController.setSpeciesList(speciesList);
-            Scene scene = new Scene(root);
-            createWindowWhatStage.setScene(scene);
+    private void editChooseActionPerformed() throws IOException, SQLException, CloneNotSupportedException {
+        editActionPerformed("Choose");
+    }
+
+    private void createActionPerformed(String What, String Selection) throws IOException, SQLException {
+        GenesysProjectBuilder.hideOtherThanMainStage();
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/genesys/project/fxml/CreateWindowWhatFXML.fxml"));
+        Parent root = loader.load();
+        createWindowWhatController = loader.getController();
+        createWindowWhatController.setSpeciesList(speciesList);
+        Scene scene = new Scene(root);
+        createWindowWhatStage.setScene(scene);
+        if (What.equals("Choose")) {
             createWindowWhatStage.show();
+        } else {
+            createWindowWhatController.newWhat(What, Selection);
         }
     }
 
     @FXML
-    private void duplicateActionPerformed() throws IOException {
-        //DatabaseModifier.PopulateDropdownsSpecies(MainButtons.Duplicate);
-        //BuilderGuiJframe.DuplicateNewNameValue.setText(">enter name here<");
-        if (duplicateWindowStage.isShowing()) {
-            duplicateWindowStage.requestFocus();
-        } else {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/genesys/project/fxml/DuplicateWindowFXML.fxml"));
-            Parent root = loader.load();
-            duplicateWindowController = loader.getController();
-            duplicateWindowController.setSpeciesList(speciesList);
-            duplicateWindowController.setDuplicateWindowController(duplicateWindowController);
-            Scene scene = new Scene(root);
-            duplicateWindowStage.setScene(scene);
-            duplicateWindowStage.show();
-        }
-
+    private void createChooseActionPerformed() throws IOException, SQLException {
+        createActionPerformed("Choose", null);
     }
 
     @FXML
-    private void deleteActionPerformed() throws IOException {
-        //DatabaseModifier.PopulateDropdownsSpecies(MainButtons.Delete);
-        if (deleteWindowStage.isShowing()) {
-            deleteWindowStage.requestFocus();
-        } else {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/genesys/project/fxml/DeleteWindowFXML.fxml"));
-            Parent root = loader.load();
-            deleteWindowController = loader.getController();
-            deleteWindowController.setSpeciesList(speciesList);
-            Scene scene = new Scene(root);
-            deleteWindowStage.setScene(scene);
-            deleteWindowStage.show();
-        }
+    private void createSpeciesActionPerformed() throws IOException, SQLException {
+        createActionPerformed("Species", null);
+    }
 
+    @FXML
+    private void createCultureActionPerformed() throws IOException, SQLException {
+        createActionPerformed("Culture", null);
+    }
+
+    @FXML
+    private void createRosterActionPerformed() throws IOException, SQLException {
+        createActionPerformed("Roster", null);
+    }
+
+    @FXML
+    private void createHumanoidActionPerformed() throws IOException, SQLException {
+        createActionPerformed("Humanoid", null);
+    }
+
+    @FXML
+    private void createFeyActionPerformed() throws IOException, SQLException {
+        createActionPerformed("Fey", null);
+    }
+
+    @FXML
+    private void createReptiliaActionPerformed() throws IOException, SQLException {
+        createActionPerformed("Reptilia", null);
+    }
+
+    @FXML
+    private void createBiestActionPerformed() throws IOException, SQLException {
+        createActionPerformed("Biest", null);
+    }
+
+    @FXML
+    private void createInsectaActionPerformed() throws IOException, SQLException {
+        createActionPerformed("Insecta", null);
+    }
+
+    private void duplicateActionPerformed(String menuItem) throws IOException {
+        GenesysProjectBuilder.hideOtherThanMainStage();
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/genesys/project/fxml/DuplicateWindowFXML.fxml"));
+        Parent root = loader.load();
+        duplicateWindowController = loader.getController();
+        duplicateWindowController.setSpeciesList(speciesList);
+        duplicateWindowController.setDuplicateWindowController(duplicateWindowController);
+        Scene scene = new Scene(root);
+        duplicateWindowStage.setScene(scene);
+        duplicateWindowStage.show();
+    }
+    
+    @FXML
+    private void duplicateChooseActionPerformed() throws IOException, SQLException, CloneNotSupportedException {
+        duplicateActionPerformed("Choose");
+    }
+
+    private void deleteActionPerformed(String menuItem) throws IOException {
+        GenesysProjectBuilder.hideOtherThanMainStage();
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/genesys/project/fxml/DeleteWindowFXML.fxml"));
+        Parent root = loader.load();
+        deleteWindowController = loader.getController();
+        deleteWindowController.setSpeciesList(speciesList);
+        Scene scene = new Scene(root);
+        deleteWindowStage.setScene(scene);
+        deleteWindowStage.show();
+    }
+    
+    @FXML
+    private void deleteChooseActionPerformed() throws IOException, SQLException, CloneNotSupportedException {
+        deleteActionPerformed("Choose");
     }
 
     @FXML
@@ -320,12 +316,8 @@ public class BuilderFXMLController implements Initializable {
             stmt3.setString(1, speciesList.getSelectionModel().getSelectedItem().toString());
             String[] columns = {"CultureName"};
             culturesList.setItems(BuilderCORE.getData(stmt3, columns, null));
-            int cost = baseCost(currentLifeDomain, speciesList.getSelectionModel().getSelectedItem().toString(),
-                    null/*culturesList.getSelectionModel().getSelectedItem().toString()*/,
-                    null/*classList.getSelectionModel().getSelectedItem().toString()*/,
-                    0);
-            String tex = Integer.toString(cost);
-            pointsPerModelValue.setText(tex);
+            int cost = baseCost(currentLifeDomain, speciesList.getSelectionModel().getSelectedItem().toString(), null, null, 0);
+            pointsPerModelValue.setText(Integer.toString(cost));
             populateLabels();
             subSkillsList.getItems().clear();
             skillFullText.setText("");
@@ -397,8 +389,7 @@ public class BuilderFXMLController implements Initializable {
                 basedOnValue.setText(BuilderCORE.getValue(stmt1, "BasedOn"));
             }
             int cost = baseCost(currentLifeDomain, speciesList.getSelectionModel().getSelectedItem().toString(), culturesList.getSelectionModel().getSelectedItem().toString(), classList.getSelectionModel().getSelectedItem().toString(), 0);
-            String tex = Integer.toString(cost);
-            pointsPerModelValue.setText(tex);
+            pointsPerModelValue.setText(Integer.toString(cost));
             populateLabels();
         }
         subSkillsList.getItems().clear();
@@ -435,8 +426,7 @@ public class BuilderFXMLController implements Initializable {
             stmt3.setString(2, speciesList.getSelectionModel().getSelectedItem().toString());
             stmt3.setString(3, culturesList.getSelectionModel().getSelectedItem().toString());
             int cost = baseCost(currentLifeDomain, speciesList.getSelectionModel().getSelectedItem().toString(), culturesList.getSelectionModel().getSelectedItem().toString(), BuilderCORE.getValue(stmt3, "BasedOn"), 0);
-            String tex = Integer.toString(cost);
-            pointsPerModelValue.setText(tex);
+            pointsPerModelValue.setText(Integer.toString(cost));
             populateLabels();
         }
         subSkillsList.getItems().clear();
@@ -516,11 +506,7 @@ public class BuilderFXMLController implements Initializable {
             if (!basedOn.equals("") && !basedOn.equals("null")) {
                 skillsBefore = getBaseSkills(colu, basedOn, SpeciesName, CultureName);
             }
-            if (!skillsThis.equals("") && !skillsThis.equals("null") && !skillsBefore.equals("")) {
-                fullSkillList = (skillsThis + "," + skillsBefore);
-            } else {
-                fullSkillList = (skillsBefore);
-            }
+            fullSkillList = !skillsThis.equals("") && !skillsThis.equals("null") && !skillsBefore.equals("") ? (skillsThis + "," + skillsBefore) : skillsBefore;
         }
         return fullSkillList;
     }
@@ -943,6 +929,78 @@ public class BuilderFXMLController implements Initializable {
             }
         });
 
+        EventHandler rightMouseListClick = new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                if (event.isSecondaryButtonDown()) {
+                    rightClickContextMenu.show((Node) event.getTarget(), event.getScreenX(), event.getScreenY());
+                }
+            }
+        };
+
+        speciesList.setOnMousePressed(rightMouseListClick);
+        culturesList.setOnMousePressed(rightMouseListClick);
+        rostersList.setOnMousePressed(rightMouseListClick);
+
+        rightClickContextMenu.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                try {
+                    checkListAndMenuItemThenDecide(((MenuItem) event.getTarget()).getText());
+                } catch (IOException | SQLException | CloneNotSupportedException ex) {
+                    Logger.getLogger(BuilderFXMLController.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        });
+    }
+
+    private void checkListAndMenuItemThenDecide(String menuItem) throws IOException, SQLException, CloneNotSupportedException {
+        switch (menuItem) {
+            case "Create new":
+                if (rostersList.isFocused() && !culturesList.getSelectionModel().isEmpty()) {
+                    createActionPerformed("Roster", culturesList.getSelectionModel().getSelectedItem().toString());
+                    break;
+                } else if (rostersList.isFocused() && culturesList.getSelectionModel().isEmpty()) {
+                    createActionPerformed("Roster", null);
+                    break;
+                } else if (culturesList.isFocused() && !speciesList.getSelectionModel().isEmpty()) {
+                    createActionPerformed("Culture", speciesList.getSelectionModel().getSelectedItem().toString());
+                    break;
+                } else if (culturesList.isFocused() && speciesList.getSelectionModel().isEmpty()) {
+                    createActionPerformed("Culture", null);
+                    break;
+                } else if (speciesList.isFocused()) {
+                    createActionPerformed("Species", null);
+                    break;
+                } else {
+                    createActionPerformed("Choose", null);
+                    break;
+                }
+            case "Edit selected":
+                if (rostersList.isFocused() || culturesList.isFocused() || speciesList.isFocused()) {
+                    editActionPerformed(menuItem);
+                    break;
+                } else {
+                    editActionPerformed("Choose");
+                    break;
+                }
+            case "Duplicate selected":
+                if (rostersList.isFocused() || culturesList.isFocused() || speciesList.isFocused()) {
+                    duplicateActionPerformed(menuItem);
+                    break;
+                } else {
+                    duplicateActionPerformed("Choose");
+                    break;
+                }
+            case "Delete selected":
+                if (rostersList.isFocused() || culturesList.isFocused() || speciesList.isFocused()) {
+                    deleteActionPerformed(menuItem);
+                    break;
+                } else {
+                    deleteActionPerformed("Choose");
+                    break;
+                }
+        }
     }
 
 }

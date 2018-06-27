@@ -24,6 +24,7 @@ import javafx.event.EventHandler;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyEvent;
+import org.sqlite.jdbc4.JDBC4PreparedStatement;
 
 /**
  *
@@ -135,7 +136,7 @@ public class BuilderCORE {
     public static final String INSECTASUBSKILS = "Order";
 
     public static final String[] GAME_TYPES = {"Standard Play", "Hero Play"};
-    
+
     public static final String[] EQUIPMENT_TYPES = {"Weapon", "Armor", "Other"};
 
     public static void main(String[] args) {
@@ -304,6 +305,19 @@ public class BuilderCORE {
             tmp.add(" ");
         }
         return tmp;
+    }
+
+    public static int findMaxAge(ListView skillsList1) throws SQLException {
+        StringBuilder skillsL = new StringBuilder("");
+        for (int i = 0; i < skillsList1.getItems().size(); i++) {
+            skillsL.append("\"").append(skillsList1.getItems().get(i).toString().split(" \\(")[0]).append("\"").append(", ");
+        }
+        String skills = skillsL.substring(0, skillsL.length() - 2);
+        chooseConnection(UseCases.COREdb);
+        PreparedStatement stmt = conn.prepareStatement("SELECT max(Age) FROM Skills WHERE SkillName IN (" + skills + ")");
+        String[] columns = {"max(Age)"};
+        ObservableList<String> tmpget = getData(stmt, columns, null);
+        return Integer.parseInt(tmpget.get(0));
     }
 
     /**

@@ -11,27 +11,27 @@
         <URL value="@builderfxml.css" />
     </stylesheets>
    <children>
-      <Button fx:id="newSpecies" contentDisplay="TOP" layoutX="14.0" layoutY="14.0" mnemonicParsing="false" onAction="#newSpeciesActions" prefHeight="283.0" prefWidth="200.0" text="New Species">
+      <Button fx:id="newSpecies" contentDisplay="TOP" layoutX="14.0" layoutY="14.0" mnemonicParsing="false" onAction="#createSpeciesChooseActionPerformed" prefHeight="283.0" prefWidth="200.0" text="New Species">
          <graphic>
-            <ImageView fitHeight="195.0" fitWidth="186.0" onMouseClicked="#newSpeciesActions" pickOnBounds="true" preserveRatio="true">
+            <ImageView fitHeight="195.0" fitWidth="186.0" onMouseClicked="#createSpeciesChooseActionPerformed" pickOnBounds="true" preserveRatio="true">
                <image>
                   <Image url="@../builder/IMAGES/create%20species.png" />
                </image>
             </ImageView>
          </graphic>
       </Button>
-      <Button fx:id="newCulture" contentDisplay="TOP" layoutX="225.0" layoutY="14.0" mnemonicParsing="false" onAction="#newCultureActions" prefHeight="283.0" prefWidth="200.0" text="New Culture">
+      <Button fx:id="newCulture" contentDisplay="TOP" layoutX="225.0" layoutY="14.0" mnemonicParsing="false" onAction="#createCultureChooseActionPerformed" prefHeight="283.0" prefWidth="200.0" text="New Culture">
          <graphic>
-            <ImageView fitHeight="116.0" fitWidth="178.0" onMouseClicked="#newCultureActions" pickOnBounds="true" preserveRatio="true">
+            <ImageView fitHeight="116.0" fitWidth="178.0" onMouseClicked="#createCultureChooseActionPerformed" pickOnBounds="true" preserveRatio="true">
                <image>
                   <Image url="@../builder/IMAGES/create%20culture.png" />
                </image>
             </ImageView>
          </graphic>
       </Button>
-      <Button fx:id="newRoster" contentDisplay="TOP" layoutX="431.0" layoutY="14.0" mnemonicParsing="false" onAction="#newRosterAcrions" prefHeight="283.0" prefWidth="200.0" text="New Roster">
+      <Button fx:id="newRoster" contentDisplay="TOP" layoutX="431.0" layoutY="14.0" mnemonicParsing="false" onAction="#createRosterChooseActionPerformed" prefHeight="283.0" prefWidth="200.0" text="New Roster">
          <graphic>
-            <ImageView fitHeight="116.0" fitWidth="181.0" onMouseClicked="#newRosterAcrions" pickOnBounds="true" preserveRatio="true">
+            <ImageView fitHeight="116.0" fitWidth="181.0" onMouseClicked="#createRosterChooseActionPerformed" pickOnBounds="true" preserveRatio="true">
                <image>
                   <Image url="@../builder/IMAGES/create%20roster.png" />
                </image>

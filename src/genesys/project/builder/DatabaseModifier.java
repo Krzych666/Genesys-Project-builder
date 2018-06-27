@@ -229,13 +229,14 @@ public class DatabaseModifier {
      * @throws SQLException
      */
     public static ObservableList<String> getAddedSkills(String HoldSkills) throws SQLException {
+
         if (HoldSkills == null || "".equals(HoldSkills)) {
             return null;
         }
         fullSkillList1 = "";
         ruledskills.clear();
-        String[] lst = HoldSkills.split(",");
-        String[] lstref = HoldSkills.split(",");
+        String[] lst = HoldSkills.replaceAll(";", ",").split(",");
+        String[] lstref = HoldSkills.replaceAll(";", ",").split(",");
         for (int i = 0; i < lst.length; i++) {
             if (!lstref[i].equals("")) {
                 chooseConnection(UseCases.COREdb);
@@ -361,7 +362,7 @@ public class DatabaseModifier {
                     }
                 }
                 if (!"".equals(species.Skills) && classname[bb].BasedOn.equals(BuilderCORE.BASE)) {
-                    String[] lst = (species.Skills.split(","));
+                    String[] lst = (species.Skills.replaceAll(";", ",").split(","));
                     for (String lst1 : lst) {
                         chooseConnection(UseCases.COREdb);
                         PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT PointCost FROM Skills WHERE SkillName = ?");
@@ -374,7 +375,7 @@ public class DatabaseModifier {
                     }
                 }
             } else {
-                String[] lst = (species.Skills.split(","));
+                String[] lst = (species.Skills.replaceAll(";", ",").split(","));
                 for (String lst1 : lst) {
                     chooseConnection(UseCases.COREdb);
                     PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT PointCost FROM Skills WHERE SkillName = ?");
@@ -387,7 +388,7 @@ public class DatabaseModifier {
                 }
             }
         } else if (!"".equals(species.Skills)) {
-            String[] lst = (species.Skills.split(","));
+            String[] lst = (species.Skills.replaceAll(";", ",").split(","));
             for (String lst1 : lst) {
                 chooseConnection(UseCases.COREdb);
                 PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT PointCost FROM Skills WHERE SkillName = ?");
@@ -1136,7 +1137,7 @@ public class DatabaseModifier {
         return tmp;
     }
 
-    //change to private and do setters/gettera
+    //change to private and do setters/getters
     /**
      *
      * @param selSpecies
@@ -1158,13 +1159,17 @@ public class DatabaseModifier {
         holdSpecies.setCharacteristicGroup(CharacteristicGroup.valueOf(BuilderCORE.getValue(stmt2, "CharacteristicGroup")));
         holdSpecies.setSpeciesName(selSpecies);
         chooseConnection(UseCases.Userdb);
-        PreparedStatement stmt3 = BuilderCORE.getConnection().prepareStatement("SELECT Skills FROM CreatedSpecies WHERE SpeciesName =?");
+        PreparedStatement stmt3 = BuilderCORE.getConnection().prepareStatement("SELECT Age FROM CreatedSpecies WHERE SpeciesName = ?");
         stmt3.setString(1, selSpecies);
-        holdSpecies.setSkills(BuilderCORE.getValue(stmt3, "Skills"));
+        holdSpecies.setAge(Integer.parseInt(BuilderCORE.getValue(stmt3, "Age")));
         chooseConnection(UseCases.Userdb);
-        PreparedStatement stmt4 = BuilderCORE.getConnection().prepareStatement("SELECT SpeciesModifiers FROM CreatedSpecies WHERE SpeciesName =?");
+        PreparedStatement stmt4 = BuilderCORE.getConnection().prepareStatement("SELECT Skills FROM CreatedSpecies WHERE SpeciesName =?");
         stmt4.setString(1, selSpecies);
-        holdSpecies.setSpeciesModifiers(BuilderCORE.getValue(stmt4, "SpeciesModifiers"));
+        holdSpecies.setSkills(BuilderCORE.getValue(stmt4, "Skills"));
+        chooseConnection(UseCases.Userdb);
+        PreparedStatement stmt5 = BuilderCORE.getConnection().prepareStatement("SELECT SpeciesModifiers FROM CreatedSpecies WHERE SpeciesName =?");
+        stmt5.setString(1, selSpecies);
+        holdSpecies.setSpeciesModifiers(BuilderCORE.getValue(stmt5, "SpeciesModifiers"));
         modifiedHoldSpecies = holdSpecies.getClone();
     }
 
@@ -1173,6 +1178,7 @@ public class DatabaseModifier {
      * @param selSpecies
      * @param selCulture
      * @throws java.lang.CloneNotSupportedException
+     * @throws java.sql.SQLException
      */
     public static void loadCulture(String selSpecies, String selCulture) throws CloneNotSupportedException, SQLException {
         holdCulture.setSpeciesName(selSpecies);
@@ -1240,27 +1246,27 @@ public class DatabaseModifier {
      * @throws java.lang.CloneNotSupportedException
      */
     public static void loadHero(String selSpecies, String selCulture, String selHero) throws SQLException, CloneNotSupportedException {
-        holdHero.HeroName = selHero;
-        holdHero.SpeciesName = selSpecies;
-        holdHero.CultureName = selCulture;
+        holdHero.setHeroName(selHero);
+        holdHero.setSpeciesName(selSpecies);
+        holdHero.setCultureName(selCulture);
         chooseConnection(UseCases.Userdb);
         PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT Advancements FROM CreatedHeroes WHERE SpeciesName =? AND CultureName =? AND HeroName =?");
         stmt.setString(1, selSpecies);
         stmt.setString(2, selCulture);
         stmt.setString(3, selHero);
-        holdHero.Advancements = BuilderCORE.getValue(stmt, "Advancements");
+        holdHero.setAdvancements(BuilderCORE.getValue(stmt, "Advancements"));
         chooseConnection(UseCases.Userdb);
         PreparedStatement stmt1 = BuilderCORE.getConnection().prepareStatement("SELECT BasedOn FROM CreatedHeroes WHERE SpeciesName =? AND CultureName =? AND HeroName =?");
         stmt1.setString(1, selSpecies);
         stmt1.setString(2, selCulture);
         stmt1.setString(3, selHero);
-        holdHero.BasedOn = BuilderCORE.getValue(stmt1, "BasedOn");
+        holdHero.setBasedOn(BuilderCORE.getValue(stmt1, "BasedOn"));
         chooseConnection(UseCases.Userdb);
         PreparedStatement stmt2 = BuilderCORE.getConnection().prepareStatement("SELECT AdditionalCost FROM CreatedHeroes WHERE SpeciesName =? AND CultureName =? AND HeroName =?");
         stmt2.setString(1, selSpecies);
         stmt2.setString(2, selCulture);
         stmt2.setString(3, selHero);
-        holdHero.AdditionalCost = BuilderCORE.getValue(stmt2, "AdditionalCost");
+        holdHero.setAdditionalCost(BuilderCORE.getValue(stmt2, "AdditionalCost"));
         modifiedHoldHero = holdHero.getClone();
     }
 
@@ -1273,15 +1279,15 @@ public class DatabaseModifier {
      * @throws java.lang.CloneNotSupportedException
      */
     public static void loadProgress(String selSpecies, String selCulture, String selProgress) throws SQLException, CloneNotSupportedException {
-        holdProgress.SpeciesName = selSpecies;
-        holdProgress.CultureName = selCulture;
-        holdProgress.ProgressName = selProgress;
+        holdProgress.setSpeciesName(selSpecies);
+        holdProgress.setCultureName(selCulture);
+        holdProgress.setProgressName(selProgress);
         chooseConnection(UseCases.Userdb);
         PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT Progress FROM CreatedProgress WHERE SpeciesName =? AND CultureName =? AND ProgressName =?");
         stmt.setString(1, selSpecies);
         stmt.setString(2, selCulture);
         stmt.setString(3, selProgress);
-        holdProgress.Progress = BuilderCORE.getValue(stmt, "Progress");
+        holdProgress.setProgress(BuilderCORE.getValue(stmt, "Progress"));
         modifiedHoldProgress = holdProgress.getClone();
     }
 
@@ -1294,15 +1300,15 @@ public class DatabaseModifier {
      * @throws java.lang.CloneNotSupportedException
      */
     public static void loadRoster(String selSpecies, String selCulture, String selRoster) throws SQLException, CloneNotSupportedException {
-        holdRoster.SpeciesName = selSpecies;
-        holdRoster.CultureName = selCulture;
-        holdRoster.RosterName = selRoster;
+        holdRoster.setSpeciesName(selSpecies);
+        holdRoster.setCultureName(selCulture);
+        holdRoster.setRosterName(selRoster);
         chooseConnection(UseCases.Userdb);
         PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT Roster FROM CreatedRosters WHERE SpeciesName =? AND CultureName =? AND RosterName =?");
         stmt.setString(1, selSpecies);
         stmt.setString(2, selCulture);
         stmt.setString(3, selRoster);
-        holdRoster.Roster = BuilderCORE.getValue(stmt, "Roster");
+        holdRoster.setRoster(BuilderCORE.getValue(stmt, "Roster"));
         modifiedHoldRoster = holdRoster.getClone();
     }
 // privatize
@@ -1312,12 +1318,12 @@ public class DatabaseModifier {
      * @param newSpecies
      */
     public static void modifySpeciesName(String newSpecies) {
-        executeSQL("UPDATE CreatedSpecies SET SpeciesName='" + newSpecies + "' WHERE SpeciesName='" + holdSpecies.SpeciesName + "'");
-        executeSQL("UPDATE CreatedCultures SET SpeciesName='" + newSpecies + "' WHERE SpeciesName='" + holdSpecies.SpeciesName + "'");
-        executeSQL("UPDATE CreatedClasses SET SpeciesName='" + newSpecies + "' WHERE SpeciesName='" + holdSpecies.SpeciesName + "'");
-        executeSQL("UPDATE CreatedHeroes SET SpeciesName='" + newSpecies + "' WHERE SpeciesName='" + holdSpecies.SpeciesName + "'");
-        executeSQL("UPDATE CreatedProgress SET SpeciesName='" + newSpecies + "' WHERE SpeciesName='" + holdSpecies.SpeciesName + "'");
-        executeSQL("UPDATE CreatedRosters SET SpeciesName='" + newSpecies + "' WHERE SpeciesName='" + holdSpecies.SpeciesName + "'");
+        executeSQL("UPDATE CreatedSpecies SET SpeciesName='" + newSpecies + "' WHERE SpeciesName='" + holdSpecies.getSpeciesName() + "'");
+        executeSQL("UPDATE CreatedCultures SET SpeciesName='" + newSpecies + "' WHERE SpeciesName='" + holdSpecies.getSpeciesName() + "'");
+        executeSQL("UPDATE CreatedClasses SET SpeciesName='" + newSpecies + "' WHERE SpeciesName='" + holdSpecies.getSpeciesName() + "'");
+        executeSQL("UPDATE CreatedHeroes SET SpeciesName='" + newSpecies + "' WHERE SpeciesName='" + holdSpecies.getSpeciesName() + "'");
+        executeSQL("UPDATE CreatedProgress SET SpeciesName='" + newSpecies + "' WHERE SpeciesName='" + holdSpecies.getSpeciesName() + "'");
+        executeSQL("UPDATE CreatedRosters SET SpeciesName='" + newSpecies + "' WHERE SpeciesName='" + holdSpecies.getSpeciesName() + "'");
     }
 
     /**
@@ -1325,12 +1331,12 @@ public class DatabaseModifier {
      * @throws SQLException
      */
     public static void modifySpecies() throws SQLException {
-        executeSQL("UPDATE CreatedSpecies SET Lifedomain='" + holdSpecies.Lifedomain + "', CharacteristicGroup='" + holdSpecies.CharacteristicGroup + "', SpeciesName='" + holdSpecies.SpeciesName + "', Skills='" + holdSpecies.Skills + "', SpeciesModifiers='" + holdSpecies.SpeciesModifiers + "' WHERE SpeciesName='" + modifiedHoldSpecies.SpeciesName + "'");
-        executeSQL("UPDATE CreatedCultures SET SpeciesName='" + holdSpecies.SpeciesName + "' WHERE SpeciesName='" + modifiedHoldSpecies.SpeciesName + "'");
-        executeSQL("UPDATE CreatedClasses SET SpeciesName='" + holdSpecies.SpeciesName + "' WHERE SpeciesName='" + modifiedHoldSpecies.SpeciesName + "'");
-        executeSQL("UPDATE CreatedHeroes SET SpeciesName='" + holdSpecies.SpeciesName + "' WHERE SpeciesName='" + modifiedHoldSpecies.SpeciesName + "'");
-        executeSQL("UPDATE CreatedProgress SET SpeciesName='" + holdSpecies.SpeciesName + "' WHERE SpeciesName='" + modifiedHoldSpecies.SpeciesName + "'");
-        executeSQL("UPDATE CreatedRosters SET SpeciesName='" + holdSpecies.SpeciesName + "' WHERE SpeciesName='" + modifiedHoldSpecies.SpeciesName + "'");
+        executeSQL("UPDATE CreatedSpecies SET Lifedomain='" + holdSpecies.getLifedomain() + "', CharacteristicGroup='" + holdSpecies.getCharacteristicGroup() + "', SpeciesName='" + holdSpecies.getSpeciesName() + "', Age='" + holdSpecies.getAge() + "', Skills='" + holdSpecies.getSkills() + "', SpeciesModifiers='" + holdSpecies.getSpeciesModifiers() + "' WHERE SpeciesName='" + modifiedHoldSpecies.getSpeciesName() + "'");
+        executeSQL("UPDATE CreatedCultures SET SpeciesName='" + holdSpecies.getSpeciesName() + "' WHERE SpeciesName='" + modifiedHoldSpecies.getSpeciesName() + "'");
+        executeSQL("UPDATE CreatedClasses SET SpeciesName='" + holdSpecies.getSpeciesName() + "' WHERE SpeciesName='" + modifiedHoldSpecies.getSpeciesName() + "'");
+        executeSQL("UPDATE CreatedHeroes SET SpeciesName='" + holdSpecies.getSpeciesName() + "' WHERE SpeciesName='" + modifiedHoldSpecies.getSpeciesName() + "'");
+        executeSQL("UPDATE CreatedProgress SET SpeciesName='" + holdSpecies.getSpeciesName() + "' WHERE SpeciesName='" + modifiedHoldSpecies.getSpeciesName() + "'");
+        executeSQL("UPDATE CreatedRosters SET SpeciesName='" + holdSpecies.getSpeciesName() + "' WHERE SpeciesName='" + modifiedHoldSpecies.getSpeciesName() + "'");
         checkClassSkillsSpecies();
     }
 
@@ -1353,25 +1359,25 @@ public class DatabaseModifier {
         }
         chooseConnection(UseCases.Userdb);
         PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT DISTINCT CultureName FROM CreatedClasses WHERE SpeciesName=?");
-        stmt.setString(1, holdSpecies.SpeciesName);
+        stmt.setString(1, holdSpecies.getSpeciesName());
         String[] columns = {"CultureName"};
         ObservableList tmpCult = BuilderCORE.getData(stmt, columns, null);
         for (int i = 0; i < tmpCult.size(); i++) {
             chooseConnection(UseCases.Userdb);
             PreparedStatement stmt1 = BuilderCORE.getConnection().prepareStatement("SELECT DISTINCT ClassName FROM CreatedClasses WHERE SpeciesName=? AND CultureName=?");
-            stmt1.setString(1, holdSpecies.SpeciesName);
+            stmt1.setString(1, holdSpecies.getSpeciesName());
             stmt1.setString(2, tmpCult.get(i).toString());
             String[] columns1 = {"ClassName"};
             ObservableList tmpClass = BuilderCORE.getData(stmt1, columns1, null);
             for (int ii = 0; ii < tmpClass.size(); ii++) {
                 chooseConnection(UseCases.Userdb);
                 PreparedStatement stmt2 = BuilderCORE.getConnection().prepareStatement("SELECT Skills FROM CreatedClasses WHERE SpeciesName=? AND CultureName=? AND ClassName=?");
-                stmt2.setString(1, holdSpecies.SpeciesName);
+                stmt2.setString(1, holdSpecies.getSpeciesName());
                 stmt2.setString(2, tmpCult.get(i).toString());
                 stmt2.setString(3, tmpClass.get(ii).toString());
                 String tmpSkill = BuilderCORE.getValue(stmt2, "Skills");
                 String tmpSkillRep = tmpSkill;
-                for (String split : deleteSkills.split(",")) {
+                for (String split : deleteSkills.replaceAll(";", ",").split(",")) {
                     tmpSkillRep = tmpSkillRep.replace(split, "");
                 }
                 if (tmpSkillRep != null && !tmpSkillRep.equals("")) {
@@ -1381,7 +1387,7 @@ public class DatabaseModifier {
                     }
                 }
                 if (!tmpSkill.equals(tmpSkillRep)) {
-                    executeSQL("UPDATE CreatedClasses SET Skills='" + tmpSkillRep + "' WHERE SpeciesName='" + holdSpecies.SpeciesName + "' AND CultureName='" + tmpCult.get(i).toString() + "' AND ClassName='" + tmpClass.get(ii).toString() + "'");
+                    executeSQL("UPDATE CreatedClasses SET Skills='" + tmpSkillRep + "' WHERE SpeciesName='" + holdSpecies.getSpeciesName() + "' AND CultureName='" + tmpCult.get(i).toString() + "' AND ClassName='" + tmpClass.get(ii).toString() + "'");
                 }
             }
         }
@@ -1392,15 +1398,15 @@ public class DatabaseModifier {
      * @param newCulture
      */
     public static void modifyCultureName(String newCulture) {
-        executeSQL("UPDATE CreatedCultures SET CultureName='" + newCulture + "' WHERE SpeciesName='" + holdCulture.SpeciesName + "' AND CultureName='" + holdCulture.CultureName + "'");
-        executeSQL("UPDATE CreatedClasses SET CultureName='" + newCulture + "' WHERE SpeciesName='" + holdCulture.SpeciesName + "' AND CultureName='" + holdCulture.CultureName + "'");
-        executeSQL("UPDATE CreatedHeroes SET CultureName='" + newCulture + "' WHERE SpeciesName='" + holdCulture.SpeciesName + "' AND CultureName='" + holdCulture.CultureName + "'");
-        executeSQL("UPDATE CreatedProgress SET CultureName='" + newCulture + "' WHERE SpeciesName='" + holdCulture.SpeciesName + "' AND CultureName='" + holdCulture.CultureName + "'");
-        executeSQL("UPDATE CreatedRosters SET CultureName='" + newCulture + "' WHERE SpeciesName='" + holdCulture.SpeciesName + "' AND CultureName='" + holdCulture.CultureName + "'");
+        executeSQL("UPDATE CreatedCultures SET CultureName='" + newCulture + "' WHERE SpeciesName='" + holdCulture.getSpeciesName() + "' AND CultureName='" + holdCulture.getCultureName() + "'");
+        executeSQL("UPDATE CreatedClasses SET CultureName='" + newCulture + "' WHERE SpeciesName='" + holdCulture.getSpeciesName() + "' AND CultureName='" + holdCulture.getCultureName() + "'");
+        executeSQL("UPDATE CreatedHeroes SET CultureName='" + newCulture + "' WHERE SpeciesName='" + holdCulture.getSpeciesName() + "' AND CultureName='" + holdCulture.getCultureName() + "'");
+        executeSQL("UPDATE CreatedProgress SET CultureName='" + newCulture + "' WHERE SpeciesName='" + holdCulture.getSpeciesName() + "' AND CultureName='" + holdCulture.getCultureName() + "'");
+        executeSQL("UPDATE CreatedRosters SET CultureName='" + newCulture + "' WHERE SpeciesName='" + holdCulture.getSpeciesName() + "' AND CultureName='" + holdCulture.getCultureName() + "'");
     }
 
     public static void modifyCulture() {
-        executeSQL("UPDATE CreatedCultures SET Age='" + holdCulture.Age + "' WHERE SpeciesName='" + holdCulture.SpeciesName + "' AND CultureName='" + holdCulture.CultureName + "'");
+        executeSQL("UPDATE CreatedCultures SET Age='" + holdCulture.getAge() + "' WHERE SpeciesName='" + holdCulture.getSpeciesName() + "' AND CultureName='" + holdCulture.getCultureName() + "'");
     }
 
     /**
@@ -1409,9 +1415,9 @@ public class DatabaseModifier {
      * @param a
      */
     public static void modifyClassName(String newClass, int a) {
-        executeSQL("UPDATE CreatedClasses SET BasedOn='" + newClass + "' WHERE SpeciesName='" + holdClass[a].SpeciesName + "' AND CultureName='" + holdClass[a].CultureName + "' AND BasedOn='" + holdClass[a].ClassName + "'");
-        executeSQL("UPDATE CreatedHeroes SET BasedOn='" + newClass + "' WHERE SpeciesName='" + holdClass[a].SpeciesName + "' AND CultureName='" + holdClass[a].CultureName + "' AND BasedOn='" + holdClass[a].ClassName + "'");
-        executeSQL("UPDATE CreatedClasses SET ClassName='" + newClass + "' WHERE SpeciesName='" + holdClass[a].SpeciesName + "' AND CultureName='" + holdClass[a].CultureName + "' AND ClassName='" + holdClass[a].ClassName + "'");
+        executeSQL("UPDATE CreatedClasses SET BasedOn='" + newClass + "' WHERE SpeciesName='" + holdClass[a].getSpeciesName() + "' AND CultureName='" + holdClass[a].getCultureName() + "' AND BasedOn='" + holdClass[a].getClassName() + "'");
+        executeSQL("UPDATE CreatedHeroes SET BasedOn='" + newClass + "' WHERE SpeciesName='" + holdClass[a].getSpeciesName() + "' AND CultureName='" + holdClass[a].getCultureName() + "' AND BasedOn='" + holdClass[a].getClassName() + "'");
+        executeSQL("UPDATE CreatedClasses SET ClassName='" + newClass + "' WHERE SpeciesName='" + holdClass[a].getSpeciesName() + "' AND CultureName='" + holdClass[a].getCultureName() + "' AND ClassName='" + holdClass[a].getClassName() + "'");
     }
 
     /**
@@ -1420,11 +1426,11 @@ public class DatabaseModifier {
      * @throws java.sql.SQLException
      */
     public static void modifyClass(int a) throws SQLException {
-        if (holdClass[a].Skills.endsWith(",")) {
-            holdClass[a].Skills = holdClass[a].Skills.substring(0, holdClass[a].Skills.length() - 1);
+        if (holdClass[a].getSkills().endsWith(",")) {
+            holdClass[a].setSkills(holdClass[a].getSkills().substring(0, holdClass[a].getSkills().length() - 1));
         }
-        executeSQL("UPDATE CreatedClasses SET ClassName='" + holdClass[a].ClassName + "', Skills='" + holdClass[a].Skills + "', SpeciesName='" + holdClass[a].SpeciesName + "', CultureName='" + holdClass[a].CultureName + "', Advancements='" + holdClass[a].Advancements + "', Type='" + holdClass[a].Type + "', BasedOn='" + holdClass[a].BasedOn + "', AdditionalCost='" + holdClass[a].AdditionalCost + "' WHERE SpeciesName='" + modifiedHoldClass[a].SpeciesName + "' AND CultureName='" + modifiedHoldClass[a].CultureName + "' AND ClassName='" + modifiedHoldClass[a].ClassName + "'");
-        executeSQL("UPDATE CreatedHeroes SET BasedOn='" + holdClass[a].ClassName + "' WHERE SpeciesName='" + modifiedHoldClass[a].SpeciesName + "' AND CultureName='" + modifiedHoldClass[a].CultureName + "' AND BasedOn='" + modifiedHoldClass[a].ClassName + "'");
+        executeSQL("UPDATE CreatedClasses SET ClassName='" + holdClass[a].getClassName() + "', Skills='" + holdClass[a].getSkills() + "', SpeciesName='" + holdClass[a].getSpeciesName() + "', CultureName='" + holdClass[a].getCultureName() + "', Advancements='" + holdClass[a].getAdvancements() + "', Type='" + holdClass[a].getType() + "', BasedOn='" + holdClass[a].getBasedOn() + "', AdditionalCost='" + holdClass[a].getAdditionalCost() + "' WHERE SpeciesName='" + modifiedHoldClass[a].getSpeciesName() + "' AND CultureName='" + modifiedHoldClass[a].getCultureName() + "' AND ClassName='" + modifiedHoldClass[a].getClassName() + "'");
+        executeSQL("UPDATE CreatedHeroes SET BasedOn='" + holdClass[a].getClassName() + "' WHERE SpeciesName='" + modifiedHoldClass[a].getSpeciesName() + "' AND CultureName='" + modifiedHoldClass[a].getCultureName() + "' AND BasedOn='" + modifiedHoldClass[a].getClassName() + "'");
         checkClassSkillsBasedon(a);
     }
 
@@ -1444,20 +1450,20 @@ public class DatabaseModifier {
         String deleteSkills = newFoundSkills.toString();
         chooseConnection(UseCases.Userdb);
         PreparedStatement stmt1 = BuilderCORE.getConnection().prepareStatement("SELECT ClassName FROM CreatedClasses WHERE SpeciesName=? AND CultureName=? AND BasedOn=?");
-        stmt1.setString(1, holdClass[a].SpeciesName);
-        stmt1.setString(2, holdClass[a].CultureName);
-        stmt1.setString(3, holdClass[a].ClassName);
+        stmt1.setString(1, holdClass[a].getSpeciesName());
+        stmt1.setString(2, holdClass[a].getCultureName());
+        stmt1.setString(3, holdClass[a].getClassName());
         String[] columns1 = {"ClassName"};
         ObservableList tmpBased = BuilderCORE.getData(stmt1, columns1, null);
         for (int i = 0; i < tmpBased.size(); i++) {
             chooseConnection(UseCases.Userdb);
             PreparedStatement stmt2 = BuilderCORE.getConnection().prepareStatement("SELECT Skills FROM CreatedClasses WHERE SpeciesName=? AND CultureName=? AND ClassName=?");
-            stmt2.setString(1, holdClass[a].SpeciesName);
-            stmt2.setString(2, holdClass[a].CultureName);
+            stmt2.setString(1, holdClass[a].getSpeciesName());
+            stmt2.setString(2, holdClass[a].getCultureName());
             stmt2.setString(3, tmpBased.get(i).toString());
             String tmpSkill = BuilderCORE.getValue(stmt2, "Skills");
             String tmpSkillRep = tmpSkill;
-            for (String split : deleteSkills.split(",")) {
+            for (String split : deleteSkills.replaceAll(";", ",").split(",")) {
                 tmpSkillRep = tmpSkillRep.replace(split, "");
             }
             if (tmpSkillRep != null && !tmpSkillRep.equals("")) {
@@ -1467,7 +1473,7 @@ public class DatabaseModifier {
                 }
             }
             if (!tmpSkill.equals(tmpSkillRep)) {
-                executeSQL("UPDATE CreatedClasses SET Skills='" + tmpSkillRep + "' WHERE SpeciesName='" + holdClass[a].SpeciesName + "' AND CultureName='" + holdClass[a].CultureName + "' AND ClassName='" + tmpBased.get(i).toString() + "'");
+                executeSQL("UPDATE CreatedClasses SET Skills='" + tmpSkillRep + "' WHERE SpeciesName='" + holdClass[a].getSpeciesName() + "' AND CultureName='" + holdClass[a].getCultureName() + "' AND ClassName='" + tmpBased.get(i).toString() + "'");
             }
         }
     }
@@ -1477,14 +1483,14 @@ public class DatabaseModifier {
      * @param newHero
      */
     public static void modifyHeroName(String newHero) {
-        executeSQL("UPDATE CreatedHeroes SET HeroName='" + newHero + "' WHERE SpeciesName='" + holdHero.SpeciesName + "' AND CultureName='" + holdHero.CultureName + "' AND HeroName='" + holdHero.HeroName + "'");
+        executeSQL("UPDATE CreatedHeroes SET HeroName='" + newHero + "' WHERE SpeciesName='" + holdHero.getSpeciesName() + "' AND CultureName='" + holdHero.getCultureName() + "' AND HeroName='" + holdHero.getHeroName() + "'");
     }
 
     /**
      * modifyHero
      */
     public static void modifyHero() {
-        executeSQL("UPDATE CreatedHeroes SET HeroName='" + holdHero.HeroName + "', SpeciesName='" + holdHero.SpeciesName + "', CultureName='" + holdHero.CultureName + "', Advancements='" + holdHero.Advancements + "', BasedOn='" + holdHero.BasedOn + "', AdditionalCost='" + holdHero.AdditionalCost + "', WHERE SpeciesName='" + modifiedHoldHero.SpeciesName + "' AND CultureName='" + modifiedHoldHero.CultureName + "' AND HeroName='" + modifiedHoldHero.HeroName + "'");
+        executeSQL("UPDATE CreatedHeroes SET HeroName='" + holdHero.getHeroName() + "', SpeciesName='" + holdHero.getSpeciesName() + "', CultureName='" + holdHero.getCultureName() + "', Advancements='" + holdHero.getAdvancements() + "', BasedOn='" + holdHero.getBasedOn() + "', AdditionalCost='" + holdHero.getAdditionalCost() + "', WHERE SpeciesName='" + modifiedHoldHero.getSpeciesName() + "' AND CultureName='" + modifiedHoldHero.getCultureName() + "' AND HeroName='" + modifiedHoldHero.getHeroName() + "'");
     }
 
     /**
@@ -1492,14 +1498,14 @@ public class DatabaseModifier {
      * @param newProgress
      */
     public static void modifyProgressName(String newProgress) {
-        executeSQL("UPDATE CreatedProgress SET ProgressName='" + newProgress + "' WHERE SpeciesName='" + holdProgress.SpeciesName + "' AND CultureName='" + holdProgress.CultureName + "' AND ProgressName='" + holdProgress.ProgressName + "'");
+        executeSQL("UPDATE CreatedProgress SET ProgressName='" + newProgress + "' WHERE SpeciesName='" + holdProgress.getSpeciesName() + "' AND CultureName='" + holdProgress.getCultureName() + "' AND ProgressName='" + holdProgress.getProgressName() + "'");
     }
 
     /**
      * modifyProgress
      */
     public static void modifyProgress() {
-        executeSQL("UPDATE CreatedProgress SET ProgressName='" + holdProgress.ProgressName + "', SpeciesName='" + holdProgress.SpeciesName + "', CultureName='" + holdProgress.CultureName + "', Progress='" + holdProgress.Progress + "' WHERE SpeciesName='" + modifiedHoldProgress.SpeciesName + "' AND CultureName='" + modifiedHoldProgress.CultureName + "' AND ProgressName='" + modifiedHoldProgress.ProgressName + "'");
+        executeSQL("UPDATE CreatedProgress SET ProgressName='" + holdProgress.getProgressName() + "', SpeciesName='" + holdProgress.getSpeciesName() + "', CultureName='" + holdProgress.getCultureName() + "', Progress='" + holdProgress.getProgress() + "' WHERE SpeciesName='" + modifiedHoldProgress.getSpeciesName() + "' AND CultureName='" + modifiedHoldProgress.getCultureName() + "' AND ProgressName='" + modifiedHoldProgress.getProgressName() + "'");
     }
 
     /**
@@ -1507,14 +1513,14 @@ public class DatabaseModifier {
      * @param newRoster
      */
     public static void modifyRosterName(String newRoster) {
-        executeSQL("UPDATE CreatedRosters SET RosterName='" + newRoster + "' WHERE SpeciesName='" + holdRoster.SpeciesName + "' AND CultureName='" + holdRoster.CultureName + "' AND RosterName='" + holdRoster.RosterName + "'");
+        executeSQL("UPDATE CreatedRosters SET RosterName='" + newRoster + "' WHERE SpeciesName='" + holdRoster.getSpeciesName() + "' AND CultureName='" + holdRoster.getCultureName() + "' AND RosterName='" + holdRoster.getRosterName() + "'");
     }
 
     /**
      * modifyRoster
      */
     public static void modifyRoster() {
-        executeSQL("UPDATE CreatedProgress SET RosterName='" + holdRoster.RosterName + "', SpeciesName='" + holdRoster.SpeciesName + "', CultureName='" + holdRoster.CultureName + "', Roster='" + holdRoster.Roster + "' WHERE SpeciesName='" + modifiedHoldRoster.SpeciesName + "' AND CultureName='" + modifiedHoldRoster.CultureName + "' AND RosterName='" + modifiedHoldRoster.RosterName + "'");
+        executeSQL("UPDATE CreatedProgress SET RosterName='" + holdRoster.getRosterName() + "', SpeciesName='" + holdRoster.getSpeciesName() + "', CultureName='" + holdRoster.getCultureName() + "', Roster='" + holdRoster.getRoster() + "' WHERE SpeciesName='" + modifiedHoldRoster.getSpeciesName() + "' AND CultureName='" + modifiedHoldRoster.getCultureName() + "' AND RosterName='" + modifiedHoldRoster.getRosterName() + "'");
     }
 
     /**
@@ -1533,6 +1539,10 @@ public class DatabaseModifier {
         @Getter
         @Setter
         private String SpeciesName, Skills, SpeciesModifiers;
+
+        @Getter
+        @Setter
+        private int Age;
 
         @Getter
         @Setter

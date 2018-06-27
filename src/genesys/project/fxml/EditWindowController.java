@@ -93,6 +93,8 @@ public class EditWindowController implements Initializable {
     public Stage classCreatorWindowStage = new Stage();
     private ClassCreatorWindowController classCreatorWindowController;
     private ListView speciesList;
+    private ListView cultureList;
+    private ListView rosterList;
 
     /**
      * editWindowNameOnlyStage
@@ -426,8 +428,26 @@ public class EditWindowController implements Initializable {
         }
     }
 
-    void setSpeciesList(ListView speciesList) {
+    void setSpeciesAndCultureAndRosterList(ListView speciesList, ListView cultureList, ListView rosterList) {
         this.speciesList = speciesList;
+        this.cultureList = cultureList;
+        this.rosterList = rosterList;
+    }
+
+    void editWhat() throws SQLException, IOException, CloneNotSupportedException {
+        if (!speciesList.getSelectionModel().isEmpty()) {
+            speciesEditDropdown.getSelectionModel().select(speciesList.getSelectionModel().getSelectedItem());
+            speciesEditDropdownItemStateChangedActions();
+            if (!cultureList.getSelectionModel().isEmpty()) {
+                cultureEditDropdown.getSelectionModel().select(cultureList.getSelectionModel().getSelectedItem());
+                cultureEditDropdownItemStateChangedActions();
+                if (!rosterList.getSelectionModel().isEmpty()) {
+                    rosterEditDropdown.getSelectionModel().select(rosterList.getSelectionModel().getSelectedItem());
+                    rosterEditDropdownItemStateChangedActions();
+                }
+            }
+        }
+        commenceEditing();        
     }
 
 }

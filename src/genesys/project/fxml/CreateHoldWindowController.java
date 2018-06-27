@@ -8,7 +8,6 @@ package genesys.project.fxml;
 import genesys.project.builder.BuilderCORE;
 import genesys.project.builder.Enums.Enmuerations.LifedomainValue;
 import genesys.project.builder.DatabaseModifier;
-import static genesys.project.builder.DatabaseModifier.holdClass;
 import genesys.project.builder.GenesysProjectBuilder;
 import java.io.IOException;
 import java.net.URL;
@@ -238,12 +237,12 @@ public class CreateHoldWindowController implements Initializable {
             tmp.add("<lesser species>");
             tmp.add("<greater species>");
         }
+        DatabaseModifier.setNumberOfClases();
         for (int i = 0; i < DatabaseModifier.holdClass.length; i++) {
             tmp.add(DatabaseModifier.holdClass[i].getClassName());
         }
         classList1.setItems(tmp);
         clearLists3();
-        DatabaseModifier.setNumberOfClases();
         classesLeft3a.setText(DatabaseModifier.classCanTake());
         classesLeft3b.setText(DatabaseModifier.classLeftModify());
     }
@@ -254,7 +253,7 @@ public class CreateHoldWindowController implements Initializable {
      */
     public void populateLabels() throws SQLException {
         for (int i = 0; i < valuesLabels3.length; i++) {
-            valuesLabels3[i].setText(GenesysProjectBuilder.CORE.getCharacteristics(DatabaseModifier.holdSpecies.getLifedomain().toString(),DatabaseModifier.holdSpecies.getCharacteristicGroup().toString())[i]);
+            valuesLabels3[i].setText(GenesysProjectBuilder.CORE.getCharacteristics(DatabaseModifier.holdSpecies.getLifedomain().toString(), DatabaseModifier.holdSpecies.getCharacteristicGroup().toString())[i]);
         }
     }
 

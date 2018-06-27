@@ -5,8 +5,10 @@
  */
 package genesys.project.fxml;
 
+import genesys.project.builder.GenesysProjectBuilder;
 import java.io.IOException;
 import java.net.URL;
+import java.sql.SQLException;
 import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -54,54 +56,62 @@ public class CreateWindowWhatController implements Initializable {
 
     private ListView speciesList;
 
-    @FXML
-    private void newSpeciesActions() throws IOException {
-        Stage stage = (Stage) newSpecies.getScene().getWindow();
-        stage.hide();
-        if (createSpeciesStage.isShowing()) {
-            createSpeciesStage.requestFocus();
-        } else {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/genesys/project/fxml/CreateSpeciesFXML.fxml"));
-            Parent root = loader.load();
-            Scene scene = new Scene(root);
-            createSpeciesController = loader.getController();
-            createSpeciesController.setSpeciesList(speciesList);
-            createSpeciesStage.setScene(scene);
+    private void newSpeciesActions(String What) throws IOException {
+        GenesysProjectBuilder.hideOtherThanMainStage();
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/genesys/project/fxml/CreateSpeciesFXML.fxml"));
+        Parent root = loader.load();
+        Scene scene = new Scene(root);
+        createSpeciesController = loader.getController();
+        createSpeciesController.setSpeciesList(speciesList);
+        createSpeciesStage.setScene(scene);
+        if (What.equals("Choose")) {
             createSpeciesStage.show();
+        } else {
+            createSpeciesController.newWhat(What);
         }
     }
 
     @FXML
-    private void newCultureActions() throws IOException {
-        Stage stage = (Stage) newCulture.getScene().getWindow();
-        stage.hide();
-        if (createCultureStage.isShowing()) {
-            createCultureStage.requestFocus();
-        } else {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/genesys/project/fxml/CreateCultureFXML.fxml"));
-            Parent root = loader.load();
-            createCultureController = loader.getController();
-            createCultureController.setSpeciesList(speciesList);
-            Scene scene = new Scene(root);
-            createCultureStage.setScene(scene);
-            createCultureStage.show();
+    private void createSpeciesChooseActionPerformed() throws IOException {
+        newSpeciesActions("Choose");
+    }
+
+    private void newCultureActions(String Selection) throws IOException, SQLException {
+        GenesysProjectBuilder.hideOtherThanMainStage();
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/genesys/project/fxml/CreateCultureFXML.fxml"));
+        Parent root = loader.load();
+        createCultureController = loader.getController();
+        createCultureController.setSpeciesList(speciesList);
+        Scene scene = new Scene(root);
+        createCultureStage.setScene(scene);
+        if (Selection != null) {
+            createCultureController.setSpeciesSelection(Selection);
         }
+        createCultureStage.show();
     }
 
     @FXML
-    private void newRosterAcrions() throws IOException {
-        Stage stage = (Stage) newRoster.getScene().getWindow();
-        stage.hide();
-        if (createRosterStage.isShowing()) {
-            createRosterStage.requestFocus();
-        } else {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/genesys/project/fxml/CreateRosterFXML.fxml"));
-            Parent root = loader.load();
-            Scene scene = new Scene(root);
-            createRosterController = loader.getController();
-            createRosterStage.setScene(scene);
-            createRosterStage.show();
+    private void createCultureChooseActionPerformed() throws IOException, SQLException {
+        newCultureActions("Choose");
+    }
+
+    private void newRosterAcrions(String Selection) throws IOException, SQLException {
+        GenesysProjectBuilder.hideOtherThanMainStage();
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/genesys/project/fxml/CreateRosterFXML.fxml"));
+        Parent root = loader.load();
+        createRosterController = loader.getController();
+        createRosterController.setSpeciesList(speciesList);
+        Scene scene = new Scene(root);
+        createRosterStage.setScene(scene);
+        if (Selection != null) {
+            createRosterController.setSpeciesAndCultureSelection(Selection);
         }
+        createRosterStage.show();
+    }
+
+    @FXML
+    private void createRosterChooseActionPerformed() throws IOException, SQLException {
+        newRosterAcrions("Choose");
     }
 
     /**
@@ -117,6 +127,27 @@ public class CreateWindowWhatController implements Initializable {
 
     void setSpeciesList(ListView speciesList) {
         this.speciesList = speciesList;
+    }
+
+    void newWhat(String What, String Selection) throws IOException, SQLException {
+        switch (What) {
+            case "Species":
+                newSpeciesActions("Choose");
+                break;
+            case "Culture":
+                newCultureActions(Selection);
+                break;
+            case "Roster":
+                newRosterAcrions(Selection);
+                break;
+            case "Humanoid":
+            case "Fey":
+            case "Reptilia":
+            case "Biest":
+            case "Insecta":
+                newSpeciesActions(What);
+                break;
+        }
     }
 
 }

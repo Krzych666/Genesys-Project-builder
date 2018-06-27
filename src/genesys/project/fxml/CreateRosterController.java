@@ -28,6 +28,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import javafx.fxml.Initializable;
+import javafx.scene.control.ListView;
 import javafx.scene.input.KeyEvent;
 
 /**
@@ -66,6 +67,7 @@ public class CreateRosterController implements Initializable {
      */
     public Stage rosterCreatorWindowStage = new Stage();
     private RosterCreatorWindowController rosterCreatorWindowController;
+    private ListView speciesList;
 
     /**
      *
@@ -161,6 +163,16 @@ public class CreateRosterController implements Initializable {
         speciesChooseDropdown.getSelectionModel().select(0);
         gameTypeDropdown.getSelectionModel().select(0);
         pointsTextField.addEventFilter(KeyEvent.KEY_TYPED, BuilderCORE.numeric_Validation(10));
+    }
+
+    void setSpeciesList(ListView speciesList) {
+        this.speciesList = speciesList;
+    }
+
+    void setSpeciesAndCultureSelection(String Selection) throws IOException, SQLException {
+        speciesChooseDropdown.getSelectionModel().select(speciesList.getSelectionModel().getSelectedItem());
+        speciesChooseDropdownItemStateChangedActions();
+        cultureChooseDropdown.getSelectionModel().select(Selection);
     }
 
 }

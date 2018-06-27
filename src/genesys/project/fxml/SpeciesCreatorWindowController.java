@@ -253,7 +253,8 @@ public class SpeciesCreatorWindowController implements Initializable {
     }
 
     void setAvailableSkills() throws SQLException {
-        availableSkillsList.setItems(AvailableSkillsLister.getAvailableSkills(DatabaseModifier.holdSpecies.getLifedomain(), DatabaseModifier.holdCulture.getAge(), skillSubSetChooser.getSelectionModel().getSelectedItem().toString(), skillsList1.getItems()));
+        int age = DatabaseModifier.holdCulture != null ? DatabaseModifier.holdCulture.getAge(): DatabaseModifier.holdSpecies.getAge();
+        availableSkillsList.setItems(AvailableSkillsLister.getAvailableSkills(DatabaseModifier.holdSpecies.getLifedomain(), age, skillSubSetChooser.getSelectionModel().getSelectedItem().toString(), skillsList1.getItems()));
         availableSkillsList.setCellFactory(new Callback<ListView<String>, ListCell<String>>() {
             @Override
             public ListCell<String> call(ListView<String> param) {
@@ -323,6 +324,7 @@ public class SpeciesCreatorWindowController implements Initializable {
         stage.hide();
         DatabaseModifier.holdSpecies.setSpeciesName(nameInputField.getText());
         DatabaseModifier.excludeSkills = skillsList1;
+        DatabaseModifier.holdSpecies.setAge(BuilderCORE.findMaxAge(skillsList1));
         if (DatabaseModifier.isModyfyinfg) {
             DatabaseModifier.isModyfyinfg = !DatabaseModifier.isModyfyinfg;
             DatabaseModifier.modifySpecies();
@@ -625,7 +627,12 @@ public class SpeciesCreatorWindowController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         this.valuesLabels = new Label[]{strengthValue1, toughnessValue1, movementValue1, martialValue1, rangedValue1, defenseValue1, disciplineValue1, willpowerValue1, commandValue1, woundsValue1, attacksValue1, sizeValue1, mTValue1, rTValue1, moraleValue1};
-        DatabaseModifier.holdCulture.setAge(1);
+        
+        if (!DatabaseModifier.isModyfyinfg) {
+            DatabaseModifier.holdSpecies.setAge(1);
+            DatabaseModifier.holdCulture.setAge(1);
+        }
+
         try {
             createSpecies();
         } catch (IOException | SQLException ex) {

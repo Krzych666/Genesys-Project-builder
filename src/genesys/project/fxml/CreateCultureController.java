@@ -243,7 +243,7 @@ public class CreateCultureController implements Initializable {
      */
     public void populateLabels() throws SQLException {
         for (int i = 0; i < valuesLabels4.length; i++) {
-            valuesLabels4[i].setText(GenesysProjectBuilder.CORE.getCharacteristics(DatabaseModifier.holdSpecies.getLifedomain().toString(),DatabaseModifier.holdSpecies.getCharacteristicGroup().toString())[i]);
+            valuesLabels4[i].setText(GenesysProjectBuilder.CORE.getCharacteristics(DatabaseModifier.holdSpecies.getLifedomain().toString(), DatabaseModifier.holdSpecies.getCharacteristicGroup().toString())[i]);
         }
     }
 
@@ -289,6 +289,11 @@ public class CreateCultureController implements Initializable {
 
     void setSpeciesList(ListView speciesList) {
         this.speciesList = speciesList;
+    }
+
+    void setSpeciesSelection(String Selection) throws SQLException, IOException {
+        speciesChooseDropdown4.getSelectionModel().select(Selection);
+        speciesChooseDropdown4ItemStateChangedActions();
     }
 
 }
