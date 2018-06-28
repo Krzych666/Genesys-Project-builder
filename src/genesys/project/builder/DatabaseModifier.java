@@ -26,7 +26,6 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.ListView;
 import static genesys.project.builder.BuilderCORE.chooseConnection;
-import java.util.Arrays;
 import lombok.Getter;
 import lombok.Setter;
 

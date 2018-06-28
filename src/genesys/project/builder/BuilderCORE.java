@@ -24,7 +24,6 @@ import javafx.event.EventHandler;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyEvent;
-import org.sqlite.jdbc4.JDBC4PreparedStatement;
 
 /**
  *
