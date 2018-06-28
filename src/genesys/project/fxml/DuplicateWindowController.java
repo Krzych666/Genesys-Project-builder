@@ -184,6 +184,7 @@ public class DuplicateWindowController implements Initializable {
             duplicateAreYouSureController.setDuplicateWindowController(duplicateWindowController);
             Scene scene = new Scene(root);
             duplicateAreYouSureStage.setScene(scene);
+            duplicateAreYouSureStage.setTitle("Confirm Duplication");
             duplicateAreYouSureStage.show();
         }
         showWhatToDuplicate();

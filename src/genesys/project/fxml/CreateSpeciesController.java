@@ -118,6 +118,7 @@ public class CreateSpeciesController implements Initializable {
         speciesCreatorWindowController.setSpeciesList(speciesList);
         Scene scene = new Scene(root);
         speciesCreatorWindowStage.setScene(scene);
+        speciesCreatorWindowStage.setTitle("Create Species");
         speciesCreatorWindowStage.show();
     }
 

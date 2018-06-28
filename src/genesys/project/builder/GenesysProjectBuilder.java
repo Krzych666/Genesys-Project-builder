@@ -30,6 +30,7 @@ public final class GenesysProjectBuilder extends Application {
         Parent root = FXMLLoader.load(getClass().getResource("/genesys/project/fxml/BuilderFXML.fxml"));
         Scene scene = new Scene(root);
         primaryStage.setScene(scene);
+        primaryStage.setTitle("Genesys Project Builder");
         primaryStage.show();
         primaryStage.setOnCloseRequest(e -> Platform.exit());
         primaryStageWindow = Window.getWindows().get(0);

@@ -168,6 +168,7 @@ public class DeleteWindowController implements Initializable {
             deleteAreYouSureController.getDeleteWindow(deleteFinishButton.getScene().getWindow());
             Scene scene = new Scene(root);
             deleteAreYouSureStage.setScene(scene);
+            deleteAreYouSureStage.setTitle("Confirm Deletion");
             deleteAreYouSureStage.show();
         }
         showWhatToDelete();

@@ -64,6 +64,7 @@ public class CreateWindowWhatController implements Initializable {
         createSpeciesController = loader.getController();
         createSpeciesController.setSpeciesList(speciesList);
         createSpeciesStage.setScene(scene);
+        createSpeciesStage.setTitle("Choose Lifedomain");
         if (What.equals("Choose")) {
             createSpeciesStage.show();
         } else {
@@ -84,7 +85,8 @@ public class CreateWindowWhatController implements Initializable {
         createCultureController.setSpeciesList(speciesList);
         Scene scene = new Scene(root);
         createCultureStage.setScene(scene);
-        if (Selection != null) {
+        createCultureStage.setTitle("Create Culture");
+        if (Selection != null && !Selection.equals("Choose")) {
             createCultureController.setSpeciesSelection(Selection);
         }
         createCultureStage.show();
@@ -103,6 +105,7 @@ public class CreateWindowWhatController implements Initializable {
         createRosterController.setSpeciesList(speciesList);
         Scene scene = new Scene(root);
         createRosterStage.setScene(scene);
+        createRosterStage.setTitle("Create Roster");
         if (Selection != null) {
             createRosterController.setSpeciesAndCultureSelection(Selection);
         }

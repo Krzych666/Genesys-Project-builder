@@ -203,6 +203,7 @@ public class RosterCreatorWindowController implements Initializable {
                 rosterAddUnitController = loader.getController();
                 rosterAddUnitController.setNameBasePointsRoster(classList.getSelectionModel().getSelectedItem().toString(), Integer.parseInt(pointsPerModelValue.getText()), Roster, currentPointsValue,maxPointsValue);
                 rosterAddUnitStage.setScene(scene);
+                rosterAddUnitStage.setTitle("Add Unit to "+DatabaseModifier.holdRoster.getRosterName()+" for "+DatabaseModifier.holdRoster.getSpeciesName()+" - "+DatabaseModifier.holdRoster.getCultureName());
                 rosterAddUnitStage.show();
             }
         }

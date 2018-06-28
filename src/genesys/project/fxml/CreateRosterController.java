@@ -112,6 +112,7 @@ public class CreateRosterController implements Initializable {
                 rosterCreatorWindowController = loader.getController();
                 rosterCreatorWindowController.setMaxPoints(pointsTextField.getText());
                 rosterCreatorWindowStage.setScene(scene);
+                rosterCreatorWindowStage.setTitle("Create Roster "+DatabaseModifier.holdRoster.getRosterName()+" for "+DatabaseModifier.holdRoster.getSpeciesName()+" - "+DatabaseModifier.holdRoster.getCultureName());
                 rosterCreatorWindowStage.show();
             }
         }

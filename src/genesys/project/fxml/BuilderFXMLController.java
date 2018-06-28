@@ -192,6 +192,7 @@ public class BuilderFXMLController implements Initializable {
         editWindowController.setSpeciesAndCultureAndRosterList(speciesList, culturesList, rostersList);
         Scene scene = new Scene(root);
         editWindowStage.setScene(scene);
+        editWindowStage.setTitle("Edit");
         if (What.equals("Choose")) {
             editWindowStage.show();
         } else {
@@ -212,6 +213,7 @@ public class BuilderFXMLController implements Initializable {
         createWindowWhatController.setSpeciesList(speciesList);
         Scene scene = new Scene(root);
         createWindowWhatStage.setScene(scene);
+        createWindowWhatStage.setTitle("Create");
         if (What.equals("Choose")) {
             createWindowWhatStage.show();
         } else {
@@ -273,6 +275,7 @@ public class BuilderFXMLController implements Initializable {
         duplicateWindowController.setDuplicateWindowController(duplicateWindowController);
         Scene scene = new Scene(root);
         duplicateWindowStage.setScene(scene);
+        duplicateWindowStage.setTitle("Duplicate");
         duplicateWindowStage.show();
     }
 
@@ -289,6 +292,7 @@ public class BuilderFXMLController implements Initializable {
         deleteWindowController.setSpeciesList(speciesList);
         Scene scene = new Scene(root);
         deleteWindowStage.setScene(scene);
+        deleteWindowStage.setTitle("Delete");
         deleteWindowStage.show();
     }
 

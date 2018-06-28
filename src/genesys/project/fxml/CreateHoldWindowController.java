@@ -191,6 +191,7 @@ public class CreateHoldWindowController implements Initializable {
             classCreatorWindowController.setClassesLeft3b(classesLeft3b);
             Scene scene = new Scene(root);
             classCreatorWindowStage.setScene(scene);
+            classCreatorWindowStage.setTitle("Create Class for " + DatabaseModifier.holdCulture.getSpeciesName() + " - " + DatabaseModifier.holdCulture.getCultureName());
             classCreatorWindowStage.show();
         }
     }
@@ -293,6 +294,9 @@ public class CreateHoldWindowController implements Initializable {
             createHoldUpdate();
         } catch (SQLException ex) {
             Logger.getLogger(CreateHoldWindowController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        if (!DatabaseModifier.isModyfyinfg && DatabaseModifier.holdCulture != null && DatabaseModifier.holdCulture.getAge() < 1) {
+            DatabaseModifier.holdCulture.setAge(1);
         }
     }
 

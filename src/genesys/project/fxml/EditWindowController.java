@@ -330,6 +330,7 @@ public class EditWindowController implements Initializable {
             editWindowNameOld = editWindowNameOnlyController.getEditWindowNameOld();
             Scene scene = new Scene(root);
             editWindowNameOnlyStage.setScene(scene);
+            editWindowNameOnlyStage.setTitle("Edit Name");
             editWindowNameOnlyStage.show();
         }
     }
@@ -365,6 +366,7 @@ public class EditWindowController implements Initializable {
                 speciesCreatorWindowController = loader.getController();
                 speciesCreatorWindowController.setSpeciesList(speciesList);
                 speciesCreatorWindowStage.setScene(scene);
+                speciesCreatorWindowStage.setTitle("Modify Species");
                 speciesCreatorWindowStage.show();
             }
             //GenesysProjectBuilder.CORE.getCharacteristics(UseCases.CreatingSpecies,BuilderFXMLController.HOLD_MODIFIERS);
@@ -381,6 +383,7 @@ public class EditWindowController implements Initializable {
                 createHoldWindowController = loader.getController();
                 createHoldWindowController.setSpeciesList(speciesList);
                 createHoldWindowStage.setScene(scene);
+                createHoldWindowStage.setTitle("Modify Classes");
                 createHoldWindowStage.show();
             }
         }
@@ -395,6 +398,7 @@ public class EditWindowController implements Initializable {
                 classCreatorWindowController = loader.getController();
                 classCreatorWindowController.setSpeciesList(speciesList);
                 classCreatorWindowStage.setScene(scene);
+                createHoldWindowStage.setTitle("Modify Class");
                 classCreatorWindowStage.show();
             }
         }
@@ -447,7 +451,7 @@ public class EditWindowController implements Initializable {
                 }
             }
         }
-        commenceEditing();        
+        commenceEditing();
     }
 
 }

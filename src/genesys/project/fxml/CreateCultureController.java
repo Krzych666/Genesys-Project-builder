@@ -224,6 +224,7 @@ public class CreateCultureController implements Initializable {
             createHoldWindowController = loader.getController();
             createHoldWindowController.setSpeciesList(speciesList);
             createHoldWindowStage.setScene(scene);
+            createHoldWindowStage.setTitle("Create Classes for " + DatabaseModifier.holdCulture.getSpeciesName() + " - " + DatabaseModifier.holdCulture.getCultureName());
             createHoldWindowStage.show();
         }
     }

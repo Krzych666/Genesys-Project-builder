@@ -344,6 +344,7 @@ public class SpeciesCreatorWindowController implements Initializable {
                 createHoldWindowController.setSpeciesList(speciesList);
                 Scene scene = new Scene(root);
                 createHoldWindowStage.setScene(scene);
+                createHoldWindowStage.setTitle("Create Classes for "+DatabaseModifier.holdCulture.getSpeciesName()+" - "+DatabaseModifier.holdCulture.getCultureName());
                 createHoldWindowStage.show();
             }
         }
