@@ -23,6 +23,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.layout.Region;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 /**
@@ -200,7 +201,7 @@ public class RosterCreatorWindowController implements Initializable {
                 Parent root = loader.load();
                 Scene scene = new Scene(root);
                 rosterAddUnitController = loader.getController();
-                rosterAddUnitController.setNameBasePointsRoster(classList.getSelectionModel().getSelectedItem().toString(), Integer.parseInt(pointsPerModelValue.getText()), Roster, currentPointsValue);
+                rosterAddUnitController.setNameBasePointsRoster(classList.getSelectionModel().getSelectedItem().toString(), Integer.parseInt(pointsPerModelValue.getText()), Roster, currentPointsValue,maxPointsValue);
                 rosterAddUnitStage.setScene(scene);
                 rosterAddUnitStage.show();
             }
@@ -214,7 +215,14 @@ public class RosterCreatorWindowController implements Initializable {
     public void removeSelectedButtonActions() {
         if (!Roster.getSelectionModel().isEmpty()) {
             currentPointsValue.setText(Integer.toString(Integer.parseInt(currentPointsValue.getText()) - Integer.parseInt(Roster.getSelectionModel().getSelectedItem().toString().split("total points:")[1])));
+            checkCurrentToMaxPoints();
             Roster.getItems().remove(Roster.getSelectionModel().getSelectedIndex());
+        }
+    }
+
+    public void checkCurrentToMaxPoints() {
+        if (Integer.parseInt(maxPointsValue.getText()) != 0) {
+            currentPointsValue.setTextFill(Color.web(Integer.parseInt(currentPointsValue.getText()) > Integer.parseInt(maxPointsValue.getText()) ? "#eb1112" : "#000"));
         }
     }
 

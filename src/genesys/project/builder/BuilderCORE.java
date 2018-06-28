@@ -214,7 +214,7 @@ public class BuilderCORE {
             for (int j = 0; j < columns.length; j++) {
                 // loop through the result set
                 while (rs.next()) {
-                    //System.out.println(rs.getString(column) +  "\t");
+                    //System.out.println(rs.getString(columns[j]) +  "\t");
                     if (exclude == null) {
                         temp.add(rs.getString(columns[j]));
                     } else {

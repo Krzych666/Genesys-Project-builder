@@ -11,7 +11,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.sql.SQLException;
 import java.util.HashMap;
-import java.util.Map.Entry;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -32,6 +31,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 import lombok.Getter;
@@ -49,6 +49,8 @@ public class RosterAddUnitController implements Initializable {
     private ListView availableEquipmentList;
     @FXML
     private ListView improvementsList;
+    @FXML
+    private ListView improvementsDetailsList;
     @FXML
     private Label squadSizeText;
     @FXML
@@ -74,6 +76,7 @@ public class RosterAddUnitController implements Initializable {
     private int basePoints;
     private ListView Roster;
     private Label currentPointsValue;
+    private Label maxPointsValue;
     private static final HashMap<String, ImprovementsItem> IMPROVEMENTS = new HashMap<String, ImprovementsItem>();
 
     /**
@@ -110,17 +113,19 @@ public class RosterAddUnitController implements Initializable {
         if (!currentEquipmentList.getSelectionModel().isEmpty()) {
             currentEquipmentList.getItems().remove(currentEquipmentList.getSelectionModel().getSelectedIndex());
         }
-        squadSizeChangeActions();
+        squadSizeChangeActions();        
         IMPROVEMENTS.clear();
+        improvementsList.getItems().clear();
+        improvementsDetailsList.getItems().clear();
     }
 
     private int itemsCost() throws SQLException {
         int cost = 0;
         for (int i = 0; i < currentEquipmentList.getItems().size(); i++) {
             if (currentEquipmentList.getItems().get(i).toString().contains("} X")) {
-                cost += DatabaseModifier.getItemCost(currentEquipmentList.getItems().get(i).toString().split("} X")[0]) * Integer.parseInt(currentEquipmentList.getItems().get(i).toString().split("} X")[1]);
+                cost += DatabaseModifier.getItemCost(currentEquipmentList.getItems().get(i).toString().split("} X")[0], equipmentTypeChooser.getSelectionModel().getSelectedItem().toString()) * Integer.parseInt(currentEquipmentList.getItems().get(i).toString().split("} X")[1]);
             } else {
-                cost += DatabaseModifier.getItemCost(currentEquipmentList.getItems().get(i).toString().split(" X")[0]) * Integer.parseInt(currentEquipmentList.getItems().get(i).toString().split(" X")[1]);
+                cost += DatabaseModifier.getItemCost(currentEquipmentList.getItems().get(i).toString().split(" X")[0], equipmentTypeChooser.getSelectionModel().getSelectedItem().toString()) * Integer.parseInt(currentEquipmentList.getItems().get(i).toString().split(" X")[1]);
             }
         }
         return cost;
@@ -135,16 +140,19 @@ public class RosterAddUnitController implements Initializable {
     public void equipmentTypeChooserStateChangedActions() throws SQLException {
         IMPROVEMENTS.clear();
         availableEquipmentList.setItems(DatabaseModifier.getItemsNames(equipmentTypeChooser.getSelectionModel().getSelectedItem().toString()));
+        improvementsList.getItems().clear();
+        improvementsDetailsList.getItems().clear();
     }
 
     @FXML
     public void availableEquipmentListMousePressed() throws SQLException {
         IMPROVEMENTS.clear();
         generateImprovementsList();
+        improvementsDetailsList.getItems().clear();
     }
 
     private void generateImprovementsList() throws SQLException {
-        ObservableList<String> improvementsObservableList = DatabaseModifier.getImprovements(availableEquipmentList.getSelectionModel().getSelectedItem().toString());
+        ObservableList<String> improvementsObservableList = DatabaseModifier.getImprovements(availableEquipmentList.getSelectionModel().getSelectedItem().toString(), equipmentTypeChooser.getSelectionModel().getSelectedItem().toString());
         improvementsList.setItems(improvementsObservableList);
         improvementsList.setCellFactory(new Callback<ListView<String>, ListCell<String>>() {
             @Override
@@ -219,18 +227,37 @@ public class RosterAddUnitController implements Initializable {
         return tempList.toString();
     }
 
+    @FXML
+    public void improvementsListMousePressed() throws SQLException {
+        String availableEquipmentName = availableEquipmentList.getSelectionModel().getSelectedItem().toString();
+        String improvementsName = improvementsList.getSelectionModel().getSelectedItem().toString();
+        String equipmentTypeNamme = equipmentTypeChooser.getSelectionModel().getSelectedItem().toString();
+        improvementsDetailsList.setItems(DatabaseModifier.getImprovementDetails(availableEquipmentName, improvementsName, equipmentTypeNamme));
+    }
+
     /**
      * addaquadButtonActions
+     *
+     * @throws java.lang.NoSuchMethodException
+     * @throws java.lang.IllegalAccessException
+     * @throws java.lang.reflect.InvocationTargetException
      */
     @FXML
-    public void addSquadButtonActions() {
+    public void addSquadButtonActions() throws NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
         Roster.getItems().add(className
                 + " x" + squadSizeValue.getText()
                 + "   \n" + currentEquipmentList.getItems().toString()
                 + "   \n total points:" + totalPointsValue.getText());
         currentPointsValue.setText(Integer.toString(Integer.parseInt(currentPointsValue.getText()) + Integer.parseInt(totalPointsValue.getText())));
+        checkCurrentToMaxPoints();
         Stage stage = (Stage) addSquadButton.getScene().getWindow();
         stage.hide();
+    }
+
+    public void checkCurrentToMaxPoints() { // Duplicate is in RosterCreatorWindowController, fina a good way to get rid of it here.
+        if (Integer.parseInt(maxPointsValue.getText()) != 0) {
+            currentPointsValue.setTextFill(Color.web(Integer.parseInt(currentPointsValue.getText()) > Integer.parseInt(maxPointsValue.getText()) ? "#eb1112" : "#000"));
+        }
     }
 
     /**
@@ -248,11 +275,12 @@ public class RosterAddUnitController implements Initializable {
      * @param Roster
      * @param currentPointsValue
      */
-    public void setNameBasePointsRoster(String className, int basePoints, ListView Roster, Label currentPointsValue) {
+    public void setNameBasePointsRoster(String className, int basePoints, ListView Roster, Label currentPointsValue, Label maxPointsValue) {
         this.className = className;
         this.basePoints = basePoints;
         this.Roster = Roster;
         this.currentPointsValue = currentPointsValue;
+        this.maxPointsValue = maxPointsValue;
     }
 
     /**
