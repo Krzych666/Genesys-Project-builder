@@ -504,26 +504,26 @@ public class DatabaseModifier {
     public static void writeToDB() {
         //if(true){fullSkillList1=holdSpecies.Skills;}        
         holdSpecies.Skills = holdSpecies.Skills.substring(0, holdSpecies.Skills.length() - 1);
-        String SpMod = "";
+        String SpecialModificators = "";
         switch (holdSpecies.Lifedomain) {
             case Humanoid:
-                SpMod = holdSpecies.SpeciesModifiers;
+                SpecialModificators = holdSpecies.SpeciesModifiers;
                 break;
             case Fey:
-                SpMod = "MainDomain=" + ((AFey) holdSpecies).getMainDomain().getText() + "," + holdSpecies.SpeciesModifiers;
+                SpecialModificators = "MainDomain=" + ((AFey) holdSpecies).getMainDomain().getText() + "," + holdSpecies.SpeciesModifiers;
                 break;
             case Reptilia:
-                SpMod = "MainLineage=" + ((AReptilia) holdSpecies).getMainLineage().getText() + "," + holdSpecies.SpeciesModifiers;
+                SpecialModificators = "MainLineage=" + ((AReptilia) holdSpecies).getMainLineage().getText() + "," + holdSpecies.SpeciesModifiers;
                 break;
             case Biest:
-                SpMod = "MainKingdom=" + ((ABiest) holdSpecies).getMainKingdom().getText() + "," + "MainRegion=" + ((ABiest) holdSpecies).getMainRegion().getText() + "," + holdSpecies.SpeciesModifiers;
+                SpecialModificators = "MainKingdom=" + ((ABiest) holdSpecies).getMainKingdom().getText() + "," + "MainRegion=" + ((ABiest) holdSpecies).getMainRegion().getText() + "," + holdSpecies.SpeciesModifiers;
                 break;
             case Insecta:
-                SpMod = "MainClasification=" + ((AInsecta) holdSpecies).getMainClasification().getText() + "," + "MainOrder=" + ((AInsecta) holdSpecies).getMainOrder().getText() + "," + holdSpecies.SpeciesModifiers;
+                SpecialModificators = "MainClasification=" + ((AInsecta) holdSpecies).getMainClasification().getText() + "," + "MainOrder=" + ((AInsecta) holdSpecies).getMainOrder().getText() + "," + holdSpecies.SpeciesModifiers;
                 break;
         }
         if (holdCulture.CultureName.equals(holdSpecies.SpeciesName)) {
-            executeSQL("INSERT INTO `CreatedSpecies`(LifeDomain,CharacteristicGroup,SpeciesName,Skills,SpeciesModifiers) VALUES ('" + holdSpecies.Lifedomain.toString() + "','" + holdSpecies.CharacteristicGroup.toString() + "','" + holdSpecies.SpeciesName + "','" + holdSpecies.Skills + "','" + SpMod + "');");
+            executeSQL("INSERT INTO `CreatedSpecies`(LifeDomain,CharacteristicGroup,SpeciesName,Skills,SpeciesModifiers) VALUES ('" + holdSpecies.Lifedomain.toString() + "','" + holdSpecies.CharacteristicGroup.toString() + "','" + holdSpecies.SpeciesName + "','" + holdSpecies.Skills + "','" + SpecialModificators + "');");
         }
         executeSQL("INSERT INTO `CreatedCultures`(CultureName,SpeciesName) VALUES ('" + holdCulture.CultureName + "','" + holdCulture.SpeciesName + "');");
         for (int i = 0; i < holdClass.length; i++) {
