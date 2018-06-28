@@ -266,16 +266,19 @@ public class BuilderFXMLController implements Initializable {
         createActionPerformed("Insecta", null);
     }
 
-    private void duplicateActionPerformed(String menuItem) throws IOException {
+    private void duplicateActionPerformed(String menuItem) throws IOException, SQLException {
         GenesysProjectBuilder.hideOtherThanMainStage();
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/genesys/project/fxml/DuplicateWindowFXML.fxml"));
         Parent root = loader.load();
         duplicateWindowController = loader.getController();
-        duplicateWindowController.setSpeciesList(speciesList);
+        duplicateWindowController.setSpeciesAndCultureAndRosterList(speciesList, culturesList, rostersList);
         duplicateWindowController.setDuplicateWindowController(duplicateWindowController);
         Scene scene = new Scene(root);
         duplicateWindowStage.setScene(scene);
         duplicateWindowStage.setTitle("Duplicate");
+        if (!menuItem.equals("Choose")) {
+            duplicateWindowController.setSelected();
+        }
         duplicateWindowStage.show();
     }
 
@@ -284,15 +287,18 @@ public class BuilderFXMLController implements Initializable {
         duplicateActionPerformed("Choose");
     }
 
-    private void deleteActionPerformed(String menuItem) throws IOException {
+    private void deleteActionPerformed(String menuItem) throws IOException, SQLException {
         GenesysProjectBuilder.hideOtherThanMainStage();
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/genesys/project/fxml/DeleteWindowFXML.fxml"));
         Parent root = loader.load();
         deleteWindowController = loader.getController();
-        deleteWindowController.setSpeciesList(speciesList);
+        deleteWindowController.setSpeciesAndCultureAndRosterList(speciesList, culturesList, rostersList);
         Scene scene = new Scene(root);
         deleteWindowStage.setScene(scene);
         deleteWindowStage.setTitle("Delete");
+        if (!menuItem.equals("Choose")) {
+            deleteWindowController.setSelected();
+        }
         deleteWindowStage.show();
     }
 

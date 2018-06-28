@@ -77,6 +77,8 @@ public class DuplicateWindowController implements Initializable {
     private DuplicateAreYouSureController duplicateAreYouSureController;
 
     private ListView speciesList;
+    private ListView cultureList;
+    private ListView rosterList;
     private Label toDuplicate;
 
     /**
@@ -559,12 +561,29 @@ public class DuplicateWindowController implements Initializable {
         }
     }
 
-    void setSpeciesList(ListView speciesList) {
+    void setSpeciesAndCultureAndRosterList(ListView speciesList, ListView cultureList, ListView rosterList) {
         this.speciesList = speciesList;
+        this.cultureList = cultureList;
+        this.rosterList = rosterList;
     }
 
     void setDuplicateWindowController(DuplicateWindowController duplicateWindowController) {
         this.duplicateWindowController = duplicateWindowController;
+    }
+
+    void setSelected() throws SQLException {
+        if (!speciesList.getSelectionModel().isEmpty()) {
+            speciesDuplicateDropdown.getSelectionModel().select(speciesList.getSelectionModel().getSelectedItem());
+            speciesDuplicateDropdownItemStateChangedActions();
+            if (!cultureList.getSelectionModel().isEmpty() && !speciesList.isFocused()) {
+                cultureDuplicateDropdown.getSelectionModel().select(cultureList.getSelectionModel().getSelectedItem());
+                cultureDuplicateDropdownItemStateChangedActions();
+                if (!rosterList.getSelectionModel().isEmpty() && !cultureList.isFocused()) {
+                    rosterDuplicateDropdown.getSelectionModel().select(rosterList.getSelectionModel().getSelectedItem());
+                    rosterDuplicateDropdownItemStateChangedActions();
+                }
+            }
+        }
     }
 
 }

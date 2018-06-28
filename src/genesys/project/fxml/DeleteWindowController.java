@@ -67,6 +67,8 @@ public class DeleteWindowController implements Initializable {
     private DeleteAreYouSureController deleteAreYouSureController;
 
     private ListView speciesList;
+    private ListView cultureList;
+    private ListView rosterList;
     private Label toDelete;
 
     /**
@@ -229,7 +231,7 @@ public class DeleteWindowController implements Initializable {
     }
 
     /**
-     *showWhatToDelete
+     * showWhatToDelete
      */
     public void showWhatToDelete() {
         String temp = "";
@@ -259,6 +261,7 @@ public class DeleteWindowController implements Initializable {
 
     /**
      * Initializes the controller class.
+     *
      * @param url
      * @param rb
      */
@@ -274,8 +277,25 @@ public class DeleteWindowController implements Initializable {
         }
     }
 
-    void setSpeciesList(ListView speciesList) {
+    void setSpeciesAndCultureAndRosterList(ListView speciesList, ListView cultureList, ListView rosterList) {
         this.speciesList = speciesList;
+        this.cultureList = cultureList;
+        this.rosterList = rosterList;
+    }
+
+    void setSelected() throws SQLException {
+        if (!speciesList.getSelectionModel().isEmpty()) {
+            speciesDeleteDropdown.getSelectionModel().select(speciesList.getSelectionModel().getSelectedItem());
+            speciesDeleteDropdownItemStateChangedActions();
+            if (!cultureList.getSelectionModel().isEmpty() && !speciesList.isFocused()) {
+                cultureDeleteDropdown.getSelectionModel().select(cultureList.getSelectionModel().getSelectedItem());
+                cultureDeleteDropdownItemStateChangedActions();
+                if (!rosterList.getSelectionModel().isEmpty() && !cultureList.isFocused()) {
+                    rosterDeleteDropdown.getSelectionModel().select(rosterList.getSelectionModel().getSelectedItem());
+                    rosterDeleteDropdownItemStateChangedActions();
+                }
+            }
+        }
     }
 
 }

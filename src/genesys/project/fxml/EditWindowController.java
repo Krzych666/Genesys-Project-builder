@@ -442,10 +442,10 @@ public class EditWindowController implements Initializable {
         if (!speciesList.getSelectionModel().isEmpty()) {
             speciesEditDropdown.getSelectionModel().select(speciesList.getSelectionModel().getSelectedItem());
             speciesEditDropdownItemStateChangedActions();
-            if (!cultureList.getSelectionModel().isEmpty()) {
+            if (!cultureList.getSelectionModel().isEmpty() && !speciesList.isFocused()) {
                 cultureEditDropdown.getSelectionModel().select(cultureList.getSelectionModel().getSelectedItem());
                 cultureEditDropdownItemStateChangedActions();
-                if (!rosterList.getSelectionModel().isEmpty()) {
+                if (!rosterList.getSelectionModel().isEmpty() && !cultureList.isFocused()) {
                     rosterEditDropdown.getSelectionModel().select(rosterList.getSelectionModel().getSelectedItem());
                     rosterEditDropdownItemStateChangedActions();
                 }
