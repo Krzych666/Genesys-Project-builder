@@ -147,6 +147,8 @@ public class CreateWindowWhatController implements Initializable {
             case "Insecta":
                 newSpeciesActions(What);
                 break;
+            default:
+                break;
         }
     }
 

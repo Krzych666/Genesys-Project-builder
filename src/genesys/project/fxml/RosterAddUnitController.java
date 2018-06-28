@@ -74,7 +74,7 @@ public class RosterAddUnitController implements Initializable {
 
     private String className;
     private int basePoints;
-    private ListView Roster;
+    private ListView roster;
     private Label currentPointsValue;
     private Label maxPointsValue;
     private static final HashMap<String, ImprovementsItem> IMPROVEMENTS = new HashMap<String, ImprovementsItem>();
@@ -95,6 +95,10 @@ public class RosterAddUnitController implements Initializable {
      * addEquipmentButtonActions
      *
      * @throws java.sql.SQLException
+     * @throws java.lang.NoSuchMethodException
+     * @throws java.lang.IllegalAccessException
+     * @throws java.lang.ClassNotFoundException
+     * @throws java.lang.reflect.InvocationTargetException
      */
     @FXML
     public void addEquipmentButtonActions() throws SQLException, NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, ClassNotFoundException {
@@ -144,6 +148,10 @@ public class RosterAddUnitController implements Initializable {
         improvementsDetailsList.getItems().clear();
     }
 
+    /**
+     *
+     * @throws SQLException
+     */
     @FXML
     public void availableEquipmentListMousePressed() throws SQLException {
         IMPROVEMENTS.clear();
@@ -227,6 +235,10 @@ public class RosterAddUnitController implements Initializable {
         return tempList.toString();
     }
 
+    /**
+     *
+     * @throws SQLException
+     */
     @FXML
     public void improvementsListMousePressed() throws SQLException {
         String availableEquipmentName = availableEquipmentList.getSelectionModel().getSelectedItem().toString();
@@ -244,7 +256,7 @@ public class RosterAddUnitController implements Initializable {
      */
     @FXML
     public void addSquadButtonActions() throws NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-        Roster.getItems().add(className
+        roster.getItems().add(className
                 + " x" + squadSizeValue.getText()
                 + "   \n" + currentEquipmentList.getItems().toString()
                 + "   \n total points:" + totalPointsValue.getText());
@@ -254,6 +266,9 @@ public class RosterAddUnitController implements Initializable {
         stage.hide();
     }
 
+    /**
+     *checkCurrentToMaxPoints
+     */
     public void checkCurrentToMaxPoints() { // Duplicate is in RosterCreatorWindowController, fina a good way to get rid of it here.
         if (Integer.parseInt(maxPointsValue.getText()) != 0) {
             currentPointsValue.setTextFill(Color.web(Integer.parseInt(currentPointsValue.getText()) > Integer.parseInt(maxPointsValue.getText()) ? "#eb1112" : "#000"));
@@ -272,13 +287,14 @@ public class RosterAddUnitController implements Initializable {
     /**
      * @param className
      * @param basePoints the basePoints to set
-     * @param Roster
+     * @param roster
      * @param currentPointsValue
+     * @param maxPointsValue
      */
-    public void setNameBasePointsRoster(String className, int basePoints, ListView Roster, Label currentPointsValue, Label maxPointsValue) {
+    public void setNameBasePointsRoster(String className, int basePoints, ListView roster, Label currentPointsValue, Label maxPointsValue) {
         this.className = className;
         this.basePoints = basePoints;
-        this.Roster = Roster;
+        this.roster = roster;
         this.currentPointsValue = currentPointsValue;
         this.maxPointsValue = maxPointsValue;
     }

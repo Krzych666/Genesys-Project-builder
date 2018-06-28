@@ -84,7 +84,7 @@ public class BuilderCORE {
     /**
      * HUMANOIDSKILS = "Traits"
      */
-    public static String HUMANOIDSKILS = "Traits";
+    public static final String HUMANOIDSKILS = "Traits";
 
     /**
      * HUMANOIDSUBSKILS = "Evolutionary Branch"
@@ -134,10 +134,21 @@ public class BuilderCORE {
      */
     public static final String INSECTASUBSKILS = "Order";
 
+    /**
+     * GAME_TYPES
+     */
     public static final String[] GAME_TYPES = {"Standard Play", "Hero Play"};
 
+    /**
+     * EQUIPMENT_TYPES
+     */
     public static final String[] EQUIPMENT_TYPES = {"Weapon", "Armor", "Other"};
 
+    /**
+     * main
+     *
+     * @param args
+     */
     public static void main(String[] args) {
 
     }
@@ -306,6 +317,12 @@ public class BuilderCORE {
         return tmp;
     }
 
+    /**
+     *
+     * @param skillsList1
+     * @return
+     * @throws SQLException
+     */
     public static int findMaxAge(ListView skillsList1) throws SQLException {
         StringBuilder skillsL = new StringBuilder("");
         for (int i = 0; i < skillsList1.getItems().size(); i++) {
@@ -377,6 +394,13 @@ public class BuilderCORE {
         return lst;
     }
 
+    /**
+     *
+     * @param skill
+     * @param simplifyToCoreSkills
+     * @return
+     * @throws SQLException
+     */
     public static ObservableList generateSubSkills(String skill, Boolean simplifyToCoreSkills) throws SQLException {
         chooseConnection(UseCases.COREdb);
         PreparedStatement stmt = getConnection().prepareStatement("SELECT SkillRules FROM Skills WHERE SkillName = ?");
@@ -387,7 +411,7 @@ public class BuilderCORE {
         } else {
             skl = skl.replace("_", " ").replace("-", "").replace("+", "").replaceAll("[0-9]", "X").replace(" Xpts", "");
         }
-        String[] sklSplit = null;
+        String[] sklSplit = new String[skl.split(";").length < 2 ? 1 : skl.split(";").length];
         if (skl.split(";").length == 0) {
             sklSplit[0] = skl;
         } else {
@@ -398,6 +422,13 @@ public class BuilderCORE {
         return tmp;
     }
 
+    /**
+     *
+     * @param subSkill
+     * @param simplifyToCoreSkills
+     * @return
+     * @throws SQLException
+     */
     public static String generateSubSkillText(String subSkill, Boolean simplifyToCoreSkills) throws SQLException {
         chooseConnection(UseCases.COREdb);
         PreparedStatement stmt = getConnection().prepareStatement("SELECT SkillRuleExplanation FROM SkillRules WHERE SkillRuleName = ?");

@@ -42,6 +42,9 @@ public final class GenesysProjectBuilder extends Application {
         launch(args);
     }
 
+    /**
+     *hideOtherThanMainStage
+     */
     public static void hideOtherThanMainStage() {
         for (int i = 0; i < Window.getWindows().size(); i++) {
             if (!Window.getWindows().get(i).equals(primaryStageWindow)) {

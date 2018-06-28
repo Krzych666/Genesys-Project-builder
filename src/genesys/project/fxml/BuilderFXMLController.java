@@ -33,7 +33,6 @@ import javafx.util.Callback;
 import static genesys.project.builder.BuilderCORE.chooseConnection;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.event.EventType;
 import javafx.scene.Node;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ContextMenu;
@@ -43,7 +42,6 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextArea;
 import javafx.scene.input.MouseEvent;
-import javafx.stage.Window;
 
 /**
  * FXML Controller class
@@ -68,9 +66,13 @@ public class BuilderFXMLController implements Initializable {
     private static int where;
 
     /**
-     * currentLifeDomain
+     * LifedomainValue currentLifeDomain
      */
     public static LifedomainValue currentLifeDomain;
+
+    /**
+     * CharacteristicGroup currentCharacteristicGroup
+     */
     public static CharacteristicGroup currentCharacteristicGroup;
     private String fullSkillList;
 
@@ -273,7 +275,7 @@ public class BuilderFXMLController implements Initializable {
         duplicateWindowStage.setScene(scene);
         duplicateWindowStage.show();
     }
-    
+
     @FXML
     private void duplicateChooseActionPerformed() throws IOException, SQLException, CloneNotSupportedException {
         duplicateActionPerformed("Choose");
@@ -289,7 +291,7 @@ public class BuilderFXMLController implements Initializable {
         deleteWindowStage.setScene(scene);
         deleteWindowStage.show();
     }
-    
+
     @FXML
     private void deleteChooseActionPerformed() throws IOException, SQLException, CloneNotSupportedException {
         deleteActionPerformed("Choose");
@@ -571,7 +573,7 @@ public class BuilderFXMLController implements Initializable {
                 if (add.contains("/")) {
                     add = add.split("/")[0];
                 }
-                if (!basedOn.equals("") && !basedOn.equals("null")) {
+                if (basedOn != null && !basedOn.equals("") && !basedOn.equals("null")) {
                     if (!"".equals(add)) {
                         points += Integer.parseInt(add);
                     }
@@ -1000,6 +1002,8 @@ public class BuilderFXMLController implements Initializable {
                     deleteActionPerformed("Choose");
                     break;
                 }
+            default:
+                break;
         }
     }
 

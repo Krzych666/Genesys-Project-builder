@@ -153,6 +153,8 @@ public class CreateSpeciesController implements Initializable {
             case "Insecta":
                 createInsectaActions();
                 break;
+            default:
+                break;
         }
     }
 

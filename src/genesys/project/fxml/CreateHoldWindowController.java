@@ -238,8 +238,8 @@ public class CreateHoldWindowController implements Initializable {
             tmp.add("<greater species>");
         }
         DatabaseModifier.setNumberOfClases();
-        for (int i = 0; i < DatabaseModifier.holdClass.length; i++) {
-            tmp.add(DatabaseModifier.holdClass[i].getClassName());
+        for (DatabaseModifier.AClass holdClas : DatabaseModifier.holdClass) {
+            tmp.add(holdClas.getClassName());
         }
         classList1.setItems(tmp);
         clearLists3();

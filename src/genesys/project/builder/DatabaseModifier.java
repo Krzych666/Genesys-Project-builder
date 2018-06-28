@@ -284,12 +284,12 @@ public class DatabaseModifier {
         if (name.equals(BuilderCORE.BASE)) {
             fullSkillList1 += holdSpecies.getSkills();
         } else {
-            for (int i = 0; i < holdClass.length; i++) {
-                if (holdClass[i].getClassName().equals(name)) {
-                    if (holdClass[i].getSkills() != null && !holdClass[i].getSkills().equals("null,") && !holdClass[i].getSkills().equals("") && !holdClass[i].getSkills().equals(";")) {
-                        fullSkillList1 += holdClass[i].getSkills() + getBaseAddedSkills(holdClass[i].getBasedOn());
+            for (AClass holdClas : holdClass) {
+                if (holdClas.getClassName().equals(name)) {
+                    if (holdClas.getSkills() != null && !holdClas.getSkills().equals("null,") && !holdClas.getSkills().equals("") && !holdClas.getSkills().equals(";")) {
+                        fullSkillList1 += holdClas.getSkills() + getBaseAddedSkills(holdClas.getBasedOn());
                     } else {
-                        fullSkillList1 += getBaseAddedSkills(holdClass[i].getBasedOn());
+                        fullSkillList1 += getBaseAddedSkills(holdClas.getBasedOn());
                     }
                 }
             }
@@ -525,15 +525,18 @@ public class DatabaseModifier {
             executeSQL("INSERT INTO `CreatedSpecies`(LifeDomain,CharacteristicGroup,SpeciesName,Skills,SpeciesModifiers) VALUES ('" + holdSpecies.Lifedomain.toString() + "','" + holdSpecies.CharacteristicGroup.toString() + "','" + holdSpecies.SpeciesName + "','" + holdSpecies.Skills + "','" + SpecialModificators + "');");
         }
         executeSQL("INSERT INTO `CreatedCultures`(CultureName,SpeciesName) VALUES ('" + holdCulture.CultureName + "','" + holdCulture.SpeciesName + "');");
-        for (int i = 0; i < holdClass.length; i++) {
-            if (holdClass[i].getSkills().length() > 2) {
-                holdClass[i].setSkills(holdClass[i].getSkills().substring(0, holdClass[i].getSkills().length() - 1));
+        for (AClass holdClas : holdClass) {
+            if (holdClas.getSkills().length() > 2) {
+                holdClas.setSkills(holdClas.getSkills().substring(0, holdClas.getSkills().length() - 1));
             }
-            executeSQL("INSERT INTO `CreatedClasses`(ClassName,Skills,SpeciesName,CultureName,Advancements,Type,BasedOn,AdditionalCost) VALUES ('" + holdClass[i].ClassName + "','" + holdClass[i].Skills + "','" + holdSpecies.SpeciesName + "','" + holdCulture.CultureName + "'," + null + ",'" + holdClass[i].Type + "','" + holdClass[i].BasedOn + "','" + holdClass[i].AdditionalCost + "');");
+            executeSQL("INSERT INTO `CreatedClasses`(ClassName,Skills,SpeciesName,CultureName,Advancements,Type,BasedOn,AdditionalCost) VALUES ('" + holdClas.ClassName + "','" + holdClas.Skills + "','" + holdSpecies.SpeciesName + "','" + holdCulture.CultureName + "'," + null + ",'" + holdClas.Type + "','" + holdClas.BasedOn + "','" + holdClas.AdditionalCost + "');");
         }
         holdSpecies = null;
     }
 
+    /**
+     * writeRosterToDB
+     */
     public static void writeRosterToDB() {
         executeSQL("INSERT INTO `CreatedRosters`(RosterName,CultureName,SpeciesName,Roster) VALUES ('" + holdRoster.RosterName + "','" + holdRoster.CultureName + "','" + holdRoster.SpeciesName + "','" + holdRoster.Roster + "');");
     }
@@ -735,6 +738,8 @@ public class DatabaseModifier {
                     case "Legendary Class":
                         ((ABiest) holdSpecies).setLegendaryClass(addRemove(((ABiest) holdSpecies).getLegendaryClass(), add));
                         break;
+                    default:
+                        break;
                 }
                 break;
             case Insecta:
@@ -849,6 +854,14 @@ public class DatabaseModifier {
         return null;
     }
 
+    /**
+     *
+     * @param SkillBranch
+     * @param onlyPrimaryChooser
+     * @param onlySecondaryChooser
+     * @return
+     * @throws SQLException
+     */
     public static ObservableList<String> getSubSkillSet(String SkillBranch, String onlyPrimaryChooser, String onlySecondaryChooser) throws SQLException {
         ObservableList<String> tmp = FXCollections.observableArrayList();
         chooseConnection(UseCases.COREdb);
@@ -1023,6 +1036,12 @@ public class DatabaseModifier {
         }
     }
 
+    /**
+     *
+     * @param itemType
+     * @return
+     * @throws SQLException
+     */
     public static ObservableList getItemsNames(String itemType) throws SQLException {
         ObservableList<String> tmp = FXCollections.observableArrayList();
         chooseConnection(UseCases.COREdb);
@@ -1034,10 +1053,16 @@ public class DatabaseModifier {
         return tmp;
     }
 
+    /**
+     *
+     * @param item
+     * @param itemType
+     * @return
+     * @throws SQLException
+     */
     public static int getItemCost(String item, String itemType) throws SQLException {
         String itemName;
         itemName = item.contains("{") ? item.split(" \\{")[0] : item;
-        int cost = 0;
         chooseConnection(UseCases.COREdb);
         PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT Cost FROM Equipment" + itemType + " WHERE " + itemType + "Name = ?");
         stmt.setString(1, itemName);
@@ -1046,10 +1071,17 @@ public class DatabaseModifier {
         if (data.contains("/")) {
             data = data.split("/")[0];
         }
-        cost = Integer.parseInt(data) + getImprovementsCosts(item, itemType);
+        int cost = Integer.parseInt(data) + getImprovementsCosts(item, itemType);
         return cost;
     }
 
+    /**
+     *
+     * @param itemWithImprovements
+     * @param itemType
+     * @return
+     * @throws SQLException
+     */
     public static int getImprovementsCosts(String itemWithImprovements, String itemType) throws SQLException {
         int cost = 0;
         if (itemWithImprovements.contains("{")) {
@@ -1099,10 +1131,17 @@ public class DatabaseModifier {
         return tmp;
     }
 
+    /**
+     *
+     * @param type
+     * @param itemName
+     * @return
+     * @throws SQLException
+     */
     public static String getItemSubType(String type, String itemName) throws SQLException {
         String[] columns = {"SubType"};
         chooseConnection(UseCases.COREdb);
-        PreparedStatement stmt = null;
+        PreparedStatement stmt;
         switch (type) {
             case "Armor":
                 stmt = BuilderCORE.getConnection().prepareStatement("SELECT SubType FROM EquipmentArmor WHERE ArmorName = ?");
@@ -1118,6 +1157,11 @@ public class DatabaseModifier {
         return tmp;
     }
 
+    /**
+     *
+     * @param itemSubType
+     * @return
+     */
     public static String getImprovementTypeBasedOnItemSubtype(String itemSubType) {
         switch (itemSubType) {
             case "Armor":
@@ -1140,6 +1184,13 @@ public class DatabaseModifier {
         }
     }
 
+    /**
+     *
+     * @param itemName
+     * @param type
+     * @return
+     * @throws SQLException
+     */
     public static ObservableList getImprovements(String itemName, String type) throws SQLException {
         ObservableList<String> tmp = FXCollections.observableArrayList();
         String subType = getItemSubType(type, itemName);
@@ -1164,6 +1215,8 @@ public class DatabaseModifier {
                         break;
                     case "Flintlock":
                         stmt = BuilderCORE.getConnection().prepareStatement("SELECT ImprovementName FROM EquipmentImprovements WHERE Type = 'Ranged Weapon' OR Type = 'Flintlock' OR Type = 'Extreme Weapons'");
+                        break;
+                    default:
                         break;
                 }
                 break;
@@ -1443,6 +1496,9 @@ public class DatabaseModifier {
         executeSQL("UPDATE CreatedRosters SET CultureName='" + newCulture + "' WHERE SpeciesName='" + holdCulture.getSpeciesName() + "' AND CultureName='" + holdCulture.getCultureName() + "'");
     }
 
+    /**
+     *modifyCulture
+     */
     public static void modifyCulture() {
         executeSQL("UPDATE CreatedCultures SET Age='" + holdCulture.getAge() + "' WHERE SpeciesName='" + holdCulture.getSpeciesName() + "' AND CultureName='" + holdCulture.getCultureName() + "'");
     }

@@ -57,6 +57,9 @@ public class Enums {
             }
         }
 
+        /**
+         *LifeDomainTree1Values
+         */
         public enum LifeDomainTree1Values {
             GeneticMutation("Genetic Mutation"),
             EnvironmentalAdaptation("Environmental Adaptation"),
@@ -565,7 +568,7 @@ public class Enums {
             }
         }
 
-        public enum primaryChooserValue {
+        public enum PrimaryChooserValue {
             NONE("-None-"),
             Light("Path of Light"),
             Darkness("Path of Darkness"),
@@ -587,7 +590,7 @@ public class Enums {
 
             private String primarychooservalue;
 
-            private primaryChooserValue(String primarychooservalue) {
+            private PrimaryChooserValue(String primarychooservalue) {
                 this.primarychooservalue = primarychooservalue;
             }
 
@@ -604,8 +607,8 @@ public class Enums {
              * @param primarychooservalue
              * @return
              */
-            public static primaryChooserValue getEnum(String primarychooservalue) {
-                for (primaryChooserValue b : primaryChooserValue.values()) {
+            public static PrimaryChooserValue getEnum(String primarychooservalue) {
+                for (PrimaryChooserValue b : PrimaryChooserValue.values()) {
                     if (b.primarychooservalue.equalsIgnoreCase(primarychooservalue)) {
                         return b;
                     }
@@ -614,7 +617,7 @@ public class Enums {
             }
         }
 
-        public enum secondaryChooserValue {
+        public enum SecondaryChooserValue {
             NONE("-None-"),
             Light("Path of Light"),
             Darkness("Path of Darkness"),
@@ -642,7 +645,7 @@ public class Enums {
 
             private String secondarychooservalue;
 
-            private secondaryChooserValue(String secondarychooservalue) {
+            private SecondaryChooserValue(String secondarychooservalue) {
                 this.secondarychooservalue = secondarychooservalue;
             }
 
@@ -659,8 +662,8 @@ public class Enums {
              * @param secondarychooservalue
              * @return
              */
-            public static secondaryChooserValue getEnum(String secondarychooservalue) {
-                for (secondaryChooserValue b : secondaryChooserValue.values()) {
+            public static SecondaryChooserValue getEnum(String secondarychooservalue) {
+                for (SecondaryChooserValue b : SecondaryChooserValue.values()) {
                     if (b.secondarychooservalue.equalsIgnoreCase(secondarychooservalue)) {
                         return b;
                     }

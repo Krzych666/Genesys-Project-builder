@@ -23,7 +23,6 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
 import static genesys.project.builder.BuilderCORE.chooseConnection;
-import static genesys.project.builder.DatabaseModifier.holdClass;
 import javafx.util.Callback;
 
 /**

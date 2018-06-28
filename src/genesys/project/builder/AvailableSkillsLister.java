@@ -305,6 +305,8 @@ public class AvailableSkillsLister {
                             case SpiritualandScientificKnowledge:
                                 stmt2.setString(2, basic[3]);
                                 break;
+                            default:
+                                break;
                         }
                         data = BuilderCORE.getData(stmt2, columns, IgnoreSkillsList);
                         if (!data.isEmpty()) {

@@ -220,6 +220,9 @@ public class RosterCreatorWindowController implements Initializable {
         }
     }
 
+    /**
+     *checkCurrentToMaxPoints
+     */
     public void checkCurrentToMaxPoints() {
         if (Integer.parseInt(maxPointsValue.getText()) != 0) {
             currentPointsValue.setTextFill(Color.web(Integer.parseInt(currentPointsValue.getText()) > Integer.parseInt(maxPointsValue.getText()) ? "#eb1112" : "#000"));
@@ -265,8 +268,8 @@ public class RosterCreatorWindowController implements Initializable {
         lifeDomainValue.setText(DatabaseModifier.holdSpecies.getLifedomain().toString());
         speciesNameValue.setText(DatabaseModifier.holdSpecies.getSpeciesName());
         ObservableList tmp = FXCollections.observableArrayList();
-        for (int i = 0; i < DatabaseModifier.holdClass.length; i++) {
-            tmp.add(DatabaseModifier.holdClass[i].getClassName());
+        for (DatabaseModifier.AClass holdClas : DatabaseModifier.holdClass) {
+            tmp.add(holdClas.getClassName());
         }
         classList.setItems(tmp);
         Roster.setCellFactory(lst

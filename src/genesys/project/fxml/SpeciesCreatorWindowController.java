@@ -14,10 +14,10 @@ import genesys.project.builder.Enums.Enmuerations.MainKingdomValue;
 import genesys.project.builder.Enums.Enmuerations.MainLineageValue;
 import genesys.project.builder.Enums.Enmuerations.MainOrderValue;
 import genesys.project.builder.Enums.Enmuerations.MainRegionValue;
-import genesys.project.builder.Enums.Enmuerations.primaryChooserValue;
-import genesys.project.builder.Enums.Enmuerations.secondaryChooserValue;
-import static genesys.project.builder.Enums.Enmuerations.primaryChooserValue.*;
-import static genesys.project.builder.Enums.Enmuerations.secondaryChooserValue.*;
+import genesys.project.builder.Enums.Enmuerations.PrimaryChooserValue;
+import genesys.project.builder.Enums.Enmuerations.SecondaryChooserValue;
+import static genesys.project.builder.Enums.Enmuerations.PrimaryChooserValue.*;
+import static genesys.project.builder.Enums.Enmuerations.SecondaryChooserValue.*;
 import genesys.project.builder.DatabaseModifier;
 import genesys.project.builder.DatabaseModifier.AFey;
 import genesys.project.builder.DatabaseModifier.AReptilia;
@@ -367,7 +367,7 @@ public class SpeciesCreatorWindowController implements Initializable {
      */
     @FXML
     public void PrimaryChooseActions() throws SQLException {
-        switch (primaryChooserValue.getEnum(primaryChooser.getSelectionModel().getSelectedItem().toString())) {
+        switch (PrimaryChooserValue.getEnum(primaryChooser.getSelectionModel().getSelectedItem().toString())) {
             case Light:
             case Darkness:
                 ((DatabaseModifier.AFey) DatabaseModifier.holdSpecies).setMainDomain(MainDomainValue.getEnum(primaryChooser.getSelectionModel().getSelectedItem().toString()));
@@ -428,7 +428,7 @@ public class SpeciesCreatorWindowController implements Initializable {
      */
     @FXML
     public void SecondaryChooseActions() throws SQLException {
-        switch (secondaryChooserValue.getEnum(secondaryChooser.getSelectionModel().getSelectedItem().toString())) {
+        switch (SecondaryChooserValue.getEnum(secondaryChooser.getSelectionModel().getSelectedItem().toString())) {
             case Light:
             case Darkness:
                 ((DatabaseModifier.AFey) DatabaseModifier.holdSpecies).setSecondaryDomain(MainDomainValue.getEnum(secondaryChooser.getSelectionModel().getSelectedItem().toString()));
@@ -648,10 +648,10 @@ public class SpeciesCreatorWindowController implements Initializable {
                 break;
             case Fey:
                 primaryChooser.setVisible(true);
-                primaryChooser.setItems(FXCollections.observableArrayList(primaryChooserValue.Light.getText(), primaryChooserValue.Darkness.getText(), primaryChooserValue.Twilight.getText()));
+                primaryChooser.setItems(FXCollections.observableArrayList(PrimaryChooserValue.Light.getText(), PrimaryChooserValue.Darkness.getText(), PrimaryChooserValue.Twilight.getText()));
                 primaryChooser.getSelectionModel().select(0);
                 secondaryChooser.setVisible(false);
-                secondaryChooser.setItems(FXCollections.observableArrayList(secondaryChooserValue.Light.getText(), secondaryChooserValue.Darkness.getText()));
+                secondaryChooser.setItems(FXCollections.observableArrayList(SecondaryChooserValue.Light.getText(), SecondaryChooserValue.Darkness.getText()));
                 secondaryChooser.getSelectionModel().select(0);
                 primaryChooserText.setVisible(true);
                 primaryChooserText.setText("Path");
@@ -669,10 +669,10 @@ public class SpeciesCreatorWindowController implements Initializable {
                 break;
             case Biest:
                 primaryChooser.setVisible(true);
-                primaryChooser.setItems(FXCollections.observableArrayList(primaryChooserValue.NONE.getText(), primaryChooserValue.Ursidae.getText(), primaryChooserValue.CanusLupis.getText(), primaryChooserValue.AvianAves.getText(), primaryChooserValue.Bor.getText(), primaryChooserValue.Ovis.getText(), primaryChooserValue.Taurus.getText(), primaryChooserValue.Feline.getText(), primaryChooserValue.Vermin.getText(), primaryChooserValue.Caballis.getText(), primaryChooserValue.Ichthyes.getText()));
+                primaryChooser.setItems(FXCollections.observableArrayList(PrimaryChooserValue.NONE.getText(), PrimaryChooserValue.Ursidae.getText(), PrimaryChooserValue.CanusLupis.getText(), PrimaryChooserValue.AvianAves.getText(), PrimaryChooserValue.Bor.getText(), PrimaryChooserValue.Ovis.getText(), PrimaryChooserValue.Taurus.getText(), PrimaryChooserValue.Feline.getText(), PrimaryChooserValue.Vermin.getText(), PrimaryChooserValue.Caballis.getText(), PrimaryChooserValue.Ichthyes.getText()));
                 primaryChooser.getSelectionModel().select(0);
                 secondaryChooser.setVisible(true);
-                secondaryChooser.setItems(FXCollections.observableArrayList(secondaryChooserValue.Caverns.getText(), secondaryChooserValue.Desert.getText(), secondaryChooserValue.Forests.getText(), secondaryChooserValue.Marsh.getText(), secondaryChooserValue.Mountains.getText(), secondaryChooserValue.Moon.getText(), secondaryChooserValue.Oceans.getText(), secondaryChooserValue.Plains.getText(), secondaryChooserValue.Sky.getText(), secondaryChooserValue.Tundra.getText()));
+                secondaryChooser.setItems(FXCollections.observableArrayList(SecondaryChooserValue.Caverns.getText(), SecondaryChooserValue.Desert.getText(), SecondaryChooserValue.Forests.getText(), SecondaryChooserValue.Marsh.getText(), SecondaryChooserValue.Mountains.getText(), SecondaryChooserValue.Moon.getText(), SecondaryChooserValue.Oceans.getText(), SecondaryChooserValue.Plains.getText(), SecondaryChooserValue.Sky.getText(), SecondaryChooserValue.Tundra.getText()));
                 secondaryChooser.getSelectionModel().select(0);
                 primaryChooserText.setVisible(true);
                 primaryChooserText.setText("Kingdom");
@@ -682,10 +682,10 @@ public class SpeciesCreatorWindowController implements Initializable {
                 break;
             case Insecta:
                 primaryChooser.setVisible(true);
-                primaryChooser.setItems(FXCollections.observableArrayList(primaryChooserValue.NONE.getText(), primaryChooserValue.Arachnea.getText(), primaryChooserValue.Crustacea.getText(), primaryChooserValue.Insecta.getText(), primaryChooserValue.Myriapoda.getText()));
+                primaryChooser.setItems(FXCollections.observableArrayList(PrimaryChooserValue.NONE.getText(), PrimaryChooserValue.Arachnea.getText(), PrimaryChooserValue.Crustacea.getText(), PrimaryChooserValue.Insecta.getText(), PrimaryChooserValue.Myriapoda.getText()));
                 primaryChooser.getSelectionModel().select(0);
                 secondaryChooser.setVisible(false);
-                secondaryChooser.setItems(FXCollections.observableArrayList(secondaryChooserValue.NONE.getText(), secondaryChooserValue.Arachnid.getText(), secondaryChooserValue.Scorpionoid.getText(), secondaryChooserValue.Decapod.getText(), secondaryChooserValue.Isopod.getText(), secondaryChooserValue.Coleoptera.getText(), secondaryChooserValue.Dipteran.getText(), secondaryChooserValue.Formicadae.getText(), secondaryChooserValue.Mantid.getText(), secondaryChooserValue.Vespidae.getText(), secondaryChooserValue.Centipedea.getText(), secondaryChooserValue.Millipedea.getText()));
+                secondaryChooser.setItems(FXCollections.observableArrayList(SecondaryChooserValue.NONE.getText(), SecondaryChooserValue.Arachnid.getText(), SecondaryChooserValue.Scorpionoid.getText(), SecondaryChooserValue.Decapod.getText(), SecondaryChooserValue.Isopod.getText(), SecondaryChooserValue.Coleoptera.getText(), SecondaryChooserValue.Dipteran.getText(), SecondaryChooserValue.Formicadae.getText(), SecondaryChooserValue.Mantid.getText(), SecondaryChooserValue.Vespidae.getText(), SecondaryChooserValue.Centipedea.getText(), SecondaryChooserValue.Millipedea.getText()));
                 secondaryChooser.getSelectionModel().select(0);
                 primaryChooserText.setVisible(true);
                 primaryChooserText.setText("Classification");
