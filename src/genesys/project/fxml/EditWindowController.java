@@ -223,7 +223,7 @@ public class EditWindowController implements Initializable {
      */
     public void commenceEditing() throws IOException, SQLException, CloneNotSupportedException {
         if (!speciesEditDropdown.getSelectionModel().getSelectedItem().toString().equals(DatabaseModifier.TOPDROP)) {
-            DatabaseModifier.loadSpecies(speciesEditDropdown.getSelectionModel().getSelectedItem().toString());
+            DatabaseModifier.loadSpeciesToHold(speciesEditDropdown.getSelectionModel().getSelectedItem().toString());
         }
         if (!speciesEditDropdown.getSelectionModel().getSelectedItem().toString().equals(DatabaseModifier.TOPDROP) && cultureEditDropdown.getSelectionModel().getSelectedItem().toString().equals(DatabaseModifier.TOPDROP)) {
             if (editNameOnlyCheckbox.isSelected()) {
@@ -237,7 +237,7 @@ public class EditWindowController implements Initializable {
         }
         if (!cultureEditDropdown.getSelectionModel().getSelectedItem().toString().equals(DatabaseModifier.TOPDROP) && classEditDropdown.getSelectionModel().getSelectedItem().toString().equals(DatabaseModifier.TOPDROP) && heroEditDropdown.getSelectionModel().getSelectedItem().toString().equals(DatabaseModifier.TOPDROP) && progressEditDropdown.getSelectionModel().getSelectedItem().toString().equals(DatabaseModifier.TOPDROP) && rosterEditDropdown.getSelectionModel().getSelectedItem().toString().equals(DatabaseModifier.TOPDROP)) {
             DatabaseModifier.holdCulture = new DatabaseModifier.ACulture();
-            DatabaseModifier.loadCulture(speciesEditDropdown.getSelectionModel().getSelectedItem().toString(), cultureEditDropdown.getSelectionModel().getSelectedItem().toString());
+            DatabaseModifier.loadCultureToHold(speciesEditDropdown.getSelectionModel().getSelectedItem().toString(), cultureEditDropdown.getSelectionModel().getSelectedItem().toString());
             if (editNameOnlyCheckbox.isSelected()) {
                 DatabaseModifier.currentTable = DBTables.CreatedCultures;
                 toNameOnly();
@@ -251,7 +251,7 @@ public class EditWindowController implements Initializable {
                 DatabaseModifier.numberOfClases = Integer.parseInt(BuilderCORE.getValue(stmt, "COUNT (*)"));
                 DatabaseModifier.setNumberOfClases();
                 for (int i = 0; i < DatabaseModifier.numberOfClases; i++) {
-                    DatabaseModifier.loadClass(speciesEditDropdown.getSelectionModel().getSelectedItem().toString(), cultureEditDropdown.getSelectionModel().getSelectedItem().toString(), classEditDropdown.getItems().get(i + 1).toString(), i);
+                    DatabaseModifier.loadClassToHold(speciesEditDropdown.getSelectionModel().getSelectedItem().toString(), cultureEditDropdown.getSelectionModel().getSelectedItem().toString(), classEditDropdown.getItems().get(i + 1).toString(), i);
                 }
                 modificator(Modificators.ModifyCulture);
             }
@@ -259,10 +259,10 @@ public class EditWindowController implements Initializable {
 
         if (!classEditDropdown.getSelectionModel().getSelectedItem().toString().equals(DatabaseModifier.TOPDROP) && heroEditDropdown.getSelectionModel().getSelectedItem().toString().equals(DatabaseModifier.TOPDROP)) {
             DatabaseModifier.holdCulture = new DatabaseModifier.ACulture();
-            DatabaseModifier.loadCulture(speciesEditDropdown.getSelectionModel().getSelectedItem().toString(), cultureEditDropdown.getSelectionModel().getSelectedItem().toString());
+            DatabaseModifier.loadCultureToHold(speciesEditDropdown.getSelectionModel().getSelectedItem().toString(), cultureEditDropdown.getSelectionModel().getSelectedItem().toString());
             DatabaseModifier.numberOfClases = 1;
             DatabaseModifier.setNumberOfClases();
-            DatabaseModifier.loadClass(speciesEditDropdown.getSelectionModel().getSelectedItem().toString(), cultureEditDropdown.getSelectionModel().getSelectedItem().toString(), classEditDropdown.getSelectionModel().getSelectedItem().toString(), 0);
+            DatabaseModifier.loadClassToHold(speciesEditDropdown.getSelectionModel().getSelectedItem().toString(), cultureEditDropdown.getSelectionModel().getSelectedItem().toString(), classEditDropdown.getSelectionModel().getSelectedItem().toString(), 0);
             if (editNameOnlyCheckbox.isSelected()) {
                 DatabaseModifier.currentTable = DBTables.CreatedClasses;
                 toNameOnly();
@@ -275,7 +275,7 @@ public class EditWindowController implements Initializable {
 
         if (!heroEditDropdown.getSelectionModel().getSelectedItem().toString().equals(DatabaseModifier.TOPDROP)) {
             DatabaseModifier.holdHero = new DatabaseModifier.AHero();
-            DatabaseModifier.loadHero(speciesEditDropdown.getSelectionModel().getSelectedItem().toString(), cultureEditDropdown.getSelectionModel().getSelectedItem().toString(), heroEditDropdown.getSelectionModel().getSelectedItem().toString());
+            DatabaseModifier.loadHeroToHold(speciesEditDropdown.getSelectionModel().getSelectedItem().toString(), cultureEditDropdown.getSelectionModel().getSelectedItem().toString(), heroEditDropdown.getSelectionModel().getSelectedItem().toString());
             if (editNameOnlyCheckbox.isSelected()) {
                 DatabaseModifier.currentTable = DBTables.CreatedHeroes;
                 toNameOnly();
@@ -288,7 +288,7 @@ public class EditWindowController implements Initializable {
 
         if (!progressEditDropdown.getSelectionModel().getSelectedItem().toString().equals(DatabaseModifier.TOPDROP)) {
             DatabaseModifier.holdProgress = new DatabaseModifier.AProgress();
-            DatabaseModifier.loadProgress(speciesEditDropdown.getSelectionModel().getSelectedItem().toString(), cultureEditDropdown.getSelectionModel().getSelectedItem().toString(), progressEditDropdown.getSelectionModel().getSelectedItem().toString());
+            DatabaseModifier.loadProgressToHold(speciesEditDropdown.getSelectionModel().getSelectedItem().toString(), cultureEditDropdown.getSelectionModel().getSelectedItem().toString(), progressEditDropdown.getSelectionModel().getSelectedItem().toString());
             if (editNameOnlyCheckbox.isSelected()) {
                 DatabaseModifier.currentTable = DBTables.CreatedProgress;
                 toNameOnly();
@@ -301,7 +301,7 @@ public class EditWindowController implements Initializable {
 
         if (!rosterEditDropdown.getSelectionModel().getSelectedItem().toString().equals(DatabaseModifier.TOPDROP)) {
             DatabaseModifier.holdRoster = new DatabaseModifier.ARoster();
-            DatabaseModifier.loadRoster(speciesEditDropdown.getSelectionModel().getSelectedItem().toString(), cultureEditDropdown.getSelectionModel().getSelectedItem().toString(), rosterEditDropdown.getSelectionModel().getSelectedItem().toString());
+            DatabaseModifier.loadRosterToHold(speciesEditDropdown.getSelectionModel().getSelectedItem().toString(), cultureEditDropdown.getSelectionModel().getSelectedItem().toString(), rosterEditDropdown.getSelectionModel().getSelectedItem().toString());
             if (editNameOnlyCheckbox.isSelected()) {
                 DatabaseModifier.currentTable = DBTables.CreatedRosters;
                 toNameOnly();

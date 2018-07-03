@@ -159,7 +159,7 @@ public class CreateCultureController implements Initializable {
         stmt1.setString(1, speciesChooseDropdown4.getSelectionModel().getSelectedItem().toString());
         DatabaseModifier.holdSpecies.setSkills(BuilderCORE.getValue(stmt1, "Skills") + ",");
         clearLists4();
-        //skillsList1 = DatabaseModifier.getAddedSkills(DatabaseModifier.holdSpecies.getSkills());
+        //skillsList1 = DatabaseModifier.getAddedSkills(DatabaseModifier.holdSpecies.getFullSkills());
         //BuilderFXMLController.getSkillModifiers(ruledskills);
         chooseConnection(UseCases.Userdb);
         PreparedStatement stmt2 = BuilderCORE.getConnection().prepareStatement("SELECT SpeciesModifiers FROM CreatedSpecies WHERE SpeciesName = ?");

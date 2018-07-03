@@ -120,21 +120,20 @@ public class CreateRosterController implements Initializable {
     }
 
     private void loadSpecies() throws SQLException, CloneNotSupportedException {
-        DatabaseModifier.loadSpecies(speciesChooseDropdown.getSelectionModel().getSelectedItem().toString());
+        DatabaseModifier.loadSpeciesToHold(speciesChooseDropdown.getSelectionModel().getSelectedItem().toString());
         DatabaseModifier.holdCulture = new DatabaseModifier.ACulture();
-        DatabaseModifier.loadCulture(speciesChooseDropdown.getSelectionModel().getSelectedItem().toString(), cultureChooseDropdown.getSelectionModel().getSelectedItem().toString());
+        DatabaseModifier.loadCultureToHold(speciesChooseDropdown.getSelectionModel().getSelectedItem().toString(), cultureChooseDropdown.getSelectionModel().getSelectedItem().toString());
         chooseConnection(Enums.Enmuerations.UseCases.Userdb);
-        PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT ClassName FROM CreatedClasses WHERE SpeciesName=? AND CultureName =?");
+        PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT * FROM CreatedClasses WHERE SpeciesName=? AND CultureName =?");
         stmt.setString(1, speciesChooseDropdown.getSelectionModel().getSelectedItem().toString());
         stmt.setString(2, cultureChooseDropdown.getSelectionModel().getSelectedItem().toString());
         String[] columns = {"ClassName"};
-        ObservableList<String> classesList = FXCollections.observableArrayList();
-        classesList = BuilderCORE.getData(stmt, columns, null);
+        ObservableList<String> classesList = BuilderCORE.getData(stmt, columns, null, 0);
         DatabaseModifier.holdClass = new DatabaseModifier.AClass[classesList.size()];
         for (int i = 0; i < classesList.size(); i++) {
             DatabaseModifier.holdClass[i] = new DatabaseModifier.AClass();
             DatabaseModifier.holdClass[i].clearAClass();
-            DatabaseModifier.loadClass(speciesChooseDropdown.getSelectionModel().getSelectedItem().toString(), cultureChooseDropdown.getSelectionModel().getSelectedItem().toString(), classesList.get(i), i);
+            DatabaseModifier.loadClassToHold(speciesChooseDropdown.getSelectionModel().getSelectedItem().toString(), cultureChooseDropdown.getSelectionModel().getSelectedItem().toString(), classesList.get(i), i);
         }
     }
 

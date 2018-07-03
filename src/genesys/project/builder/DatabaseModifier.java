@@ -43,27 +43,27 @@ public class DatabaseModifier {
     /**
      * holdCulture
      */
-    public static ACulture holdCulture;
+    public static ACulture holdCulture = new ACulture();
 
     /**
      * holdClass
      */
-    public static AClass[] holdClass;
+    public static AClass[] holdClass = new AClass[1];
 
     /**
      * holdHero
      */
-    public static AHero holdHero;
+    public static AHero holdHero = new AHero();
 
     /**
      * holdProgress
      */
-    public static AProgress holdProgress;
+    public static AProgress holdProgress = new AProgress();
 
     /**
      * holdRoster
      */
-    public static ARoster holdRoster;
+    public static ARoster holdRoster = new ARoster();
 
     /**
      * fullSkillList1
@@ -240,11 +240,11 @@ public class DatabaseModifier {
         for (int i = 0; i < lst.length; i++) {
             if (!lstref[i].equals("")) {
                 chooseConnection(UseCases.COREdb);
-                PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT SkillRules FROM Skills WHERE SkillName = ?");
+                PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT * FROM Skills WHERE SkillName = ?");
                 stmt.setString(1, lstref[i]);
                 String[] skl = ((BuilderCORE.getValue(stmt, "SkillRules")).split(";"));
                 chooseConnection(UseCases.COREdb);
-                PreparedStatement stmt1 = BuilderCORE.getConnection().prepareStatement("SELECT PointCost FROM Skills WHERE SkillName = ?");
+                PreparedStatement stmt1 = BuilderCORE.getConnection().prepareStatement("SELECT * FROM Skills WHERE SkillName = ?");
                 stmt1.setString(1, lstref[i]);
                 String ptscost = (BuilderCORE.getValue(stmt1, "PointCost"));
                 lst[i] += " (pts : " + ptscost + ") : ";
@@ -260,7 +260,7 @@ public class DatabaseModifier {
                         lst[i] += ", ";
                     }
                     chooseConnection(UseCases.COREdb);
-                    PreparedStatement stmt2 = BuilderCORE.getConnection().prepareStatement("SELECT LifeDomainTree2 FROM Skills WHERE SkillName = ?");
+                    PreparedStatement stmt2 = BuilderCORE.getConnection().prepareStatement("SELECT * FROM Skills WHERE SkillName = ?");
                     stmt2.setString(1, lstref[i]);
                     String rulledskill = BuilderCORE.getValue(stmt2, "LifeDomainTree2");
                     ruledskills.add(rulledskill + ">" + skl[j]);
@@ -338,7 +338,7 @@ public class DatabaseModifier {
                     points += a * baseAddedCost(lifeDomain, species, classname, source, points);
                     for (String lst1 : lst) {
                         chooseConnection(UseCases.COREdb);
-                        PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT PointCost FROM Skills WHERE SkillName = ?");
+                        PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT * FROM Skills WHERE SkillName = ?");
                         stmt.setString(1, lst1);
                         String add = (BuilderCORE.getValue(stmt, "PointCost"));
                         if (add.contains("/")) {
@@ -352,7 +352,7 @@ public class DatabaseModifier {
                     String[] lst = ((classname[bb].Skills).split(","));
                     for (String lst1 : lst) {
                         chooseConnection(UseCases.COREdb);
-                        PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT PointCost FROM Skills WHERE SkillName = ?");
+                        PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT * FROM Skills WHERE SkillName = ?");
                         stmt.setString(1, lst1);
                         String add = (BuilderCORE.getValue(stmt, "PointCost"));
                         if (add.contains("/")) {
@@ -365,7 +365,7 @@ public class DatabaseModifier {
                     String[] lst = (species.Skills.replaceAll(";", ",").split(","));
                     for (String lst1 : lst) {
                         chooseConnection(UseCases.COREdb);
-                        PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT PointCost FROM Skills WHERE SkillName = ?");
+                        PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT * FROM Skills WHERE SkillName = ?");
                         stmt.setString(1, lst1);
                         String add = BuilderCORE.getValue(stmt, "PointCost");
                         if (add.contains("/")) {
@@ -378,7 +378,7 @@ public class DatabaseModifier {
                 String[] lst = (species.Skills.replaceAll(";", ",").split(","));
                 for (String lst1 : lst) {
                     chooseConnection(UseCases.COREdb);
-                    PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT PointCost FROM Skills WHERE SkillName = ?");
+                    PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT * FROM Skills WHERE SkillName = ?");
                     stmt.setString(1, lst1);
                     String add = BuilderCORE.getValue(stmt, "PointCost");
                     if (add.contains("/")) {
@@ -391,7 +391,7 @@ public class DatabaseModifier {
             String[] lst = (species.Skills.replaceAll(";", ",").split(","));
             for (String lst1 : lst) {
                 chooseConnection(UseCases.COREdb);
-                PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT PointCost FROM Skills WHERE SkillName = ?");
+                PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT * FROM Skills WHERE SkillName = ?");
                 stmt.setString(1, lst1);
                 String add = BuilderCORE.getValue(stmt, "PointCost");
                 if (add.contains("/")) {
@@ -409,7 +409,7 @@ public class DatabaseModifier {
      */
     public static String skillsCanTake() throws SQLException {
         chooseConnection(UseCases.COREdb);
-        PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT StartingNumberOfSkills FROM StartingCharacteristics WHERE LifeDomain = ?");
+        PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT * FROM StartingCharacteristics WHERE LifeDomain = ?");
         stmt.setString(1, holdSpecies.Lifedomain.toString());
         String rules = BuilderCORE.getValue(stmt, "StartingNumberOfSkills");
         switch (holdSpecies.Lifedomain) {
@@ -453,7 +453,7 @@ public class DatabaseModifier {
      */
     public static String classCanTake() throws SQLException {
         chooseConnection(UseCases.COREdb);
-        PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT ClassTypes FROM StartingCharacteristics WHERE LifeDomain =?");
+        PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT * FROM StartingCharacteristics WHERE LifeDomain =?");
         stmt.setString(1, holdSpecies.Lifedomain.toString());
         String ClassList = BuilderCORE.getValue(stmt, "ClassTypes");
         String CL[] = ClassList.split(",");
@@ -551,7 +551,7 @@ public class DatabaseModifier {
         chooseConnection(UseCases.Userdb);
         PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT DISTINCT SpeciesName FROM CreatedSpecies");
         String[] columns = {"SpeciesName"};
-        tmp.addAll(BuilderCORE.getData(stmt, columns, null));
+        tmp.addAll(BuilderCORE.getData(stmt, columns, null, 0));
         return tmp;
     }
 
@@ -565,10 +565,10 @@ public class DatabaseModifier {
         ObservableList tmp = FXCollections.observableArrayList();
         tmp.setAll(TOPDROP);
         chooseConnection(UseCases.Userdb);
-        PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT CultureName FROM CreatedCultures WHERE SpeciesName = ?");
+        PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT * FROM CreatedCultures WHERE SpeciesName = ?");
         stmt.setString(1, fromwhat);
         String[] columns = {"CultureName"};
-        tmp.addAll(BuilderCORE.getData(stmt, columns, null));
+        tmp.addAll(BuilderCORE.getData(stmt, columns, null, 0));
         return tmp;
     }
 
@@ -583,11 +583,11 @@ public class DatabaseModifier {
         ObservableList tmp = FXCollections.observableArrayList();
         tmp.setAll(TOPDROP);
         chooseConnection(UseCases.Userdb);
-        PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT ClassName FROM CreatedClasses WHERE (SpeciesName =?) AND (CultureName =?)");
+        PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT * FROM CreatedClasses WHERE (SpeciesName =?) AND (CultureName =?)");
         stmt.setString(1, fromwhats);
         stmt.setString(2, fromwhatc);
         String[] columns = {"ClassName"};
-        tmp.addAll(BuilderCORE.getData(stmt, columns, null));
+        tmp.addAll(BuilderCORE.getData(stmt, columns, null, 0));
         return tmp;
     }
 
@@ -605,16 +605,16 @@ public class DatabaseModifier {
         chooseConnection(UseCases.Userdb);
         String[] columns = {"HeroName"};
         if (TOPDROP.equals(fromwhatcl) && !(TOPDROP.equals(fromwhats) && TOPDROP.equals(fromwhatc))) {
-            PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT HeroName FROM CreatedHeroes WHERE (SpeciesName =?) AND (CultureName =?)");
+            PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT * FROM CreatedHeroes WHERE (SpeciesName =?) AND (CultureName =?)");
             stmt.setString(1, fromwhats);
             stmt.setString(2, fromwhatc);
-            tmp.addAll(BuilderCORE.getData(stmt, columns, null));
+            tmp.addAll(BuilderCORE.getData(stmt, columns, null, 0));
         } else {
-            PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT HeroName FROM CreatedHeroes WHERE (SpeciesName =?) AND (CultureName =?) AND (BasedOn =?)");
+            PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT * FROM CreatedHeroes WHERE (SpeciesName =?) AND (CultureName =?) AND (BasedOn =?)");
             stmt.setString(1, fromwhats);
             stmt.setString(2, fromwhatc);
             stmt.setString(3, fromwhatcl);
-            tmp.addAll(BuilderCORE.getData(stmt, columns, null));
+            tmp.addAll(BuilderCORE.getData(stmt, columns, null, 0));
         }
         return tmp;
     }
@@ -630,11 +630,11 @@ public class DatabaseModifier {
         ObservableList tmp = FXCollections.observableArrayList();
         tmp.setAll(TOPDROP);
         chooseConnection(UseCases.Userdb);
-        PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT ProgressName FROM CreatedProgress WHERE (SpeciesName =?) AND (CultureName =?)");
+        PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT * FROM CreatedProgress WHERE (SpeciesName =?) AND (CultureName =?)");
         stmt.setString(1, fromwhats);
         stmt.setString(2, fromwhatc);
         String[] columns = {"ProgressName"};
-        tmp.addAll(BuilderCORE.getData(stmt, columns, null));
+        tmp.addAll(BuilderCORE.getData(stmt, columns, null, 0));
         return tmp;
     }
 
@@ -649,11 +649,11 @@ public class DatabaseModifier {
         ObservableList tmp = FXCollections.observableArrayList();
         tmp.setAll(TOPDROP);
         chooseConnection(UseCases.Userdb);
-        PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT RosterName FROM CreatedRosters WHERE (SpeciesName =?) AND (CultureName =?)");
+        PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT * FROM CreatedRosters WHERE (SpeciesName =?) AND (CultureName =?)");
         stmt.setString(1, fromwhats);
         stmt.setString(2, fromwhatc);
         String[] columns = {"RosterName"};
-        tmp.addAll(BuilderCORE.getData(stmt, columns, null));
+        tmp.addAll(BuilderCORE.getData(stmt, columns, null, 0));
         return tmp;
     }
 
@@ -772,7 +772,7 @@ public class DatabaseModifier {
             PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT DISTINCT LifeDomainTree1 FROM Skills WHERE LifeDomain = ?");
             stmt.setString(1, holdSpecies.Lifedomain.toString());
             String[] columns = {"LifeDomainTree1"};
-            tmp = BuilderCORE.getData(stmt, columns, null);
+            tmp = BuilderCORE.getData(stmt, columns, null, 0);
             if (LifedomainValue.Fey == holdSpecies.Lifedomain) {
                 chooseConnection(UseCases.COREdb);
                 PreparedStatement stmt1 = BuilderCORE.getConnection().prepareStatement("SELECT DISTINCT LifeDomainTree1 FROM Skills WHERE (LifeDomain = 'Fey' AND (LifeDomainTree1 = ? OR LifeDomainTree1 = ?))");
@@ -816,7 +816,7 @@ public class DatabaseModifier {
                         break;
                 }
                 String[] columns1 = {"LifeDomainTree1"};
-                tmp = BuilderCORE.getData(stmt1, columns1, null);
+                tmp = BuilderCORE.getData(stmt1, columns1, null, 0);
             }
         }
         int a = 0;
@@ -826,14 +826,14 @@ public class DatabaseModifier {
             chooseConnection(UseCases.COREdb);
             PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT DISTINCT LifeDomainTree1 FROM Skills WHERE LifeDomain = 'Fey'");
             String[] columns = {"LifeDomainTree1"};
-            tmp1 = BuilderCORE.getData(stmt, columns, null);
+            tmp1 = BuilderCORE.getData(stmt, columns, null, 0);
         }
         if (outcasts && holdSpecies.Lifedomain == LifedomainValue.Fey) {
             a = 2;
             chooseConnection(UseCases.COREdb);
             PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT DISTINCT LifeDomainTree1 FROM Skills WHERE (LifeDomain = 'Humanoid' AND LifeDomainTree1 != 'Genetic Mutation')");
             String[] columns = {"LifeDomainTree1"};
-            tmp1 = BuilderCORE.getData(stmt, columns, null);
+            tmp1 = BuilderCORE.getData(stmt, columns, null, 0);
         }
         if (tmp != null) {
             String[] lst = new String[tmp.size() + a];
@@ -869,7 +869,7 @@ public class DatabaseModifier {
         stmt.setString(1, holdSpecies.Lifedomain.name());
         stmt.setString(2, SkillBranch);
         String[] columns = {"LifeDomainTree2"};
-        tmp = BuilderCORE.getData(stmt, columns, null);
+        tmp = BuilderCORE.getData(stmt, columns, null, 0);
         if (onlyPrimaryChooser != null && !onlyPrimaryChooser.equals("") && !onlyPrimaryChooser.equals("standard") && tmp.contains(onlyPrimaryChooser)) {
             return FXCollections.observableArrayList(onlyPrimaryChooser);
         }
@@ -888,11 +888,11 @@ public class DatabaseModifier {
      */
     public static String skillsLeftModify(String Skill, Boolean Add) throws SQLException {
         chooseConnection(UseCases.COREdb);
-        PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT LifeDomainTree1 FROM Skills WHERE SkillName = ?");
+        PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT * FROM Skills WHERE SkillName = ?");
         stmt.setString(1, Skill);
         String SkillType1 = BuilderCORE.getValue(stmt, "LifeDomainTree1");
         chooseConnection(UseCases.COREdb);
-        PreparedStatement stmt1 = BuilderCORE.getConnection().prepareStatement("SELECT LifeDomainTree3 FROM Skills WHERE SkillName = ?");
+        PreparedStatement stmt1 = BuilderCORE.getConnection().prepareStatement("SELECT * FROM Skills WHERE SkillName = ?");
         stmt1.setString(1, Skill);
         String SkillType3 = BuilderCORE.getValue(stmt1, "LifeDomainTree3");
 
@@ -1043,13 +1043,29 @@ public class DatabaseModifier {
      * @throws SQLException
      */
     public static ObservableList getItemsNames(String itemType) throws SQLException {
+        String itemTypeOneWord = itemType.replaceAll(" ", "");
         ObservableList<String> tmp = FXCollections.observableArrayList();
         chooseConnection(UseCases.COREdb);
-        PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT " + itemType + "Name FROM Equipment" + itemType + " WHERE Type = ? OR Type = ?");
+        PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT * FROM Equipment" + itemTypeOneWord + " WHERE Type = ? OR Type = ?");
         stmt.setString(1, "Primitive");
         stmt.setString(2, "Common");
-        String[] columns = {itemType + "Name"};
-        tmp.addAll(BuilderCORE.getData(stmt, columns, null));
+        String[] columns = {itemTypeOneWord + "Name"};
+        tmp.addAll(BuilderCORE.getData(stmt, columns, null, 0));
+        tmp.addAll(getAvailableSpecialItemNames(itemType));
+        return tmp;
+    }
+
+    public static ObservableList getAvailableSpecialItemNames(String itemType) throws SQLException {
+        String itemTypeOneWord = itemType.replaceAll(" ", "");
+        ObservableList<String> tmp = FXCollections.observableArrayList();
+        chooseConnection(UseCases.COREdb);
+        //PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT " + itemTypeOneWord + "Name FROM Equipment" + itemTypeOneWord + " WHERE Type = ? ");
+        PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT * FROM Equipment" + itemTypeOneWord + " WHERE Type = ? ");
+        stmt.setString(1, "Special");
+        String[] columns = {itemTypeOneWord + "Name", "SubType"};
+        System.out.println(BuilderCORE.getData(stmt, columns, null, 0));
+        //tmp.addAll(BuilderCORE.getData(stmt, columns, null, 0));
+        //tmp.remove();
         return tmp;
     }
 
@@ -1064,10 +1080,10 @@ public class DatabaseModifier {
         String itemName;
         itemName = item.contains("{") ? item.split(" \\{")[0] : item;
         chooseConnection(UseCases.COREdb);
-        PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT Cost FROM Equipment" + itemType + " WHERE " + itemType + "Name = ?");
+        PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT * FROM Equipment" + itemType + " WHERE " + itemType + "Name = ?");
         stmt.setString(1, itemName);
         String[] columns = {"Cost"};
-        String data = BuilderCORE.getData(stmt, columns, null).get(0).toString();
+        String data = BuilderCORE.getData(stmt, columns, null, 0).get(0).toString();
         if (data.contains("/")) {
             data = data.split("/")[0];
         }
@@ -1093,12 +1109,12 @@ public class DatabaseModifier {
                 StringBuilder improvementHelper = new StringBuilder();
                 improvementHelper.append(improvementsList1.contains("X") ? improvementsList1.split("X")[0] + "X" : improvementsList1);
                 chooseConnection(UseCases.COREdb);
-                PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT Cost FROM EquipmentImprovements WHERE ImprovementName = ? AND (Type = ? OR Type = ? OR Type = ?)");
+                PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT * FROM EquipmentImprovements WHERE ImprovementName = ? AND (Type = ? OR Type = ? OR Type = ?)");
                 stmt.setString(1, improvementHelper.toString());
                 stmt.setString(2, getImprovementTypeBasedOnItemSubtype(getItemSubType(itemType, itemWithImprovements.contains("{") ? itemWithImprovements.split(" \\{")[0] : itemWithImprovements)));
                 stmt.setString(3, "Flintlock");
                 stmt.setString(4, itemType.equals("Weapon") ? "Extreme Weapons" : "Resistance");
-                String stringCost = BuilderCORE.getData(stmt, columns, null).get(0).toString();
+                String stringCost = BuilderCORE.getData(stmt, columns, null, 0).get(0).toString();
                 if (stringCost.contains("/")) {
                     stringCost = stringCost.split("/")[Integer.parseInt(improvementsList1.split("X")[1]) > stringCost.split("/").length ? stringCost.split("/").length - 1 : Integer.parseInt(improvementsList1.split("X")[1]) - 1];
                 }
@@ -1120,12 +1136,12 @@ public class DatabaseModifier {
         String[] columns = {"SpecialRules"};
         ObservableList<String> tmp = FXCollections.observableArrayList();
         chooseConnection(UseCases.COREdb);
-        PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT SpecialRules FROM EquipmentImprovements WHERE ImprovementName = ? AND (Type = ? OR Type = ? OR Type = ?)");
+        PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT * FROM EquipmentImprovements WHERE ImprovementName = ? AND (Type = ? OR Type = ? OR Type = ?)");
         stmt.setString(1, improvementName);
         stmt.setString(2, getImprovementTypeBasedOnItemSubtype(getItemSubType(itemType, itemName)));
         stmt.setString(3, "Flintlock");
         stmt.setString(4, itemType.equals("Weapon") ? "Extreme Weapons" : "Resistance");
-        String data = BuilderCORE.getData(stmt, columns, null).get(0).toString();
+        String data = BuilderCORE.getData(stmt, columns, null, 0).get(0).toString();
         String lst[] = data.split(";").length > 1 ? data.split(";") : new String[]{data};
         tmp.addAll(lst);
         return tmp;
@@ -1142,18 +1158,9 @@ public class DatabaseModifier {
         String[] columns = {"SubType"};
         chooseConnection(UseCases.COREdb);
         PreparedStatement stmt;
-        switch (type) {
-            case "Armor":
-                stmt = BuilderCORE.getConnection().prepareStatement("SELECT SubType FROM EquipmentArmor WHERE ArmorName = ?");
-                break;
-            case "Weapon":
-                stmt = BuilderCORE.getConnection().prepareStatement("SELECT SubType FROM EquipmentWeapon WHERE WeaponName = ?");
-                break;
-            default:
-                return "";
-        }
+        stmt = BuilderCORE.getConnection().prepareStatement("SELECT * FROM Equipment" + type + " WHERE " + type + "Name = ?");
         stmt.setString(1, itemName);
-        String tmp = BuilderCORE.getData(stmt, columns, null).get(0).toString();
+        String tmp = BuilderCORE.getData(stmt, columns, null, 0).get(0).toString();
         return tmp;
     }
 
@@ -1177,8 +1184,12 @@ public class DatabaseModifier {
                 return "Ranged Weapon";
             case "Flintlock":
                 return "Ranged Weapon";
-            case "Other":
-                return "Other";
+            case "Companion":
+                return "Exotic Animal Attributes";
+            case "HeavyMilitary":
+                return "Military Weapon";
+            case "Vehicle":
+                return "Chariot and Wagon Upgrades";
             default:
                 return "";
         }
@@ -1199,69 +1210,112 @@ public class DatabaseModifier {
         PreparedStatement stmt = null;
         switch (type) {
             case "Armor":
-                stmt = BuilderCORE.getConnection().prepareStatement("SELECT ImprovementName FROM EquipmentImprovements WHERE Type = 'Armor' OR Type = 'Resistance'");
+                stmt = BuilderCORE.getConnection().prepareStatement("SELECT * FROM EquipmentImprovements WHERE Type = 'Armor' OR Type = 'Resistance'");
                 break;
             case "Weapon":
                 switch (subType) {
                     case "Melee":
                     case "Spear":
-                        stmt = BuilderCORE.getConnection().prepareStatement("SELECT ImprovementName FROM EquipmentImprovements WHERE Type = 'Melee Weapon' OR Type = 'Extreme Weapons'");
+                        stmt = BuilderCORE.getConnection().prepareStatement("SELECT * FROM EquipmentImprovements WHERE Type = 'Melee Weapon' OR Type = 'Extreme Weapons'");
                         break;
                     case "Throwing":
                     case "Bow":
                     case "Crossbow":
                     case "Alchemy":
-                        stmt = BuilderCORE.getConnection().prepareStatement("SELECT ImprovementName FROM EquipmentImprovements WHERE Type = 'Ranged Weapon' OR Type = 'Extreme Weapons'");
+                        stmt = BuilderCORE.getConnection().prepareStatement("SELECT * FROM EquipmentImprovements WHERE Type = 'Ranged Weapon' OR Type = 'Extreme Weapons'");
                         break;
                     case "Flintlock":
-                        stmt = BuilderCORE.getConnection().prepareStatement("SELECT ImprovementName FROM EquipmentImprovements WHERE Type = 'Ranged Weapon' OR Type = 'Flintlock' OR Type = 'Extreme Weapons'");
+                        stmt = BuilderCORE.getConnection().prepareStatement("SELECT * FROM EquipmentImprovements WHERE Type = 'Ranged Weapon' OR Type = 'Flintlock' OR Type = 'Extreme Weapons'");
                         break;
                     default:
                         break;
                 }
                 break;
-            case "Other":
-                stmt = BuilderCORE.getConnection().prepareStatement("SELECT ImprovementName FROM EquipmentImprovements WHERE Type = 'Other'");
+            case "Comapnion":
+                stmt = BuilderCORE.getConnection().prepareStatement("SELECT * FROM EquipmentImprovements WHERE Type = 'Exotic Animal Attributes'");
+                break;
+            case "Vehicle":
+                stmt = BuilderCORE.getConnection().prepareStatement("SELECT * FROM EquipmentImprovements WHERE Type = 'Chariot and Wagon Upgrades'");
+                break;
+            case "Heavy Military Weapon":
+                stmt = BuilderCORE.getConnection().prepareStatement("SELECT * FROM EquipmentImprovements WHERE Type = 'Chariot and Wagon Upgrades'");
+                break;
+            default:
                 break;
         }
-        tmp.addAll(BuilderCORE.getData(stmt, columns, null));
+        tmp.addAll(BuilderCORE.getData(stmt, columns, null, 0));
         return tmp;
+    }
+
+    public static ObservableList loadAllSkillsFromDB() throws SQLException {
+        chooseConnection(UseCases.COREdb);
+        PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT * FROM Skills");
+        String[] columns = {"SkillName", "PointCost", "SkillRules", "Age", "LifeDomain", "LifeDomainTree1", "LifeDomainTree2", "LifeDomainTree3"};
+        ObservableList data = BuilderCORE.getData(stmt, columns, null, 0);
+        return data;
+    }
+
+    public static int getSkillIndex(ObservableList allSkills, String skillName) {
+        int index = -1;
+        for (int j = 0; j < allSkills.size(); j++) {
+            if (allSkills.get(j).toString().split("\\|")[0].equals(skillName)) {
+                index = j;
+                j = allSkills.size();
+            }
+        }
+        return index;
     }
 
     //change to private and do setters/getters
     /**
      *
      * @param selSpecies
+     * @return
      * @throws SQLException
      * @throws java.lang.CloneNotSupportedException
      */
-    public static void loadSpecies(String selSpecies) throws SQLException, CloneNotSupportedException {
+    public static ObservableList getSpeciesData(String selSpecies) throws SQLException, CloneNotSupportedException {
         chooseConnection(UseCases.Userdb);
-        PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT LifeDomain FROM CreatedSpecies WHERE SpeciesName =?");
+        PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT * FROM CreatedSpecies WHERE SpeciesName =?");
         stmt.setString(1, selSpecies);
-        holdSpecies = ASpecies.createASpecies(LifedomainValue.valueOf(BuilderCORE.getValue(stmt, "LifeDomain")));
-        chooseConnection(UseCases.Userdb);
-        PreparedStatement stmt1 = BuilderCORE.getConnection().prepareStatement("SELECT LifeDomain FROM CreatedSpecies WHERE SpeciesName =?");
-        stmt1.setString(1, selSpecies);
-        holdSpecies.setLifedomain(LifedomainValue.valueOf(BuilderCORE.getValue(stmt1, "LifeDomain")));
-        chooseConnection(UseCases.Userdb);
-        PreparedStatement stmt2 = BuilderCORE.getConnection().prepareStatement("SELECT CharacteristicGroup FROM CreatedSpecies WHERE SpeciesName =?");
-        stmt2.setString(1, selSpecies);
-        holdSpecies.setCharacteristicGroup(CharacteristicGroup.valueOf(BuilderCORE.getValue(stmt2, "CharacteristicGroup")));
+        String[] columns = {"LifeDomain", "CharacteristicGroup", "Age", "Skills", "SpeciesModifiers"};
+        ObservableList data = BuilderCORE.getData(stmt, columns, null, 0);
+        return data;
+    }
+
+    /**
+     *
+     * @param selSpecies
+     * @throws SQLException
+     * @throws CloneNotSupportedException
+     */
+    public static void loadSpeciesToHold(String selSpecies) throws SQLException, CloneNotSupportedException {
+        ObservableList data = getSpeciesData(selSpecies);
+        holdSpecies = ASpecies.createASpecies(LifedomainValue.valueOf(data.get(0).toString().split("\\|")[0]));
+        holdSpecies.setLifedomain(LifedomainValue.valueOf(data.get(0).toString().split("\\|")[0]));
+        holdSpecies.setCharacteristicGroup(CharacteristicGroup.valueOf(data.get(0).toString().split("\\|")[1]));
         holdSpecies.setSpeciesName(selSpecies);
-        chooseConnection(UseCases.Userdb);
-        PreparedStatement stmt3 = BuilderCORE.getConnection().prepareStatement("SELECT Age FROM CreatedSpecies WHERE SpeciesName = ?");
-        stmt3.setString(1, selSpecies);
-        holdSpecies.setAge(Integer.parseInt(BuilderCORE.getValue(stmt3, "Age")));
-        chooseConnection(UseCases.Userdb);
-        PreparedStatement stmt4 = BuilderCORE.getConnection().prepareStatement("SELECT Skills FROM CreatedSpecies WHERE SpeciesName =?");
-        stmt4.setString(1, selSpecies);
-        holdSpecies.setSkills(BuilderCORE.getValue(stmt4, "Skills"));
-        chooseConnection(UseCases.Userdb);
-        PreparedStatement stmt5 = BuilderCORE.getConnection().prepareStatement("SELECT SpeciesModifiers FROM CreatedSpecies WHERE SpeciesName =?");
-        stmt5.setString(1, selSpecies);
-        holdSpecies.setSpeciesModifiers(BuilderCORE.getValue(stmt5, "SpeciesModifiers"));
+        holdSpecies.setAge(Integer.parseInt(data.get(0).toString().split("\\|")[2]));
+        holdSpecies.setSkills(data.get(0).toString().split("\\|")[3]);
+        holdSpecies.setSpeciesModifiers(data.get(0).toString().split("\\|")[4]);
         modifiedHoldSpecies = holdSpecies.getClone();
+    }
+
+    /**
+     *
+     * @param selSpecies
+     * @param selCulture
+     * @return
+     * @throws SQLException
+     */
+    public static ObservableList getCultureData(String selSpecies, String selCulture) throws SQLException {
+        chooseConnection(UseCases.Userdb);
+        PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT * FROM CreatedCultures WHERE SpeciesName = ? AND CultureName = ?");
+        stmt.setString(1, selSpecies);
+        stmt.setString(2, selCulture);
+        String[] columns = {"Age"};
+        ObservableList data = BuilderCORE.getData(stmt, columns, null, 0);
+        return data;
     }
 
     /**
@@ -1271,15 +1325,31 @@ public class DatabaseModifier {
      * @throws java.lang.CloneNotSupportedException
      * @throws java.sql.SQLException
      */
-    public static void loadCulture(String selSpecies, String selCulture) throws CloneNotSupportedException, SQLException {
+    public static void loadCultureToHold(String selSpecies, String selCulture) throws CloneNotSupportedException, SQLException {
+        ObservableList data = getCultureData(selSpecies, selCulture);
         holdCulture.setSpeciesName(selSpecies);
         holdCulture.setCultureName(selCulture);
+        holdCulture.setAge(Integer.parseInt(data.get(0).toString().split("\\|")[0]));
+        modifiedHoldCulture = holdCulture.getClone();
+    }
+
+    /**
+     *
+     * @param selSpecies
+     * @param selCulture
+     * @param selClass
+     * @return
+     * @throws SQLException
+     */
+    public static ObservableList getClassData(String selSpecies, String selCulture, String selClass) throws SQLException {
         chooseConnection(UseCases.Userdb);
-        PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT Age FROM CreatedCultures WHERE SpeciesName = ? AND CultureName = ?");
+        PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT * FROM CreatedClasses WHERE SpeciesName=? AND CultureName =? AND ClassName =?");
         stmt.setString(1, selSpecies);
         stmt.setString(2, selCulture);
-        holdCulture.setAge(Integer.parseInt(BuilderCORE.getValue(stmt, "Age")));
-        modifiedHoldCulture = holdCulture.getClone();
+        stmt.setString(3, selClass);
+        String[] columns = {"Skills", "Advancements", "Type", "BasedOn", "AdditionalCost"};
+        ObservableList data = BuilderCORE.getData(stmt, columns, null, 0);
+        return data;
     }
 
     /**
@@ -1290,42 +1360,37 @@ public class DatabaseModifier {
      * @param a
      * @throws SQLException
      */
-    public static void loadClass(String selSpecies, String selCulture, String selClass, int a) throws SQLException {
+    public static void loadClassToHold(String selSpecies, String selCulture, String selClass, int a) throws SQLException {
+        ObservableList data = getClassData(selSpecies, selCulture, selClass);
         holdClass[a].setClassName(selClass);
-        chooseConnection(UseCases.Userdb);
-        PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT Skills FROM CreatedClasses WHERE SpeciesName=? AND CultureName =? AND ClassName =?");
-        stmt.setString(1, selSpecies);
-        stmt.setString(2, selCulture);
-        stmt.setString(3, selClass);
-        holdClass[a].setSkills(BuilderCORE.getValue(stmt, "Skills") + ",");
+        holdClass[a].setSkills(data.get(0).toString().split("\\|")[0] + ",");
         holdClass[a].setSpeciesName(selSpecies);
         holdClass[a].setCultureName(selCulture);
-        chooseConnection(UseCases.Userdb);
-        PreparedStatement stmt1 = BuilderCORE.getConnection().prepareStatement("SELECT Advancements FROM CreatedClasses WHERE SpeciesName=? AND CultureName =? AND ClassName =?");
-        stmt1.setString(1, selSpecies);
-        stmt1.setString(2, selCulture);
-        stmt1.setString(3, selClass);
-        holdClass[a].setAdvancements(BuilderCORE.getValue(stmt1, "Advancements"));
-        chooseConnection(UseCases.Userdb);
-        PreparedStatement stmt2 = BuilderCORE.getConnection().prepareStatement("SELECT Type FROM CreatedClasses WHERE SpeciesName=? AND CultureName =? AND ClassName =?");
-        stmt2.setString(1, selSpecies);
-        stmt2.setString(2, selCulture);
-        stmt2.setString(3, selClass);
-        holdClass[a].setType(BuilderCORE.getValue(stmt2, "Type"));
-        chooseConnection(UseCases.Userdb);
-        PreparedStatement stmt3 = BuilderCORE.getConnection().prepareStatement("SELECT BasedOn FROM CreatedClasses WHERE SpeciesName=? AND CultureName =? AND ClassName =?");
-        stmt3.setString(1, selSpecies);
-        stmt3.setString(2, selCulture);
-        stmt3.setString(3, selClass);
-        holdClass[a].setBasedOn(BuilderCORE.getValue(stmt3, "BasedOn"));
-        chooseConnection(UseCases.Userdb);
-        PreparedStatement stmt4 = BuilderCORE.getConnection().prepareStatement("SELECT AdditionalCost FROM CreatedClasses WHERE SpeciesName=? AND CultureName =? AND ClassName =?");
-        stmt4.setString(1, selSpecies);
-        stmt4.setString(2, selCulture);
-        stmt4.setString(3, selClass);
-        holdClass[a].setAdditionalCost(BuilderCORE.getValue(stmt4, "AdditionalCost"));
+        holdClass[a].setAdvancements(data.get(0).toString().split("\\|")[1]);
+        holdClass[a].setType(data.get(0).toString().split("\\|")[2]);
+        holdClass[a].setBasedOn(data.get(0).toString().split("\\|")[3]);
+        holdClass[a].setAdditionalCost(data.get(0).toString().split("\\|")[4]);
         modifiedHoldClass = new AClass[holdClass.length];
         modifiedHoldClass[a] = holdClass[a].getClone();
+    }
+
+    /**
+     *
+     * @param selSpecies
+     * @param selCulture
+     * @param selHero
+     * @return
+     * @throws SQLException
+     */
+    public static ObservableList getHeroData(String selSpecies, String selCulture, String selHero) throws SQLException {
+        chooseConnection(UseCases.Userdb);
+        PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT * FROM CreatedHeroes WHERE SpeciesName =? AND CultureName =? AND HeroName =?");
+        stmt.setString(1, selSpecies);
+        stmt.setString(2, selCulture);
+        stmt.setString(3, selHero);
+        String[] columns = {"Advancements", "BasedOn", "AdditionalCost"};
+        ObservableList data = BuilderCORE.getData(stmt, columns, null, 0);
+        return data;
     }
 
     /**
@@ -1336,29 +1401,26 @@ public class DatabaseModifier {
      * @throws SQLException
      * @throws java.lang.CloneNotSupportedException
      */
-    public static void loadHero(String selSpecies, String selCulture, String selHero) throws SQLException, CloneNotSupportedException {
+    public static void loadHeroToHold(String selSpecies, String selCulture, String selHero) throws SQLException, CloneNotSupportedException {
+        ObservableList data = getHeroData(selSpecies, selCulture, selHero);
         holdHero.setHeroName(selHero);
         holdHero.setSpeciesName(selSpecies);
         holdHero.setCultureName(selCulture);
+        holdHero.setAdvancements(data.get(0).toString().split("\\|")[0]);
+        holdHero.setBasedOn(data.get(0).toString().split("\\|")[1]);
+        holdHero.setAdditionalCost(data.get(0).toString().split("\\|")[2]);
+        modifiedHoldHero = holdHero.getClone();
+    }
+
+    public static ObservableList getProgressData(String selSpecies, String selCulture, String selProgress) throws SQLException {
         chooseConnection(UseCases.Userdb);
-        PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT Advancements FROM CreatedHeroes WHERE SpeciesName =? AND CultureName =? AND HeroName =?");
+        PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT * FROM CreatedProgress WHERE SpeciesName =? AND CultureName =? AND ProgressName =?");
         stmt.setString(1, selSpecies);
         stmt.setString(2, selCulture);
-        stmt.setString(3, selHero);
-        holdHero.setAdvancements(BuilderCORE.getValue(stmt, "Advancements"));
-        chooseConnection(UseCases.Userdb);
-        PreparedStatement stmt1 = BuilderCORE.getConnection().prepareStatement("SELECT BasedOn FROM CreatedHeroes WHERE SpeciesName =? AND CultureName =? AND HeroName =?");
-        stmt1.setString(1, selSpecies);
-        stmt1.setString(2, selCulture);
-        stmt1.setString(3, selHero);
-        holdHero.setBasedOn(BuilderCORE.getValue(stmt1, "BasedOn"));
-        chooseConnection(UseCases.Userdb);
-        PreparedStatement stmt2 = BuilderCORE.getConnection().prepareStatement("SELECT AdditionalCost FROM CreatedHeroes WHERE SpeciesName =? AND CultureName =? AND HeroName =?");
-        stmt2.setString(1, selSpecies);
-        stmt2.setString(2, selCulture);
-        stmt2.setString(3, selHero);
-        holdHero.setAdditionalCost(BuilderCORE.getValue(stmt2, "AdditionalCost"));
-        modifiedHoldHero = holdHero.getClone();
+        stmt.setString(3, selProgress);
+        String[] columns = {"Progress"};
+        ObservableList data = BuilderCORE.getData(stmt, columns, null, 0);
+        return data;
     }
 
     /**
@@ -1369,17 +1431,32 @@ public class DatabaseModifier {
      * @throws SQLException
      * @throws java.lang.CloneNotSupportedException
      */
-    public static void loadProgress(String selSpecies, String selCulture, String selProgress) throws SQLException, CloneNotSupportedException {
+    public static void loadProgressToHold(String selSpecies, String selCulture, String selProgress) throws SQLException, CloneNotSupportedException {
+        ObservableList data = getProgressData(selSpecies, selCulture, selProgress);
         holdProgress.setSpeciesName(selSpecies);
         holdProgress.setCultureName(selCulture);
         holdProgress.setProgressName(selProgress);
+        holdProgress.setProgress(data.get(0).toString().split("\\|")[0]);
+        modifiedHoldProgress = holdProgress.getClone();
+    }
+
+    /**
+     *
+     * @param selSpecies
+     * @param selCulture
+     * @param selRoster
+     * @return
+     * @throws SQLException
+     */
+    public static ObservableList getRosterData(String selSpecies, String selCulture, String selRoster) throws SQLException {
         chooseConnection(UseCases.Userdb);
-        PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT Progress FROM CreatedProgress WHERE SpeciesName =? AND CultureName =? AND ProgressName =?");
+        PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT * FROM CreatedRosters WHERE SpeciesName =? AND CultureName =? AND RosterName =?");
         stmt.setString(1, selSpecies);
         stmt.setString(2, selCulture);
-        stmt.setString(3, selProgress);
-        holdProgress.setProgress(BuilderCORE.getValue(stmt, "Progress"));
-        modifiedHoldProgress = holdProgress.getClone();
+        stmt.setString(3, selRoster);
+        String[] columns = {"Roster"};
+        ObservableList data = BuilderCORE.getData(stmt, columns, null, 0);
+        return data;
     }
 
     /**
@@ -1390,16 +1467,12 @@ public class DatabaseModifier {
      * @throws SQLException
      * @throws java.lang.CloneNotSupportedException
      */
-    public static void loadRoster(String selSpecies, String selCulture, String selRoster) throws SQLException, CloneNotSupportedException {
+    public static void loadRosterToHold(String selSpecies, String selCulture, String selRoster) throws SQLException, CloneNotSupportedException {
+        ObservableList data = getRosterData(selSpecies, selCulture, selRoster);
         holdRoster.setSpeciesName(selSpecies);
         holdRoster.setCultureName(selCulture);
         holdRoster.setRosterName(selRoster);
-        chooseConnection(UseCases.Userdb);
-        PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT Roster FROM CreatedRosters WHERE SpeciesName =? AND CultureName =? AND RosterName =?");
-        stmt.setString(1, selSpecies);
-        stmt.setString(2, selCulture);
-        stmt.setString(3, selRoster);
-        holdRoster.setRoster(BuilderCORE.getValue(stmt, "Roster"));
+        holdRoster.setRoster(data.get(0).toString().split("\\|")[0]);
         modifiedHoldRoster = holdRoster.getClone();
     }
 // privatize
@@ -1452,17 +1525,17 @@ public class DatabaseModifier {
         PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT DISTINCT CultureName FROM CreatedClasses WHERE SpeciesName=?");
         stmt.setString(1, holdSpecies.getSpeciesName());
         String[] columns = {"CultureName"};
-        ObservableList tmpCult = BuilderCORE.getData(stmt, columns, null);
+        ObservableList tmpCult = BuilderCORE.getData(stmt, columns, null, 0);
         for (int i = 0; i < tmpCult.size(); i++) {
             chooseConnection(UseCases.Userdb);
             PreparedStatement stmt1 = BuilderCORE.getConnection().prepareStatement("SELECT DISTINCT ClassName FROM CreatedClasses WHERE SpeciesName=? AND CultureName=?");
             stmt1.setString(1, holdSpecies.getSpeciesName());
             stmt1.setString(2, tmpCult.get(i).toString());
             String[] columns1 = {"ClassName"};
-            ObservableList tmpClass = BuilderCORE.getData(stmt1, columns1, null);
+            ObservableList tmpClass = BuilderCORE.getData(stmt1, columns1, null, 0);
             for (int ii = 0; ii < tmpClass.size(); ii++) {
                 chooseConnection(UseCases.Userdb);
-                PreparedStatement stmt2 = BuilderCORE.getConnection().prepareStatement("SELECT Skills FROM CreatedClasses WHERE SpeciesName=? AND CultureName=? AND ClassName=?");
+                PreparedStatement stmt2 = BuilderCORE.getConnection().prepareStatement("SELECT * FROM CreatedClasses WHERE SpeciesName=? AND CultureName=? AND ClassName=?");
                 stmt2.setString(1, holdSpecies.getSpeciesName());
                 stmt2.setString(2, tmpCult.get(i).toString());
                 stmt2.setString(3, tmpClass.get(ii).toString());
@@ -1497,7 +1570,7 @@ public class DatabaseModifier {
     }
 
     /**
-     *modifyCulture
+     * modifyCulture
      */
     public static void modifyCulture() {
         executeSQL("UPDATE CreatedCultures SET Age='" + holdCulture.getAge() + "' WHERE SpeciesName='" + holdCulture.getSpeciesName() + "' AND CultureName='" + holdCulture.getCultureName() + "'");
@@ -1543,15 +1616,15 @@ public class DatabaseModifier {
         }
         String deleteSkills = newFoundSkills.toString();
         chooseConnection(UseCases.Userdb);
-        PreparedStatement stmt1 = BuilderCORE.getConnection().prepareStatement("SELECT ClassName FROM CreatedClasses WHERE SpeciesName=? AND CultureName=? AND BasedOn=?");
+        PreparedStatement stmt1 = BuilderCORE.getConnection().prepareStatement("SELECT * FROM CreatedClasses WHERE SpeciesName=? AND CultureName=? AND BasedOn=?");
         stmt1.setString(1, holdClass[a].getSpeciesName());
         stmt1.setString(2, holdClass[a].getCultureName());
         stmt1.setString(3, holdClass[a].getClassName());
         String[] columns1 = {"ClassName"};
-        ObservableList tmpBased = BuilderCORE.getData(stmt1, columns1, null);
+        ObservableList tmpBased = BuilderCORE.getData(stmt1, columns1, null, 0);
         for (int i = 0; i < tmpBased.size(); i++) {
             chooseConnection(UseCases.Userdb);
-            PreparedStatement stmt2 = BuilderCORE.getConnection().prepareStatement("SELECT Skills FROM CreatedClasses WHERE SpeciesName=? AND CultureName=? AND ClassName=?");
+            PreparedStatement stmt2 = BuilderCORE.getConnection().prepareStatement("SELECT * FROM CreatedClasses WHERE SpeciesName=? AND CultureName=? AND ClassName=?");
             stmt2.setString(1, holdClass[a].getSpeciesName());
             stmt2.setString(2, holdClass[a].getCultureName());
             stmt2.setString(3, tmpBased.get(i).toString());

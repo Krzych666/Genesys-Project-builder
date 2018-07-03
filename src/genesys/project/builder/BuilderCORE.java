@@ -36,16 +36,6 @@ public class BuilderCORE {
      */
     private static Connection conn;
 
-    /**
-     * CLASS_TABLES
-     */
-    public static final String[] CLASS_TABLES = {"Skills", "Advancements", "Type", "BasedOn", "AdditionalCost"};
-
-    /**
-     * HERO_TABLES
-     */
-    public static final String[] HERO_TABLES = {"Advancements", "BasedOn", "AdditionalCost"};
-
     private static final String[] CHARACTERISTICS = {"Strength", "Toughness", "Movement", "Martial", "Ranged", "Defense", "Discipline", "Willpower", "Command", "Wounds", "Attacks", "Size", "MT", "RT", "Morale"};
 
     private static final String[] SIZES = {"T", "S", "M", "L", "XL", "XXL"};
@@ -142,7 +132,7 @@ public class BuilderCORE {
     /**
      * EQUIPMENT_TYPES
      */
-    public static final String[] EQUIPMENT_TYPES = {"Weapon", "Armor", "Other"};
+    public static final String[] EQUIPMENT_TYPES = {"Weapon", "Armor", "Heavy Military Weapon", "Vehicle", "Companion"};
 
     /**
      * main
@@ -211,37 +201,40 @@ public class BuilderCORE {
      * @param stmt
      * @param columns
      * @param exclude
+     * @param excludeCompareColumn
      * @return
      * @throws java.sql.SQLException
      */
-    public static ObservableList getData(PreparedStatement stmt, String[] columns, ObservableList exclude) throws SQLException {
+    public static ObservableList getData(PreparedStatement stmt, String[] columns, ObservableList exclude, int excludeCompareColumn) throws SQLException {
+        int exCompColu = (excludeCompareColumn > columns.length || excludeCompareColumn < 0) ? 0 : excludeCompareColumn - 1;
         ObservableList temp = FXCollections.observableArrayList();
         ResultSet rs = stmt.executeQuery();
         try //(            
         //PreparedStatement stmt  = conn.prepareStatement(sql);             
         //)
         {
-            for (int j = 0; j < columns.length; j++) {
-                // loop through the result set
-                while (rs.next()) {
-                    //System.out.println(rs.getString(columns[j]) +  "\t");
-                    if (exclude == null) {
-                        temp.add(rs.getString(columns[j]));
-                    } else {
-                        boolean isPresent = false;
-                        for (int i = 0; i < exclude.size(); i++) {
-                            if ((exclude.get(i).toString().split(" \\(p")[0]).equals(rs.getString(columns[j]))) {
-                                isPresent = true;
-                            }
-                        }
-                        if (!isPresent) {
-                            temp.add(rs.getString(columns[j]));
+            // loop through the result set
+            while (rs.next()) {
+                //System.out.println(rs.getString(columns[j]) +  "\t");
+                boolean isPresent = false;
+                if (exclude != null) {
+                    for (int i = 0; i < exclude.size(); i++) {
+                        if ((exclude.get(i).toString().split(" \\(p")[0]).equals(rs.getString(columns[exCompColu]))) {
+                            isPresent = true;
                         }
                     }
                 }
-                if (j != columns.length - 1) {
-                    temp.add("");
+                if (!isPresent) {
+                    StringBuilder row = new StringBuilder();
+                    for (int j = 0; j < columns.length; j++) {
+                        row.append(rs.getString(columns[j]));
+                        if (columns.length > 1 && j != columns.length - 1) {
+                            row.append("|");
+                        }
+                    }                    
+                    temp.add(row.toString());
                 }
+                //if (j != columns.length - 1) {temp.add("");} //Why?
             }
         } catch (SQLException e) {
             System.out.println(e.getMessage());
@@ -305,10 +298,10 @@ public class BuilderCORE {
         for (LifedomainValue domain : DOMAINS) {
             tmp.add("--" + domain.toString() + "--");
             chooseConnection(UseCases.Userdb);
-            PreparedStatement stmt = conn.prepareStatement("SELECT SpeciesName FROM CreatedSpecies WHERE LifeDomain = ?");
+            PreparedStatement stmt = conn.prepareStatement("SELECT * FROM CreatedSpecies WHERE LifeDomain = ?");
             stmt.setString(1, domain.toString());
             String[] columns = {"SpeciesName"};
-            ObservableList<String> tmpget = getData(stmt, columns, null);
+            ObservableList<String> tmpget = getData(stmt, columns, null, 0);
             for (int i = 0; i < tmpget.size(); i++) {
                 tmp.add(tmpget.get(i));
             }
@@ -332,7 +325,7 @@ public class BuilderCORE {
         chooseConnection(UseCases.COREdb);
         PreparedStatement stmt = conn.prepareStatement("SELECT max(Age) FROM Skills WHERE SkillName IN (" + skills + ")");
         String[] columns = {"max(Age)"};
-        ObservableList<String> tmpget = getData(stmt, columns, null);
+        ObservableList<String> tmpget = getData(stmt, columns, null, 0);
         return Integer.parseInt(tmpget.get(0));
     }
 
@@ -349,13 +342,13 @@ public class BuilderCORE {
         for (int j = 0; j < CHARACTERISTICS.length; j++) {
             if ("Size".equals(CHARACTERISTICS[j]) && j < 12) {
                 chooseConnection(UseCases.COREdb);
-                PreparedStatement stmt = conn.prepareStatement("SELECT " + CHARACTERISTICS[j] + " FROM StartingCharacteristics WHERE LifeDomain = ? AND CharacteristicGroup = ?");
+                PreparedStatement stmt = conn.prepareStatement("SELECT * FROM StartingCharacteristics WHERE LifeDomain = ? AND CharacteristicGroup = ?");
                 stmt.setString(1, lifedomain);
                 stmt.setString(2, characteristicGroup);
                 outputValues[j] = SIZES[(Integer.parseInt(getValue(stmt, CHARACTERISTICS[j])) + CharacteristicModifiers[j])];
             } else if (j < 12) {
                 chooseConnection(UseCases.COREdb);
-                PreparedStatement stmt1 = conn.prepareStatement("SELECT " + CHARACTERISTICS[j] + " FROM StartingCharacteristics WHERE LifeDomain = ? AND CharacteristicGroup = ?");
+                PreparedStatement stmt1 = conn.prepareStatement("SELECT * FROM StartingCharacteristics WHERE LifeDomain = ? AND CharacteristicGroup = ?");
                 stmt1.setString(1, lifedomain);
                 stmt1.setString(2, characteristicGroup);
                 outputValues[j] = Integer.toString(Integer.parseInt(getValue(stmt1, CHARACTERISTICS[j])) + CharacteristicModifiers[j]);
@@ -403,7 +396,7 @@ public class BuilderCORE {
      */
     public static ObservableList generateSubSkills(String skill, Boolean simplifyToCoreSkills) throws SQLException {
         chooseConnection(UseCases.COREdb);
-        PreparedStatement stmt = getConnection().prepareStatement("SELECT SkillRules FROM Skills WHERE SkillName = ?");
+        PreparedStatement stmt = getConnection().prepareStatement("SELECT * FROM Skills WHERE SkillName = ?");
         stmt.setString(1, skill.split(" \\(p")[0]);
         String skl = (getValue(stmt, "SkillRules"));
         if (!simplifyToCoreSkills) {
@@ -431,7 +424,7 @@ public class BuilderCORE {
      */
     public static String generateSubSkillText(String subSkill, Boolean simplifyToCoreSkills) throws SQLException {
         chooseConnection(UseCases.COREdb);
-        PreparedStatement stmt = getConnection().prepareStatement("SELECT SkillRuleExplanation FROM SkillRules WHERE SkillRuleName = ?");
+        PreparedStatement stmt = getConnection().prepareStatement("SELECT * FROM SkillRules WHERE SkillRuleName = ?");
         if (simplifyToCoreSkills) {
             subSkill = subSkill.replace("-", "").replace("+", "").replaceAll("[0-9]", "X").replace(" Xpts", "");
         }
