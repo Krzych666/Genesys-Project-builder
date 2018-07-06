@@ -5,8 +5,10 @@
  */
 package genesys.project.fxml;
 
-import genesys.project.builder.DatabaseModifier;
-import genesys.project.builder.GenesysProjectBuilder;
+import genesys.project.builder.BuilderCORE;
+import genesys.project.builder.DatabaseHolder;
+import genesys.project.builder.DatabaseReader;
+import genesys.project.builder.DatabaseWriter;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
@@ -158,18 +160,18 @@ public class RosterCreatorWindowController implements Initializable {
     @FXML
     public void classListMousePressedActions() throws SQLException {
         if (!classList.getSelectionModel().isEmpty()) {
-            DatabaseModifier.classList1Holder = classList.getSelectionModel().getSelectedItem().toString();
-            for (int i = 0; i < DatabaseModifier.holdClass.length; i++) {
-                if (DatabaseModifier.holdClass[i].getClassName().equals(classList.getSelectionModel().getSelectedItem().toString())) {
-                    DatabaseModifier.b = i;
+            DatabaseHolder.classList1Holder = classList.getSelectionModel().getSelectedItem().toString();
+            for (int i = 0; i < DatabaseHolder.holdClass.length; i++) {
+                if (DatabaseHolder.holdClass[i].getClassName().equals(classList.getSelectionModel().getSelectedItem().toString())) {
+                    DatabaseHolder.b = i;
                 }
             }
-            DatabaseModifier.fullSkillList1 = "";
-            skillsList.setItems(DatabaseModifier.getAddedSkills(DatabaseModifier.getBaseAddedSkills(classList.getSelectionModel().getSelectedItem().toString())));
-            BuilderFXMLController.getSkillModifiers(DatabaseModifier.ruledskills);
-            classTypeValue.setText(DatabaseModifier.holdClass[DatabaseModifier.b].getType());
-            basedOnValue.setText(DatabaseModifier.holdClass[DatabaseModifier.b].getBasedOn());
-            int cost = DatabaseModifier.baseAddedCost(DatabaseModifier.holdSpecies.getLifedomain(), DatabaseModifier.holdSpecies, DatabaseModifier.holdClass, DatabaseModifier.b, 0);
+            DatabaseHolder.fullSkillList1 = "";
+            skillsList.setItems(DatabaseReader.getAddedSkills(BuilderCORE.getBaseAddedSkills(classList.getSelectionModel().getSelectedItem().toString())));
+            BuilderFXMLController.getSkillModifiers(DatabaseHolder.ruledskills);
+            classTypeValue.setText(DatabaseHolder.holdClass[DatabaseHolder.b].getType());
+            basedOnValue.setText(DatabaseHolder.holdClass[DatabaseHolder.b].getBasedOn());
+            int cost = BuilderCORE.baseAddedCost(DatabaseHolder.holdSpecies.getLifedomain(), DatabaseHolder.holdSpecies, DatabaseHolder.holdClass, DatabaseHolder.b, 0);
             String tex = Integer.toString(cost);
             pointsPerModelValue.setText(tex);
             populateLabels();
@@ -182,7 +184,7 @@ public class RosterCreatorWindowController implements Initializable {
      */
     public void populateLabels() throws SQLException {
         for (int i = 0; i < valuesLabels.length; i++) {
-            valuesLabels[i].setText(GenesysProjectBuilder.CORE.getCharacteristics(DatabaseModifier.holdSpecies.getLifedomain().toString(), DatabaseModifier.holdSpecies.getCharacteristicGroup().toString())[i]);
+            valuesLabels[i].setText(DatabaseReader.getCharacteristics(DatabaseHolder.holdSpecies.getLifedomain().toString(), DatabaseHolder.holdSpecies.getCharacteristicGroup().toString())[i]);
         }
     }
 
@@ -202,9 +204,9 @@ public class RosterCreatorWindowController implements Initializable {
                 Parent root = loader.load();
                 Scene scene = new Scene(root);
                 rosterAddUnitController = loader.getController();
-                rosterAddUnitController.setNameBasePointsRoster(classList.getSelectionModel().getSelectedItem().toString(), Integer.parseInt(pointsPerModelValue.getText()), Roster, currentPointsValue,maxPointsValue);
+                rosterAddUnitController.setNameBasePointsRoster(classList.getSelectionModel().getSelectedItem().toString(), Integer.parseInt(pointsPerModelValue.getText()), Roster, currentPointsValue, maxPointsValue);
                 rosterAddUnitStage.setScene(scene);
-                rosterAddUnitStage.setTitle("Add Unit to "+DatabaseModifier.holdRoster.getRosterName()+" for "+DatabaseModifier.holdRoster.getSpeciesName()+" - "+DatabaseModifier.holdRoster.getCultureName());
+                rosterAddUnitStage.setTitle("Add Unit to " + DatabaseHolder.holdRoster.getRosterName() + " for " + DatabaseHolder.holdRoster.getSpeciesName() + " - " + DatabaseHolder.holdRoster.getCultureName());
                 rosterAddUnitStage.show();
             }
         }
@@ -223,7 +225,7 @@ public class RosterCreatorWindowController implements Initializable {
     }
 
     /**
-     *checkCurrentToMaxPoints
+     * checkCurrentToMaxPoints
      */
     public void checkCurrentToMaxPoints() {
         if (Integer.parseInt(maxPointsValue.getText()) != 0) {
@@ -243,8 +245,8 @@ public class RosterCreatorWindowController implements Initializable {
                 rosterPrint.append(";");
             }
         }
-        DatabaseModifier.holdRoster.setRoster(rosterPrint.toString());
-        DatabaseModifier.writeRosterToDB();
+        DatabaseHolder.holdRoster.setRoster(rosterPrint.toString());
+        DatabaseWriter.writeRosterToDB();
         Stage stage = (Stage) createRosterFinalButton.getScene().getWindow();
         stage.hide();
     }
@@ -267,10 +269,10 @@ public class RosterCreatorWindowController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         this.valuesLabels = new Label[]{strengthValue, toughnessValue, movementValue, martialValue, rangedValue, defenseValue, disciplineValue, willpowerValue, commandValue, woundsValue, attacksValue, sizeValue, mTValue, rTValue, moraleValue};
-        lifeDomainValue.setText(DatabaseModifier.holdSpecies.getLifedomain().toString());
-        speciesNameValue.setText(DatabaseModifier.holdSpecies.getSpeciesName());
+        lifeDomainValue.setText(DatabaseHolder.holdSpecies.getLifedomain().toString());
+        speciesNameValue.setText(DatabaseHolder.holdSpecies.getSpeciesName());
         ObservableList tmp = FXCollections.observableArrayList();
-        for (DatabaseModifier.AClass holdClas : DatabaseModifier.holdClass) {
+        for (DatabaseHolder.AClass holdClas : DatabaseHolder.holdClass) {
             tmp.add(holdClas.getClassName());
         }
         classList.setItems(tmp);

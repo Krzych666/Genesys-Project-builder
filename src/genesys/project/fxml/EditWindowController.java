@@ -12,7 +12,8 @@ import genesys.project.builder.Enums.Enmuerations.MainLineageValue;
 import genesys.project.builder.Enums.Enmuerations.Modificators;
 import genesys.project.builder.Enums.Enmuerations.UseCases;
 import static genesys.project.builder.BuilderCORE.chooseConnection;
-import genesys.project.builder.DatabaseModifier;
+import genesys.project.builder.DatabaseHolder;
+import genesys.project.builder.DatabaseReader;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.PreparedStatement;
@@ -27,7 +28,6 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.ComboBox;
 import javafx.stage.Stage;
-import static genesys.project.builder.DatabaseModifier.holdSpecies;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
@@ -118,7 +118,7 @@ public class EditWindowController implements Initializable {
      */
     @FXML
     public void speciesEditDropdownItemStateChangedActions() throws SQLException {
-        cultureEditDropdown.setItems(DatabaseModifier.populateDropdownsCultures(speciesEditDropdown.getSelectionModel().getSelectedItem().toString()));
+        cultureEditDropdown.setItems(DatabaseReader.populateDropdownsCultures(speciesEditDropdown.getSelectionModel().getSelectedItem().toString()));
         cultureEditDropdown.getSelectionModel().select(0);
     }
 
@@ -131,13 +131,13 @@ public class EditWindowController implements Initializable {
         if (cultureEditDropdown.getSelectionModel().isEmpty()) {
             cultureEditDropdown.getSelectionModel().select(0);
         }
-        classEditDropdown.setItems(DatabaseModifier.populateDropdownsClasses(speciesEditDropdown.getSelectionModel().getSelectedItem().toString(), cultureEditDropdown.getSelectionModel().getSelectedItem().toString()));
+        classEditDropdown.setItems(DatabaseReader.populateDropdownsClasses(speciesEditDropdown.getSelectionModel().getSelectedItem().toString(), cultureEditDropdown.getSelectionModel().getSelectedItem().toString()));
         classEditDropdown.getSelectionModel().select(0);
-        heroEditDropdown.setItems(DatabaseModifier.populateDropdownsHeroes(speciesEditDropdown.getSelectionModel().getSelectedItem().toString(), cultureEditDropdown.getSelectionModel().getSelectedItem().toString(), classEditDropdown.getSelectionModel().getSelectedItem().toString()));
+        heroEditDropdown.setItems(DatabaseReader.populateDropdownsHeroes(speciesEditDropdown.getSelectionModel().getSelectedItem().toString(), cultureEditDropdown.getSelectionModel().getSelectedItem().toString(), classEditDropdown.getSelectionModel().getSelectedItem().toString()));
         heroEditDropdown.getSelectionModel().select(0);
-        progressEditDropdown.setItems(DatabaseModifier.populateDropdownsProgress(speciesEditDropdown.getSelectionModel().getSelectedItem().toString(), cultureEditDropdown.getSelectionModel().getSelectedItem().toString()));
+        progressEditDropdown.setItems(DatabaseReader.populateDropdownsProgress(speciesEditDropdown.getSelectionModel().getSelectedItem().toString(), cultureEditDropdown.getSelectionModel().getSelectedItem().toString()));
         progressEditDropdown.getSelectionModel().select(0);
-        rosterEditDropdown.setItems(DatabaseModifier.populateDropdownsRosters(speciesEditDropdown.getSelectionModel().getSelectedItem().toString(), cultureEditDropdown.getSelectionModel().getSelectedItem().toString()));
+        rosterEditDropdown.setItems(DatabaseReader.populateDropdownsRosters(speciesEditDropdown.getSelectionModel().getSelectedItem().toString(), cultureEditDropdown.getSelectionModel().getSelectedItem().toString()));
         rosterEditDropdown.getSelectionModel().select(0);
     }
 
@@ -151,7 +151,7 @@ public class EditWindowController implements Initializable {
             classEditDropdown.getSelectionModel().select(0);
         }
         Object sel = classEditDropdown.getSelectionModel().getSelectedItem();
-        heroEditDropdown.setItems(DatabaseModifier.populateDropdownsHeroes(speciesEditDropdown.getSelectionModel().getSelectedItem().toString(), cultureEditDropdown.getSelectionModel().getSelectedItem().toString(), classEditDropdown.getSelectionModel().getSelectedItem().toString()));
+        heroEditDropdown.setItems(DatabaseReader.populateDropdownsHeroes(speciesEditDropdown.getSelectionModel().getSelectedItem().toString(), cultureEditDropdown.getSelectionModel().getSelectedItem().toString(), classEditDropdown.getSelectionModel().getSelectedItem().toString()));
         heroEditDropdown.getSelectionModel().select(0);
         progressEditDropdown.getSelectionModel().select(0);
         rosterEditDropdown.getSelectionModel().select(0);
@@ -222,92 +222,92 @@ public class EditWindowController implements Initializable {
      * @throws CloneNotSupportedException
      */
     public void commenceEditing() throws IOException, SQLException, CloneNotSupportedException {
-        if (!speciesEditDropdown.getSelectionModel().getSelectedItem().toString().equals(DatabaseModifier.TOPDROP)) {
-            DatabaseModifier.loadSpeciesToHold(speciesEditDropdown.getSelectionModel().getSelectedItem().toString());
+        if (!speciesEditDropdown.getSelectionModel().getSelectedItem().toString().equals(DatabaseHolder.TOPDROP)) {
+            DatabaseHolder.loadSpeciesToHold(speciesEditDropdown.getSelectionModel().getSelectedItem().toString());
         }
-        if (!speciesEditDropdown.getSelectionModel().getSelectedItem().toString().equals(DatabaseModifier.TOPDROP) && cultureEditDropdown.getSelectionModel().getSelectedItem().toString().equals(DatabaseModifier.TOPDROP)) {
+        if (!speciesEditDropdown.getSelectionModel().getSelectedItem().toString().equals(DatabaseHolder.TOPDROP) && cultureEditDropdown.getSelectionModel().getSelectedItem().toString().equals(DatabaseHolder.TOPDROP)) {
             if (editNameOnlyCheckbox.isSelected()) {
-                DatabaseModifier.currentTable = DBTables.CreatedSpecies;
+                DatabaseHolder.currentTable = DBTables.CreatedSpecies;
                 toNameOnly();
-                editWindowNameOld.setText(DatabaseModifier.holdSpecies.getSpeciesName());
+                editWindowNameOld.setText(DatabaseHolder.holdSpecies.getSpeciesName());
                 editWindowNameOnlyText1.setText("Change the folowing species name:");
             } else {
                 modificator(Modificators.ModifySpecies);
             }
         }
-        if (!cultureEditDropdown.getSelectionModel().getSelectedItem().toString().equals(DatabaseModifier.TOPDROP) && classEditDropdown.getSelectionModel().getSelectedItem().toString().equals(DatabaseModifier.TOPDROP) && heroEditDropdown.getSelectionModel().getSelectedItem().toString().equals(DatabaseModifier.TOPDROP) && progressEditDropdown.getSelectionModel().getSelectedItem().toString().equals(DatabaseModifier.TOPDROP) && rosterEditDropdown.getSelectionModel().getSelectedItem().toString().equals(DatabaseModifier.TOPDROP)) {
-            DatabaseModifier.holdCulture = new DatabaseModifier.ACulture();
-            DatabaseModifier.loadCultureToHold(speciesEditDropdown.getSelectionModel().getSelectedItem().toString(), cultureEditDropdown.getSelectionModel().getSelectedItem().toString());
+        if (!cultureEditDropdown.getSelectionModel().getSelectedItem().toString().equals(DatabaseHolder.TOPDROP) && classEditDropdown.getSelectionModel().getSelectedItem().toString().equals(DatabaseHolder.TOPDROP) && heroEditDropdown.getSelectionModel().getSelectedItem().toString().equals(DatabaseHolder.TOPDROP) && progressEditDropdown.getSelectionModel().getSelectedItem().toString().equals(DatabaseHolder.TOPDROP) && rosterEditDropdown.getSelectionModel().getSelectedItem().toString().equals(DatabaseHolder.TOPDROP)) {
+            DatabaseHolder.holdCulture = new DatabaseHolder.ACulture();
+            DatabaseHolder.loadCultureToHold(speciesEditDropdown.getSelectionModel().getSelectedItem().toString(), cultureEditDropdown.getSelectionModel().getSelectedItem().toString());
             if (editNameOnlyCheckbox.isSelected()) {
-                DatabaseModifier.currentTable = DBTables.CreatedCultures;
+                DatabaseHolder.currentTable = DBTables.CreatedCultures;
                 toNameOnly();
-                editWindowNameOld.setText(DatabaseModifier.holdCulture.getCultureName());
+                editWindowNameOld.setText(DatabaseHolder.holdCulture.getCultureName());
                 editWindowNameOnlyText1.setText("Change the folowing culture name:");
             } else {
                 chooseConnection(UseCases.Userdb);
                 PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT COUNT (*) FROM CreatedClasses WHERE SpeciesName=? AND CultureName =?");
                 stmt.setString(1, speciesEditDropdown.getSelectionModel().getSelectedItem().toString());
                 stmt.setString(2, cultureEditDropdown.getSelectionModel().getSelectedItem().toString());
-                DatabaseModifier.numberOfClases = Integer.parseInt(BuilderCORE.getValue(stmt, "COUNT (*)"));
-                DatabaseModifier.setNumberOfClases();
-                DatabaseModifier.modifiedHoldClass = new DatabaseModifier.AClass[DatabaseModifier.holdClass.length];
-                for (int i = 0; i < DatabaseModifier.numberOfClases; i++) {
-                    DatabaseModifier.loadClassToHold(speciesEditDropdown.getSelectionModel().getSelectedItem().toString(), cultureEditDropdown.getSelectionModel().getSelectedItem().toString(), classEditDropdown.getItems().get(i + 1).toString(), i);
+                DatabaseHolder.numberOfClases = Integer.parseInt(BuilderCORE.getValue(stmt, "COUNT (*)"));
+                BuilderCORE.setNumberOfClases();
+                DatabaseHolder.modifiedHoldClass = new DatabaseHolder.AClass[DatabaseHolder.holdClass.length];
+                for (int i = 0; i < DatabaseHolder.numberOfClases; i++) {
+                    DatabaseHolder.loadClassToHold(speciesEditDropdown.getSelectionModel().getSelectedItem().toString(), cultureEditDropdown.getSelectionModel().getSelectedItem().toString(), classEditDropdown.getItems().get(i + 1).toString(), i);
                 }
                 modificator(Modificators.ModifyCulture);
             }
         }
 
-        if (!classEditDropdown.getSelectionModel().getSelectedItem().toString().equals(DatabaseModifier.TOPDROP) && heroEditDropdown.getSelectionModel().getSelectedItem().toString().equals(DatabaseModifier.TOPDROP)) {
-            DatabaseModifier.holdCulture = new DatabaseModifier.ACulture();
-            DatabaseModifier.loadCultureToHold(speciesEditDropdown.getSelectionModel().getSelectedItem().toString(), cultureEditDropdown.getSelectionModel().getSelectedItem().toString());
-            DatabaseModifier.numberOfClases = 1;
-            DatabaseModifier.setNumberOfClases();
-            DatabaseModifier.modifiedHoldClass = new DatabaseModifier.AClass[1];
-            DatabaseModifier.loadClassToHold(speciesEditDropdown.getSelectionModel().getSelectedItem().toString(), cultureEditDropdown.getSelectionModel().getSelectedItem().toString(), classEditDropdown.getSelectionModel().getSelectedItem().toString(), 0);
+        if (!classEditDropdown.getSelectionModel().getSelectedItem().toString().equals(DatabaseHolder.TOPDROP) && heroEditDropdown.getSelectionModel().getSelectedItem().toString().equals(DatabaseHolder.TOPDROP)) {
+            DatabaseHolder.holdCulture = new DatabaseHolder.ACulture();
+            DatabaseHolder.loadCultureToHold(speciesEditDropdown.getSelectionModel().getSelectedItem().toString(), cultureEditDropdown.getSelectionModel().getSelectedItem().toString());
+            DatabaseHolder.numberOfClases = 1;
+            BuilderCORE.setNumberOfClases();
+            DatabaseHolder.modifiedHoldClass = new DatabaseHolder.AClass[1];
+            DatabaseHolder.loadClassToHold(speciesEditDropdown.getSelectionModel().getSelectedItem().toString(), cultureEditDropdown.getSelectionModel().getSelectedItem().toString(), classEditDropdown.getSelectionModel().getSelectedItem().toString(), 0);
             if (editNameOnlyCheckbox.isSelected()) {
-                DatabaseModifier.currentTable = DBTables.CreatedClasses;
+                DatabaseHolder.currentTable = DBTables.CreatedClasses;
                 toNameOnly();
-                editWindowNameOld.setText(DatabaseModifier.holdClass[0].getClassName());
+                editWindowNameOld.setText(DatabaseHolder.holdClass[0].getClassName());
                 editWindowNameOnlyText1.setText("Change the folowing class name:");
             } else {
                 modificator(Modificators.ModifyClass);
             }
         }
 
-        if (!heroEditDropdown.getSelectionModel().getSelectedItem().toString().equals(DatabaseModifier.TOPDROP)) {
-            DatabaseModifier.holdHero = new DatabaseModifier.AHero();
-            DatabaseModifier.loadHeroToHold(speciesEditDropdown.getSelectionModel().getSelectedItem().toString(), cultureEditDropdown.getSelectionModel().getSelectedItem().toString(), heroEditDropdown.getSelectionModel().getSelectedItem().toString());
+        if (!heroEditDropdown.getSelectionModel().getSelectedItem().toString().equals(DatabaseHolder.TOPDROP)) {
+            DatabaseHolder.holdHero = new DatabaseHolder.AHero();
+            DatabaseHolder.loadHeroToHold(speciesEditDropdown.getSelectionModel().getSelectedItem().toString(), cultureEditDropdown.getSelectionModel().getSelectedItem().toString(), heroEditDropdown.getSelectionModel().getSelectedItem().toString());
             if (editNameOnlyCheckbox.isSelected()) {
-                DatabaseModifier.currentTable = DBTables.CreatedHeroes;
+                DatabaseHolder.currentTable = DBTables.CreatedHeroes;
                 toNameOnly();
-                editWindowNameOld.setText(DatabaseModifier.holdHero.getHeroName());
+                editWindowNameOld.setText(DatabaseHolder.holdHero.getHeroName());
                 editWindowNameOnlyText1.setText("Change the folowing hero name:");
             } else {
                 modificator(Modificators.ModifyHero);
             }
         }
 
-        if (!progressEditDropdown.getSelectionModel().getSelectedItem().toString().equals(DatabaseModifier.TOPDROP)) {
-            DatabaseModifier.holdProgress = new DatabaseModifier.AProgress();
-            DatabaseModifier.loadProgressToHold(speciesEditDropdown.getSelectionModel().getSelectedItem().toString(), cultureEditDropdown.getSelectionModel().getSelectedItem().toString(), progressEditDropdown.getSelectionModel().getSelectedItem().toString());
+        if (!progressEditDropdown.getSelectionModel().getSelectedItem().toString().equals(DatabaseHolder.TOPDROP)) {
+            DatabaseHolder.holdProgress = new DatabaseHolder.AProgress();
+            DatabaseHolder.loadProgressToHold(speciesEditDropdown.getSelectionModel().getSelectedItem().toString(), cultureEditDropdown.getSelectionModel().getSelectedItem().toString(), progressEditDropdown.getSelectionModel().getSelectedItem().toString());
             if (editNameOnlyCheckbox.isSelected()) {
-                DatabaseModifier.currentTable = DBTables.CreatedProgress;
+                DatabaseHolder.currentTable = DBTables.CreatedProgress;
                 toNameOnly();
-                editWindowNameOld.setText(DatabaseModifier.holdProgress.getProgressName());
+                editWindowNameOld.setText(DatabaseHolder.holdProgress.getProgressName());
                 editWindowNameOnlyText1.setText("Change the folowing progress name:");
             } else {
                 modificator(Modificators.ModifyProgress);
             }
         }
 
-        if (!rosterEditDropdown.getSelectionModel().getSelectedItem().toString().equals(DatabaseModifier.TOPDROP)) {
-            DatabaseModifier.holdRoster = new DatabaseModifier.ARoster();
-            DatabaseModifier.loadRosterToHold(speciesEditDropdown.getSelectionModel().getSelectedItem().toString(), cultureEditDropdown.getSelectionModel().getSelectedItem().toString(), rosterEditDropdown.getSelectionModel().getSelectedItem().toString());
+        if (!rosterEditDropdown.getSelectionModel().getSelectedItem().toString().equals(DatabaseHolder.TOPDROP)) {
+            DatabaseHolder.holdRoster = new DatabaseHolder.ARoster();
+            DatabaseHolder.loadRosterToHold(speciesEditDropdown.getSelectionModel().getSelectedItem().toString(), cultureEditDropdown.getSelectionModel().getSelectedItem().toString(), rosterEditDropdown.getSelectionModel().getSelectedItem().toString());
             if (editNameOnlyCheckbox.isSelected()) {
-                DatabaseModifier.currentTable = DBTables.CreatedRosters;
+                DatabaseHolder.currentTable = DBTables.CreatedRosters;
                 toNameOnly();
-                editWindowNameOld.setText(DatabaseModifier.holdRoster.getRosterName());
+                editWindowNameOld.setText(DatabaseHolder.holdRoster.getRosterName());
                 editWindowNameOnlyText1.setText("Change the folowing roster name:");
             } else {
                 modificator(Modificators.ModifyRoster);
@@ -339,18 +339,18 @@ public class EditWindowController implements Initializable {
 
     private void modificator(Enum what) throws IOException {
 
-        switch (holdSpecies.getLifedomain()) {
+        switch (DatabaseHolder.holdSpecies.getLifedomain()) {
             case Humanoid:
-                DatabaseModifier.arcana = Boolean.valueOf(DatabaseModifier.holdSpecies.getSpeciesModifiers().split("=")[1]);
+                DatabaseHolder.arcana = Boolean.valueOf(DatabaseHolder.holdSpecies.getSpeciesModifiers().split("=")[1]);
                 break;
             case Fey:
-                ((DatabaseModifier.AFey) DatabaseModifier.holdSpecies).setMainDomain(MainDomainValue.getEnum(DatabaseModifier.holdSpecies.getSpeciesModifiers().split(",")[0].split("=")[1]));
-                DatabaseModifier.outcasts = Boolean.valueOf(DatabaseModifier.holdSpecies.getSpeciesModifiers().split(",")[1].split("=")[1]);
-                ((DatabaseModifier.AFey) DatabaseModifier.holdSpecies).setSecondaryDomain(MainDomainValue.getEnum(DatabaseModifier.holdSpecies.getSpeciesModifiers().split(",")[2].split("=")[1]));
+                ((DatabaseHolder.AFey) DatabaseHolder.holdSpecies).setMainDomain(MainDomainValue.getEnum(DatabaseHolder.holdSpecies.getSpeciesModifiers().split(",")[0].split("=")[1]));
+                DatabaseHolder.outcasts = Boolean.valueOf(DatabaseHolder.holdSpecies.getSpeciesModifiers().split(",")[1].split("=")[1]);
+                ((DatabaseHolder.AFey) DatabaseHolder.holdSpecies).setSecondaryDomain(MainDomainValue.getEnum(DatabaseHolder.holdSpecies.getSpeciesModifiers().split(",")[2].split("=")[1]));
                 break;
             case Reptilia:
-                ((DatabaseModifier.AReptilia) DatabaseModifier.holdSpecies).setMainLineage(MainLineageValue.getEnum(DatabaseModifier.holdSpecies.getSpeciesModifiers().split(",")[0].split("=")[1]));
-                DatabaseModifier.arcana = Boolean.valueOf(DatabaseModifier.holdSpecies.getSpeciesModifiers().split(",")[1].split("=")[1]);
+                ((DatabaseHolder.AReptilia) DatabaseHolder.holdSpecies).setMainLineage(MainLineageValue.getEnum(DatabaseHolder.holdSpecies.getSpeciesModifiers().split(",")[0].split("=")[1]));
+                DatabaseHolder.arcana = Boolean.valueOf(DatabaseHolder.holdSpecies.getSpeciesModifiers().split(",")[1].split("=")[1]);
                 break;
             case Biest:
                 break;
@@ -358,7 +358,7 @@ public class EditWindowController implements Initializable {
                 break;
         }
         if (Modificators.ModifySpecies.equals(what)) {
-            DatabaseModifier.isModyfyinfg = true;
+            DatabaseHolder.isModyfyinfg = true;
             if (speciesCreatorWindowStage.isShowing()) {
                 speciesCreatorWindowStage.requestFocus();
             } else {
@@ -375,7 +375,7 @@ public class EditWindowController implements Initializable {
             //populateLabels();
         }
         if (Modificators.ModifyCulture.equals(what)) {
-            DatabaseModifier.isModyfyinfg = true;
+            DatabaseHolder.isModyfyinfg = true;
             if (createHoldWindowStage.isShowing()) {
                 createHoldWindowStage.requestFocus();
             } else {
@@ -390,7 +390,7 @@ public class EditWindowController implements Initializable {
             }
         }
         if (Modificators.ModifyClass.equals(what)) {
-            DatabaseModifier.classIsModyfying = true;
+            DatabaseHolder.classIsModyfying = true;
             if (classCreatorWindowStage.isShowing()) {
                 classCreatorWindowStage.requestFocus();
             } else {
@@ -421,7 +421,7 @@ public class EditWindowController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         try {
-            speciesEditDropdown.setItems(DatabaseModifier.populateDropdownsSpecies());
+            speciesEditDropdown.setItems(DatabaseReader.populateDropdownsSpecies());
         } catch (SQLException ex) {
             Logger.getLogger(EditWindowController.class.getName()).log(Level.SEVERE, null, ex);
         }

@@ -6,6 +6,7 @@
 package genesys.project.fxml;
 
 import genesys.project.builder.BuilderCORE;
+import genesys.project.builder.DatabaseReader;
 import java.net.URL;
 import java.sql.SQLException;
 import java.util.ResourceBundle;
@@ -50,7 +51,7 @@ public class DuplicateAreYouSureController implements Initializable {
     @FXML
     public void duplicateYesButtonActions() throws SQLException {
         duplicateWindowController.commenceDuplicating();
-        speciesList.setItems(BuilderCORE.getSpeciesList());
+        speciesList.setItems(DatabaseReader.getSpeciesList());
         speciesList.getSelectionModel().clearSelection();
 
         Stage stage = (Stage) duplicateYesButton.getScene().getWindow();

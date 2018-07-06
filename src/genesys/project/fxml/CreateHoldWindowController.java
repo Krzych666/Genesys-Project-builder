@@ -7,8 +7,9 @@ package genesys.project.fxml;
 
 import genesys.project.builder.BuilderCORE;
 import genesys.project.builder.Enums.Enmuerations.LifedomainValue;
-import genesys.project.builder.DatabaseModifier;
-import genesys.project.builder.GenesysProjectBuilder;
+import genesys.project.builder.DatabaseReader;
+import genesys.project.builder.DatabaseHolder;
+import genesys.project.builder.DatabaseWriter;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
@@ -149,26 +150,26 @@ public class CreateHoldWindowController implements Initializable {
     @FXML
     public void classList1MousePressedActions() throws SQLException {
         if (!classList1.getSelectionModel().isEmpty()) {
-            DatabaseModifier.classList1Holder = classList1.getSelectionModel().getSelectedItem().toString();
+            DatabaseHolder.classList1Holder = classList1.getSelectionModel().getSelectedItem().toString();
             int cost;
             if ("<base species>".equals(classList1.getSelectionModel().getSelectedItem().toString())) {
-                skillsList3.setItems(DatabaseModifier.getAddedSkills(DatabaseModifier.holdSpecies.getSkills()));
-                BuilderFXMLController.getSkillModifiers(DatabaseModifier.ruledskills);
+                skillsList3.setItems(DatabaseReader.getAddedSkills(DatabaseHolder.holdSpecies.getSkills()));
+                BuilderFXMLController.getSkillModifiers(DatabaseHolder.ruledskills);
                 classTypeValue3.setText("");
                 basedOnValue3.setText("");
-                cost = DatabaseModifier.baseAddedCost(DatabaseModifier.holdSpecies.getLifedomain(), DatabaseModifier.holdSpecies, null, 0, 0);
+                cost = BuilderCORE.baseAddedCost(DatabaseHolder.holdSpecies.getLifedomain(), DatabaseHolder.holdSpecies, null, 0, 0);
             } else {
-                for (int i = 0; i < DatabaseModifier.holdClass.length; i++) {
-                    if (DatabaseModifier.holdClass[i].getClassName().equals(classList1.getSelectionModel().getSelectedItem().toString())) {
-                        DatabaseModifier.b = i;
+                for (int i = 0; i < DatabaseHolder.holdClass.length; i++) {
+                    if (DatabaseHolder.holdClass[i].getClassName().equals(classList1.getSelectionModel().getSelectedItem().toString())) {
+                        DatabaseHolder.b = i;
                     }
                 }
-                DatabaseModifier.fullSkillList1 = "";
-                skillsList3.setItems(DatabaseModifier.getAddedSkills(DatabaseModifier.getBaseAddedSkills(classList1.getSelectionModel().getSelectedItem().toString())));
-                BuilderFXMLController.getSkillModifiers(DatabaseModifier.ruledskills);
-                classTypeValue3.setText(DatabaseModifier.holdClass[DatabaseModifier.b].getType());
-                basedOnValue3.setText(DatabaseModifier.holdClass[DatabaseModifier.b].getBasedOn());
-                cost = DatabaseModifier.baseAddedCost(DatabaseModifier.holdSpecies.getLifedomain(), DatabaseModifier.holdSpecies, DatabaseModifier.holdClass, DatabaseModifier.b, 0);
+                DatabaseHolder.fullSkillList1 = "";
+                skillsList3.setItems(DatabaseReader.getAddedSkills(BuilderCORE.getBaseAddedSkills(classList1.getSelectionModel().getSelectedItem().toString())));
+                BuilderFXMLController.getSkillModifiers(DatabaseHolder.ruledskills);
+                classTypeValue3.setText(DatabaseHolder.holdClass[DatabaseHolder.b].getType());
+                basedOnValue3.setText(DatabaseHolder.holdClass[DatabaseHolder.b].getBasedOn());
+                cost = BuilderCORE.baseAddedCost(DatabaseHolder.holdSpecies.getLifedomain(), DatabaseHolder.holdSpecies, DatabaseHolder.holdClass, DatabaseHolder.b, 0);
             }
             String tex = Integer.toString(cost);
             pointsPerModelValue3.setText(tex);
@@ -192,7 +193,7 @@ public class CreateHoldWindowController implements Initializable {
             classCreatorWindowController.setClassesLeft3b(classesLeft3b);
             Scene scene = new Scene(root);
             classCreatorWindowStage.setScene(scene);
-            classCreatorWindowStage.setTitle("Create Class for " + DatabaseModifier.holdCulture.getSpeciesName() + " - " + DatabaseModifier.holdCulture.getCultureName());
+            classCreatorWindowStage.setTitle("Create Class for " + DatabaseHolder.holdCulture.getSpeciesName() + " - " + DatabaseHolder.holdCulture.getCultureName());
             classCreatorWindowStage.show();
         }
     }
@@ -203,24 +204,24 @@ public class CreateHoldWindowController implements Initializable {
      */
     @FXML
     public void createSpeciesFinalButtonActions() throws SQLException {
-        if (DatabaseModifier.isModyfyinfg) {
-            DatabaseModifier.isModyfyinfg = !DatabaseModifier.isModyfyinfg;
-            for (int i = 0; i < DatabaseModifier.holdClass.length; i++) {
-                if (DatabaseModifier.holdClass[i].getSkills().length() > 2) {
-                    DatabaseModifier.holdClass[i].setSkills(DatabaseModifier.holdClass[i].getSkills().substring(0, DatabaseModifier.holdClass[i].getSkills().length() - 1));
+        if (DatabaseHolder.isModyfyinfg) {
+            DatabaseHolder.isModyfyinfg = !DatabaseHolder.isModyfyinfg;
+            for (int i = 0; i < DatabaseHolder.holdClass.length; i++) {
+                if (DatabaseHolder.holdClass[i].getSkills().length() > 2) {
+                    DatabaseHolder.holdClass[i].setSkills(DatabaseHolder.holdClass[i].getSkills().substring(0, DatabaseHolder.holdClass[i].getSkills().length() - 1));
                 }
-                DatabaseModifier.modifyClass(i);
+                DatabaseWriter.modifyClass(i);
             }
             //DatabaseModifier.modifyHero();
             //DatabaseModifier.modifyProgress();
             //DatabaseModifier.modifyRoster();
-            DatabaseModifier.holdSpecies = null;
-            DatabaseModifier.modifiedHoldSpecies = null;
+            DatabaseHolder.holdSpecies = null;
+            DatabaseHolder.modifiedHoldSpecies = null;
         } else {
-            DatabaseModifier.writeToDB();
+            DatabaseWriter.writeToDB();
         }
 
-        speciesList.setItems(BuilderCORE.getSpeciesList());
+        speciesList.setItems(DatabaseReader.getSpeciesList());
         speciesList.getSelectionModel().clearSelection();
         Stage stage = (Stage) createSpeciesFinalButton.getScene().getWindow();
         stage.hide();
@@ -231,16 +232,16 @@ public class CreateHoldWindowController implements Initializable {
      * @throws SQLException
      */
     public void createHoldUpdate() throws SQLException {
-        lifeDomainValue3.setText(DatabaseModifier.holdSpecies.getLifedomain().toString());
-        speciesNameValue3.setText(DatabaseModifier.holdSpecies.getSpeciesName());
+        lifeDomainValue3.setText(DatabaseHolder.holdSpecies.getLifedomain().toString());
+        speciesNameValue3.setText(DatabaseHolder.holdSpecies.getSpeciesName());
         ObservableList tmp = FXCollections.observableArrayList();
         tmp.add("<base species>");
         if (LifedomainValue.Fey.equals(BuilderFXMLController.currentLifeDomain)) {
             tmp.add("<lesser species>");
             tmp.add("<greater species>");
         }
-        DatabaseModifier.setNumberOfClases();
-        for (DatabaseModifier.AClass holdClas : DatabaseModifier.holdClass) {
+        BuilderCORE.setNumberOfClases();
+        for (DatabaseHolder.AClass holdClas : DatabaseHolder.holdClass) {
             if (holdClas.getClassName() != null && !holdClas.getClassName().equals("")) {
                 tmp.add(holdClas.getClassName());
             }
@@ -248,8 +249,8 @@ public class CreateHoldWindowController implements Initializable {
         }
         classList1.setItems(tmp);
         clearLists3();
-        classesLeft3a.setText(DatabaseModifier.classCanTake());
-        classesLeft3b.setText(DatabaseModifier.classLeftModify());
+        classesLeft3a.setText(DatabaseReader.classCanTake());
+        classesLeft3b.setText(DatabaseHolder.classLeftModify());
     }
 
     /**
@@ -258,7 +259,7 @@ public class CreateHoldWindowController implements Initializable {
      */
     public void populateLabels() throws SQLException {
         for (int i = 0; i < valuesLabels3.length; i++) {
-            valuesLabels3[i].setText(GenesysProjectBuilder.CORE.getCharacteristics(DatabaseModifier.holdSpecies.getLifedomain().toString(), DatabaseModifier.holdSpecies.getCharacteristicGroup().toString())[i]);
+            valuesLabels3[i].setText(DatabaseReader.getCharacteristics(DatabaseHolder.holdSpecies.getLifedomain().toString(), DatabaseHolder.holdSpecies.getCharacteristicGroup().toString())[i]);
         }
     }
 
@@ -299,8 +300,8 @@ public class CreateHoldWindowController implements Initializable {
         } catch (SQLException ex) {
             Logger.getLogger(CreateHoldWindowController.class.getName()).log(Level.SEVERE, null, ex);
         }
-        if (!DatabaseModifier.isModyfyinfg && DatabaseModifier.holdCulture != null && DatabaseModifier.holdCulture.getAge() < 1) {
-            DatabaseModifier.holdCulture.setAge(1);
+        if (!DatabaseHolder.isModyfyinfg && DatabaseHolder.holdCulture != null && DatabaseHolder.holdCulture.getAge() < 1) {
+            DatabaseHolder.holdCulture.setAge(1);
         }
     }
 

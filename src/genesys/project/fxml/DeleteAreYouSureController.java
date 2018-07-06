@@ -6,7 +6,8 @@
 package genesys.project.fxml;
 
 import genesys.project.builder.BuilderCORE;
-import genesys.project.builder.DatabaseModifier;
+import genesys.project.builder.DatabaseReader;
+import genesys.project.builder.DatabaseWriter;
 import java.net.URL;
 import java.sql.SQLException;
 import java.util.ResourceBundle;
@@ -45,8 +46,8 @@ public class DeleteAreYouSureController implements Initializable {
      */
     @FXML
     public void deleteYesButtonActions() throws SQLException {
-        DatabaseModifier.commenceDeleting();
-        speciesList.setItems(BuilderCORE.getSpeciesList());
+        DatabaseWriter.commenceDeleting();
+        speciesList.setItems(DatabaseReader.getSpeciesList());
         speciesList.getSelectionModel().clearSelection();
 
         Stage stage = (Stage) deleteYesButton.getScene().getWindow();

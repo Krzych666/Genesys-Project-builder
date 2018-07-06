@@ -12,7 +12,7 @@ import static genesys.project.builder.Enums.Enmuerations.LifedomainValue.Humanoi
 import static genesys.project.builder.Enums.Enmuerations.LifedomainValue.Insecta;
 import static genesys.project.builder.Enums.Enmuerations.LifedomainValue.Reptilia;
 import genesys.project.builder.Enums.Enmuerations.UseCases;
-import genesys.project.fxml.BuilderFXMLController;
+import static java.lang.Integer.max;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -34,13 +34,13 @@ public class BuilderCORE {
     /**
      * conn
      */
-    private static Connection conn;
+    public static Connection conn;
 
-    private static final String[] CHARACTERISTICS = {"Strength", "Toughness", "Movement", "Martial", "Ranged", "Defense", "Discipline", "Willpower", "Command", "Wounds", "Attacks", "Size", "MT", "RT", "Morale"};
+    public static final String[] CHARACTERISTICS = {"Strength", "Toughness", "Movement", "Martial", "Ranged", "Defense", "Discipline", "Willpower", "Command", "Wounds", "Attacks", "Size", "MT", "RT", "Morale"};
 
-    private static final String[] SIZES = {"T", "S", "M", "L", "XL", "XXL"};
+    public static final String[] SIZES = {"T", "S", "M", "L", "XL", "XXL"};
 
-    private static final LifedomainValue[] DOMAINS = {Humanoid, Fey, Reptilia, Biest, Insecta};
+    public static final LifedomainValue[] DOMAINS = {Humanoid, Fey, Reptilia, Biest, Insecta};
     /**
      * LIGHT = "Path of Light"
      */
@@ -289,82 +289,7 @@ public class BuilderCORE {
         return Tmp;
     }
 
-    /**
-     *
-     * @return @throws SQLException
-     */
-    public static ObservableList<String> getSpeciesList() throws SQLException {
-        ObservableList<String> tmp = FXCollections.observableArrayList();
-        for (LifedomainValue domain : DOMAINS) {
-            tmp.add("--" + domain.toString() + "--");
-            chooseConnection(UseCases.Userdb);
-            PreparedStatement stmt = conn.prepareStatement("SELECT * FROM CreatedSpecies WHERE LifeDomain = ?");
-            stmt.setString(1, domain.toString());
-            String[] columns = {"SpeciesName"};
-            ObservableList<String> tmpget = getData(stmt, columns, null, 0);
-            for (int i = 0; i < tmpget.size(); i++) {
-                tmp.add(tmpget.get(i));
-            }
-            tmp.add(" ");
-        }
-        return tmp;
-    }
 
-    /**
-     *
-     * @param skillsList1
-     * @return
-     * @throws SQLException
-     */
-    public static int findMaxAge(ListView skillsList1) throws SQLException {
-        StringBuilder skillsL = new StringBuilder("");
-        for (int i = 0; i < skillsList1.getItems().size(); i++) {
-            skillsL.append("\"").append(skillsList1.getItems().get(i).toString().split(" \\(")[0]).append("\"").append(", ");
-        }
-        String skills = skillsL.substring(0, skillsL.length() - 2);
-        chooseConnection(UseCases.COREdb);
-        PreparedStatement stmt = conn.prepareStatement("SELECT max(Age) FROM Skills WHERE SkillName IN (" + skills + ")");
-        String[] columns = {"max(Age)"};
-        ObservableList<String> tmpget = getData(stmt, columns, null, 0);
-        return Integer.parseInt(tmpget.get(0));
-    }
-
-    /**
-     *
-     * @param lifedomain
-     * @param characteristicGroup
-     * @return
-     * @throws java.sql.SQLException
-     */
-    public String[] getCharacteristics(String lifedomain, String characteristicGroup) throws SQLException {
-        String[] outputValues = new String[16];
-        int[] CharacteristicModifiers = {BuilderFXMLController.HOLD_MODIFIERS.getStrengthModifier(), BuilderFXMLController.HOLD_MODIFIERS.getToughnessModifier(), BuilderFXMLController.HOLD_MODIFIERS.getMovementModifier(), BuilderFXMLController.HOLD_MODIFIERS.getMartialModifier(), BuilderFXMLController.HOLD_MODIFIERS.getRangedModifier(), BuilderFXMLController.HOLD_MODIFIERS.getDefenseModifier(), BuilderFXMLController.HOLD_MODIFIERS.getDisciplineModifier(), BuilderFXMLController.HOLD_MODIFIERS.getWillpowerModifier(), BuilderFXMLController.HOLD_MODIFIERS.getCommandModifier(), BuilderFXMLController.HOLD_MODIFIERS.getWoundsModifier(), BuilderFXMLController.HOLD_MODIFIERS.getAttacksModifier(), BuilderFXMLController.HOLD_MODIFIERS.getSizeModifier(), BuilderFXMLController.HOLD_MODIFIERS.getMTModifier(), BuilderFXMLController.HOLD_MODIFIERS.getRTModifier(), BuilderFXMLController.HOLD_MODIFIERS.getMoraleModifier()};
-        for (int j = 0; j < CHARACTERISTICS.length; j++) {
-            if ("Size".equals(CHARACTERISTICS[j]) && j < 12) {
-                chooseConnection(UseCases.COREdb);
-                PreparedStatement stmt = conn.prepareStatement("SELECT * FROM StartingCharacteristics WHERE LifeDomain = ? AND CharacteristicGroup = ?");
-                stmt.setString(1, lifedomain);
-                stmt.setString(2, characteristicGroup);
-                outputValues[j] = SIZES[(Integer.parseInt(getValue(stmt, CHARACTERISTICS[j])) + CharacteristicModifiers[j])];
-            } else if (j < 12) {
-                chooseConnection(UseCases.COREdb);
-                PreparedStatement stmt1 = conn.prepareStatement("SELECT * FROM StartingCharacteristics WHERE LifeDomain = ? AND CharacteristicGroup = ?");
-                stmt1.setString(1, lifedomain);
-                stmt1.setString(2, characteristicGroup);
-                outputValues[j] = Integer.toString(Integer.parseInt(getValue(stmt1, CHARACTERISTICS[j])) + CharacteristicModifiers[j]);
-            }
-            if (j == 12) {
-                outputValues[j] = Integer.toString(Integer.parseInt(outputValues[3]) + Integer.parseInt(outputValues[5]) + CharacteristicModifiers[12]);
-            }
-            if (j == 13) {
-                outputValues[j] = Integer.toString(Integer.parseInt(outputValues[2]) + Integer.parseInt(outputValues[5]) + CharacteristicModifiers[13]);
-            }
-            if (j == 14) {
-                outputValues[j] = Integer.toString(Integer.parseInt(outputValues[6]) + Integer.parseInt(outputValues[7]) + CharacteristicModifiers[14]);
-            }
-        }
-        return outputValues;
-    }
 
     /**
      *
@@ -394,11 +319,8 @@ public class BuilderCORE {
      * @return
      * @throws SQLException
      */
-    public static ObservableList generateSubSkills(String skill, Boolean simplifyToCoreSkills) throws SQLException {
-        chooseConnection(UseCases.COREdb);
-        PreparedStatement stmt = getConnection().prepareStatement("SELECT * FROM Skills WHERE SkillName = ?");
-        stmt.setString(1, skill.split(" \\(p")[0]);
-        String skl = (getValue(stmt, "SkillRules"));
+    public static ObservableList generateSubSkills(String skill, Boolean simplifyToCoreSkills) throws SQLException {        
+        String skl = DatabaseReader.getSkillRules(skill);
         if (!simplifyToCoreSkills) {
             skl = skl.replace("_", " ");
         } else {
@@ -422,9 +344,7 @@ public class BuilderCORE {
      * @return
      * @throws SQLException
      */
-    public static String generateSubSkillText(String subSkill, Boolean simplifyToCoreSkills) throws SQLException {
-        chooseConnection(UseCases.COREdb);
-        PreparedStatement stmt = getConnection().prepareStatement("SELECT * FROM SkillRules WHERE SkillRuleName = ?");
+    public static String generateSubSkillText(String subSkill, Boolean simplifyToCoreSkills) throws SQLException {        
         if (simplifyToCoreSkills) {
             subSkill = subSkill.replace("-", "").replace("+", "").replaceAll("[0-9]", "X").replace(" Xpts", "");
         }
@@ -449,8 +369,7 @@ public class BuilderCORE {
         if (subSkill.contains("Remove Trait")) {
             subSkill = "Remove Trait";
         }
-        stmt.setString(1, subSkill);
-        return getValue(stmt, "SkillRuleExplanation");
+        return DatabaseReader.getSkillRuleExplanation(subSkill);
     }
 
     /**
@@ -472,6 +391,410 @@ public class BuilderCORE {
                 }
             }
         };
+    }
+
+    public static int getSkillIndex(ObservableList allSkills, String skillName) {
+        int index = -1;
+        for (int j = 0; j < allSkills.size(); j++) {
+            if (allSkills.get(j).toString().split("\\|")[0].equals(skillName)) {
+                index = j;
+                j = allSkills.size();
+            }
+        }
+        return index;
+    }
+
+    /**
+     *
+     * @param itemSubType
+     * @return
+     */
+    public static String getImprovementTypeBasedOnItemSubtype(String itemSubType) {
+        switch (itemSubType) {
+            case "Armor":
+            case "Shield":
+                return "Armor";
+            case "Melee":
+            case "Spear":
+                return "Melee Weapon";
+            case "Throwing":
+            case "Bow":
+            case "Crossbow":
+            case "Alchemy":
+                return "Ranged Weapon";
+            case "Flintlock":
+                return "Ranged Weapon";
+            case "Companion":
+                return "Exotic Animal Attributes";
+            case "HeavyMilitary":
+                return "Military Weapon";
+            case "Vehicle":
+                return "Chariot and Wagon Upgrades";
+            default:
+                return "";
+        }
+    }
+
+    static Boolean decider(String requirement, String classSkillsRules) {
+        if (requirement.contains(" any ")) {
+            if (requirement.contains("any Fire Arm Trait")) {
+                requirement = requirement.replace("any Fire Arm Trait", "Flintlocks or Blunderbuss"); //dirty code
+            }
+        }
+        if (requirement.contains(" or ") || requirement.contains(" and ")) {
+            if (requirement.contains(" or ") || !requirement.contains(" and ")) {
+                for (String split : requirement.split(" or ")) {
+                    if (classSkillsRules.contains(split)) {
+                        return true;
+                    }
+                }
+            }
+            if (!requirement.contains(" or ") || requirement.contains(" and ")) {
+                int andCounter = 0;
+                for (String split : requirement.split(" and ")) {
+                    if (classSkillsRules.contains(split)) {
+                        andCounter++;
+                    }
+                }
+                if (requirement.split(" and ").length == andCounter) {
+                    return true;
+                }
+            }
+            if (requirement.contains(" or ") && requirement.contains(" and ")) {
+                String tmp = requirement.replaceAll(" or ", " # ").replaceAll(" and ", " # ");
+                String tmp2 = requirement.replaceAll(" or ", " # ").replaceAll(" and ", " # ");
+                String tmp3 = requirement.replaceAll(" or ", " o ").replaceAll(" and ", " a ");
+                StringBuilder logicString = new StringBuilder();
+                for (String split : tmp.split(" \\# ")) {
+                    if (classSkillsRules.contains(split)) {
+                        logicString.append("1");
+                    } else {
+                        logicString.append("0");
+                    }
+                    if (tmp2.contains("#")) {
+                        logicString.append(tmp3.charAt(tmp2.indexOf("#")));
+                        tmp2 = tmp2.replaceFirst("\\#", "*");
+                    }
+                }
+                String gate = logicString.toString().replaceAll(" ", "");
+                while (gate.contains("o") || gate.contains("a")) {
+                    gate = gate.replaceFirst("1o1", "1");
+                    gate = gate.replaceFirst("1o0", "1");
+                    gate = gate.replaceFirst("0o1", "1");
+                    gate = gate.replaceFirst("0o0", "0");
+                    gate = gate.replaceFirst("1a1", "1");
+                    gate = gate.replaceFirst("1a0", "0");
+                    gate = gate.replaceFirst("0a1", "0");
+                    gate = gate.replaceFirst("0a0", "0");
+                }
+                if (gate.equals("1")) {
+                    return true;
+                } else if (gate.equals("0")) {
+                    return false;
+                }
+            }
+        } else if (classSkillsRules.contains(requirement)) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * setNumberOfClases
+     */
+    public static void setNumberOfClases() {
+        DatabaseHolder.AClass[] tmp = null;
+        if (DatabaseHolder.holdClass != null && DatabaseHolder.holdClass[0] != null) {
+            tmp = DatabaseHolder.holdClass.clone();
+        }
+        DatabaseHolder.holdClass = new DatabaseHolder.AClass[DatabaseHolder.numberOfClases + 1];
+        for (int i = 0; i < DatabaseHolder.numberOfClases + 1; i++) {
+            DatabaseHolder.holdClass[i] = new DatabaseHolder.AClass();
+            DatabaseHolder.holdClass[i].clearAClass();
+        }
+        if (tmp != null) {
+            System.arraycopy(tmp, 0, DatabaseHolder.holdClass, 0, DatabaseHolder.numberOfClases);
+        }
+    }
+
+    /**
+     *
+     * @param name
+     * @return
+     */
+    public static String getBaseAddedSkills(String name) {
+        if (DatabaseHolder.fullSkillList1 == null) {
+            DatabaseHolder.fullSkillList1 = "";
+        }
+        if (name.equals(BuilderCORE.BASE)) {
+            DatabaseHolder.fullSkillList1 += DatabaseHolder.holdSpecies.getSkills();
+        } else {
+            for (DatabaseHolder.AClass holdClas : DatabaseHolder.holdClass) {
+                if (holdClas.getClassName().equals(name)) {
+                    if (holdClas.getSkills() != null && !holdClas.getSkills().equals("null,") && !holdClas.getSkills().equals("") && !holdClas.getSkills().equals(";")) {
+                        DatabaseHolder.fullSkillList1 += holdClas.getSkills() + getBaseAddedSkills(holdClas.getBasedOn());
+                    } else {
+                        DatabaseHolder.fullSkillList1 += getBaseAddedSkills(holdClas.getBasedOn());
+                    }
+                }
+            }
+        }
+        return DatabaseHolder.fullSkillList1;
+    }
+
+    /**
+     *
+     * @param lifeDomain
+     * @param species
+     * @param classname
+     * @param bb
+     * @param points
+     * @return
+     * @throws SQLException
+     */
+    public static int baseAddedCost(LifedomainValue lifeDomain, DatabaseHolder.ASpecies species, DatabaseHolder.AClass[] classname, int bb, int points) throws SQLException {
+        int a = 1;
+        int source = 0;
+        if (classname != null) {
+            switch (classname[bb].getType()) {
+                case "Standard Class":
+                    a = 1;
+                    break;
+                case "Elite Class":
+                    a = 2;
+                    break;
+                case "Leader Class":
+                    a = 3;
+                    break;
+                case "Unique Class":
+                    a = 2;
+                    break;
+                default:
+                    break;
+            }
+            if (!"".equals(classname[bb].getType()) && !"null".equals(classname[bb].getType()) && !(BuilderCORE.BASE.equals(DatabaseHolder.classList1Holder))) {
+                if (classname[bb].getBasedOn() != null && !classname[bb].getBasedOn().equals(BuilderCORE.BASE) && !BuilderCORE.BASE.equals(DatabaseHolder.classList1Holder)) {
+                    String[] lst = (classname[bb].getSkills()).replaceAll(";", ",").split(",");
+                    for (int s = 0; s < classname.length; s++) {
+                        if (classname[bb].getBasedOn().equals(classname[s].getClassName())) {
+                            source = s;
+                        }
+                    }
+                    points += a * baseAddedCost(lifeDomain, species, classname, source, points);
+                    for (String lst1 : lst) {
+                        String add = DatabaseReader.getSkillPointCost(lst1);
+                        if (add.contains("/")) {
+                            add = add.split("/")[0];
+                        }
+                        if (!"".equals(add)) {
+                            points += Integer.parseInt(add);
+                        }
+                    }
+                } else if (classname[bb].getBasedOn() != null && classname[bb].getBasedOn().equals(BuilderCORE.BASE) && !BuilderCORE.BASE.equals(DatabaseHolder.classList1Holder) && !"".equals(classname[bb].getSkills()) && !",".equals(classname[bb].getSkills())) {
+                    String[] lst = (classname[bb].getSkills()).replaceAll(";", ",").split(",");
+                    for (String lst1 : lst) {
+                        String add = DatabaseReader.getSkillPointCost(lst1);
+                        if (add.contains("/")) {
+                            add = add.split("/")[0];
+                        }
+                        points += Integer.parseInt(add);
+                    }
+                }
+                if (!"".equals(species.getSkills()) && classname[bb].getBasedOn().equals(BuilderCORE.BASE)) {
+                    String[] lst = species.getSkills().replaceAll(";", ",").split(",");
+                    for (String lst1 : lst) {
+                        String add = DatabaseReader.getSkillPointCost(lst1);
+                        if (add.contains("/")) {
+                            add = add.split("/")[0];
+                        }
+                        points += a * Integer.parseInt(add);
+                    }
+                }
+            } else {
+                String[] lst = species.getSkills().replaceAll(";", ",").split(",");
+                for (String lst1 : lst) {
+                    String add = DatabaseReader.getSkillPointCost(lst1);
+                    if (add.contains("/")) {
+                        add = add.split("/")[0];
+                    }
+                    points += Integer.parseInt(add);
+                }
+            }
+        } else if (!"".equals(species.getSkills())) {
+            String[] lst = species.getSkills().replaceAll(";", ",").split(",");
+            for (String lst1 : lst) {
+                String add = DatabaseReader.getSkillPointCost(lst1);
+                if (add.contains("/")) {
+                    add = add.split("/")[0];
+                }
+                points += Integer.parseInt(add);
+            }
+        }
+        return points;
+    }
+
+    /**
+     *
+     * @return @throws SQLException
+     */
+    public static String skillsCanTake() throws SQLException {
+        String rules = DatabaseReader.getStartingNumberOfSkills(DatabaseHolder.holdSpecies.getLifedomain().toString());
+        switch (DatabaseHolder.holdSpecies.getLifedomain()) {
+            case Humanoid:
+                return rules.replace(",", "\n").replace(":", " : ");
+            case Fey:
+                switch (((DatabaseHolder.AFey) DatabaseHolder.holdSpecies).getMainDomain()) {
+                    case Light:
+                        if (!DatabaseHolder.outcasts) {
+                            return rules.split(";")[0].replace(",", "\n").replace(":", " : ");
+                        } else {
+                            return rules.split(";")[3].replace(",", "\n").replace(":", " : ");
+                        }
+                    case Darkness:
+                        if (!DatabaseHolder.outcasts) {
+                            return rules.split(";")[1].replace(",", "\n").replace(":", " : ");
+                        } else {
+                            return rules.split(";")[4].replace(",", "\n").replace(":", " : ");
+                        }
+                    case Twilight:
+                        if (!DatabaseHolder.outcasts) {
+                            return rules.split(";")[2].replace(",", "\n").replace(":", " : ");
+                        } else {
+                            return rules.split(";")[5].replace(",", "\n").replace(":", " : ");
+                        }
+                }
+                break;
+            case Reptilia:
+                return rules.replace(":", " : ");
+            case Biest:
+                return rules.replace(",", "\n").replace(":", " : ");
+            case Insecta:
+                return rules.replace(",", "\n").replace(":", " : ");
+        }
+        return null;
+    }
+
+    static int addRemove(int Skl, Boolean Add) {
+        int tmp = Skl;
+        tmp = Add ? tmp + 1 : tmp - 1;
+        return tmp;
+    }
+
+    /**
+     *
+     * @param Skill
+     * @param Add
+     * @return
+     * @throws SQLException
+     */
+    public static String skillsLeftModify(String Skill, Boolean Add) throws SQLException {
+        String[] LdTrees = DatabaseReader.getLdTrees(Skill);
+        String SkillType1 = LdTrees[0];
+        String SkillType3 = LdTrees[1];
+        switch (SkillType1) {
+            case "Genetic Mutation":
+                DatabaseHolder.holdSpecies.setGeneticMutation(BuilderCORE.addRemove(DatabaseHolder.holdSpecies.getGeneticMutation(), Add));
+                break;
+            case "Environmental Adaptation":
+                DatabaseHolder.holdSpecies.setEnvironmentalAdaptation(BuilderCORE.addRemove(DatabaseHolder.holdSpecies.getEnvironmentalAdaptation(), Add));
+                break;
+            case "Knowledge and Science":
+                DatabaseHolder.holdSpecies.setKnowledgeAndScience(BuilderCORE.addRemove(DatabaseHolder.holdSpecies.getKnowledgeAndScience(), Add));
+                break;
+            case BuilderCORE.LIGHT:
+                if ("Lesser Traits".equals(SkillType3)) {
+                    DatabaseHolder.holdSpecies.setLesserTraitsAndPowersOfLight(BuilderCORE.addRemove(DatabaseHolder.holdSpecies.getLesserTraitsAndPowersOfLight(), Add));
+                }
+                if ("Greater Traits".equals(SkillType3)) {
+                    DatabaseHolder.holdSpecies.setGreaterTraitsAndPowersOfLight(BuilderCORE.addRemove(DatabaseHolder.holdSpecies.getGreaterTraitsAndPowersOfLight(), Add));
+                }
+                break;
+            case BuilderCORE.DARKNESS:
+                if ("Lesser Traits".equals(SkillType3)) {
+                    DatabaseHolder.holdSpecies.setLesserTraitsAndPowersOfDarkness(BuilderCORE.addRemove(DatabaseHolder.holdSpecies.getLesserTraitsAndPowersOfDarkness(), Add));
+                }
+                if ("Greater Traits".equals(SkillType3)) {
+                    DatabaseHolder.holdSpecies.setGreaterTraitsAndPowersOfDarkness(BuilderCORE.addRemove(DatabaseHolder.holdSpecies.getGreaterTraitsAndPowersOfDarkness(), Add));
+                }
+                break;
+            case BuilderCORE.TWILIGHT:
+                if ("Lesser Traits".equals(SkillType3)) {
+                    DatabaseHolder.holdSpecies.setLesserTraitsAndPowersOfTwilight(BuilderCORE.addRemove(DatabaseHolder.holdSpecies.getLesserTraitsAndPowersOfTwilight(), Add));
+                }
+                if ("Greater Traits".equals(SkillType3)) {
+                    DatabaseHolder.holdSpecies.setGreaterTraitsAndPowersOfTwilight(BuilderCORE.addRemove(DatabaseHolder.holdSpecies.getGreaterTraitsAndPowersOfTwilight(), Add));
+                }
+                break;
+            case "Reptilia Lineages":
+                DatabaseHolder.holdSpecies.setReptiliaLineage(BuilderCORE.addRemove(DatabaseHolder.holdSpecies.getReptiliaLineage(), Add));
+                break;
+            case "EnvironmentalAdaptability":
+                DatabaseHolder.holdSpecies.setEnvironmentalAdaptability(BuilderCORE.addRemove(DatabaseHolder.holdSpecies.getEnvironmentalAdaptability(), Add));
+                break;
+            case "ExtremisAffinity":
+                DatabaseHolder.holdSpecies.setExtremisAffinity(BuilderCORE.addRemove(DatabaseHolder.holdSpecies.getExtremisAffinity(), Add));
+                break;
+            case "BiestialKingdoms":
+                DatabaseHolder.holdSpecies.setBiestialKingdoms(BuilderCORE.addRemove(DatabaseHolder.holdSpecies.getBiestialKingdoms(), Add));
+                break;
+            case "RegionalTraits":
+                DatabaseHolder.holdSpecies.setRegionalTraits(BuilderCORE.addRemove(DatabaseHolder.holdSpecies.getRegionalTraits(), Add));
+                break;
+            case "SpiritualAndScientificKnowledge":
+                DatabaseHolder.holdSpecies.setSpiritualAndScientificKnowledge(BuilderCORE.addRemove(DatabaseHolder.holdSpecies.getSpiritualAndScientificKnowledge(), Add));
+                break;
+            case "Clasification":
+                DatabaseHolder.holdSpecies.setClasification(BuilderCORE.addRemove(DatabaseHolder.holdSpecies.getClasification(), Add));
+                break;
+            case "Order":
+                DatabaseHolder.holdSpecies.setOrder(BuilderCORE.addRemove(DatabaseHolder.holdSpecies.getOrder(), Add));
+                break;
+            case "GeneticMorphology":
+                DatabaseHolder.holdSpecies.setGeneticMorphology(BuilderCORE.addRemove(DatabaseHolder.holdSpecies.getGeneticMorphology(), Add));
+                break;
+            case "Knowledge":
+                DatabaseHolder.holdSpecies.setKnowledge(BuilderCORE.addRemove(DatabaseHolder.holdSpecies.getKnowledge(), Add));
+                break;
+            default:
+                break;
+        }
+        switch (DatabaseHolder.holdSpecies.getLifedomain()) {
+            case Humanoid:
+                if (!DatabaseHolder.arcana) {
+                    return DatabaseHolder.holdSpecies.getGeneticMutation() + "\n" + DatabaseHolder.holdSpecies.getEnvironmentalAdaptation() + "\n" + DatabaseHolder.holdSpecies.getKnowledgeAndScience() + "\n";
+                } else {
+                    return DatabaseHolder.holdSpecies.getGeneticMutation() + "\n" + DatabaseHolder.holdSpecies.getEnvironmentalAdaptation() + "\n" + DatabaseHolder.holdSpecies.getKnowledgeAndScience() + "\n"; //TODO add fey skills
+                }
+            case Fey:
+                switch (((DatabaseHolder.AFey) DatabaseHolder.holdSpecies).getMainDomain()) {
+                    case Light:
+                        if (!DatabaseHolder.outcasts) {
+                            return DatabaseHolder.holdSpecies.getLesserTraitsAndPowersOfLight() + "\n" + DatabaseHolder.holdSpecies.getGreaterTraitsAndPowersOfLight() + "\n" + DatabaseHolder.holdSpecies.getLesserTraitsAndPowersOfTwilight() + "\n";
+                        } else {
+                            return DatabaseHolder.holdSpecies.getLesserTraitsAndPowersOfLight() + "\n" + DatabaseHolder.holdSpecies.getGreaterTraitsAndPowersOfLight() + "\n" + DatabaseHolder.holdSpecies.getKnowledgeAndScience() + "\n" + DatabaseHolder.holdSpecies.getEnvironmentalAdaptation() + "\n";
+                        }
+                    case Darkness:
+                        if (!DatabaseHolder.outcasts) {
+                            return DatabaseHolder.holdSpecies.getLesserTraitsAndPowersOfDarkness() + "\n" + DatabaseHolder.holdSpecies.getGreaterTraitsAndPowersOfDarkness() + "\n" + DatabaseHolder.holdSpecies.getLesserTraitsAndPowersOfTwilight() + "\n";
+                        } else {
+                            return DatabaseHolder.holdSpecies.getLesserTraitsAndPowersOfDarkness() + "\n" + DatabaseHolder.holdSpecies.getGreaterTraitsAndPowersOfDarkness() + "\n" + DatabaseHolder.holdSpecies.getKnowledgeAndScience() + "\n" + DatabaseHolder.holdSpecies.getEnvironmentalAdaptation() + "\n";
+                        }
+                    case Twilight:
+                        if (!DatabaseHolder.outcasts) {
+                            return DatabaseHolder.holdSpecies.getLesserTraitsAndPowersOfTwilight() + "\n" + DatabaseHolder.holdSpecies.getGreaterTraitsAndPowersOfTwilight() + "\n" + max(DatabaseHolder.holdSpecies.getLesserTraitsAndPowersOfLight(), DatabaseHolder.holdSpecies.getLesserTraitsAndPowersOfDarkness()) + "\n";
+                        } else {
+                            return DatabaseHolder.holdSpecies.getLesserTraitsAndPowersOfTwilight() + "\n" + DatabaseHolder.holdSpecies.getGreaterTraitsAndPowersOfTwilight() + "\n" + DatabaseHolder.holdSpecies.getKnowledgeAndScience() + "\n" + DatabaseHolder.holdSpecies.getEnvironmentalAdaptation() + "\n";
+                        }
+                }
+                break;
+            case Reptilia:
+                return DatabaseHolder.holdSpecies.getReptiliaLineage() + "\n" + DatabaseHolder.holdSpecies.getEnvironmentalAdaptability() + "\n" + DatabaseHolder.holdSpecies.getExtremisAffinity() + "\n";
+            case Biest:
+                return DatabaseHolder.holdSpecies.getBiestialKingdoms() + "\n" + DatabaseHolder.holdSpecies.getRegionalTraits() + "\n" + DatabaseHolder.holdSpecies.getGeneticMutation() + "\n" + DatabaseHolder.holdSpecies.getEnvironmentalAdaptation() + "\n" + DatabaseHolder.holdSpecies.getSpiritualAndScientificKnowledge() + "\n";
+            case Insecta:
+                return DatabaseHolder.holdSpecies.getOrder() + "\n" + DatabaseHolder.holdSpecies.getGeneticMorphology() + "\n" + DatabaseHolder.holdSpecies.getEnvironmentalAdaptation() + "\n" + DatabaseHolder.holdSpecies.getKnowledge() + "\n";
+        }
+        return "";
     }
 
 }

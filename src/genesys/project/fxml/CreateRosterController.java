@@ -7,7 +7,8 @@ package genesys.project.fxml;
 
 import genesys.project.builder.BuilderCORE;
 import static genesys.project.builder.BuilderCORE.chooseConnection;
-import genesys.project.builder.DatabaseModifier;
+import genesys.project.builder.DatabaseHolder;
+import genesys.project.builder.DatabaseReader;
 import genesys.project.builder.Enums;
 import java.io.IOException;
 import java.net.URL;
@@ -77,7 +78,7 @@ public class CreateRosterController implements Initializable {
     @FXML
     public void speciesChooseDropdownItemStateChangedActions() throws IOException, SQLException {
         if (!speciesChooseDropdown.getSelectionModel().getSelectedItem().equals("--CHOOSE--")) {
-            cultureChooseDropdown.setItems(DatabaseModifier.populateDropdownsCultures(speciesChooseDropdown.getSelectionModel().getSelectedItem().toString()));
+            cultureChooseDropdown.setItems(DatabaseReader.populateDropdownsCultures(speciesChooseDropdown.getSelectionModel().getSelectedItem().toString()));
             cultureChooseDropdown.getSelectionModel().select(0);
         } else {
             cultureChooseDropdown.getItems().clear();
@@ -97,10 +98,10 @@ public class CreateRosterController implements Initializable {
         }
         if (!speciesChooseDropdown.getSelectionModel().getSelectedItem().equals("--CHOOSE--") && !cultureChooseDropdown.getSelectionModel().getSelectedItem().equals("--CHOOSE--")) {
             loadSpecies();
-            DatabaseModifier.holdRoster = new DatabaseModifier.ARoster();
-            DatabaseModifier.holdRoster.setRosterName(rosterNameTextField.getText());
-            DatabaseModifier.holdRoster.setSpeciesName(speciesChooseDropdown.getSelectionModel().getSelectedItem().toString());
-            DatabaseModifier.holdRoster.setCultureName(cultureChooseDropdown.getSelectionModel().getSelectedItem().toString());
+            DatabaseHolder.holdRoster = new DatabaseHolder.ARoster();
+            DatabaseHolder.holdRoster.setRosterName(rosterNameTextField.getText());
+            DatabaseHolder.holdRoster.setSpeciesName(speciesChooseDropdown.getSelectionModel().getSelectedItem().toString());
+            DatabaseHolder.holdRoster.setCultureName(cultureChooseDropdown.getSelectionModel().getSelectedItem().toString());
             Stage stage = (Stage) selectDataForRoster.getScene().getWindow();
             stage.hide();
             if (rosterCreatorWindowStage.isShowing()) {
@@ -112,7 +113,7 @@ public class CreateRosterController implements Initializable {
                 rosterCreatorWindowController = loader.getController();
                 rosterCreatorWindowController.setMaxPoints(pointsTextField.getText());
                 rosterCreatorWindowStage.setScene(scene);
-                rosterCreatorWindowStage.setTitle("Create Roster "+DatabaseModifier.holdRoster.getRosterName()+" for "+DatabaseModifier.holdRoster.getSpeciesName()+" - "+DatabaseModifier.holdRoster.getCultureName());
+                rosterCreatorWindowStage.setTitle("Create Roster "+DatabaseHolder.holdRoster.getRosterName()+" for "+DatabaseHolder.holdRoster.getSpeciesName()+" - "+DatabaseHolder.holdRoster.getCultureName());
                 rosterCreatorWindowStage.show();
             }
         }
@@ -120,21 +121,21 @@ public class CreateRosterController implements Initializable {
     }
 
     private void loadSpecies() throws SQLException, CloneNotSupportedException {
-        DatabaseModifier.loadSpeciesToHold(speciesChooseDropdown.getSelectionModel().getSelectedItem().toString());
-        DatabaseModifier.holdCulture = new DatabaseModifier.ACulture();
-        DatabaseModifier.loadCultureToHold(speciesChooseDropdown.getSelectionModel().getSelectedItem().toString(), cultureChooseDropdown.getSelectionModel().getSelectedItem().toString());
+        DatabaseHolder.loadSpeciesToHold(speciesChooseDropdown.getSelectionModel().getSelectedItem().toString());
+        DatabaseHolder.holdCulture = new DatabaseHolder.ACulture();
+        DatabaseHolder.loadCultureToHold(speciesChooseDropdown.getSelectionModel().getSelectedItem().toString(), cultureChooseDropdown.getSelectionModel().getSelectedItem().toString());
         chooseConnection(Enums.Enmuerations.UseCases.Userdb);
         PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT * FROM CreatedClasses WHERE SpeciesName=? AND CultureName =?");
         stmt.setString(1, speciesChooseDropdown.getSelectionModel().getSelectedItem().toString());
         stmt.setString(2, cultureChooseDropdown.getSelectionModel().getSelectedItem().toString());
         String[] columns = {"ClassName"};
         ObservableList<String> classesList = BuilderCORE.getData(stmt, columns, null, 0);
-        DatabaseModifier.holdClass = new DatabaseModifier.AClass[classesList.size()];
-        DatabaseModifier.modifiedHoldClass = new DatabaseModifier.AClass[DatabaseModifier.holdClass.length];
+        DatabaseHolder.holdClass = new DatabaseHolder.AClass[classesList.size()];
+        DatabaseHolder.modifiedHoldClass = new DatabaseHolder.AClass[DatabaseHolder.holdClass.length];
         for (int i = 0; i < classesList.size(); i++) {
-            DatabaseModifier.holdClass[i] = new DatabaseModifier.AClass();
-            DatabaseModifier.holdClass[i].clearAClass();
-            DatabaseModifier.loadClassToHold(speciesChooseDropdown.getSelectionModel().getSelectedItem().toString(), cultureChooseDropdown.getSelectionModel().getSelectedItem().toString(), classesList.get(i), i);
+            DatabaseHolder.holdClass[i] = new DatabaseHolder.AClass();
+            DatabaseHolder.holdClass[i].clearAClass();
+            DatabaseHolder.loadClassToHold(speciesChooseDropdown.getSelectionModel().getSelectedItem().toString(), cultureChooseDropdown.getSelectionModel().getSelectedItem().toString(), classesList.get(i), i);
         }
     }
 
@@ -156,7 +157,7 @@ public class CreateRosterController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         try {
-            speciesChooseDropdown.setItems(DatabaseModifier.populateDropdownsSpecies());
+            speciesChooseDropdown.setItems(DatabaseReader.populateDropdownsSpecies());
             gameTypeDropdown.setItems(FXCollections.observableArrayList(BuilderCORE.GAME_TYPES));
         } catch (SQLException ex) {
             Logger.getLogger(CreateCultureController.class.getName()).log(Level.SEVERE, null, ex);

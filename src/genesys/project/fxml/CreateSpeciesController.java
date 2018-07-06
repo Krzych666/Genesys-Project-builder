@@ -5,9 +5,9 @@
  */
 package genesys.project.fxml;
 
+import genesys.project.builder.DatabaseHolder;
 import genesys.project.builder.Enums.Enmuerations.Creators;
 import genesys.project.builder.Enums.Enmuerations.LifedomainValue;
-import genesys.project.builder.DatabaseModifier;
 import genesys.project.builder.GenesysProjectBuilder;
 import java.io.IOException;
 import java.net.URL;
@@ -58,7 +58,7 @@ public class CreateSpeciesController implements Initializable {
     @FXML
     public void createHumanoidActions() throws IOException {
         GenesysProjectBuilder.hideOtherThanMainStage();
-        DatabaseModifier.creator(LifedomainValue.Humanoid, Creators.CreateSpecies);
+        DatabaseHolder.creator(LifedomainValue.Humanoid, Creators.CreateSpecies);
         showNextStage();
     }
 
@@ -69,7 +69,7 @@ public class CreateSpeciesController implements Initializable {
     @FXML
     public void createFeyActions() throws IOException {
         GenesysProjectBuilder.hideOtherThanMainStage();
-        DatabaseModifier.creator(LifedomainValue.Fey, Creators.CreateSpecies);
+        DatabaseHolder.creator(LifedomainValue.Fey, Creators.CreateSpecies);
         showNextStage();
     }
 
@@ -80,7 +80,7 @@ public class CreateSpeciesController implements Initializable {
     @FXML
     public void createReptiliaActions() throws IOException {
         GenesysProjectBuilder.hideOtherThanMainStage();
-        DatabaseModifier.creator(LifedomainValue.Reptilia, Creators.CreateSpecies);
+        DatabaseHolder.creator(LifedomainValue.Reptilia, Creators.CreateSpecies);
         showNextStage();
     }
 
@@ -91,7 +91,7 @@ public class CreateSpeciesController implements Initializable {
     @FXML
     public void createBiestActions() throws IOException {
         GenesysProjectBuilder.hideOtherThanMainStage();
-        DatabaseModifier.creator(LifedomainValue.Biest, Creators.CreateSpecies);
+        DatabaseHolder.creator(LifedomainValue.Biest, Creators.CreateSpecies);
         showNextStage();
     }
 
@@ -102,7 +102,7 @@ public class CreateSpeciesController implements Initializable {
     @FXML
     public void createInsectaActions() throws IOException {
         GenesysProjectBuilder.hideOtherThanMainStage();
-        DatabaseModifier.creator(LifedomainValue.Insecta, Creators.CreateSpecies);
+        DatabaseHolder.creator(LifedomainValue.Insecta, Creators.CreateSpecies);
         showNextStage();
     }
 

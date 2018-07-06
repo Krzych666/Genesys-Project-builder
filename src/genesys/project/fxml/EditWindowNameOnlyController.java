@@ -6,7 +6,9 @@
 package genesys.project.fxml;
 
 import genesys.project.builder.BuilderCORE;
-import genesys.project.builder.DatabaseModifier;
+import genesys.project.builder.DatabaseHolder;
+import genesys.project.builder.DatabaseReader;
+import genesys.project.builder.DatabaseWriter;
 import java.net.URL;
 import java.sql.SQLException;
 import java.util.ResourceBundle;
@@ -49,24 +51,24 @@ public class EditWindowNameOnlyController implements Initializable {
     public void editWindowNameButtonOkAction() throws SQLException {
         Stage stage = (Stage) editWindowNameButtonOk.getScene().getWindow();
         stage.hide();
-        switch (DatabaseModifier.currentTable) {
+        switch (DatabaseHolder.currentTable) {
             case CreatedSpecies:
-                DatabaseModifier.modifySpeciesName(editWindowNameNew.getText());
+                DatabaseWriter.modifySpeciesName(editWindowNameNew.getText());
                 break;
             case CreatedCultures:
-                DatabaseModifier.modifyCultureName(editWindowNameNew.getText());
+                DatabaseWriter.modifyCultureName(editWindowNameNew.getText());
                 break;
             case CreatedClasses:
-                DatabaseModifier.modifyClassName(editWindowNameNew.getText(), 0);
+                DatabaseWriter.modifyClassName(editWindowNameNew.getText(), 0);
                 break;
             case CreatedHeroes:
-                DatabaseModifier.modifyHeroName(editWindowNameNew.getText());
+                DatabaseWriter.modifyHeroName(editWindowNameNew.getText());
                 break;
             case CreatedProgress:
-                DatabaseModifier.modifyProgressName(editWindowNameNew.getText());
+                DatabaseWriter.modifyProgressName(editWindowNameNew.getText());
                 break;
             case CreatedRosters:
-                DatabaseModifier.modifyRosterName(editWindowNameNew.getText());
+                DatabaseWriter.modifyRosterName(editWindowNameNew.getText());
                 break;
         }
         editCloseAfterSaveActions();
@@ -77,7 +79,7 @@ public class EditWindowNameOnlyController implements Initializable {
      * @throws SQLException
      */
     public void editCloseAfterSaveActions() throws SQLException {
-        speciesList.setItems(BuilderCORE.getSpeciesList());
+        speciesList.setItems(DatabaseReader.getSpeciesList());
         speciesList.getSelectionModel().clearSelection();
     }
 

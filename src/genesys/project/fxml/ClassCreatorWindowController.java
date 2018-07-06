@@ -8,8 +8,9 @@ package genesys.project.fxml;
 import genesys.project.builder.AvailableSkillsLister;
 import genesys.project.builder.BuilderCORE;
 import genesys.project.builder.Enums.Enmuerations.UseCases;
-import genesys.project.builder.DatabaseModifier;
-import genesys.project.builder.GenesysProjectBuilder;
+import genesys.project.builder.DatabaseReader;
+import genesys.project.builder.DatabaseHolder;
+import genesys.project.builder.DatabaseWriter;
 import java.net.URL;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -32,16 +33,6 @@ import javafx.util.Callback;
  */
 public class ClassCreatorWindowController implements Initializable {
 
-    /**
-     * @FXML private ClassCreatorWindow2 = new javax.swing.JDialog;
-     * @FXML private jScrollPane10 = new javax.swing.JScrollPane;
-     * @FXML private SkillsList2 = new javax.swing.JList<>;
-     * @FXML private jScrollPane12 = new javax.swing.JScrollPane;
-     * @FXML private AvailableSkillsList1 = new javax.swing.JList<>;
-     * @FXML private jScrollPane15 = new javax.swing.JScrollPane;
-     * @FXML private SkillsList4 = new javax.swing.JList<>;
-     *
-     */
     @FXML
     private ListView skillsList2;
     @FXML
@@ -215,7 +206,7 @@ public class ClassCreatorWindowController implements Initializable {
     }
 
     private void setAvailableSkills(ObservableList exclude) throws SQLException {
-        availableSkillsList1.setItems(AvailableSkillsLister.getAvailableSkills(DatabaseModifier.holdSpecies.getLifedomain(), DatabaseModifier.holdCulture.getAge(), skillSubSetChooser2.getSelectionModel().getSelectedItem().toString(), exclude));
+        availableSkillsList1.setItems(AvailableSkillsLister.getAvailableSkills(DatabaseHolder.holdSpecies.getLifedomain(), DatabaseHolder.holdCulture.getAge(), skillSubSetChooser2.getSelectionModel().getSelectedItem().toString(), exclude));
         availableSkillsList1.setCellFactory(new Callback<ListView<String>, ListCell<String>>() {
             @Override
             public ListCell<String> call(ListView<String> param) {
@@ -249,7 +240,7 @@ public class ClassCreatorWindowController implements Initializable {
      */
     @FXML
     public void basedOnChooserItemStateChangedActions() throws SQLException {
-        DatabaseModifier.holdClass[DatabaseModifier.b].setBasedOn(basedOnChooser.getSelectionModel().getSelectedItem().toString());
+        DatabaseHolder.holdClass[DatabaseHolder.b].setBasedOn(basedOnChooser.getSelectionModel().getSelectedItem().toString());
         showBase();
         setAvailableSkills(BuilderCORE.mergeListViews(skillsList2, skillsList4));
     }
@@ -260,7 +251,7 @@ public class ClassCreatorWindowController implements Initializable {
      */
     @FXML
     public void classTypeChooserItemStateChangedActions() throws SQLException {
-        DatabaseModifier.holdClass[DatabaseModifier.b].setType(classTypeChooser.getSelectionModel().getSelectedItem().toString());
+        DatabaseHolder.holdClass[DatabaseHolder.b].setType(classTypeChooser.getSelectionModel().getSelectedItem().toString());
         showBase();
         setAvailableSkills(BuilderCORE.mergeListViews(skillsList2, skillsList4));
     }
@@ -272,10 +263,10 @@ public class ClassCreatorWindowController implements Initializable {
     @FXML
     public void skillSetChooser2ItemStateChangedActions() throws SQLException {
         if (skillSetChooser2.getSelectionModel().isEmpty()) {
-            skillSetChooser2.setItems(DatabaseModifier.getSkillSet());
+            skillSetChooser2.setItems(DatabaseReader.getSkillSet());
             skillSetChooser2.getSelectionModel().select(0);
         }
-        skillSubSetChooser2.setItems(DatabaseModifier.getSubSkillSet(skillSetChooser2.getSelectionModel().getSelectedItem().toString(), DatabaseModifier.holdSpecies.getCharacteristicGroup().toString(), null)); //TODO beast envir
+        skillSubSetChooser2.setItems(DatabaseReader.getSubSkillSet(skillSetChooser2.getSelectionModel().getSelectedItem().toString(), DatabaseHolder.holdSpecies.getCharacteristicGroup().toString(), null)); //TODO beast envir
         skillSubSetChooser2.getSelectionModel().select(0);
     }
 
@@ -286,7 +277,7 @@ public class ClassCreatorWindowController implements Initializable {
     @FXML
     public void skillSubSetChooser2ItemStateChangedActions() throws SQLException {
         if (skillSubSetChooser2.getSelectionModel().isEmpty()) {
-            skillSubSetChooser2.setItems(DatabaseModifier.getSubSkillSet(skillSetChooser2.getSelectionModel().getSelectedItem().toString(), DatabaseModifier.holdSpecies.getCharacteristicGroup().toString(), null)); //TODO beast envir
+            skillSubSetChooser2.setItems(DatabaseReader.getSubSkillSet(skillSetChooser2.getSelectionModel().getSelectedItem().toString(), DatabaseHolder.holdSpecies.getCharacteristicGroup().toString(), null)); //TODO beast envir
             skillSubSetChooser2.getSelectionModel().select(0);
         }
         setAvailableSkills(BuilderCORE.mergeListViews(skillsList2, skillsList4));
@@ -303,9 +294,9 @@ public class ClassCreatorWindowController implements Initializable {
         setAvailableSkills(BuilderCORE.mergeListViews(skillsList2, skillsList4));
         showBase();
         /*skillList 2 or 4 set?*/
-        DatabaseModifier.getAddedSkills(DatabaseModifier.holdClass[DatabaseModifier.b].getSkills() + DatabaseModifier.holdSpecies.getSkills());
-        BuilderFXMLController.getSkillModifiers(DatabaseModifier.ruledskills);
-        int cost = DatabaseModifier.baseAddedCost(DatabaseModifier.holdSpecies.getLifedomain(), DatabaseModifier.holdSpecies, DatabaseModifier.holdClass, DatabaseModifier.b, 0);
+        DatabaseReader.getAddedSkills(DatabaseHolder.holdClass[DatabaseHolder.b].getSkills() + DatabaseHolder.holdSpecies.getSkills());
+        BuilderFXMLController.getSkillModifiers(DatabaseHolder.ruledskills);
+        int cost = BuilderCORE.baseAddedCost(DatabaseHolder.holdSpecies.getLifedomain(), DatabaseHolder.holdSpecies, DatabaseHolder.holdClass, DatabaseHolder.b, 0);
         String tex = Integer.toString(cost);
         pointsPerModelValue2.setText(tex);
         populateLabels();
@@ -316,24 +307,24 @@ public class ClassCreatorWindowController implements Initializable {
     void moveSkill1() throws SQLException {
         if (availableSkillsList1.getSelectionModel().getSelectedItem() != null) {
             //SkillsLeftActual2.setText(skillsLeftModify(AvailableSkillsList1.getSelectedValue(),true));
-            DatabaseModifier.holdClass[DatabaseModifier.b].addSkills(availableSkillsList1.getSelectionModel().getSelectedItem().toString());
-            DatabaseModifier.holdClass[DatabaseModifier.b].addSkills(";");
+            DatabaseHolder.holdClass[DatabaseHolder.b].addSkills(availableSkillsList1.getSelectionModel().getSelectedItem().toString());
+            DatabaseHolder.holdClass[DatabaseHolder.b].addSkills(";");
         }
         if (skillsList2.getSelectionModel().getSelectedItem() != null) {
             //SkillsLeftActual2.setText(skillsLeftModify(SkillsList2.getSelectedValue().split(" \\(")[0],false));
-            DatabaseModifier.holdClass[DatabaseModifier.b].setSkills(DatabaseModifier.holdClass[DatabaseModifier.b].getSkills().replace(skillsList2.getSelectionModel().getSelectedItem().toString().split(" \\(")[0] + ";", ""));
+            DatabaseHolder.holdClass[DatabaseHolder.b].setSkills(DatabaseHolder.holdClass[DatabaseHolder.b].getSkills().replace(skillsList2.getSelectionModel().getSelectedItem().toString().split(" \\(")[0] + ";", ""));
         }
 
-        if (!("".equals(DatabaseModifier.holdClass[DatabaseModifier.b].getSkills()) || DatabaseModifier.holdClass[DatabaseModifier.b].getSkills() == null)) {
-            skillsList2.setItems(DatabaseModifier.getAddedSkills(DatabaseModifier.holdClass[DatabaseModifier.b].getSkills()));
-            BuilderFXMLController.getSkillModifiers(DatabaseModifier.ruledskills);
+        if (!("".equals(DatabaseHolder.holdClass[DatabaseHolder.b].getSkills()) || DatabaseHolder.holdClass[DatabaseHolder.b].getSkills() == null)) {
+            skillsList2.setItems(DatabaseReader.getAddedSkills(DatabaseHolder.holdClass[DatabaseHolder.b].getSkills()));
+            BuilderFXMLController.getSkillModifiers(DatabaseHolder.ruledskills);
         } else {
             skillsList2.getItems().clear();
             BuilderFXMLController.HOLD_MODIFIERS.clearModifiers();
 
         }
         //SkillsLeft.setText(skillsCanTake(LifeDomain));
-        int cost = DatabaseModifier.baseAddedCost(DatabaseModifier.holdSpecies.getLifedomain(), DatabaseModifier.holdSpecies, null, DatabaseModifier.b, 0);
+        int cost = BuilderCORE.baseAddedCost(DatabaseHolder.holdSpecies.getLifedomain(), DatabaseHolder.holdSpecies, null, DatabaseHolder.b, 0);
         String tex = Integer.toString(cost);
         pointsPerModelValue2.setText(tex);
         populateLabels();
@@ -349,8 +340,8 @@ public class ClassCreatorWindowController implements Initializable {
     public void populateBasedOnClasses() {
         ObservableList lst = FXCollections.observableArrayList();
         lst.add("<base species>");
-        for (int i = 1; i < DatabaseModifier.holdClass.length + 1; i++) {
-            lst.add(DatabaseModifier.holdClass[i - 1].getClassName());
+        for (int i = 1; i < DatabaseHolder.holdClass.length + 1; i++) {
+            lst.add(DatabaseHolder.holdClass[i - 1].getClassName());
         }
         basedOnChooser.setItems(lst);
         basedOnChooser.getSelectionModel().select(0);
@@ -362,14 +353,14 @@ public class ClassCreatorWindowController implements Initializable {
      */
     public void showBase() throws SQLException {
         if ("<base species>".equals(basedOnChooser.getSelectionModel().getSelectedItem().toString())) {
-            skillsList4.setItems(DatabaseModifier.getAddedSkills(DatabaseModifier.holdSpecies.getSkills()));
-            BuilderFXMLController.getSkillModifiers(DatabaseModifier.ruledskills);
+            skillsList4.setItems(DatabaseReader.getAddedSkills(DatabaseHolder.holdSpecies.getSkills()));
+            BuilderFXMLController.getSkillModifiers(DatabaseHolder.ruledskills);
         } else {
-            DatabaseModifier.fullSkillList1 = "";
-            skillsList4.setItems(DatabaseModifier.getAddedSkills(DatabaseModifier.getBaseAddedSkills(basedOnChooser.getSelectionModel().getSelectedItem().toString())));
-            BuilderFXMLController.getSkillModifiers(DatabaseModifier.ruledskills);
+            DatabaseHolder.fullSkillList1 = "";
+            skillsList4.setItems(DatabaseReader.getAddedSkills(BuilderCORE.getBaseAddedSkills(basedOnChooser.getSelectionModel().getSelectedItem().toString())));
+            BuilderFXMLController.getSkillModifiers(DatabaseHolder.ruledskills);
         }
-        int cost = DatabaseModifier.baseAddedCost(DatabaseModifier.holdSpecies.getLifedomain(), DatabaseModifier.holdSpecies, DatabaseModifier.holdClass, DatabaseModifier.b, 0);
+        int cost = BuilderCORE.baseAddedCost(DatabaseHolder.holdSpecies.getLifedomain(), DatabaseHolder.holdSpecies, DatabaseHolder.holdClass, DatabaseHolder.b, 0);
         String tex = Integer.toString(cost);
         pointsPerModelValue2.setText(tex);
         populateLabels();
@@ -383,7 +374,7 @@ public class ClassCreatorWindowController implements Initializable {
         ObservableList tmp = FXCollections.observableArrayList();
         chooseConnection(UseCases.COREdb);
         PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT ClassTypes FROM StartingCharacteristics WHERE LifeDomain =?");
-        stmt.setString(1, DatabaseModifier.holdSpecies.getLifedomain().toString());
+        stmt.setString(1, DatabaseHolder.holdSpecies.getLifedomain().toString());
         String[] types = BuilderCORE.getValue(stmt, "ClassTypes").split(",");
         tmp.setAll((Object[]) types);
         classTypeChooser.setItems(tmp);
@@ -400,21 +391,21 @@ public class ClassCreatorWindowController implements Initializable {
         //SpeciesCreatorWindowController.SetMaxClassNumber(); //why?
         Stage stage = (Stage) createFinish2.getScene().getWindow();
         stage.hide();
-        if (DatabaseModifier.classIsModyfying) {
-            DatabaseModifier.classIsModyfying = !DatabaseModifier.classIsModyfying;
-            DatabaseModifier.modifyClass(0);
-            DatabaseModifier.holdSpecies = null;
-            DatabaseModifier.modifiedHoldSpecies = null;
-            speciesList.setItems(BuilderCORE.getSpeciesList());
+        if (DatabaseHolder.classIsModyfying) {
+            DatabaseHolder.classIsModyfying = !DatabaseHolder.classIsModyfying;
+            DatabaseWriter.modifyClass(0);
+            DatabaseHolder.holdSpecies = null;
+            DatabaseHolder.modifiedHoldSpecies = null;
+            speciesList.setItems(DatabaseReader.getSpeciesList());
             speciesList.getSelectionModel().clearSelection();
         } else {
-            DatabaseModifier.numberOfClases++;
-            DatabaseModifier.recognizeClassDo(DatabaseModifier.holdSpecies.getLifedomain(), DatabaseModifier.holdClass[DatabaseModifier.b].getType(), true);
-            DatabaseModifier.holdClass[DatabaseModifier.b].setClassName(nameInputField2.getText());
-            classList1.getItems().add(DatabaseModifier.holdClass[DatabaseModifier.b].getClassName());
-            classesLeft3b.setText(DatabaseModifier.classLeftModify());
-            DatabaseModifier.searchFreeClassSpot();
-            DatabaseModifier.setNumberOfClases();
+            DatabaseHolder.numberOfClases++;
+            DatabaseHolder.recognizeClassDo(DatabaseHolder.holdSpecies.getLifedomain(), DatabaseHolder.holdClass[DatabaseHolder.b].getType(), true);
+            DatabaseHolder.holdClass[DatabaseHolder.b].setClassName(nameInputField2.getText());
+            classList1.getItems().add(DatabaseHolder.holdClass[DatabaseHolder.b].getClassName());
+            classesLeft3b.setText(DatabaseHolder.classLeftModify());
+            DatabaseHolder.searchFreeClassSpot();
+            BuilderCORE.setNumberOfClases();
         }
     }
 
@@ -424,7 +415,7 @@ public class ClassCreatorWindowController implements Initializable {
      */
     public void populateLabels() throws SQLException {
         for (int i = 0; i < valuesLabels2.length; i++) {
-            valuesLabels2[i].setText(GenesysProjectBuilder.CORE.getCharacteristics(DatabaseModifier.holdSpecies.getLifedomain().toString(), DatabaseModifier.holdSpecies.getCharacteristicGroup().toString())[i]);
+            valuesLabels2[i].setText(DatabaseReader.getCharacteristics(DatabaseHolder.holdSpecies.getLifedomain().toString(), DatabaseHolder.holdSpecies.getCharacteristicGroup().toString())[i]);
         }
     }
 
@@ -488,8 +479,8 @@ public class ClassCreatorWindowController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         this.valuesLabels2 = new Label[]{strengthValue2, toughnessValue2, movementValue2, martialValue2, rangedValue2, defenseValue2, disciplineValue2, willpowerValue2, commandValue2, woundsValue2, attacksValue2, sizeValue2, mTValue2, rTValue2, moraleValue2};
-        lifeDomainValue2.setText(DatabaseModifier.holdSpecies.getLifedomain().toString());
-        switch (DatabaseModifier.holdSpecies.getLifedomain()) {
+        lifeDomainValue2.setText(DatabaseHolder.holdSpecies.getLifedomain().toString());
+        switch (DatabaseHolder.holdSpecies.getLifedomain()) {
             case Humanoid:
                 skillSetText2.setText(BuilderCORE.HUMANOIDSKILS);
                 skillSubSetText2.setText(BuilderCORE.HUMANOIDSUBSKILS);
@@ -507,32 +498,32 @@ public class ClassCreatorWindowController implements Initializable {
             case Insecta:
                 break;
         }
-        speciesNameValue2.setText(DatabaseModifier.holdSpecies.getSpeciesName());
+        speciesNameValue2.setText(DatabaseHolder.holdSpecies.getSpeciesName());
         populateBasedOnClasses();
         try {
             populateDropdownsClassType();
-            skillSetChooser2.setItems(DatabaseModifier.getSkillSet());
+            skillSetChooser2.setItems(DatabaseReader.getSkillSet());
             skillSetChooser2.getSelectionModel().select(0);
-            skillSubSetChooser2.setItems(DatabaseModifier.getSubSkillSet(skillSetChooser2.getSelectionModel().getSelectedItem().toString(), DatabaseModifier.holdSpecies.getCharacteristicGroup().toString(), null)); //TODO beast envir
+            skillSubSetChooser2.setItems(DatabaseReader.getSubSkillSet(skillSetChooser2.getSelectionModel().getSelectedItem().toString(), DatabaseHolder.holdSpecies.getCharacteristicGroup().toString(), null)); //TODO beast envir
             skillSubSetChooser2.getSelectionModel().select(0);
-            if (DatabaseModifier.classIsModyfying) {
+            if (DatabaseHolder.classIsModyfying) {
                 createFinish2.setText("Modify Class");
                 //fill basedOn in hold class of a new class
-                nameInputField2.setText(DatabaseModifier.holdClass[0].getClassName());
-                basedOnChooser.getSelectionModel().select(DatabaseModifier.holdClass[0].getBasedOn());
-                classTypeChooser.getSelectionModel().select(DatabaseModifier.holdClass[0].getType());
-                skillsList2.setItems(DatabaseModifier.getAddedSkills(DatabaseModifier.holdClass[0].getSkills()));
+                nameInputField2.setText(DatabaseHolder.holdClass[0].getClassName());
+                basedOnChooser.getSelectionModel().select(DatabaseHolder.holdClass[0].getBasedOn());
+                classTypeChooser.getSelectionModel().select(DatabaseHolder.holdClass[0].getType());
+                skillsList2.setItems(DatabaseReader.getAddedSkills(DatabaseHolder.holdClass[0].getSkills()));
                 showBase();
                 setAvailableSkills(BuilderCORE.mergeListViews(skillsList2, skillsList4));
             } else {
                 createFinish2.setText("Add Class");
                 nameInputField2.setText(">enter name here<");
                 clearLists2();
-                DatabaseModifier.searchFreeClassSpot();
-                DatabaseModifier.holdClass[DatabaseModifier.b].setBasedOn(basedOnChooser.getSelectionModel().getSelectedItem().toString());
-                DatabaseModifier.holdClass[DatabaseModifier.b].setType(classTypeChooser.getSelectionModel().getSelectedItem().toString());                
-                DatabaseModifier.holdClass[DatabaseModifier.b].setAdditionalCost("0");
-                setAvailableSkills(DatabaseModifier.getAddedSkills(DatabaseModifier.holdSpecies.getSkills()));
+                DatabaseHolder.searchFreeClassSpot();
+                DatabaseHolder.holdClass[DatabaseHolder.b].setBasedOn(basedOnChooser.getSelectionModel().getSelectedItem().toString());
+                DatabaseHolder.holdClass[DatabaseHolder.b].setType(classTypeChooser.getSelectionModel().getSelectedItem().toString());
+                DatabaseHolder.holdClass[DatabaseHolder.b].setAdditionalCost("0");
+                setAvailableSkills(DatabaseReader.getAddedSkills(DatabaseHolder.holdSpecies.getSkills()));
                 showBase();
             }
 

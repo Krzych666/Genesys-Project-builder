@@ -18,12 +18,13 @@ import genesys.project.builder.Enums.Enmuerations.PrimaryChooserValue;
 import genesys.project.builder.Enums.Enmuerations.SecondaryChooserValue;
 import static genesys.project.builder.Enums.Enmuerations.PrimaryChooserValue.*;
 import static genesys.project.builder.Enums.Enmuerations.SecondaryChooserValue.*;
-import genesys.project.builder.DatabaseModifier;
-import genesys.project.builder.DatabaseModifier.AFey;
-import genesys.project.builder.DatabaseModifier.AReptilia;
-import genesys.project.builder.DatabaseModifier.ABiest;
-import genesys.project.builder.DatabaseModifier.AInsecta;
-import genesys.project.builder.GenesysProjectBuilder;
+import genesys.project.builder.DatabaseHolder;
+import genesys.project.builder.DatabaseHolder.AFey;
+import genesys.project.builder.DatabaseHolder.AReptilia;
+import genesys.project.builder.DatabaseHolder.ABiest;
+import genesys.project.builder.DatabaseHolder.AInsecta;
+import genesys.project.builder.DatabaseReader;
+import genesys.project.builder.DatabaseWriter;
 import java.io.IOException;
 import static java.lang.Integer.max;
 import static java.lang.Integer.min;
@@ -192,23 +193,23 @@ public class SpeciesCreatorWindowController implements Initializable {
      * @throws SQLException
      */
     public void createSpecies() throws IOException, SQLException {
-        if (DatabaseModifier.isModyfyinfg) {
-            nameInputField.setText(DatabaseModifier.holdSpecies.getSpeciesName());
+        if (DatabaseHolder.isModyfyinfg) {
+            nameInputField.setText(DatabaseHolder.holdSpecies.getSpeciesName());
         } else {
-            DatabaseModifier.holdSpecies.setSkills("");
+            DatabaseHolder.holdSpecies.setSkills("");
             nameInputField.setText(">enter name here<");
         }
-        DatabaseModifier.arcana = false;
-        DatabaseModifier.outcasts = false;
-        lifeDomainValue.setText(DatabaseModifier.holdSpecies.getLifedomain().toString());
+        DatabaseHolder.arcana = false;
+        DatabaseHolder.outcasts = false;
+        lifeDomainValue.setText(DatabaseHolder.holdSpecies.getLifedomain().toString());
         classNameValue.setText("<base species>");
-        if (DatabaseModifier.holdSpecies.getSkills() == null || "".equals(DatabaseModifier.holdSpecies.getSkills())) {
+        if (DatabaseHolder.holdSpecies.getSkills() == null || "".equals(DatabaseHolder.holdSpecies.getSkills())) {
             skillsList1.getItems().clear();
         } else {
-            skillsList1.setItems(DatabaseModifier.getAddedSkills(DatabaseModifier.holdSpecies.getSkills()));
-            BuilderFXMLController.getSkillModifiers(DatabaseModifier.ruledskills);
+            skillsList1.setItems(DatabaseReader.getAddedSkills(DatabaseHolder.holdSpecies.getSkills()));
+            BuilderFXMLController.getSkillModifiers(DatabaseHolder.ruledskills);
         }
-        switch (DatabaseModifier.holdSpecies.getLifedomain()) {
+        switch (DatabaseHolder.holdSpecies.getLifedomain()) {
             case Humanoid:
                 skillSetText.setText(BuilderCORE.HUMANOIDSKILS);
                 skillSubSetText.setText(BuilderCORE.HUMANOIDSUBSKILS);
@@ -216,45 +217,45 @@ public class SpeciesCreatorWindowController implements Initializable {
             case Fey:
                 skillSetText.setText(BuilderCORE.FEYSKILS);
                 skillSubSetText.setText(BuilderCORE.FEYSUBSKILS);
-                ((AFey) DatabaseModifier.holdSpecies).setMainDomain(MainDomainValue.Light);
-                ((AFey) DatabaseModifier.holdSpecies).setSecondaryDomain(MainDomainValue.Twilight);
+                ((AFey) DatabaseHolder.holdSpecies).setMainDomain(MainDomainValue.Light);
+                ((AFey) DatabaseHolder.holdSpecies).setSecondaryDomain(MainDomainValue.Twilight);
                 break;
             case Reptilia:
                 skillSetText.setText(BuilderCORE.REPTILIASKILS);
                 skillSubSetText.setText(BuilderCORE.REPTILIASUBSKILS);
-                ((AReptilia) DatabaseModifier.holdSpecies).setMainLineage(MainLineageValue.Draconic);
+                ((AReptilia) DatabaseHolder.holdSpecies).setMainLineage(MainLineageValue.Draconic);
                 break;
             case Biest:
                 skillSetText.setText(BuilderCORE.BIESTSKILS);
                 skillSubSetText.setText(BuilderCORE.BIESTSUBSKILS);
-                ((ABiest) DatabaseModifier.holdSpecies).setMainKingdom(MainKingdomValue.NONE);
+                ((ABiest) DatabaseHolder.holdSpecies).setMainKingdom(MainKingdomValue.NONE);
                 primaryChooserString = MainKingdomValue.NONE.getText();
-                ((ABiest) DatabaseModifier.holdSpecies).setMainRegion(MainRegionValue.Caverns);
+                ((ABiest) DatabaseHolder.holdSpecies).setMainRegion(MainRegionValue.Caverns);
                 secondaryChooserString = MainRegionValue.Caverns.getText();
                 break;
             case Insecta:
                 skillSetText.setText(BuilderCORE.INSECTASKILS);
                 skillSubSetText.setText(BuilderCORE.INSECTASUBSKILS);
-                ((AInsecta) DatabaseModifier.holdSpecies).setMainClasification(MainClasificationValue.NONE);
-                ((AInsecta) DatabaseModifier.holdSpecies).setMainOrder(MainOrderValue.NONE);
+                ((AInsecta) DatabaseHolder.holdSpecies).setMainClasification(MainClasificationValue.NONE);
+                ((AInsecta) DatabaseHolder.holdSpecies).setMainOrder(MainOrderValue.NONE);
                 primaryChooserString = MainClasificationValue.NONE.getText();
                 secondaryChooserString = MainOrderValue.NONE.getText();
                 break;
         }
-        skillSetChooser.setItems(DatabaseModifier.getSkillSet());
+        skillSetChooser.setItems(DatabaseReader.getSkillSet());
         skillSetChooser.getSelectionModel().select(0);
-        skillSubSetChooser.setItems(DatabaseModifier.getSubSkillSet(skillSetChooser.getSelectionModel().getSelectedItem().toString(), primaryChooserString, secondaryChooserString));
+        skillSubSetChooser.setItems(DatabaseReader.getSubSkillSet(skillSetChooser.getSelectionModel().getSelectedItem().toString(), primaryChooserString, secondaryChooserString));
         skillSubSetChooser.getSelectionModel().select(0);
         setAvailableSkills();
         pointsPerModelValue1.setText("0");
         populateLabels();
-        skillsLeft1a.setText(DatabaseModifier.skillsCanTake());
-        skillsLeft1b.setText(DatabaseModifier.skillsLeftModify("0", true));
+        skillsLeft1a.setText(BuilderCORE.skillsCanTake());
+        skillsLeft1b.setText(BuilderCORE.skillsLeftModify("0", true));
     }
 
     void setAvailableSkills() throws SQLException {
-        int age = Integer.max(DatabaseModifier.holdCulture.getAge(), DatabaseModifier.holdSpecies.getAge());
-        availableSkillsList.setItems(AvailableSkillsLister.getAvailableSkills(DatabaseModifier.holdSpecies.getLifedomain(), age, skillSubSetChooser.getSelectionModel().getSelectedItem().toString(), skillsList1.getItems()));
+        int age = Integer.max(DatabaseHolder.holdCulture.getAge(), DatabaseHolder.holdSpecies.getAge());
+        availableSkillsList.setItems(AvailableSkillsLister.getAvailableSkills(DatabaseHolder.holdSpecies.getLifedomain(), age, skillSubSetChooser.getSelectionModel().getSelectedItem().toString(), skillsList1.getItems()));
         availableSkillsList.setCellFactory(new Callback<ListView<String>, ListCell<String>>() {
             @Override
             public ListCell<String> call(ListView<String> param) {
@@ -288,9 +289,9 @@ public class SpeciesCreatorWindowController implements Initializable {
      */
     public void wipeSkills() throws SQLException {
         skillsList1.getItems().clear();
-        DatabaseModifier.holdSpecies.setAllTraitsAndPowers(0, 0, 0, 0, 0, 0);
-        skillsLeft1b.setText(DatabaseModifier.skillsLeftModify("0", true));
-        DatabaseModifier.holdSpecies.setSkills("");
+        DatabaseHolder.holdSpecies.setAllTraitsAndPowers(0, 0, 0, 0, 0, 0);
+        skillsLeft1b.setText(BuilderCORE.skillsLeftModify("0", true));
+        DatabaseHolder.holdSpecies.setSkills("");
         BuilderFXMLController.HOLD_MODIFIERS.setWoundsModifier(0);
         BuilderFXMLController.HOLD_MODIFIERS.setAttacksModifier(0);
         BuilderFXMLController.HOLD_MODIFIERS.setSizeModifier(0);
@@ -307,7 +308,7 @@ public class SpeciesCreatorWindowController implements Initializable {
         BuilderFXMLController.HOLD_MODIFIERS.setRTModifier(0);
         BuilderFXMLController.HOLD_MODIFIERS.setMoraleModifier(0);
         populateLabels();
-        skillSetChooser.setItems(DatabaseModifier.getSkillSet());
+        skillSetChooser.setItems(DatabaseReader.getSkillSet());
         skillSetChooser.getSelectionModel().select(0);
         setAvailableSkills();
     }
@@ -322,18 +323,18 @@ public class SpeciesCreatorWindowController implements Initializable {
         setMaxClassNumber();
         Stage stage = (Stage) createFinish.getScene().getWindow();
         stage.hide();
-        DatabaseModifier.holdSpecies.setSpeciesName(nameInputField.getText());
-        DatabaseModifier.holdSpecies.setAge(BuilderCORE.findMaxAge(skillsList1));
-        if (DatabaseModifier.isModyfyinfg) {
-            DatabaseModifier.isModyfyinfg = !DatabaseModifier.isModyfyinfg;
-            DatabaseModifier.modifySpecies();
-            DatabaseModifier.holdSpecies = null;
-            DatabaseModifier.modifiedHoldSpecies = null;
-            speciesList.setItems(BuilderCORE.getSpeciesList());
+        DatabaseHolder.holdSpecies.setSpeciesName(nameInputField.getText());
+        DatabaseHolder.holdSpecies.setAge(DatabaseReader.findMaxAge(skillsList1));
+        if (DatabaseHolder.isModyfyinfg) {
+            DatabaseHolder.isModyfyinfg = !DatabaseHolder.isModyfyinfg;
+            DatabaseWriter.modifySpecies();
+            DatabaseHolder.holdSpecies = null;
+            DatabaseHolder.modifiedHoldSpecies = null;
+            speciesList.setItems(DatabaseReader.getSpeciesList());
             speciesList.getSelectionModel().clearSelection();
         } else {
-            DatabaseModifier.holdCulture.setSpeciesName(nameInputField.getText());
-            DatabaseModifier.holdCulture.setCultureName(nameInputField.getText());
+            DatabaseHolder.holdCulture.setSpeciesName(nameInputField.getText());
+            DatabaseHolder.holdCulture.setCultureName(nameInputField.getText());
             if (createHoldWindowStage.isShowing()) {
                 createHoldWindowStage.requestFocus();
             } else {
@@ -343,7 +344,7 @@ public class SpeciesCreatorWindowController implements Initializable {
                 createHoldWindowController.setSpeciesList(speciesList);
                 Scene scene = new Scene(root);
                 createHoldWindowStage.setScene(scene);
-                createHoldWindowStage.setTitle("Create Classes for " + DatabaseModifier.holdCulture.getSpeciesName() + " - " + DatabaseModifier.holdCulture.getCultureName());
+                createHoldWindowStage.setTitle("Create Classes for " + DatabaseHolder.holdCulture.getSpeciesName() + " - " + DatabaseHolder.holdCulture.getCultureName());
                 createHoldWindowStage.show();
             }
         }
@@ -356,8 +357,8 @@ public class SpeciesCreatorWindowController implements Initializable {
      */
     @FXML
     public void outcastCheckboxActions() throws SQLException {
-        DatabaseModifier.outcasts = !DatabaseModifier.outcasts;
-        DatabaseModifier.holdSpecies.setSpeciesModifiers("Outcasts=" + DatabaseModifier.outcasts + ",SecondaryDomain=" + ((AFey) DatabaseModifier.holdSpecies).getSecondaryDomain().getText());
+        DatabaseHolder.outcasts = !DatabaseHolder.outcasts;
+        DatabaseHolder.holdSpecies.setSpeciesModifiers("Outcasts=" + DatabaseHolder.outcasts + ",SecondaryDomain=" + ((AFey) DatabaseHolder.holdSpecies).getSecondaryDomain().getText());
         PrimaryChooseActions();
     }
 
@@ -370,16 +371,16 @@ public class SpeciesCreatorWindowController implements Initializable {
         switch (PrimaryChooserValue.getEnum(primaryChooser.getSelectionModel().getSelectedItem().toString())) {
             case Light:
             case Darkness:
-                ((DatabaseModifier.AFey) DatabaseModifier.holdSpecies).setMainDomain(MainDomainValue.getEnum(primaryChooser.getSelectionModel().getSelectedItem().toString()));
+                ((DatabaseHolder.AFey) DatabaseHolder.holdSpecies).setMainDomain(MainDomainValue.getEnum(primaryChooser.getSelectionModel().getSelectedItem().toString()));
                 secondaryChooser.setVisible(false);
                 secondaryChooserText.setVisible(false);
                 break;
             case Twilight:
-                ((DatabaseModifier.AFey) DatabaseModifier.holdSpecies).setMainDomain(MainDomainValue.Twilight);
-                if (DatabaseModifier.outcasts) {
+                ((DatabaseHolder.AFey) DatabaseHolder.holdSpecies).setMainDomain(MainDomainValue.Twilight);
+                if (DatabaseHolder.outcasts) {
                     secondaryChooser.setVisible(false);
                     secondaryChooserText.setVisible(false);
-                    ((DatabaseModifier.AFey) DatabaseModifier.holdSpecies).setSecondaryDomain(MainDomainValue.Twilight);
+                    ((DatabaseHolder.AFey) DatabaseHolder.holdSpecies).setSecondaryDomain(MainDomainValue.Twilight);
                     wipeSkills();
                 } else {
                     secondaryChooser.setVisible(true);
@@ -398,27 +399,27 @@ public class SpeciesCreatorWindowController implements Initializable {
             case Vermin:
             case Caballis:
             case Ichthyes:
-                ((DatabaseModifier.ABiest) DatabaseModifier.holdSpecies).setMainKingdom(MainKingdomValue.getEnum(primaryChooser.getSelectionModel().getSelectedItem().toString()));
-                DatabaseModifier.holdSpecies.setCharacteristicGroup(Enmuerations.CharacteristicGroup.getEnum(primaryChooser.getSelectionModel().getSelectedItem().toString()));
+                ((DatabaseHolder.ABiest) DatabaseHolder.holdSpecies).setMainKingdom(MainKingdomValue.getEnum(primaryChooser.getSelectionModel().getSelectedItem().toString()));
+                DatabaseHolder.holdSpecies.setCharacteristicGroup(Enmuerations.CharacteristicGroup.getEnum(primaryChooser.getSelectionModel().getSelectedItem().toString()));
                 primaryChooserString = primaryChooser.getSelectionModel().getSelectedItem().toString();
                 break;
             case Arachnea:
             case Crustacea:
             case Insecta:
             case Myriapoda:
-                ((DatabaseModifier.AInsecta) DatabaseModifier.holdSpecies).setMainClasification(MainClasificationValue.getEnum(primaryChooser.getSelectionModel().getSelectedItem().toString()));
-                DatabaseModifier.holdSpecies.setCharacteristicGroup(Enmuerations.CharacteristicGroup.getEnum(primaryChooser.getSelectionModel().getSelectedItem().toString()));
+                ((DatabaseHolder.AInsecta) DatabaseHolder.holdSpecies).setMainClasification(MainClasificationValue.getEnum(primaryChooser.getSelectionModel().getSelectedItem().toString()));
+                DatabaseHolder.holdSpecies.setCharacteristicGroup(Enmuerations.CharacteristicGroup.getEnum(primaryChooser.getSelectionModel().getSelectedItem().toString()));
                 primaryChooserString = primaryChooser.getSelectionModel().getSelectedItem().toString();
                 break;
             case NONE:
-                DatabaseModifier.holdSpecies.setCharacteristicGroup(Enmuerations.CharacteristicGroup.standard);
+                DatabaseHolder.holdSpecies.setCharacteristicGroup(Enmuerations.CharacteristicGroup.standard);
                 primaryChooserString = primaryChooser.getSelectionModel().getSelectedItem().toString();
                 break;
             default:
                 break;
         }
 
-        skillsLeft1a.setText(DatabaseModifier.skillsCanTake());
+        skillsLeft1a.setText(BuilderCORE.skillsCanTake());
         wipeSkills();
     }
 
@@ -431,16 +432,16 @@ public class SpeciesCreatorWindowController implements Initializable {
         switch (SecondaryChooserValue.getEnum(secondaryChooser.getSelectionModel().getSelectedItem().toString())) {
             case Light:
             case Darkness:
-                ((DatabaseModifier.AFey) DatabaseModifier.holdSpecies).setSecondaryDomain(MainDomainValue.getEnum(secondaryChooser.getSelectionModel().getSelectedItem().toString()));
+                ((DatabaseHolder.AFey) DatabaseHolder.holdSpecies).setSecondaryDomain(MainDomainValue.getEnum(secondaryChooser.getSelectionModel().getSelectedItem().toString()));
                 break;
             default:
                 break;
         }
-        switch (DatabaseModifier.holdSpecies.getLifedomain()) {
+        switch (DatabaseHolder.holdSpecies.getLifedomain()) {
             case Humanoid:
                 break;
             case Fey:
-                DatabaseModifier.holdSpecies.setSpeciesModifiers("Outcasts=" + DatabaseModifier.outcasts + ",SecondaryDomain=" + ((AFey) DatabaseModifier.holdSpecies).getSecondaryDomain().getText());
+                DatabaseHolder.holdSpecies.setSpeciesModifiers("Outcasts=" + DatabaseHolder.outcasts + ",SecondaryDomain=" + ((AFey) DatabaseHolder.holdSpecies).getSecondaryDomain().getText());
                 break;
             case Reptilia:
                 break;
@@ -466,35 +467,35 @@ public class SpeciesCreatorWindowController implements Initializable {
     }
 
     void moveSkill() throws SQLException {
-        if (DatabaseModifier.holdSpecies.getSkills().length() > 1) {
-            if (!";".equals(DatabaseModifier.holdSpecies.getSkills().substring(DatabaseModifier.holdSpecies.getSkills().length() - 1))) {
-                DatabaseModifier.holdSpecies.addSkills(";");
+        if (DatabaseHolder.holdSpecies.getSkills().length() > 1) {
+            if (!";".equals(DatabaseHolder.holdSpecies.getSkills().substring(DatabaseHolder.holdSpecies.getSkills().length() - 1))) {
+                DatabaseHolder.holdSpecies.addSkills(";");
             }
         }
         if (!availableSkillsList.getSelectionModel().isEmpty()) {
-            skillsLeft1b.setText(DatabaseModifier.skillsLeftModify(availableSkillsList.getSelectionModel().getSelectedItem().toString(), true));
-            DatabaseModifier.holdSpecies.addSkills(availableSkillsList.getSelectionModel().getSelectedItem().toString());
-            DatabaseModifier.holdSpecies.addSkills(";");
+            skillsLeft1b.setText(BuilderCORE.skillsLeftModify(availableSkillsList.getSelectionModel().getSelectedItem().toString(), true));
+            DatabaseHolder.holdSpecies.addSkills(availableSkillsList.getSelectionModel().getSelectedItem().toString());
+            DatabaseHolder.holdSpecies.addSkills(";");
         }
         if (!skillsList1.getSelectionModel().isEmpty()) {
-            skillsLeft1b.setText(DatabaseModifier.skillsLeftModify(skillsList1.getSelectionModel().getSelectedItem().toString().split(" \\(p")[0], false));
-            DatabaseModifier.holdSpecies.setSkills(DatabaseModifier.holdSpecies.getSkills().replace(skillsList1.getSelectionModel().getSelectedItem().toString().split(" \\(p")[0] + ";", ""));
+            skillsLeft1b.setText(BuilderCORE.skillsLeftModify(skillsList1.getSelectionModel().getSelectedItem().toString().split(" \\(p")[0], false));
+            DatabaseHolder.holdSpecies.setSkills(DatabaseHolder.holdSpecies.getSkills().replace(skillsList1.getSelectionModel().getSelectedItem().toString().split(" \\(p")[0] + ";", ""));
         }
-        if (!("".equals(DatabaseModifier.holdSpecies.getSkills()) || DatabaseModifier.holdSpecies.getSkills() == null)) {
-            skillsList1.setItems(DatabaseModifier.getAddedSkills(DatabaseModifier.holdSpecies.getSkills()));
-            BuilderFXMLController.getSkillModifiers(DatabaseModifier.ruledskills);
+        if (!("".equals(DatabaseHolder.holdSpecies.getSkills()) || DatabaseHolder.holdSpecies.getSkills() == null)) {
+            skillsList1.setItems(DatabaseReader.getAddedSkills(DatabaseHolder.holdSpecies.getSkills()));
+            BuilderFXMLController.getSkillModifiers(DatabaseHolder.ruledskills);
         } else {
             skillsList1.getItems().clear();
             BuilderFXMLController.HOLD_MODIFIERS.clearModifiers();
         }
-        skillsLeft1a.setText(DatabaseModifier.skillsCanTake());
-        GenesysProjectBuilder.CORE.getCharacteristics(DatabaseModifier.holdSpecies.getLifedomain().toString(), DatabaseModifier.holdSpecies.getCharacteristicGroup().toString());
-        int cost = DatabaseModifier.baseAddedCost(DatabaseModifier.holdSpecies.getLifedomain(), DatabaseModifier.holdSpecies, null, DatabaseModifier.b, 0);
+        skillsLeft1a.setText(BuilderCORE.skillsCanTake());
+        DatabaseReader.getCharacteristics(DatabaseHolder.holdSpecies.getLifedomain().toString(), DatabaseHolder.holdSpecies.getCharacteristicGroup().toString());
+        int cost = BuilderCORE.baseAddedCost(DatabaseHolder.holdSpecies.getLifedomain(), DatabaseHolder.holdSpecies, null, DatabaseHolder.b, 0);
         String tex = Integer.toString(cost);
         pointsPerModelValue1.setText(tex);
         populateLabels();
         setAvailableSkills();
-        DatabaseModifier.holdSpecies.setNumberOfSkills(DatabaseModifier.holdSpecies.getSkills().split(";").length);
+        DatabaseHolder.holdSpecies.setNumberOfSkills(DatabaseHolder.holdSpecies.getSkills().split(";").length);
         subSkillsList1.getItems().clear();
         subSkillText1.setText("");
     }
@@ -506,10 +507,10 @@ public class SpeciesCreatorWindowController implements Initializable {
     @FXML
     public void skillSetChooserItemStateChangedActions() throws SQLException {
         if (skillSetChooser.getSelectionModel().isEmpty()) {
-            skillSetChooser.setItems(DatabaseModifier.getSkillSet());
+            skillSetChooser.setItems(DatabaseReader.getSkillSet());
             skillSetChooser.getSelectionModel().select(0);
         }
-        skillSubSetChooser.setItems(DatabaseModifier.getSubSkillSet(skillSetChooser.getSelectionModel().getSelectedItem().toString(), primaryChooserString, secondaryChooserString));
+        skillSubSetChooser.setItems(DatabaseReader.getSubSkillSet(skillSetChooser.getSelectionModel().getSelectedItem().toString(), primaryChooserString, secondaryChooserString));
         skillSubSetChooser.getSelectionModel().select(0);
     }
 
@@ -520,7 +521,7 @@ public class SpeciesCreatorWindowController implements Initializable {
     @FXML
     public void skillSubSetChooserItemStateChangedActions() throws SQLException {
         if (skillSubSetChooser.getSelectionModel().isEmpty()) {
-            skillSubSetChooser.setItems(DatabaseModifier.getSubSkillSet(skillSetChooser.getSelectionModel().getSelectedItem().toString(), primaryChooserString, secondaryChooserString));
+            skillSubSetChooser.setItems(DatabaseReader.getSubSkillSet(skillSetChooser.getSelectionModel().getSelectedItem().toString(), primaryChooserString, secondaryChooserString));
             skillSubSetChooser.getSelectionModel().select(0);
         }
         setAvailableSkills();
@@ -559,7 +560,7 @@ public class SpeciesCreatorWindowController implements Initializable {
      */
     public void setMaxClassNumber() {
         int a = 0, b = 0, c = 0;
-        switch (DatabaseModifier.holdSpecies.getLifedomain()) {
+        switch (DatabaseHolder.holdSpecies.getLifedomain()) {
             case Humanoid:
                 a = Integer.parseInt(martialValue1.getText());
                 b = Integer.parseInt(rangedValue1.getText());
@@ -578,9 +579,9 @@ public class SpeciesCreatorWindowController implements Initializable {
                 c = Integer.parseInt(movementValue1.getText());
                 break;
         }
-        DatabaseModifier.holdSpecies.setMaxNumberOfLowClases(max(max(a, b), c));
-        DatabaseModifier.holdSpecies.setMaxNumberOfMidClases(min(min(max(a, b), max(a, c)), max(min(a, b), min(a, c))));
-        DatabaseModifier.holdSpecies.setMaxNumberOfHigClases(min(min(a, b), c));
+        DatabaseHolder.holdSpecies.setMaxNumberOfLowClases(max(max(a, b), c));
+        DatabaseHolder.holdSpecies.setMaxNumberOfMidClases(min(min(max(a, b), max(a, c)), max(min(a, b), min(a, c))));
+        DatabaseHolder.holdSpecies.setMaxNumberOfHigClases(min(min(a, b), c));
     }
 
     /**
@@ -589,7 +590,7 @@ public class SpeciesCreatorWindowController implements Initializable {
      */
     public void populateLabels() throws SQLException {
         for (int i = 0; i < valuesLabels.length; i++) {
-            valuesLabels[i].setText(GenesysProjectBuilder.CORE.getCharacteristics(DatabaseModifier.holdSpecies.getLifedomain().toString(), DatabaseModifier.holdSpecies.getCharacteristicGroup().toString())[i]);
+            valuesLabels[i].setText(DatabaseReader.getCharacteristics(DatabaseHolder.holdSpecies.getLifedomain().toString(), DatabaseHolder.holdSpecies.getCharacteristicGroup().toString())[i]);
         }
     }
 
@@ -628,16 +629,16 @@ public class SpeciesCreatorWindowController implements Initializable {
     public void initialize(URL url, ResourceBundle rb) {
         this.valuesLabels = new Label[]{strengthValue1, toughnessValue1, movementValue1, martialValue1, rangedValue1, defenseValue1, disciplineValue1, willpowerValue1, commandValue1, woundsValue1, attacksValue1, sizeValue1, mTValue1, rTValue1, moraleValue1};
 
-        if (!DatabaseModifier.isModyfyinfg) {
-            DatabaseModifier.holdSpecies.setAge(1);
-            DatabaseModifier.holdCulture.setAge(1);
+        if (!DatabaseHolder.isModyfyinfg) {
+            DatabaseHolder.holdSpecies.setAge(1);
+            DatabaseHolder.holdCulture.setAge(1);
         }
         try {
             createSpecies();
         } catch (IOException | SQLException ex) {
             Logger.getLogger(SpeciesCreatorWindowController.class.getName()).log(Level.SEVERE, null, ex);
         }
-        switch (DatabaseModifier.holdSpecies.getLifedomain()) {
+        switch (DatabaseHolder.holdSpecies.getLifedomain()) {
             case Humanoid:
                 primaryChooser.setVisible(false);
                 secondaryChooser.setVisible(false);
@@ -657,7 +658,7 @@ public class SpeciesCreatorWindowController implements Initializable {
                 secondaryChooserText.setVisible(false);
                 secondaryChooserText.setText("Sphere");
                 outcastsCheckbox.setVisible(true);
-                DatabaseModifier.outcasts = false;
+                DatabaseHolder.outcasts = false;
                 break;
             case Reptilia:
                 primaryChooser.setVisible(false);

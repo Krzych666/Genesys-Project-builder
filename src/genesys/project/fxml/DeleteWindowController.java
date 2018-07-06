@@ -5,7 +5,9 @@
  */
 package genesys.project.fxml;
 
-import genesys.project.builder.DatabaseModifier;
+import genesys.project.builder.DatabaseHolder;
+import genesys.project.builder.DatabaseReader;
+import genesys.project.builder.DatabaseWriter;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
@@ -77,7 +79,7 @@ public class DeleteWindowController implements Initializable {
      */
     @FXML
     public void speciesDeleteDropdownItemStateChangedActions() throws SQLException {
-        cultureDeleteDropdown.setItems(DatabaseModifier.populateDropdownsCultures(speciesDeleteDropdown.getSelectionModel().getSelectedItem().toString()));
+        cultureDeleteDropdown.setItems(DatabaseReader.populateDropdownsCultures(speciesDeleteDropdown.getSelectionModel().getSelectedItem().toString()));
         cultureDeleteDropdown.getSelectionModel().select(0);
     }
 
@@ -90,13 +92,13 @@ public class DeleteWindowController implements Initializable {
         if (cultureDeleteDropdown.getSelectionModel().isEmpty()) {
             cultureDeleteDropdown.getSelectionModel().select(0);
         }
-        classDeleteDropdown.setItems(DatabaseModifier.populateDropdownsClasses(speciesDeleteDropdown.getSelectionModel().getSelectedItem().toString(), cultureDeleteDropdown.getSelectionModel().getSelectedItem().toString()));
+        classDeleteDropdown.setItems(DatabaseReader.populateDropdownsClasses(speciesDeleteDropdown.getSelectionModel().getSelectedItem().toString(), cultureDeleteDropdown.getSelectionModel().getSelectedItem().toString()));
         classDeleteDropdown.getSelectionModel().select(0);
-        heroDeleteDropdown.setItems(DatabaseModifier.populateDropdownsHeroes(speciesDeleteDropdown.getSelectionModel().getSelectedItem().toString(), cultureDeleteDropdown.getSelectionModel().getSelectedItem().toString(), classDeleteDropdown.getSelectionModel().getSelectedItem().toString()));
+        heroDeleteDropdown.setItems(DatabaseReader.populateDropdownsHeroes(speciesDeleteDropdown.getSelectionModel().getSelectedItem().toString(), cultureDeleteDropdown.getSelectionModel().getSelectedItem().toString(), classDeleteDropdown.getSelectionModel().getSelectedItem().toString()));
         heroDeleteDropdown.getSelectionModel().select(0);
-        progressDeleteDropdown.setItems(DatabaseModifier.populateDropdownsProgress(speciesDeleteDropdown.getSelectionModel().getSelectedItem().toString(), cultureDeleteDropdown.getSelectionModel().getSelectedItem().toString()));
+        progressDeleteDropdown.setItems(DatabaseReader.populateDropdownsProgress(speciesDeleteDropdown.getSelectionModel().getSelectedItem().toString(), cultureDeleteDropdown.getSelectionModel().getSelectedItem().toString()));
         progressDeleteDropdown.getSelectionModel().select(0);
-        rosterDeleteDropdown.setItems(DatabaseModifier.populateDropdownsRosters(speciesDeleteDropdown.getSelectionModel().getSelectedItem().toString(), cultureDeleteDropdown.getSelectionModel().getSelectedItem().toString()));
+        rosterDeleteDropdown.setItems(DatabaseReader.populateDropdownsRosters(speciesDeleteDropdown.getSelectionModel().getSelectedItem().toString(), cultureDeleteDropdown.getSelectionModel().getSelectedItem().toString()));
         rosterDeleteDropdown.getSelectionModel().select(0);
     }
 
@@ -110,7 +112,7 @@ public class DeleteWindowController implements Initializable {
             classDeleteDropdown.getSelectionModel().select(0);
         }
         Object sel = classDeleteDropdown.getSelectionModel().getSelectedItem();
-        heroDeleteDropdown.setItems(DatabaseModifier.populateDropdownsHeroes(speciesDeleteDropdown.getSelectionModel().getSelectedItem().toString(), cultureDeleteDropdown.getSelectionModel().getSelectedItem().toString(), classDeleteDropdown.getSelectionModel().getSelectedItem().toString()));
+        heroDeleteDropdown.setItems(DatabaseReader.populateDropdownsHeroes(speciesDeleteDropdown.getSelectionModel().getSelectedItem().toString(), cultureDeleteDropdown.getSelectionModel().getSelectedItem().toString(), classDeleteDropdown.getSelectionModel().getSelectedItem().toString()));
         heroDeleteDropdown.getSelectionModel().select(0);
         progressDeleteDropdown.getSelectionModel().select(0);
         rosterDeleteDropdown.getSelectionModel().select(0);
@@ -194,10 +196,10 @@ public class DeleteWindowController implements Initializable {
         String a = "') AND (";
         String[] sql1 = {"DELETE FROM CreatedSpecies", "DELETE FROM CreatedCultures", "DELETE FROM CreatedClasses", "DELETE FROM CreatedHeroes", "DELETE FROM CreatedProgress", "DELETE FROM CreatedRosters"};
         String[] sql2 = {"SpeciesName = '", "CultureName = '", "ClassName = '", "HeroName = '", "ProgressName = '", "RosterName = '"};
-        if (speciesDeleteDropdown.getSelectionModel().getSelectedItem().toString().equals(DatabaseModifier.TOPDROP)) {
+        if (speciesDeleteDropdown.getSelectionModel().getSelectedItem().toString().equals(DatabaseHolder.TOPDROP)) {
             temp = sql1[0] + ";" + sql1[1] + ";" + sql1[2] + ";" + sql1[3] + ";" + sql1[4] + ";" + sql1[5] + ";";
         }
-        if (!speciesDeleteDropdown.getSelectionModel().getSelectedItem().toString().equals(DatabaseModifier.TOPDROP)) {
+        if (!speciesDeleteDropdown.getSelectionModel().getSelectedItem().toString().equals(DatabaseHolder.TOPDROP)) {
             temp = sql1[0] + w + sql2[0] + speciesDeleteDropdown.getSelectionModel().getSelectedItem().toString() + "');"
                     + sql1[1] + w + sql2[0] + speciesDeleteDropdown.getSelectionModel().getSelectedItem().toString() + "');"
                     + sql1[2] + w + sql2[0] + speciesDeleteDropdown.getSelectionModel().getSelectedItem().toString() + "');"
@@ -205,29 +207,29 @@ public class DeleteWindowController implements Initializable {
                     + sql1[4] + w + sql2[0] + speciesDeleteDropdown.getSelectionModel().getSelectedItem().toString() + "');"
                     + sql1[5] + w + sql2[0] + speciesDeleteDropdown.getSelectionModel().getSelectedItem().toString() + "');";
         }
-        if (!cultureDeleteDropdown.getSelectionModel().getSelectedItem().toString().equals(DatabaseModifier.TOPDROP)) {
+        if (!cultureDeleteDropdown.getSelectionModel().getSelectedItem().toString().equals(DatabaseHolder.TOPDROP)) {
             temp = sql1[1] + w + sql2[0] + speciesDeleteDropdown.getSelectionModel().getSelectedItem().toString() + a + sql2[1] + cultureDeleteDropdown.getSelectionModel().getSelectedItem().toString() + "');"
                     + sql1[2] + w + sql2[0] + speciesDeleteDropdown.getSelectionModel().getSelectedItem().toString() + a + sql2[1] + cultureDeleteDropdown.getSelectionModel().getSelectedItem().toString() + "');"
                     + sql1[3] + w + sql2[0] + speciesDeleteDropdown.getSelectionModel().getSelectedItem().toString() + a + sql2[1] + cultureDeleteDropdown.getSelectionModel().getSelectedItem().toString() + "');"
                     + sql1[4] + w + sql2[0] + speciesDeleteDropdown.getSelectionModel().getSelectedItem().toString() + a + sql2[1] + cultureDeleteDropdown.getSelectionModel().getSelectedItem().toString() + "');"
                     + sql1[5] + w + sql2[0] + speciesDeleteDropdown.getSelectionModel().getSelectedItem().toString() + a + sql2[1] + cultureDeleteDropdown.getSelectionModel().getSelectedItem().toString() + "');";
         }
-        if (!classDeleteDropdown.getSelectionModel().getSelectedItem().toString().equals(DatabaseModifier.TOPDROP)) {
+        if (!classDeleteDropdown.getSelectionModel().getSelectedItem().toString().equals(DatabaseHolder.TOPDROP)) {
             temp = sql1[2] + w + sql2[0] + speciesDeleteDropdown.getSelectionModel().getSelectedItem().toString() + a + sql2[1] + cultureDeleteDropdown.getSelectionModel().getSelectedItem().toString() + a + sql2[2] + classDeleteDropdown.getSelectionModel().getSelectedItem().toString() + "');"
                     + sql1[3] + w + sql2[0] + speciesDeleteDropdown.getSelectionModel().getSelectedItem().toString() + a + sql2[1] + cultureDeleteDropdown.getSelectionModel().getSelectedItem().toString() + a + sql2[2] + classDeleteDropdown.getSelectionModel().getSelectedItem().toString() + "');"
                     + sql1[4] + w + sql2[0] + speciesDeleteDropdown.getSelectionModel().getSelectedItem().toString() + a + sql2[1] + cultureDeleteDropdown.getSelectionModel().getSelectedItem().toString() + "');"
                     + sql1[5] + w + sql2[0] + speciesDeleteDropdown.getSelectionModel().getSelectedItem().toString() + a + sql2[1] + cultureDeleteDropdown.getSelectionModel().getSelectedItem().toString() + "');";
         }
-        if (!heroDeleteDropdown.getSelectionModel().getSelectedItem().toString().equals(DatabaseModifier.TOPDROP)) {
+        if (!heroDeleteDropdown.getSelectionModel().getSelectedItem().toString().equals(DatabaseHolder.TOPDROP)) {
             temp = sql1[3] + w + sql2[0] + speciesDeleteDropdown.getSelectionModel().getSelectedItem().toString() + a + sql2[1] + cultureDeleteDropdown.getSelectionModel().getSelectedItem().toString() + a + sql2[3] + heroDeleteDropdown.getSelectionModel().getSelectedItem().toString() + "');";
         }
-        if (!progressDeleteDropdown.getSelectionModel().getSelectedItem().toString().equals(DatabaseModifier.TOPDROP)) {
+        if (!progressDeleteDropdown.getSelectionModel().getSelectedItem().toString().equals(DatabaseHolder.TOPDROP)) {
             temp = sql1[4] + w + sql2[0] + speciesDeleteDropdown.getSelectionModel().getSelectedItem().toString() + a + sql2[1] + cultureDeleteDropdown.getSelectionModel().getSelectedItem().toString() + a + sql2[4] + progressDeleteDropdown.getSelectionModel().getSelectedItem().toString() + "');";
         }
-        if (!rosterDeleteDropdown.getSelectionModel().getSelectedItem().toString().equals(DatabaseModifier.TOPDROP)) {
+        if (!rosterDeleteDropdown.getSelectionModel().getSelectedItem().toString().equals(DatabaseHolder.TOPDROP)) {
             temp = sql1[5] + w + sql2[0] + speciesDeleteDropdown.getSelectionModel().getSelectedItem().toString() + a + sql2[1] + cultureDeleteDropdown.getSelectionModel().getSelectedItem().toString() + a + sql2[5] + rosterDeleteDropdown.getSelectionModel().getSelectedItem().toString() + "');";
         }
-        DatabaseModifier.tempDeletescript = temp;
+        DatabaseWriter.tempDeletescript = temp;
     }
 
     /**
@@ -235,25 +237,25 @@ public class DeleteWindowController implements Initializable {
      */
     public void showWhatToDelete() {
         String temp = "";
-        if (speciesDeleteDropdown.getSelectionModel().getSelectedItem().toString().equals(DatabaseModifier.TOPDROP)) {
+        if (speciesDeleteDropdown.getSelectionModel().getSelectedItem().toString().equals(DatabaseHolder.TOPDROP)) {
             temp = "  All Species";
         }
-        if (!speciesDeleteDropdown.getSelectionModel().getSelectedItem().toString().equals(DatabaseModifier.TOPDROP)) {
+        if (!speciesDeleteDropdown.getSelectionModel().getSelectedItem().toString().equals(DatabaseHolder.TOPDROP)) {
             temp = "  Species: " + speciesDeleteDropdown.getSelectionModel().getSelectedItem().toString();
         }
-        if (!cultureDeleteDropdown.getSelectionModel().getSelectedItem().toString().equals(DatabaseModifier.TOPDROP)) {
+        if (!cultureDeleteDropdown.getSelectionModel().getSelectedItem().toString().equals(DatabaseHolder.TOPDROP)) {
             temp = "  Culture: " + cultureDeleteDropdown.getSelectionModel().getSelectedItem().toString() + " (in species: " + speciesDeleteDropdown.getSelectionModel().getSelectedItem().toString() + ")";
         }
-        if (!classDeleteDropdown.getSelectionModel().getSelectedItem().toString().equals(DatabaseModifier.TOPDROP)) {
+        if (!classDeleteDropdown.getSelectionModel().getSelectedItem().toString().equals(DatabaseHolder.TOPDROP)) {
             temp = "  Class: " + classDeleteDropdown.getSelectionModel().getSelectedItem().toString() + " (in culture: " + cultureDeleteDropdown.getSelectionModel().getSelectedItem().toString() + ", in species: " + speciesDeleteDropdown.getSelectionModel().getSelectedItem().toString() + ")";
         }
-        if (!heroDeleteDropdown.getSelectionModel().getSelectedItem().toString().equals(DatabaseModifier.TOPDROP)) {
+        if (!heroDeleteDropdown.getSelectionModel().getSelectedItem().toString().equals(DatabaseHolder.TOPDROP)) {
             temp = "  Hero: " + heroDeleteDropdown.getSelectionModel().getSelectedItem().toString() + " (in culture: " + cultureDeleteDropdown.getSelectionModel().getSelectedItem().toString() + ", in species: " + speciesDeleteDropdown.getSelectionModel().getSelectedItem().toString() + ")";
         }
-        if (!progressDeleteDropdown.getSelectionModel().getSelectedItem().toString().equals(DatabaseModifier.TOPDROP)) {
+        if (!progressDeleteDropdown.getSelectionModel().getSelectedItem().toString().equals(DatabaseHolder.TOPDROP)) {
             temp = "  Progress: " + progressDeleteDropdown.getSelectionModel().getSelectedItem().toString() + " (in culture: " + cultureDeleteDropdown.getSelectionModel().getSelectedItem().toString() + ", in species: " + speciesDeleteDropdown.getSelectionModel().getSelectedItem().toString() + ")";
         }
-        if (!rosterDeleteDropdown.getSelectionModel().getSelectedItem().toString().equals(DatabaseModifier.TOPDROP)) {
+        if (!rosterDeleteDropdown.getSelectionModel().getSelectedItem().toString().equals(DatabaseHolder.TOPDROP)) {
             temp = "  Roster: " + rosterDeleteDropdown.getSelectionModel().getSelectedItem().toString() + " (in culture: " + cultureDeleteDropdown.getSelectionModel().getSelectedItem().toString() + ", in species: " + speciesDeleteDropdown.getSelectionModel().getSelectedItem().toString() + ")";
         }
         toDelete.setText(temp);
@@ -268,7 +270,7 @@ public class DeleteWindowController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         try {
-            speciesDeleteDropdown.setItems(DatabaseModifier.populateDropdownsSpecies());
+            speciesDeleteDropdown.setItems(DatabaseReader.populateDropdownsSpecies());
             speciesDeleteDropdown.getSelectionModel().select(0);
             speciesDeleteDropdownItemStateChangedActions();
             cultureDeleteDropdownItemStateChangedActions();

@@ -19,10 +19,6 @@ import javafx.stage.Window;
  */
 public final class GenesysProjectBuilder extends Application {
 
-    /**
-     * BuilderCORE CORE
-     */
-    final public static BuilderCORE CORE = new BuilderCORE();
     private static Window primaryStageWindow;
 
     @Override

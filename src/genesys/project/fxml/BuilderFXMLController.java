@@ -6,6 +6,9 @@
 package genesys.project.fxml;
 
 import genesys.project.builder.BuilderCORE;
+import static genesys.project.builder.BuilderCORE.chooseConnection;
+import genesys.project.builder.DatabaseReader;
+import genesys.project.builder.DatabaseHolder;
 import genesys.project.builder.Enums.Enmuerations.LifedomainValue;
 import genesys.project.builder.Enums.Enmuerations.CharacteristicGroup;
 import genesys.project.builder.Enums.Enmuerations.UseCases;
@@ -30,8 +33,6 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.util.Callback;
-import static genesys.project.builder.BuilderCORE.chooseConnection;
-import genesys.project.builder.DatabaseModifier;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
@@ -311,10 +312,10 @@ public class BuilderFXMLController implements Initializable {
     private void speciesListMousePressed() throws SQLException, CloneNotSupportedException {
         if (!speciesList.getSelectionModel().isEmpty()) {
             HOLD_MODIFIERS.clearModifiers();
-            ObservableList dataSpecies = DatabaseModifier.getSpeciesData(speciesList.getSelectionModel().getSelectedItem().toString());
+            ObservableList dataSpecies = DatabaseReader.getSpeciesData(speciesList.getSelectionModel().getSelectedItem().toString());
             currentLifeDomain = LifedomainValue.valueOf(dataSpecies.get(0).toString().split("\\|")[0]);
-            culturesList.setItems(DatabaseModifier.populateDropdownsCultures(speciesList.getSelectionModel().getSelectedItem().toString()));
-            culturesList.getItems().remove(DatabaseModifier.TOPDROP);
+            culturesList.setItems(DatabaseReader.populateDropdownsCultures(speciesList.getSelectionModel().getSelectedItem().toString()));
+            culturesList.getItems().remove(DatabaseHolder.TOPDROP);
             currentCharacteristicGroup = (CharacteristicGroup.valueOf(dataSpecies.get(0).toString().split("\\|")[1]));
             String simpleSkillList = dataSpecies.get(0).toString().split("\\|")[3];
             skillsList.setItems(getFullSkillsDescription(simpleSkillList));
@@ -329,7 +330,7 @@ public class BuilderFXMLController implements Initializable {
     @FXML
     private void culturesListMousePressed() throws SQLException, CloneNotSupportedException {
         if (!culturesList.getSelectionModel().isEmpty() && !speciesList.getSelectionModel().isEmpty()) {
-            ObservableList dataSpecies = DatabaseModifier.getSpeciesData(speciesList.getSelectionModel().getSelectedItem().toString());
+            ObservableList dataSpecies = DatabaseReader.getSpeciesData(speciesList.getSelectionModel().getSelectedItem().toString());
             skillsList.setItems(getFullSkillsDescription(dataSpecies.get(0).toString().split("\\|")[3]));
             ObservableList tmp = FXCollections.observableArrayList();
             tmp.add(BuilderCORE.BASE);
@@ -337,15 +338,15 @@ public class BuilderFXMLController implements Initializable {
                 tmp.add(BuilderCORE.LESSER);
                 tmp.add(BuilderCORE.GREATER);
             }
-            ObservableList dataCulture = DatabaseModifier.getCultureData(speciesList.getSelectionModel().getSelectedItem().toString(), culturesList.getSelectionModel().getSelectedItem().toString());
-            classList.setItems(DatabaseModifier.populateDropdownsClasses(speciesList.getSelectionModel().getSelectedItem().toString(), culturesList.getSelectionModel().getSelectedItem().toString()));
-            classList.getItems().remove(DatabaseModifier.TOPDROP);
-            heroesList.setItems(DatabaseModifier.populateDropdownsHeroes(speciesList.getSelectionModel().getSelectedItem().toString(), culturesList.getSelectionModel().getSelectedItem().toString(), null));
-            heroesList.getItems().remove(DatabaseModifier.TOPDROP);
-            cultureProgressList.setItems(DatabaseModifier.populateDropdownsProgress(speciesList.getSelectionModel().getSelectedItem().toString(), culturesList.getSelectionModel().getSelectedItem().toString()));
-            cultureProgressList.getItems().remove(DatabaseModifier.TOPDROP);
-            rostersList.setItems(DatabaseModifier.populateDropdownsRosters(speciesList.getSelectionModel().getSelectedItem().toString(), culturesList.getSelectionModel().getSelectedItem().toString()));
-            rostersList.getItems().remove(DatabaseModifier.TOPDROP);
+            ObservableList dataCulture = DatabaseReader.getCultureData(speciesList.getSelectionModel().getSelectedItem().toString(), culturesList.getSelectionModel().getSelectedItem().toString());
+            classList.setItems(DatabaseReader.populateDropdownsClasses(speciesList.getSelectionModel().getSelectedItem().toString(), culturesList.getSelectionModel().getSelectedItem().toString()));
+            classList.getItems().remove(DatabaseHolder.TOPDROP);
+            heroesList.setItems(DatabaseReader.populateDropdownsHeroes(speciesList.getSelectionModel().getSelectedItem().toString(), culturesList.getSelectionModel().getSelectedItem().toString(), null));
+            heroesList.getItems().remove(DatabaseHolder.TOPDROP);
+            cultureProgressList.setItems(DatabaseReader.populateDropdownsProgress(speciesList.getSelectionModel().getSelectedItem().toString(), culturesList.getSelectionModel().getSelectedItem().toString()));
+            cultureProgressList.getItems().remove(DatabaseHolder.TOPDROP);
+            rostersList.setItems(DatabaseReader.populateDropdownsRosters(speciesList.getSelectionModel().getSelectedItem().toString(), culturesList.getSelectionModel().getSelectedItem().toString()));
+            rostersList.getItems().remove(DatabaseHolder.TOPDROP);
             populateLabels();
         }
         subSkillsList.getItems().clear();
@@ -357,13 +358,13 @@ public class BuilderFXMLController implements Initializable {
         if (!classList.getSelectionModel().isEmpty() && !speciesList.getSelectionModel().isEmpty() && !culturesList.getSelectionModel().isEmpty()) {
             heroesList.getSelectionModel().clearSelection();
             String simpleSkillList;
-            ObservableList dataSpecies = DatabaseModifier.getSpeciesData(speciesList.getSelectionModel().getSelectedItem().toString());
+            ObservableList dataSpecies = DatabaseReader.getSpeciesData(speciesList.getSelectionModel().getSelectedItem().toString());
             if (BuilderCORE.BASE.equals(classList.getSelectionModel().getSelectedItem().toString())) {
                 simpleSkillList = dataSpecies.get(0).toString().split("\\|")[3];
                 classTypeValue.setText("");
                 basedOnValue.setText("");
             } else {
-                ObservableList dataClass = DatabaseModifier.getClassData(speciesList.getSelectionModel().getSelectedItem().toString(), culturesList.getSelectionModel().getSelectedItem().toString(), classList.getSelectionModel().getSelectedItem().toString());
+                ObservableList dataClass = DatabaseReader.getClassData(speciesList.getSelectionModel().getSelectedItem().toString(), culturesList.getSelectionModel().getSelectedItem().toString(), classList.getSelectionModel().getSelectedItem().toString());
                 simpleSkillList = getSourceBaseSkills(dataSpecies, dataClass);
                 classTypeValue.setText(dataClass.get(0).toString().split("\\|")[2]);
                 basedOnValue.setText(dataClass.get(0).toString().split("\\|")[3]);
@@ -381,9 +382,9 @@ public class BuilderFXMLController implements Initializable {
     private void heroesListMousePressed() throws SQLException, CloneNotSupportedException {
         if (!heroesList.getSelectionModel().isEmpty() && !speciesList.getSelectionModel().isEmpty() && !culturesList.getSelectionModel().isEmpty()) {
             classList.getSelectionModel().clearSelection();
-            ObservableList dataSpecies = DatabaseModifier.getSpeciesData(speciesList.getSelectionModel().getSelectedItem().toString());
-            ObservableList dataHero = DatabaseModifier.getHeroData(speciesList.getSelectionModel().getSelectedItem().toString(), culturesList.getSelectionModel().getSelectedItem().toString(), heroesList.getSelectionModel().getSelectedItem().toString());
-            ObservableList dataClass = DatabaseModifier.getClassData(speciesList.getSelectionModel().getSelectedItem().toString(), culturesList.getSelectionModel().getSelectedItem().toString(), dataHero.get(0).toString().split("\\|")[1]);
+            ObservableList dataSpecies = DatabaseReader.getSpeciesData(speciesList.getSelectionModel().getSelectedItem().toString());
+            ObservableList dataHero = DatabaseReader.getHeroData(speciesList.getSelectionModel().getSelectedItem().toString(), culturesList.getSelectionModel().getSelectedItem().toString(), heroesList.getSelectionModel().getSelectedItem().toString());
+            ObservableList dataClass = DatabaseReader.getClassData(speciesList.getSelectionModel().getSelectedItem().toString(), culturesList.getSelectionModel().getSelectedItem().toString(), dataHero.get(0).toString().split("\\|")[1]);
             String simpleSkillList = getSourceBaseSkills(dataSpecies, dataClass);
             skillsList.setItems(getFullSkillsDescription(simpleSkillList));
             basedOnValue.setText(dataHero.get(0).toString().split("\\|")[1]);
@@ -407,9 +408,9 @@ public class BuilderFXMLController implements Initializable {
         tmp.addAll(rawSkills.split(","));
         List<String> ruledskills = new ArrayList<>();
         String lst[] = new String[tmp.size()];
-        ObservableList allSkills = DatabaseModifier.loadAllSkillsFromDB();
+        ObservableList allSkills = DatabaseReader.loadAllSkillsFromDB();
         for (int i = 0; i < tmp.size(); i++) {
-            int index = DatabaseModifier.getSkillIndex(allSkills, tmp.get(i));
+            int index = BuilderCORE.getSkillIndex(allSkills, tmp.get(i));
             lst[i] = tmp.get(i);
             String[] skl = (allSkills.get(index).toString().split("\\|")[2]).split(";");
             lst[i] += " (pts : " + (allSkills.get(index).toString().split("\\|")[1]) + ") : ";
@@ -446,7 +447,7 @@ public class BuilderFXMLController implements Initializable {
             if (basedOn.equals("<base species>")) {
                 skillsBefore = dataSpecies.get(0).toString().split("\\|")[3];
             } else {
-                ObservableList dataBaseClass = DatabaseModifier.getClassData(speciesList.getSelectionModel().getSelectedItem().toString(), culturesList.getSelectionModel().getSelectedItem().toString(), basedOn);
+                ObservableList dataBaseClass = DatabaseReader.getClassData(speciesList.getSelectionModel().getSelectedItem().toString(), culturesList.getSelectionModel().getSelectedItem().toString(), basedOn);
                 skillsBefore = getSourceBaseSkills(dataSpecies, dataBaseClass);
             }
         }
@@ -466,10 +467,10 @@ public class BuilderFXMLController implements Initializable {
      */
     public int baseCost(String species, String culture, String classname, int points) throws SQLException, CloneNotSupportedException {
         int a = 1;
-        ObservableList dataSpecies = DatabaseModifier.getSpeciesData(species);
-        ObservableList allSkills = DatabaseModifier.loadAllSkillsFromDB();
+        ObservableList dataSpecies = DatabaseReader.getSpeciesData(species);
+        ObservableList allSkills = DatabaseReader.loadAllSkillsFromDB();
         if (classname != null && !classname.equals(BuilderCORE.BASE) && !classname.equals(BuilderCORE.LESSER) && !classname.equals(BuilderCORE.GREATER)) {
-            ObservableList dataClass = DatabaseModifier.getClassData(species, culture, classname);
+            ObservableList dataClass = DatabaseReader.getClassData(species, culture, classname);
             switch (dataClass.get(0).toString().split("\\|")[2]) {
                 case "Standard Class":
                     a = 1;
@@ -492,8 +493,8 @@ public class BuilderFXMLController implements Initializable {
                 points += a * baseCost(species, culture, basedOn, points);
             }
             for (String lst1 : lst) {
-                int index = DatabaseModifier.getSkillIndex(allSkills, lst1);
-                String pointCost = index<0?"":allSkills.get(index).toString().split("\\|")[1];
+                int index = BuilderCORE.getSkillIndex(allSkills, lst1);
+                String pointCost = index < 0 ? "" : allSkills.get(index).toString().split("\\|")[1];
                 if (pointCost.equals("")) {
                     pointCost = "0";
                 }
@@ -510,7 +511,7 @@ public class BuilderFXMLController implements Initializable {
         } else {
             String[] lst = (dataSpecies.get(0).toString().split("\\|")[3]).split(",");
             for (String lst1 : lst) {
-                int index = DatabaseModifier.getSkillIndex(allSkills, lst1);
+                int index = BuilderCORE.getSkillIndex(allSkills, lst1);
                 String pointCost = allSkills.get(index).toString().split("\\|")[1];
                 if (pointCost.equals("")) {
                     pointCost = "0";
@@ -523,7 +524,7 @@ public class BuilderFXMLController implements Initializable {
         }
         if (!heroesList.getSelectionModel().isEmpty()) {
             String selHero = heroesList.getSelectionModel().getSelectedItem().toString();
-            ObservableList dataHero = DatabaseModifier.getHeroData(species, culture, selHero);
+            ObservableList dataHero = DatabaseReader.getHeroData(species, culture, selHero);
             String basedOn = dataHero.get(0).toString().split("\\|")[1];
             if (basedOn != null && !basedOn.equals("null") && !basedOn.equals("") && basedOn.equals(classname)) {
                 points += Integer.parseInt(dataHero.get(0).toString().split("\\|")[2]);
@@ -699,7 +700,7 @@ public class BuilderFXMLController implements Initializable {
      */
     public void populateLabels() throws SQLException {
         for (int i = 0; i < valuesLabels.length; i++) {
-            valuesLabels[i].setText(GenesysProjectBuilder.CORE.getCharacteristics(currentLifeDomain.toString(), currentCharacteristicGroup.toString())[i]);
+            valuesLabels[i].setText(DatabaseReader.getCharacteristics(currentLifeDomain.toString(), currentCharacteristicGroup.toString())[i]);
         }
     }
 
@@ -729,7 +730,7 @@ public class BuilderFXMLController implements Initializable {
      */
     public void clearSelectionEvent() throws SQLException {
         clearLists();
-        speciesList.setItems(BuilderCORE.getSpeciesList());
+        speciesList.setItems(DatabaseReader.getSpeciesList());
     }
 
     @FXML
@@ -797,7 +798,7 @@ public class BuilderFXMLController implements Initializable {
         simplifyToCoreSkills = false;
         this.valuesLabels = new Label[]{strengthValue, toughnessValue, movementValue, martialValue, rangedValue, defenseValue, disciplineValue, willpowerValue, commandValue, woundsValue, attacksValue, sizeValue, mTValue, rTValue, moraleValue};
         try {
-            speciesList.setItems(BuilderCORE.getSpeciesList());
+            speciesList.setItems(DatabaseReader.getSpeciesList());
         } catch (SQLException ex) {
             Logger.getLogger(BuilderFXMLController.class.getName()).log(Level.SEVERE, null, ex);
         }

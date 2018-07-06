@@ -12,7 +12,8 @@ import genesys.project.builder.Enums.Enmuerations.MainDomainValue;
 import genesys.project.builder.Enums.Enmuerations.MainLineageValue;
 import genesys.project.builder.Enums.Enmuerations.UseCases;
 import static genesys.project.builder.BuilderCORE.chooseConnection;
-import genesys.project.builder.DatabaseModifier;
+import genesys.project.builder.DatabaseHolder;
+import genesys.project.builder.DatabaseReader;
 import genesys.project.builder.GenesysProjectBuilder;
 import java.io.IOException;
 import java.net.URL;
@@ -148,45 +149,45 @@ public class CreateCultureController implements Initializable {
             chooseConnection(UseCases.Userdb);
             PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT LifeDomain FROM CreatedSpecies WHERE SpeciesName = ?");
             stmt.setString(1, speciesChooseDropdown4.getSelectionModel().getSelectedItem().toString());
-            DatabaseModifier.creator(LifedomainValue.valueOf(BuilderCORE.getValue(stmt, "LifeDomain")), Creators.CreateCulture);
+            DatabaseHolder.creator(LifedomainValue.valueOf(BuilderCORE.getValue(stmt, "LifeDomain")), Creators.CreateCulture);
         } catch (IOException ex) {
             Logger.getLogger(CreateCultureController.class.getName()).log(Level.SEVERE, null, ex);
         }
-        DatabaseModifier.holdCulture.setSpeciesName(speciesChooseDropdown4.getSelectionModel().getSelectedItem().toString());
-        DatabaseModifier.holdSpecies.setSpeciesName(speciesChooseDropdown4.getSelectionModel().getSelectedItem().toString());
+        DatabaseHolder.holdCulture.setSpeciesName(speciesChooseDropdown4.getSelectionModel().getSelectedItem().toString());
+        DatabaseHolder.holdSpecies.setSpeciesName(speciesChooseDropdown4.getSelectionModel().getSelectedItem().toString());
         chooseConnection(UseCases.Userdb);
         PreparedStatement stmt1 = BuilderCORE.getConnection().prepareStatement("SELECT Skills FROM CreatedSpecies WHERE SpeciesName = ?");
         stmt1.setString(1, speciesChooseDropdown4.getSelectionModel().getSelectedItem().toString());
-        DatabaseModifier.holdSpecies.setSkills(BuilderCORE.getValue(stmt1, "Skills") + ",");
+        DatabaseHolder.holdSpecies.setSkills(BuilderCORE.getValue(stmt1, "Skills") + ",");
         clearLists4();
-        //skillsList1 = DatabaseModifier.getAddedSkills(DatabaseModifier.holdSpecies.getFullSkills());
+        //skillsList1 = DatabaseReader.getAddedSkills(DatabaseReader.holdSpecies.getFullSkills());
         //BuilderFXMLController.getSkillModifiers(ruledskills);
         chooseConnection(UseCases.Userdb);
         PreparedStatement stmt2 = BuilderCORE.getConnection().prepareStatement("SELECT SpeciesModifiers FROM CreatedSpecies WHERE SpeciesName = ?");
         stmt2.setString(1, speciesChooseDropdown4.getSelectionModel().getSelectedItem().toString());
-        DatabaseModifier.holdSpecies.setSpeciesModifiers(BuilderCORE.getValue(stmt2, "SpeciesModifiers"));
-        switch (DatabaseModifier.holdSpecies.getLifedomain()) {
+        DatabaseHolder.holdSpecies.setSpeciesModifiers(BuilderCORE.getValue(stmt2, "SpeciesModifiers"));
+        switch (DatabaseHolder.holdSpecies.getLifedomain()) {
             case Humanoid:
-                DatabaseModifier.arcana = Boolean.valueOf(DatabaseModifier.holdSpecies.getSpeciesModifiers().split("=")[1]);
+                DatabaseHolder.arcana = Boolean.valueOf(DatabaseHolder.holdSpecies.getSpeciesModifiers().split("=")[1]);
                 break;
             case Fey:
-                ((DatabaseModifier.AFey) DatabaseModifier.holdSpecies).setMainDomain(MainDomainValue.getEnum((DatabaseModifier.holdSpecies.getSpeciesModifiers().split(",")[0].split("=")[1])));
-                DatabaseModifier.outcasts = Boolean.valueOf(DatabaseModifier.holdSpecies.getSpeciesModifiers().split(",")[1].split("=")[1]);
-                ((DatabaseModifier.AFey) DatabaseModifier.holdSpecies).setSecondaryDomain(MainDomainValue.getEnum(DatabaseModifier.holdSpecies.getSpeciesModifiers().split(",")[2].split("=")[1]));
+                ((DatabaseHolder.AFey) DatabaseHolder.holdSpecies).setMainDomain(MainDomainValue.getEnum((DatabaseHolder.holdSpecies.getSpeciesModifiers().split(",")[0].split("=")[1])));
+                DatabaseHolder.outcasts = Boolean.valueOf(DatabaseHolder.holdSpecies.getSpeciesModifiers().split(",")[1].split("=")[1]);
+                ((DatabaseHolder.AFey) DatabaseHolder.holdSpecies).setSecondaryDomain(MainDomainValue.getEnum(DatabaseHolder.holdSpecies.getSpeciesModifiers().split(",")[2].split("=")[1]));
                 break;
             case Reptilia:
-                ((DatabaseModifier.AReptilia) DatabaseModifier.holdSpecies).setMainLineage(MainLineageValue.getEnum(DatabaseModifier.holdSpecies.getSpeciesModifiers().split(",")[0].split("=")[1]));
+                ((DatabaseHolder.AReptilia) DatabaseHolder.holdSpecies).setMainLineage(MainLineageValue.getEnum(DatabaseHolder.holdSpecies.getSpeciesModifiers().split(",")[0].split("=")[1]));
                 break;
             case Biest:
                 break;
             case Insecta:
                 break;
         }
-        //skillSetChooser.setItems(DatabaseModifier.getSkillSet());
-        lifeDomainValue4.setText(DatabaseModifier.holdSpecies.getLifedomain().toString());
-        skillsList5.setItems(DatabaseModifier.getAddedSkills(DatabaseModifier.holdSpecies.getSkills()));
-        BuilderFXMLController.getSkillModifiers(DatabaseModifier.ruledskills);
-        int cost = DatabaseModifier.baseAddedCost(DatabaseModifier.holdSpecies.getLifedomain(), DatabaseModifier.holdSpecies, null, DatabaseModifier.b, 0);
+        //skillSetChooser.setItems(DatabaseReader.getSkillSet());
+        lifeDomainValue4.setText(DatabaseHolder.holdSpecies.getLifedomain().toString());
+        skillsList5.setItems(DatabaseReader.getAddedSkills(DatabaseHolder.holdSpecies.getSkills()));
+        BuilderFXMLController.getSkillModifiers(DatabaseHolder.ruledskills);
+        int cost = BuilderCORE.baseAddedCost(DatabaseHolder.holdSpecies.getLifedomain(), DatabaseHolder.holdSpecies, null, DatabaseHolder.b, 0);
         String tex = Integer.toString(cost);
         pointsPerModelValue4.setText(tex);
         populateLabels();
@@ -213,7 +214,7 @@ public class CreateCultureController implements Initializable {
     public void selectSpecies4Actions() throws IOException {
         Stage stage = (Stage) selectSpecies4.getScene().getWindow();
         stage.hide();
-        DatabaseModifier.holdCulture.setCultureName(cultureNameValue4.getText());
+        DatabaseHolder.holdCulture.setCultureName(cultureNameValue4.getText());
         if (createHoldWindowStage.isShowing()) {
             createHoldWindowStage.requestFocus();
         } else {
@@ -223,7 +224,7 @@ public class CreateCultureController implements Initializable {
             createHoldWindowController = loader.getController();
             createHoldWindowController.setSpeciesList(speciesList);
             createHoldWindowStage.setScene(scene);
-            createHoldWindowStage.setTitle("Create Classes for " + DatabaseModifier.holdCulture.getSpeciesName() + " - " + DatabaseModifier.holdCulture.getCultureName());
+            createHoldWindowStage.setTitle("Create Classes for " + DatabaseHolder.holdCulture.getSpeciesName() + " - " + DatabaseHolder.holdCulture.getCultureName());
             createHoldWindowStage.show();
         }
     }
@@ -243,7 +244,7 @@ public class CreateCultureController implements Initializable {
      */
     public void populateLabels() throws SQLException {
         for (int i = 0; i < valuesLabels4.length; i++) {
-            valuesLabels4[i].setText(GenesysProjectBuilder.CORE.getCharacteristics(DatabaseModifier.holdSpecies.getLifedomain().toString(), DatabaseModifier.holdSpecies.getCharacteristicGroup().toString())[i]);
+            valuesLabels4[i].setText(DatabaseReader.getCharacteristics(DatabaseHolder.holdSpecies.getLifedomain().toString(), DatabaseHolder.holdSpecies.getCharacteristicGroup().toString())[i]);
         }
     }
 
@@ -280,7 +281,7 @@ public class CreateCultureController implements Initializable {
     public void initialize(URL url, ResourceBundle rb) {
         this.valuesLabels4 = new Label[]{strengthValue4, toughnessValue4, movementValue4, martialValue4, rangedValue4, defenseValue4, disciplineValue4, willpowerValue4, commandValue4, woundsValue4, attacksValue4, sizeValue4, mTValue4, rTValue4, moraleValue4};
         try {
-            speciesChooseDropdown4.setItems(DatabaseModifier.populateDropdownsSpecies());
+            speciesChooseDropdown4.setItems(DatabaseReader.populateDropdownsSpecies());
         } catch (SQLException ex) {
             Logger.getLogger(CreateCultureController.class.getName()).log(Level.SEVERE, null, ex);
         }

@@ -42,13 +42,12 @@ public class AvailableSkillsLister {
     public static ObservableList<String> getAvailableSkills(Enums.Enmuerations.LifedomainValue lifeDomain, int maxAge, String skillSubSet, ObservableList IgnoreSkillsList) throws SQLException {
         ObservableList<String> tmp = FXCollections.observableArrayList();
         ObservableList<String> lifeDomainTree3 = FXCollections.observableArrayList();
-        ObservableList data = FXCollections.observableArrayList();
         chooseConnection(Enums.Enmuerations.UseCases.COREdb);
         PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT DISTINCT LifeDomainTree1 FROM Skills WHERE LifeDomain = ? AND LifeDomainTree2 = ? AND Age <= ?");
         stmt.setString(1, lifeDomain.toString());
         stmt.setString(2, skillSubSet);
         stmt.setInt(3, maxAge);
-        data = BuilderCORE.getData(stmt, columns2, null, 0);
+        ObservableList data = BuilderCORE.getData(stmt, columns2, null, 0);
         lifeDomainTree1Value = LifeDomainTree1Values.getEnum(data.get(0).toString());
         lifeDomainTree2Value = LifeDomainTree2Values.getEnum(skillSubSet);
         if (!IgnoreSkillsList.isEmpty()) {
@@ -113,7 +112,7 @@ public class AvailableSkillsLister {
                         stmt3.setInt(3, maxAge);
                         tmp3 = BuilderCORE.getData(stmt3, columns, null, 0);
                     } catch (SQLException ex) {
-                        Logger.getLogger(DatabaseModifier.class.getName()).log(Level.SEVERE, null, ex);
+                        Logger.getLogger(DatabaseReader.class.getName()).log(Level.SEVERE, null, ex);
                     }
                     return (skill.toString().split(" \\(p")[0]).equals(tmp3.get(0));
                 })) || (IgnoreSkillsList.contains("Ophidian"/*To implement for rare and ancient blodline swap*/))) {
@@ -395,6 +394,18 @@ public class AvailableSkillsLister {
             }
         }
         return tmp;
+    }
+
+    public static String getSkillsRules(String skills) throws SQLException {
+        ObservableList allSkills = DatabaseReader.loadAllSkillsFromDB();
+        StringBuilder skillsRules = new StringBuilder();
+        for (String split : skills.split(",")) {
+            if (!split.equals("")) {
+                int index = BuilderCORE.getSkillIndex(allSkills, split);
+                skillsRules.append(allSkills.get(index).toString().split("\\|")[2]).append(";");
+            }
+        }
+        return skillsRules.toString();
     }
 
 }

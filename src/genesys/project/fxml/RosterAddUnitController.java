@@ -6,7 +6,7 @@
 package genesys.project.fxml;
 
 import genesys.project.builder.BuilderCORE;
-import genesys.project.builder.DatabaseModifier;
+import genesys.project.builder.DatabaseReader;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.sql.SQLException;
@@ -127,9 +127,9 @@ public class RosterAddUnitController implements Initializable {
         int cost = 0;
         for (int i = 0; i < currentEquipmentList.getItems().size(); i++) {
             if (currentEquipmentList.getItems().get(i).toString().contains("} X")) {
-                cost += DatabaseModifier.getItemCost(currentEquipmentList.getItems().get(i).toString().split("} X")[0], equipmentTypeChooser.getSelectionModel().getSelectedItem().toString()) * Integer.parseInt(currentEquipmentList.getItems().get(i).toString().split("} X")[1]);
+                cost += DatabaseReader.getItemCost(currentEquipmentList.getItems().get(i).toString().split("} X")[0], equipmentTypeChooser.getSelectionModel().getSelectedItem().toString()) * Integer.parseInt(currentEquipmentList.getItems().get(i).toString().split("} X")[1]);
             } else {
-                cost += DatabaseModifier.getItemCost(currentEquipmentList.getItems().get(i).toString().split(" X")[0], equipmentTypeChooser.getSelectionModel().getSelectedItem().toString()) * Integer.parseInt(currentEquipmentList.getItems().get(i).toString().split(" X")[1]);
+                cost += DatabaseReader.getItemCost(currentEquipmentList.getItems().get(i).toString().split(" X")[0], equipmentTypeChooser.getSelectionModel().getSelectedItem().toString()) * Integer.parseInt(currentEquipmentList.getItems().get(i).toString().split(" X")[1]);
             }
         }
         return cost;
@@ -143,7 +143,7 @@ public class RosterAddUnitController implements Initializable {
     @FXML
     public void equipmentTypeChooserStateChangedActions() throws SQLException {
         IMPROVEMENTS.clear();        
-        availableEquipmentList.setItems(DatabaseModifier.getItemsNames(equipmentTypeChooser.getSelectionModel().getSelectedItem().toString()));
+        availableEquipmentList.setItems(DatabaseReader.getItemsNames(equipmentTypeChooser.getSelectionModel().getSelectedItem().toString()));
         improvementsList.getItems().clear();
         improvementsDetailsList.getItems().clear();
     }
@@ -160,7 +160,7 @@ public class RosterAddUnitController implements Initializable {
     }
 
     private void generateImprovementsList() throws SQLException {
-        ObservableList<String> improvementsObservableList = DatabaseModifier.getImprovements(availableEquipmentList.getSelectionModel().getSelectedItem().toString(), equipmentTypeChooser.getSelectionModel().getSelectedItem().toString());
+        ObservableList<String> improvementsObservableList = DatabaseReader.getImprovements(availableEquipmentList.getSelectionModel().getSelectedItem().toString(), equipmentTypeChooser.getSelectionModel().getSelectedItem().toString());
         improvementsList.setItems(improvementsObservableList);
         improvementsList.setCellFactory(new Callback<ListView<String>, ListCell<String>>() {
             @Override
@@ -244,7 +244,7 @@ public class RosterAddUnitController implements Initializable {
         String availableEquipmentName = availableEquipmentList.getSelectionModel().getSelectedItem().toString();
         String improvementsName = improvementsList.getSelectionModel().getSelectedItem().toString();
         String equipmentTypeNamme = equipmentTypeChooser.getSelectionModel().getSelectedItem().toString();
-        improvementsDetailsList.setItems(DatabaseModifier.getImprovementDetails(availableEquipmentName, improvementsName, equipmentTypeNamme));
+        improvementsDetailsList.setItems(DatabaseReader.getImprovementDetails(availableEquipmentName, improvementsName, equipmentTypeNamme));
     }
 
     /**
