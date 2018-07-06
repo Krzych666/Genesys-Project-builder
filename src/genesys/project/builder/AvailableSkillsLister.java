@@ -51,7 +51,6 @@ public class AvailableSkillsLister {
         data = BuilderCORE.getData(stmt, columns2, null, 0);
         lifeDomainTree1Value = LifeDomainTree1Values.getEnum(data.get(0).toString());
         lifeDomainTree2Value = LifeDomainTree2Values.getEnum(skillSubSet);
-
         if (!IgnoreSkillsList.isEmpty()) {
             for (int i = 0; i < IgnoreSkillsList.size(); i++) {
                 chooseConnection(Enums.Enmuerations.UseCases.COREdb);
@@ -71,7 +70,7 @@ public class AvailableSkillsLister {
                 stmt.setString(1, skillSubSet);
                 stmt.setString(2, basic[0]);
                 stmt.setInt(3, maxAge);
-                data = BuilderCORE.getData(stmt, columns, IgnoreSkillsList, 0);
+                data = BuilderCORE.getData(stmt, columns, IgnoreSkillsList, 1);
                 if (!data.isEmpty()) {
                     tmp.add("--" + basic[0] + "--");
                     tmp.addAll(data);
@@ -84,7 +83,7 @@ public class AvailableSkillsLister {
                 stmt.setString(1, skillSubSet);
                 stmt.setString(2, basic[1]);
                 stmt.setInt(3, maxAge);
-                data = BuilderCORE.getData(stmt, columns, IgnoreSkillsList, 0);
+                data = BuilderCORE.getData(stmt, columns, IgnoreSkillsList, 1);
                 if (!data.isEmpty()) {
                     tmp.add("--" + basic[1] + "--");
                     tmp.addAll(data);
@@ -98,7 +97,7 @@ public class AvailableSkillsLister {
                     stmt.setString(1, skillSubSet);
                     stmt.setString(2, reptiliaSpecific[1]);
                     stmt.setInt(3, maxAge);
-                    data = BuilderCORE.getData(stmt, columns, IgnoreSkillsList, 0);
+                    data = BuilderCORE.getData(stmt, columns, IgnoreSkillsList, 1);
                     if (!data.isEmpty()) {
                         tmp.add("--" + reptiliaSpecific[1] + "--");
                         tmp.addAll(data);
@@ -123,7 +122,7 @@ public class AvailableSkillsLister {
                     stmt.setString(1, skillSubSet);
                     stmt.setString(2, reptiliaSpecific[1]);
                     stmt.setInt(3, maxAge);
-                    data = BuilderCORE.getData(stmt, columns, IgnoreSkillsList, 0);
+                    data = BuilderCORE.getData(stmt, columns, IgnoreSkillsList, 1);
                     if (!data.isEmpty()) {
                         tmp.add("--" + reptiliaSpecific[1] + "--");
                         tmp.addAll(data);
@@ -135,7 +134,7 @@ public class AvailableSkillsLister {
                 stmt.setString(1, skillSubSet);
                 stmt.setString(2, basic[1]);
                 stmt.setInt(3, maxAge);
-                data = BuilderCORE.getData(stmt, columns, IgnoreSkillsList, 0);
+                data = BuilderCORE.getData(stmt, columns, IgnoreSkillsList, 1);
                 if (!data.isEmpty()) {
                     tmp.add("--" + basic[1] + "--");
                     tmp.addAll(data);
@@ -149,7 +148,7 @@ public class AvailableSkillsLister {
                 stmt.setString(2, basic[0]);
                 stmt.setString(3, basic[1]);
                 stmt.setInt(4, maxAge);
-                data = BuilderCORE.getData(stmt, columns, IgnoreSkillsList, 0);
+                data = BuilderCORE.getData(stmt, columns, IgnoreSkillsList, 1);
                 if (!data.isEmpty()) {
                     switch (lifeDomainTree1Value) {
                         case BiestialKingdoms:
@@ -175,7 +174,7 @@ public class AvailableSkillsLister {
                 stmt.setString(2, basic[0]);
                 stmt.setString(3, basic[1]);
                 stmt.setInt(4, maxAge);
-                data = BuilderCORE.getData(stmt, columns, IgnoreSkillsList, 0);
+                data = BuilderCORE.getData(stmt, columns, IgnoreSkillsList, 1);
                 if (!data.isEmpty()) {
                     switch (lifeDomainTree1Value) {
                         case Arachnea:
@@ -222,7 +221,7 @@ public class AvailableSkillsLister {
                         stmt2.setString(1, skillSubSet);
                         stmt2.setString(2, basic[3]);
                         stmt2.setInt(3, maxAge);
-                        data = BuilderCORE.getData(stmt2, columns, IgnoreSkillsList, 0);
+                        data = BuilderCORE.getData(stmt2, columns, IgnoreSkillsList, 1);
                         if (!data.isEmpty()) {
                             tmp.add("--" + basic[3] + "--");
                             tmp.addAll(data);
@@ -241,7 +240,7 @@ public class AvailableSkillsLister {
                         if (lifeDomainTree3.contains(basic[4])) {
                             stmt2.setString(4, basic[5]);
                         }
-                        data = BuilderCORE.getData(stmt2, columns, IgnoreSkillsList, 0);
+                        data = BuilderCORE.getData(stmt2, columns, IgnoreSkillsList, 1);
                         if (!data.isEmpty()) {
                             tmp.addAll(data);
                         }
@@ -268,7 +267,7 @@ public class AvailableSkillsLister {
                         stmt2.setString(1, skillSubSet);
                         stmt2.setString(2, basic[4]);
                         stmt2.setInt(3, maxAge);
-                        data = BuilderCORE.getData(stmt2, columns, IgnoreSkillsList, 0);
+                        data = BuilderCORE.getData(stmt2, columns, IgnoreSkillsList, 1);
                         if (!data.isEmpty()) {
                             tmp.add("--" + basic[4] + "--");
                             tmp.addAll(data);
@@ -281,7 +280,7 @@ public class AvailableSkillsLister {
                         stmt2.setString(1, skillSubSet);
                         stmt2.setString(2, reptiliaSpecific[0]);
                         stmt2.setInt(3, maxAge);
-                        data = BuilderCORE.getData(stmt2, columns, IgnoreSkillsList, 0);
+                        data = BuilderCORE.getData(stmt2, columns, IgnoreSkillsList, 1);
                         if (!data.isEmpty()) {
                             tmp.add("--" + reptiliaSpecific[0] + "--");
                             tmp.addAll(data);
@@ -308,7 +307,7 @@ public class AvailableSkillsLister {
                             default:
                                 break;
                         }
-                        data = BuilderCORE.getData(stmt2, columns, IgnoreSkillsList, 0);
+                        data = BuilderCORE.getData(stmt2, columns, IgnoreSkillsList, 1);
                         if (!data.isEmpty()) {
                             switch (lifeDomainTree1Value) {
                                 case BiestialKingdoms:
@@ -359,7 +358,7 @@ public class AvailableSkillsLister {
                             default:
                                 break;
                         }
-                        data = BuilderCORE.getData(stmt2, columns, IgnoreSkillsList, 0);
+                        data = BuilderCORE.getData(stmt2, columns, IgnoreSkillsList, 1);
                         if (!data.isEmpty()) {
                             switch (lifeDomainTree1Value) {
                                 case Arachnea:

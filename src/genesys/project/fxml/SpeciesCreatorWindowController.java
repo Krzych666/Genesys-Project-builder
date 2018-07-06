@@ -253,7 +253,7 @@ public class SpeciesCreatorWindowController implements Initializable {
     }
 
     void setAvailableSkills() throws SQLException {
-        int age = DatabaseModifier.holdCulture != null ? DatabaseModifier.holdCulture.getAge(): DatabaseModifier.holdSpecies.getAge();
+        int age = Integer.max(DatabaseModifier.holdCulture.getAge(), DatabaseModifier.holdSpecies.getAge());
         availableSkillsList.setItems(AvailableSkillsLister.getAvailableSkills(DatabaseModifier.holdSpecies.getLifedomain(), age, skillSubSetChooser.getSelectionModel().getSelectedItem().toString(), skillsList1.getItems()));
         availableSkillsList.setCellFactory(new Callback<ListView<String>, ListCell<String>>() {
             @Override
@@ -323,7 +323,6 @@ public class SpeciesCreatorWindowController implements Initializable {
         Stage stage = (Stage) createFinish.getScene().getWindow();
         stage.hide();
         DatabaseModifier.holdSpecies.setSpeciesName(nameInputField.getText());
-        DatabaseModifier.excludeSkills = skillsList1;
         DatabaseModifier.holdSpecies.setAge(BuilderCORE.findMaxAge(skillsList1));
         if (DatabaseModifier.isModyfyinfg) {
             DatabaseModifier.isModyfyinfg = !DatabaseModifier.isModyfyinfg;
@@ -344,7 +343,7 @@ public class SpeciesCreatorWindowController implements Initializable {
                 createHoldWindowController.setSpeciesList(speciesList);
                 Scene scene = new Scene(root);
                 createHoldWindowStage.setScene(scene);
-                createHoldWindowStage.setTitle("Create Classes for "+DatabaseModifier.holdCulture.getSpeciesName()+" - "+DatabaseModifier.holdCulture.getCultureName());
+                createHoldWindowStage.setTitle("Create Classes for " + DatabaseModifier.holdCulture.getSpeciesName() + " - " + DatabaseModifier.holdCulture.getCultureName());
                 createHoldWindowStage.show();
             }
         }
@@ -628,12 +627,11 @@ public class SpeciesCreatorWindowController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         this.valuesLabels = new Label[]{strengthValue1, toughnessValue1, movementValue1, martialValue1, rangedValue1, defenseValue1, disciplineValue1, willpowerValue1, commandValue1, woundsValue1, attacksValue1, sizeValue1, mTValue1, rTValue1, moraleValue1};
-        
+
         if (!DatabaseModifier.isModyfyinfg) {
             DatabaseModifier.holdSpecies.setAge(1);
             DatabaseModifier.holdCulture.setAge(1);
         }
-
         try {
             createSpecies();
         } catch (IOException | SQLException ex) {

@@ -163,6 +163,7 @@ public class CreateHoldWindowController implements Initializable {
                         DatabaseModifier.b = i;
                     }
                 }
+                DatabaseModifier.fullSkillList1 = "";
                 skillsList3.setItems(DatabaseModifier.getAddedSkills(DatabaseModifier.getBaseAddedSkills(classList1.getSelectionModel().getSelectedItem().toString())));
                 BuilderFXMLController.getSkillModifiers(DatabaseModifier.ruledskills);
                 classTypeValue3.setText(DatabaseModifier.holdClass[DatabaseModifier.b].getType());
@@ -240,7 +241,10 @@ public class CreateHoldWindowController implements Initializable {
         }
         DatabaseModifier.setNumberOfClases();
         for (DatabaseModifier.AClass holdClas : DatabaseModifier.holdClass) {
-            tmp.add(holdClas.getClassName());
+            if (holdClas.getClassName() != null && !holdClas.getClassName().equals("")) {
+                tmp.add(holdClas.getClassName());
+            }
+
         }
         classList1.setItems(tmp);
         clearLists3();

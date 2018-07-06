@@ -130,6 +130,7 @@ public class CreateRosterController implements Initializable {
         String[] columns = {"ClassName"};
         ObservableList<String> classesList = BuilderCORE.getData(stmt, columns, null, 0);
         DatabaseModifier.holdClass = new DatabaseModifier.AClass[classesList.size()];
+        DatabaseModifier.modifiedHoldClass = new DatabaseModifier.AClass[DatabaseModifier.holdClass.length];
         for (int i = 0; i < classesList.size(); i++) {
             DatabaseModifier.holdClass[i] = new DatabaseModifier.AClass();
             DatabaseModifier.holdClass[i].clearAClass();

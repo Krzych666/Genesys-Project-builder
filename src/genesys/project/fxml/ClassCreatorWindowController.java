@@ -365,6 +365,7 @@ public class ClassCreatorWindowController implements Initializable {
             skillsList4.setItems(DatabaseModifier.getAddedSkills(DatabaseModifier.holdSpecies.getSkills()));
             BuilderFXMLController.getSkillModifiers(DatabaseModifier.ruledskills);
         } else {
+            DatabaseModifier.fullSkillList1 = "";
             skillsList4.setItems(DatabaseModifier.getAddedSkills(DatabaseModifier.getBaseAddedSkills(basedOnChooser.getSelectionModel().getSelectedItem().toString())));
             BuilderFXMLController.getSkillModifiers(DatabaseModifier.ruledskills);
         }
@@ -516,6 +517,7 @@ public class ClassCreatorWindowController implements Initializable {
             skillSubSetChooser2.getSelectionModel().select(0);
             if (DatabaseModifier.classIsModyfying) {
                 createFinish2.setText("Modify Class");
+                //fill basedOn in hold class of a new class
                 nameInputField2.setText(DatabaseModifier.holdClass[0].getClassName());
                 basedOnChooser.getSelectionModel().select(DatabaseModifier.holdClass[0].getBasedOn());
                 classTypeChooser.getSelectionModel().select(DatabaseModifier.holdClass[0].getType());
@@ -526,11 +528,11 @@ public class ClassCreatorWindowController implements Initializable {
                 createFinish2.setText("Add Class");
                 nameInputField2.setText(">enter name here<");
                 clearLists2();
-                DatabaseModifier.holdClass[DatabaseModifier.b].setBasedOn(basedOnChooser.getSelectionModel().getSelectedItem().toString());
-                DatabaseModifier.holdClass[DatabaseModifier.b].setType(classTypeChooser.getSelectionModel().getSelectedItem().toString());
                 DatabaseModifier.searchFreeClassSpot();
+                DatabaseModifier.holdClass[DatabaseModifier.b].setBasedOn(basedOnChooser.getSelectionModel().getSelectedItem().toString());
+                DatabaseModifier.holdClass[DatabaseModifier.b].setType(classTypeChooser.getSelectionModel().getSelectedItem().toString());                
                 DatabaseModifier.holdClass[DatabaseModifier.b].setAdditionalCost("0");
-                setAvailableSkills(DatabaseModifier.excludeSkills.getItems());
+                setAvailableSkills(DatabaseModifier.getAddedSkills(DatabaseModifier.holdSpecies.getSkills()));
                 showBase();
             }
 

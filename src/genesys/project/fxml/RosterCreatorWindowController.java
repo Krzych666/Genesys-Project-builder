@@ -164,6 +164,7 @@ public class RosterCreatorWindowController implements Initializable {
                     DatabaseModifier.b = i;
                 }
             }
+            DatabaseModifier.fullSkillList1 = "";
             skillsList.setItems(DatabaseModifier.getAddedSkills(DatabaseModifier.getBaseAddedSkills(classList.getSelectionModel().getSelectedItem().toString())));
             BuilderFXMLController.getSkillModifiers(DatabaseModifier.ruledskills);
             classTypeValue.setText(DatabaseModifier.holdClass[DatabaseModifier.b].getType());

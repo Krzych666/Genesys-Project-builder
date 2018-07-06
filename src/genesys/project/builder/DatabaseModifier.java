@@ -24,7 +24,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.scene.control.ListView;
 import static genesys.project.builder.BuilderCORE.chooseConnection;
 import lombok.Getter;
 import lombok.Setter;
@@ -145,11 +144,6 @@ public class DatabaseModifier {
     public static String tempDeletescript = null;
 
     /**
-     * excludeSkills
-     */
-    public static ListView excludeSkills;
-
-    /**
      * classList1Holder
      */
     public static String classList1Holder;
@@ -229,7 +223,6 @@ public class DatabaseModifier {
      * @throws SQLException
      */
     public static ObservableList<String> getAddedSkills(String HoldSkills) throws SQLException {
-
         if (HoldSkills == null || "".equals(HoldSkills)) {
             return null;
         }
@@ -297,6 +290,18 @@ public class DatabaseModifier {
         return fullSkillList1;
     }
 
+    public static String getSkillsRules(String skills) throws SQLException {
+        ObservableList allSkills = loadAllSkillsFromDB();
+        StringBuilder skillsRules = new StringBuilder();
+        for (String split : skills.split(",")) {
+            if (!split.equals("")) {
+                int index = getSkillIndex(allSkills, split);
+                skillsRules.append(allSkills.get(index).toString().split("\\|")[2]).append(";");
+            }
+        }
+        return skillsRules.toString();
+    }
+
     /**
      *
      * @param lifeDomain
@@ -329,7 +334,7 @@ public class DatabaseModifier {
             }
             if (!"".equals(classname[bb].Type) && !"null".equals(classname[bb].Type) && !(BuilderCORE.BASE.equals(classList1Holder))) {
                 if (classname[bb].BasedOn != null && !classname[bb].BasedOn.equals(BuilderCORE.BASE) && !BuilderCORE.BASE.equals(classList1Holder)) {
-                    String[] lst = ((classname[bb].Skills).split(","));
+                    String[] lst = ((classname[bb].Skills).replaceAll(";", ",").split(","));
                     for (int s = 0; s < classname.length; s++) {
                         if (classname[bb].BasedOn.equals(classname[s].ClassName)) {
                             source = s;
@@ -349,7 +354,7 @@ public class DatabaseModifier {
                         }
                     }
                 } else if (classname[bb].BasedOn != null && classname[bb].BasedOn.equals(BuilderCORE.BASE) && !BuilderCORE.BASE.equals(classList1Holder) && !"".equals(classname[bb].Skills) && !",".equals(classname[bb].Skills)) {
-                    String[] lst = ((classname[bb].Skills).split(","));
+                    String[] lst = ((classname[bb].Skills).replaceAll(";", ",").split(","));
                     for (String lst1 : lst) {
                         chooseConnection(UseCases.COREdb);
                         PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT * FROM Skills WHERE SkillName = ?");
@@ -515,21 +520,21 @@ public class DatabaseModifier {
                 SpecialModificators = "MainLineage=" + ((AReptilia) holdSpecies).getMainLineage().getText() + "," + holdSpecies.SpeciesModifiers;
                 break;
             case Biest:
-                SpecialModificators = "MainKingdom=" + ((ABiest) holdSpecies).getMainKingdom().getText() + "," + "MainRegion=" + ((ABiest) holdSpecies).getMainRegion().getText() + "," + holdSpecies.SpeciesModifiers;
+                SpecialModificators = "MainKingdom=" + ((ABiest) holdSpecies).getMainKingdom().getText() + "," + "MainRegion=" + ((ABiest) holdSpecies).getMainRegion().getText() + "," + holdSpecies.getSpeciesModifiers();
                 break;
             case Insecta:
-                SpecialModificators = "MainClasification=" + ((AInsecta) holdSpecies).getMainClasification().getText() + "," + "MainOrder=" + ((AInsecta) holdSpecies).getMainOrder().getText() + "," + holdSpecies.SpeciesModifiers;
+                SpecialModificators = "MainClasification=" + ((AInsecta) holdSpecies).getMainClasification().getText() + "," + "MainOrder=" + ((AInsecta) holdSpecies).getMainOrder().getText() + "," + holdSpecies.getSpeciesModifiers();
                 break;
         }
-        if (holdCulture.CultureName.equals(holdSpecies.SpeciesName)) {
-            executeSQL("INSERT INTO `CreatedSpecies`(LifeDomain,CharacteristicGroup,SpeciesName,Skills,SpeciesModifiers) VALUES ('" + holdSpecies.Lifedomain.toString() + "','" + holdSpecies.CharacteristicGroup.toString() + "','" + holdSpecies.SpeciesName + "','" + holdSpecies.Skills + "','" + SpecialModificators + "');");
+        if (holdCulture.getCultureName().equals(holdSpecies.getSpeciesName())) {
+            executeSQL("INSERT INTO `CreatedSpecies`(LifeDomain,CharacteristicGroup,SpeciesName,Skills,SpeciesModifiers) VALUES ('" + holdSpecies.getLifedomain().toString() + "','" + holdSpecies.getCharacteristicGroup().toString() + "','" + holdSpecies.getSpeciesName() + "','" + holdSpecies.getSkills() + "','" + SpecialModificators + "');");
         }
-        executeSQL("INSERT INTO `CreatedCultures`(CultureName,SpeciesName) VALUES ('" + holdCulture.CultureName + "','" + holdCulture.SpeciesName + "');");
+        executeSQL("INSERT INTO `CreatedCultures`(CultureName,SpeciesName) VALUES ('" + holdCulture.getCultureName() + "','" + holdCulture.getSpeciesName() + "');");
         for (AClass holdClas : holdClass) {
             if (holdClas.getSkills().length() > 2) {
                 holdClas.setSkills(holdClas.getSkills().substring(0, holdClas.getSkills().length() - 1));
             }
-            executeSQL("INSERT INTO `CreatedClasses`(ClassName,Skills,SpeciesName,CultureName,Advancements,Type,BasedOn,AdditionalCost) VALUES ('" + holdClas.ClassName + "','" + holdClas.Skills + "','" + holdSpecies.SpeciesName + "','" + holdCulture.CultureName + "'," + null + ",'" + holdClas.Type + "','" + holdClas.BasedOn + "','" + holdClas.AdditionalCost + "');");
+            executeSQL("INSERT INTO `CreatedClasses`(ClassName,Skills,SpeciesName,CultureName,Advancements,Type,BasedOn,AdditionalCost) VALUES ('" + holdClas.getClassName() + "','" + holdClas.getSkills() + "','" + holdSpecies.getSpeciesName() + "','" + holdCulture.getCultureName() + "'," + null + ",'" + holdClas.getType() + "','" + holdClas.getBasedOn() + "','" + holdClas.getAdditionalCost() + "');");
         }
         holdSpecies = null;
     }
@@ -1023,8 +1028,8 @@ public class DatabaseModifier {
      */
     public static void setNumberOfClases() {
         AClass[] tmp = null;
-        if (holdClass != null) {
-            tmp = holdClass;
+        if (holdClass != null && holdClass[0] != null) {
+            tmp = holdClass.clone();
         }
         holdClass = new AClass[numberOfClases + 1];
         for (int i = 0; i < numberOfClases + 1; i++) {
@@ -1057,16 +1062,118 @@ public class DatabaseModifier {
 
     public static ObservableList getAvailableSpecialItemNames(String itemType) throws SQLException {
         String itemTypeOneWord = itemType.replaceAll(" ", "");
-        ObservableList<String> tmp = FXCollections.observableArrayList();
         chooseConnection(UseCases.COREdb);
-        //PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT " + itemTypeOneWord + "Name FROM Equipment" + itemTypeOneWord + " WHERE Type = ? ");
         PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT * FROM Equipment" + itemTypeOneWord + " WHERE Type = ? ");
         stmt.setString(1, "Special");
-        String[] columns = {itemTypeOneWord + "Name", "SubType"};
-        System.out.println(BuilderCORE.getData(stmt, columns, null, 0));
-        //tmp.addAll(BuilderCORE.getData(stmt, columns, null, 0));
-        //tmp.remove();
+        String[] columns = new String[]{};
+        switch (itemType) {
+            case "Armor":
+            case "Weapon":
+            case "Comapnion":
+            case "Vehicle":
+                columns = new String[]{itemTypeOneWord + "Name", "SubType"};
+                break;
+            case "Heavy Military Weapon":
+                columns = new String[]{itemTypeOneWord + "Name", "SubType", "Pre-requisite"};
+                break;
+            default:
+                break;
+        }
+        ObservableList data = BuilderCORE.getData(stmt, columns, null, 0);
+        fullSkillList1 = "";
+        String classSkillsRules = getSkillsRules(getBaseAddedSkills(classList1Holder));
+        ObservableList tmp = FXCollections.observableArrayList();
+        for (int i = 0; i < data.size(); i++) {
+            String requirement = "";
+            switch (itemType) {
+                case "Armor":
+                    requirement = data.get(i).toString().split("\\|")[0];
+                    break;
+                case "Weapon":
+                    requirement = data.get(i).toString().split("\\|")[0];
+                    break;
+                case "Comapnion":
+                    requirement = data.get(i).toString().split("\\|")[0];
+                    break;
+                case "Vehicle":
+                    requirement = data.get(i).toString().split("\\|")[0];
+                    break;
+                case "Heavy Military Weapon":
+                    requirement = data.get(i).toString().split("\\|")[2];
+                    break;
+                default:
+                    break;
+            }
+            Boolean include = decider(requirement, classSkillsRules);
+            if (include) {
+                tmp.add(data.get(i).toString().split("\\|")[0]);
+            }
+        }
         return tmp;
+    }
+
+    private static Boolean decider(String requirement, String classSkillsRules) {
+        if (requirement.contains(" any ")) {
+            if (requirement.contains("any Fire Arm Trait")) {
+                requirement = requirement.replace("any Fire Arm Trait", "Flintlocks or Blunderbuss"); //dirty code
+            }
+        }
+        if (requirement.contains(" or ") || requirement.contains(" and ")) {
+            if (requirement.contains(" or ") || !requirement.contains(" and ")) {
+                for (String split : requirement.split(" or ")) {
+                    if (classSkillsRules.contains(split)) {
+                        return true;
+                    }
+                }
+            }
+            if (!requirement.contains(" or ") || requirement.contains(" and ")) {
+                int andCounter = 0;
+                for (String split : requirement.split(" and ")) {
+                    if (classSkillsRules.contains(split)) {
+                        andCounter++;
+                    }
+                }
+                if (requirement.split(" and ").length == andCounter) {
+                    return true;
+                }
+            }
+            if (requirement.contains(" or ") && requirement.contains(" and ")) {
+                String tmp = requirement.replaceAll(" or ", " # ").replaceAll(" and ", " # ");
+                String tmp2 = requirement.replaceAll(" or ", " # ").replaceAll(" and ", " # ");
+                String tmp3 = requirement.replaceAll(" or ", " o ").replaceAll(" and ", " a ");
+                StringBuilder logicString = new StringBuilder();
+                for (String split : tmp.split(" \\# ")) {
+                    if (classSkillsRules.contains(split)) {
+                        logicString.append("1");
+                    } else {
+                        logicString.append("0");
+                    }
+                    if (tmp2.contains("#")) {
+                        logicString.append(tmp3.charAt(tmp2.indexOf("#")));
+                        tmp2 = tmp2.replaceFirst("\\#", "*");
+                    }
+                }
+                String gate = logicString.toString().replaceAll(" ", "");
+                while (gate.contains("o") || gate.contains("a")) {
+                    gate = gate.replaceFirst("1o1", "1");
+                    gate = gate.replaceFirst("1o0", "1");
+                    gate = gate.replaceFirst("0o1", "1");
+                    gate = gate.replaceFirst("0o0", "0");
+                    gate = gate.replaceFirst("1a1", "1");
+                    gate = gate.replaceFirst("1a0", "0");
+                    gate = gate.replaceFirst("0a1", "0");
+                    gate = gate.replaceFirst("0a0", "0");
+                }
+                if (gate.equals("1")) {
+                    return true;
+                } else if (gate.equals("0")) {
+                    return false;
+                }
+            }
+        } else if (classSkillsRules.contains(requirement)) {
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -1079,8 +1186,9 @@ public class DatabaseModifier {
     public static int getItemCost(String item, String itemType) throws SQLException {
         String itemName;
         itemName = item.contains("{") ? item.split(" \\{")[0] : item;
+        String itemTypeOneWord = itemType.replaceAll(" ", "");
         chooseConnection(UseCases.COREdb);
-        PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT * FROM Equipment" + itemType + " WHERE " + itemType + "Name = ?");
+        PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT * FROM Equipment" + itemTypeOneWord + " WHERE " + itemTypeOneWord + "Name = ?");
         stmt.setString(1, itemName);
         String[] columns = {"Cost"};
         String data = BuilderCORE.getData(stmt, columns, null, 0).get(0).toString();
@@ -1155,10 +1263,11 @@ public class DatabaseModifier {
      * @throws SQLException
      */
     public static String getItemSubType(String type, String itemName) throws SQLException {
+        String mergeType = type.replaceAll(" ", "");
         String[] columns = {"SubType"};
         chooseConnection(UseCases.COREdb);
         PreparedStatement stmt;
-        stmt = BuilderCORE.getConnection().prepareStatement("SELECT * FROM Equipment" + type + " WHERE " + type + "Name = ?");
+        stmt = BuilderCORE.getConnection().prepareStatement("SELECT * FROM Equipment" + mergeType + " WHERE " + mergeType + "Name = ?");
         stmt.setString(1, itemName);
         String tmp = BuilderCORE.getData(stmt, columns, null, 0).get(0).toString();
         return tmp;
@@ -1238,7 +1347,7 @@ public class DatabaseModifier {
                 stmt = BuilderCORE.getConnection().prepareStatement("SELECT * FROM EquipmentImprovements WHERE Type = 'Chariot and Wagon Upgrades'");
                 break;
             case "Heavy Military Weapon":
-                stmt = BuilderCORE.getConnection().prepareStatement("SELECT * FROM EquipmentImprovements WHERE Type = 'Chariot and Wagon Upgrades'");
+                stmt = BuilderCORE.getConnection().prepareStatement("SELECT * FROM EquipmentImprovements WHERE Type = 'Military Weapon' OR Type = 'Extreme Weapons'");
                 break;
             default:
                 break;
@@ -1370,7 +1479,6 @@ public class DatabaseModifier {
         holdClass[a].setType(data.get(0).toString().split("\\|")[2]);
         holdClass[a].setBasedOn(data.get(0).toString().split("\\|")[3]);
         holdClass[a].setAdditionalCost(data.get(0).toString().split("\\|")[4]);
-        modifiedHoldClass = new AClass[holdClass.length];
         modifiedHoldClass[a] = holdClass[a].getClone();
     }
 
@@ -1593,12 +1701,16 @@ public class DatabaseModifier {
      * @throws java.sql.SQLException
      */
     public static void modifyClass(int a) throws SQLException {
-        if (holdClass[a].getSkills().endsWith(",")) {
-            holdClass[a].setSkills(holdClass[a].getSkills().substring(0, holdClass[a].getSkills().length() - 1));
+        if (a < DatabaseModifier.modifiedHoldClass.length-1) {
+            if (holdClass[a].getSkills().endsWith(",")) {
+                holdClass[a].setSkills(holdClass[a].getSkills().substring(0, holdClass[a].getSkills().length() - 1));
+            }
+            executeSQL("UPDATE CreatedClasses SET ClassName='" + holdClass[a].getClassName() + "', Skills='" + holdClass[a].getSkills() + "', SpeciesName='" + holdClass[a].getSpeciesName() + "', CultureName='" + holdClass[a].getCultureName() + "', Advancements='" + holdClass[a].getAdvancements() + "', Type='" + holdClass[a].getType() + "', BasedOn='" + holdClass[a].getBasedOn() + "', AdditionalCost='" + holdClass[a].getAdditionalCost() + "' WHERE SpeciesName='" + modifiedHoldClass[a].getSpeciesName() + "' AND CultureName='" + modifiedHoldClass[a].getCultureName() + "' AND ClassName='" + modifiedHoldClass[a].getClassName() + "'");
+            executeSQL("UPDATE CreatedHeroes SET BasedOn='" + holdClass[a].getClassName() + "' WHERE SpeciesName='" + modifiedHoldClass[a].getSpeciesName() + "' AND CultureName='" + modifiedHoldClass[a].getCultureName() + "' AND BasedOn='" + modifiedHoldClass[a].getClassName() + "'");
+            checkClassSkillsBasedon(a);
+        } else {
+            executeSQL("INSERT INTO `CreatedClasses`(ClassName,Skills,SpeciesName,CultureName,Advancements,Type,BasedOn,AdditionalCost) VALUES ('" + holdClass[a].getClassName() + "','" + holdClass[a].getSkills() + "','" + holdSpecies.getSpeciesName() + "','" + holdCulture.getCultureName() + "'," + null + ",'" + holdClass[a].getType() + "','" + holdClass[a].getBasedOn() + "','" + holdClass[a].getAdditionalCost() + "');");
         }
-        executeSQL("UPDATE CreatedClasses SET ClassName='" + holdClass[a].getClassName() + "', Skills='" + holdClass[a].getSkills() + "', SpeciesName='" + holdClass[a].getSpeciesName() + "', CultureName='" + holdClass[a].getCultureName() + "', Advancements='" + holdClass[a].getAdvancements() + "', Type='" + holdClass[a].getType() + "', BasedOn='" + holdClass[a].getBasedOn() + "', AdditionalCost='" + holdClass[a].getAdditionalCost() + "' WHERE SpeciesName='" + modifiedHoldClass[a].getSpeciesName() + "' AND CultureName='" + modifiedHoldClass[a].getCultureName() + "' AND ClassName='" + modifiedHoldClass[a].getClassName() + "'");
-        executeSQL("UPDATE CreatedHeroes SET BasedOn='" + holdClass[a].getClassName() + "' WHERE SpeciesName='" + modifiedHoldClass[a].getSpeciesName() + "' AND CultureName='" + modifiedHoldClass[a].getCultureName() + "' AND BasedOn='" + modifiedHoldClass[a].getClassName() + "'");
-        checkClassSkillsBasedon(a);
     }
 
     private static void checkClassSkillsBasedon(int a) throws SQLException {

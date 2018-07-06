@@ -250,6 +250,7 @@ public class EditWindowController implements Initializable {
                 stmt.setString(2, cultureEditDropdown.getSelectionModel().getSelectedItem().toString());
                 DatabaseModifier.numberOfClases = Integer.parseInt(BuilderCORE.getValue(stmt, "COUNT (*)"));
                 DatabaseModifier.setNumberOfClases();
+                DatabaseModifier.modifiedHoldClass = new DatabaseModifier.AClass[DatabaseModifier.holdClass.length];
                 for (int i = 0; i < DatabaseModifier.numberOfClases; i++) {
                     DatabaseModifier.loadClassToHold(speciesEditDropdown.getSelectionModel().getSelectedItem().toString(), cultureEditDropdown.getSelectionModel().getSelectedItem().toString(), classEditDropdown.getItems().get(i + 1).toString(), i);
                 }
@@ -262,6 +263,7 @@ public class EditWindowController implements Initializable {
             DatabaseModifier.loadCultureToHold(speciesEditDropdown.getSelectionModel().getSelectedItem().toString(), cultureEditDropdown.getSelectionModel().getSelectedItem().toString());
             DatabaseModifier.numberOfClases = 1;
             DatabaseModifier.setNumberOfClases();
+            DatabaseModifier.modifiedHoldClass = new DatabaseModifier.AClass[1];
             DatabaseModifier.loadClassToHold(speciesEditDropdown.getSelectionModel().getSelectedItem().toString(), cultureEditDropdown.getSelectionModel().getSelectedItem().toString(), classEditDropdown.getSelectionModel().getSelectedItem().toString(), 0);
             if (editNameOnlyCheckbox.isSelected()) {
                 DatabaseModifier.currentTable = DBTables.CreatedClasses;

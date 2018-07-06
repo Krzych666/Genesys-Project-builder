@@ -117,7 +117,7 @@ public class RosterAddUnitController implements Initializable {
         if (!currentEquipmentList.getSelectionModel().isEmpty()) {
             currentEquipmentList.getItems().remove(currentEquipmentList.getSelectionModel().getSelectedIndex());
         }
-        squadSizeChangeActions();        
+        squadSizeChangeActions();
         IMPROVEMENTS.clear();
         improvementsList.getItems().clear();
         improvementsDetailsList.getItems().clear();
@@ -142,7 +142,7 @@ public class RosterAddUnitController implements Initializable {
      */
     @FXML
     public void equipmentTypeChooserStateChangedActions() throws SQLException {
-        IMPROVEMENTS.clear();
+        IMPROVEMENTS.clear();        
         availableEquipmentList.setItems(DatabaseModifier.getItemsNames(equipmentTypeChooser.getSelectionModel().getSelectedItem().toString()));
         improvementsList.getItems().clear();
         improvementsDetailsList.getItems().clear();
@@ -267,7 +267,7 @@ public class RosterAddUnitController implements Initializable {
     }
 
     /**
-     *checkCurrentToMaxPoints
+     * checkCurrentToMaxPoints
      */
     public void checkCurrentToMaxPoints() { // Duplicate is in RosterCreatorWindowController, fina a good way to get rid of it here.
         if (Integer.parseInt(maxPointsValue.getText()) != 0) {
