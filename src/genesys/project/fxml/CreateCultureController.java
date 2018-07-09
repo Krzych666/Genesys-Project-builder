@@ -5,23 +5,21 @@
  */
 package genesys.project.fxml;
 
+import genesys.project.builder.AvailableSkillsLister;
 import genesys.project.builder.BuilderCORE;
 import genesys.project.builder.Enums.Enmuerations.Creators;
 import genesys.project.builder.Enums.Enmuerations.LifedomainValue;
 import genesys.project.builder.Enums.Enmuerations.MainDomainValue;
 import genesys.project.builder.Enums.Enmuerations.MainLineageValue;
-import genesys.project.builder.Enums.Enmuerations.UseCases;
-import static genesys.project.builder.BuilderCORE.chooseConnection;
 import genesys.project.builder.DatabaseHolder;
 import genesys.project.builder.DatabaseReader;
-import genesys.project.builder.GenesysProjectBuilder;
 import java.io.IOException;
 import java.net.URL;
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -143,29 +141,20 @@ public class CreateCultureController implements Initializable {
     /**
      *
      * @throws SQLException
+     * @throws java.lang.CloneNotSupportedException
+     * @throws java.io.IOException
      */
-    public void createCulture() throws SQLException {
-        try {
-            chooseConnection(UseCases.Userdb);
-            PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT LifeDomain FROM CreatedSpecies WHERE SpeciesName = ?");
-            stmt.setString(1, speciesChooseDropdown4.getSelectionModel().getSelectedItem().toString());
-            DatabaseHolder.creator(LifedomainValue.valueOf(BuilderCORE.getValue(stmt, "LifeDomain")), Creators.CreateCulture);
-        } catch (IOException ex) {
-            Logger.getLogger(CreateCultureController.class.getName()).log(Level.SEVERE, null, ex);
-        }
+    public void createCulture() throws SQLException, CloneNotSupportedException, IOException {
+        ObservableList data = DatabaseReader.getSpeciesData(speciesChooseDropdown4.getSelectionModel().getSelectedItem().toString());
+        DatabaseHolder.creator(LifedomainValue.valueOf(data.get(0).toString().split("\\|")[0]), Creators.CreateCulture);
         DatabaseHolder.holdCulture.setSpeciesName(speciesChooseDropdown4.getSelectionModel().getSelectedItem().toString());
         DatabaseHolder.holdSpecies.setSpeciesName(speciesChooseDropdown4.getSelectionModel().getSelectedItem().toString());
-        chooseConnection(UseCases.Userdb);
-        PreparedStatement stmt1 = BuilderCORE.getConnection().prepareStatement("SELECT Skills FROM CreatedSpecies WHERE SpeciesName = ?");
-        stmt1.setString(1, speciesChooseDropdown4.getSelectionModel().getSelectedItem().toString());
-        DatabaseHolder.holdSpecies.setSkills(BuilderCORE.getValue(stmt1, "Skills") + ",");
+        DatabaseHolder.holdSpecies.setSkills(data.get(0).toString().split("\\|")[3] + ",");
         clearLists4();
         //skillsList1 = DatabaseReader.getAddedSkills(DatabaseReader.holdSpecies.getFullSkills());
         //BuilderFXMLController.getSkillModifiers(ruledskills);
-        chooseConnection(UseCases.Userdb);
-        PreparedStatement stmt2 = BuilderCORE.getConnection().prepareStatement("SELECT SpeciesModifiers FROM CreatedSpecies WHERE SpeciesName = ?");
-        stmt2.setString(1, speciesChooseDropdown4.getSelectionModel().getSelectedItem().toString());
-        DatabaseHolder.holdSpecies.setSpeciesModifiers(BuilderCORE.getValue(stmt2, "SpeciesModifiers"));
+        DatabaseHolder.holdSpecies.setSpeciesModifiers(data.get(0).toString().split("\\|")[4]);
+        
         switch (DatabaseHolder.holdSpecies.getLifedomain()) {
             case Humanoid:
                 DatabaseHolder.arcana = Boolean.valueOf(DatabaseHolder.holdSpecies.getSpeciesModifiers().split("=")[1]);
@@ -185,7 +174,7 @@ public class CreateCultureController implements Initializable {
         }
         //skillSetChooser.setItems(DatabaseReader.getSkillSet());
         lifeDomainValue4.setText(DatabaseHolder.holdSpecies.getLifedomain().toString());
-        skillsList5.setItems(DatabaseReader.getAddedSkills(DatabaseHolder.holdSpecies.getSkills()));
+        skillsList5.setItems(AvailableSkillsLister.getAddedSkills(DatabaseHolder.holdSpecies.getSkills()));
         BuilderFXMLController.getSkillModifiers(DatabaseHolder.ruledskills);
         int cost = BuilderCORE.baseAddedCost(DatabaseHolder.holdSpecies.getLifedomain(), DatabaseHolder.holdSpecies, null, DatabaseHolder.b, 0);
         String tex = Integer.toString(cost);
@@ -197,9 +186,10 @@ public class CreateCultureController implements Initializable {
      *
      * @throws IOException
      * @throws SQLException
+     * @throws java.lang.CloneNotSupportedException
      */
     @FXML
-    public void speciesChooseDropdown4ItemStateChangedActions() throws IOException, SQLException {
+    public void speciesChooseDropdown4ItemStateChangedActions() throws IOException, SQLException, CloneNotSupportedException {
         if (speciesChooseDropdown4.getSelectionModel().getSelectedItem().equals("--CHOOSE--")) {
             clearLists4();
         }
@@ -292,7 +282,7 @@ public class CreateCultureController implements Initializable {
         this.speciesList = speciesList;
     }
 
-    void setSpeciesSelection(String Selection) throws SQLException, IOException {
+    void setSpeciesSelection(String Selection) throws SQLException, IOException, CloneNotSupportedException {
         speciesChooseDropdown4.getSelectionModel().select(Selection);
         speciesChooseDropdown4ItemStateChangedActions();
     }

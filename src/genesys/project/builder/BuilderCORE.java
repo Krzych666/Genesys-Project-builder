@@ -231,7 +231,7 @@ public class BuilderCORE {
                         if (columns.length > 1 && j != columns.length - 1) {
                             row.append("|");
                         }
-                    }                    
+                    }
                     temp.add(row.toString());
                 }
                 //if (j != columns.length - 1) {temp.add("");} //Why?
@@ -289,8 +289,6 @@ public class BuilderCORE {
         return Tmp;
     }
 
-
-
     /**
      *
      * @param first
@@ -319,8 +317,8 @@ public class BuilderCORE {
      * @return
      * @throws SQLException
      */
-    public static ObservableList generateSubSkills(String skill, Boolean simplifyToCoreSkills) throws SQLException {        
-        String skl = DatabaseReader.getSkillRules(skill);
+    public static ObservableList generateSubSkills(String skill, Boolean simplifyToCoreSkills) throws SQLException {
+        String skl = DatabaseReader.loadSkillFromDB(skill).get(0).toString().split("\\|")[2];
         if (!simplifyToCoreSkills) {
             skl = skl.replace("_", " ");
         } else {
@@ -344,7 +342,7 @@ public class BuilderCORE {
      * @return
      * @throws SQLException
      */
-    public static String generateSubSkillText(String subSkill, Boolean simplifyToCoreSkills) throws SQLException {        
+    public static String generateSubSkillText(String subSkill, Boolean simplifyToCoreSkills) throws SQLException {
         if (simplifyToCoreSkills) {
             subSkill = subSkill.replace("-", "").replace("+", "").replaceAll("[0-9]", "X").replace(" Xpts", "");
         }
@@ -582,7 +580,7 @@ public class BuilderCORE {
                     }
                     points += a * baseAddedCost(lifeDomain, species, classname, source, points);
                     for (String lst1 : lst) {
-                        String add = DatabaseReader.getSkillPointCost(lst1);
+                        String add = DatabaseReader.loadSkillFromDB(lst1).get(0).toString().split("\\|")[1];
                         if (add.contains("/")) {
                             add = add.split("/")[0];
                         }
@@ -593,7 +591,7 @@ public class BuilderCORE {
                 } else if (classname[bb].getBasedOn() != null && classname[bb].getBasedOn().equals(BuilderCORE.BASE) && !BuilderCORE.BASE.equals(DatabaseHolder.classList1Holder) && !"".equals(classname[bb].getSkills()) && !",".equals(classname[bb].getSkills())) {
                     String[] lst = (classname[bb].getSkills()).replaceAll(";", ",").split(",");
                     for (String lst1 : lst) {
-                        String add = DatabaseReader.getSkillPointCost(lst1);
+                        String add = DatabaseReader.loadSkillFromDB(lst1).get(0).toString().split("\\|")[1];
                         if (add.contains("/")) {
                             add = add.split("/")[0];
                         }
@@ -603,7 +601,7 @@ public class BuilderCORE {
                 if (!"".equals(species.getSkills()) && classname[bb].getBasedOn().equals(BuilderCORE.BASE)) {
                     String[] lst = species.getSkills().replaceAll(";", ",").split(",");
                     for (String lst1 : lst) {
-                        String add = DatabaseReader.getSkillPointCost(lst1);
+                        String add = DatabaseReader.loadSkillFromDB(lst1).get(0).toString().split("\\|")[1];
                         if (add.contains("/")) {
                             add = add.split("/")[0];
                         }
@@ -613,7 +611,7 @@ public class BuilderCORE {
             } else {
                 String[] lst = species.getSkills().replaceAll(";", ",").split(",");
                 for (String lst1 : lst) {
-                    String add = DatabaseReader.getSkillPointCost(lst1);
+                    String add = DatabaseReader.loadSkillFromDB(lst1).get(0).toString().split("\\|")[1];
                     if (add.contains("/")) {
                         add = add.split("/")[0];
                     }
@@ -623,7 +621,7 @@ public class BuilderCORE {
         } else if (!"".equals(species.getSkills())) {
             String[] lst = species.getSkills().replaceAll(";", ",").split(",");
             for (String lst1 : lst) {
-                String add = DatabaseReader.getSkillPointCost(lst1);
+                String add = DatabaseReader.loadSkillFromDB(lst1).get(0).toString().split("\\|")[1];
                 if (add.contains("/")) {
                     add = add.split("/")[0];
                 }

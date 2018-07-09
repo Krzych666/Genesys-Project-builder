@@ -10,13 +10,10 @@ import genesys.project.builder.Enums.Enmuerations.DBTables;
 import genesys.project.builder.Enums.Enmuerations.MainDomainValue;
 import genesys.project.builder.Enums.Enmuerations.MainLineageValue;
 import genesys.project.builder.Enums.Enmuerations.Modificators;
-import genesys.project.builder.Enums.Enmuerations.UseCases;
-import static genesys.project.builder.BuilderCORE.chooseConnection;
 import genesys.project.builder.DatabaseHolder;
 import genesys.project.builder.DatabaseReader;
 import java.io.IOException;
 import java.net.URL;
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
@@ -243,12 +240,8 @@ public class EditWindowController implements Initializable {
                 toNameOnly();
                 editWindowNameOld.setText(DatabaseHolder.holdCulture.getCultureName());
                 editWindowNameOnlyText1.setText("Change the folowing culture name:");
-            } else {
-                chooseConnection(UseCases.Userdb);
-                PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT COUNT (*) FROM CreatedClasses WHERE SpeciesName=? AND CultureName =?");
-                stmt.setString(1, speciesEditDropdown.getSelectionModel().getSelectedItem().toString());
-                stmt.setString(2, cultureEditDropdown.getSelectionModel().getSelectedItem().toString());
-                DatabaseHolder.numberOfClases = Integer.parseInt(BuilderCORE.getValue(stmt, "COUNT (*)"));
+            } else {                
+                DatabaseHolder.numberOfClases = DatabaseReader.getNumberOfClases(speciesEditDropdown.getSelectionModel().getSelectedItem().toString(),cultureEditDropdown.getSelectionModel().getSelectedItem().toString());
                 BuilderCORE.setNumberOfClases();
                 DatabaseHolder.modifiedHoldClass = new DatabaseHolder.AClass[DatabaseHolder.holdClass.length];
                 for (int i = 0; i < DatabaseHolder.numberOfClases; i++) {

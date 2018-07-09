@@ -5,7 +5,6 @@
  */
 package genesys.project.fxml;
 
-import genesys.project.builder.BuilderCORE;
 import genesys.project.builder.DatabaseReader;
 import java.net.URL;
 import java.sql.SQLException;

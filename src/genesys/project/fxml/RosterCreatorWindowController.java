@@ -5,6 +5,7 @@
  */
 package genesys.project.fxml;
 
+import genesys.project.builder.AvailableSkillsLister;
 import genesys.project.builder.BuilderCORE;
 import genesys.project.builder.DatabaseHolder;
 import genesys.project.builder.DatabaseReader;
@@ -167,7 +168,7 @@ public class RosterCreatorWindowController implements Initializable {
                 }
             }
             DatabaseHolder.fullSkillList1 = "";
-            skillsList.setItems(DatabaseReader.getAddedSkills(BuilderCORE.getBaseAddedSkills(classList.getSelectionModel().getSelectedItem().toString())));
+            skillsList.setItems(AvailableSkillsLister.getAddedSkills(BuilderCORE.getBaseAddedSkills(classList.getSelectionModel().getSelectedItem().toString())));
             BuilderFXMLController.getSkillModifiers(DatabaseHolder.ruledskills);
             classTypeValue.setText(DatabaseHolder.holdClass[DatabaseHolder.b].getType());
             basedOnValue.setText(DatabaseHolder.holdClass[DatabaseHolder.b].getBasedOn());

@@ -23,53 +23,9 @@ public class DatabaseReader {
 
     /**
      *
-     * @param HoldSkills
      * @return
      * @throws SQLException
      */
-    public static ObservableList<String> getAddedSkills(String HoldSkills) throws SQLException {
-        if (HoldSkills == null || "".equals(HoldSkills)) {
-            return null;
-        }
-        DatabaseHolder.fullSkillList1 = "";
-        DatabaseHolder.ruledskills.clear();
-        String[] lst = HoldSkills.replaceAll(";", ",").split(",");
-        String[] lstref = HoldSkills.replaceAll(";", ",").split(",");
-        for (int i = 0; i < lst.length; i++) {
-            if (!lstref[i].equals("")) {
-                chooseConnection(UseCases.COREdb);
-                PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT * FROM Skills WHERE SkillName = ?");
-                stmt.setString(1, lstref[i]);
-                String[] skl = ((BuilderCORE.getValue(stmt, "SkillRules")).split(";"));
-                chooseConnection(UseCases.COREdb);
-                PreparedStatement stmt1 = BuilderCORE.getConnection().prepareStatement("SELECT * FROM Skills WHERE SkillName = ?");
-                stmt1.setString(1, lstref[i]);
-                String ptscost = (BuilderCORE.getValue(stmt1, "PointCost"));
-                lst[i] += " (pts : " + ptscost + ") : ";
-                for (int j = 0; j < skl.length; j++) {
-                    lst[i] = lst[i] + ((skl[j].split("_"))[0]);
-                    if ((skl[j].split("_")).length >= 2) {
-                        lst[i] += " " + ((skl[j].split("_"))[1]);
-                    }
-                    if ((skl[j].split("_")).length >= 3) {
-                        lst[i] += " " + ((skl[j].split("_"))[2]);
-                    }
-                    if (j < skl.length - 1) {
-                        lst[i] += ", ";
-                    }
-                    chooseConnection(UseCases.COREdb);
-                    PreparedStatement stmt2 = BuilderCORE.getConnection().prepareStatement("SELECT * FROM Skills WHERE SkillName = ?");
-                    stmt2.setString(1, lstref[i]);
-                    String rulledskill = BuilderCORE.getValue(stmt2, "LifeDomainTree2");
-                    DatabaseHolder.ruledskills.add(rulledskill + ">" + skl[j]);
-                }
-            }
-        }
-        ObservableList<String> tmp = FXCollections.observableArrayList();
-        tmp.addAll(lst);
-        return tmp;
-    }
-
     public static ObservableList loadAllSkillsFromDB() throws SQLException {
         chooseConnection(UseCases.COREdb);
         PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT * FROM Skills");
@@ -77,21 +33,27 @@ public class DatabaseReader {
         return BuilderCORE.getData(stmt, columns, null, 0);
     }
 
-    static String getSkillRules(String SkillName) throws SQLException {
-        chooseConnection(UseCases.COREdb);
-        PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT * FROM Skills WHERE SkillName = ?");
-        stmt.setString(1, SkillName.split(" \\(p")[0]);
-        return BuilderCORE.getValue(stmt, "SkillRules");
-    }
-
-    static String getSkillPointCost(String SkillName) throws SQLException {
+    /**
+     *
+     * @param SkillName
+     * @return
+     * @throws SQLException
+     */
+    public static ObservableList loadSkillFromDB(String SkillName) throws SQLException {
         chooseConnection(UseCases.COREdb);
         PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT * FROM Skills WHERE SkillName = ?");
         stmt.setString(1, SkillName);
-        return BuilderCORE.getValue(stmt, "PointCost");
+        String[] columns = {"SkillName", "PointCost", "SkillRules", "Age", "LifeDomain", "LifeDomainTree1", "LifeDomainTree2", "LifeDomainTree3"};
+        return BuilderCORE.getData(stmt, columns, null, 0);
     }
 
-    static String getSkillRuleExplanation(String SkillRuleName) throws SQLException {
+    /**
+     *
+     * @param SkillRuleName
+     * @return
+     * @throws SQLException
+     */
+    public static String getSkillRuleExplanation(String SkillRuleName) throws SQLException {
         chooseConnection(UseCases.COREdb);
         PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT * FROM SkillRules WHERE SkillRuleName = ?");
         stmt.setString(1, SkillRuleName);
@@ -116,6 +78,27 @@ public class DatabaseReader {
         return fintex.toString();
     }
 
+        /**
+     *
+     * @return @throws SQLException
+     */
+    public static ObservableList<String> getSpeciesList() throws SQLException {
+        ObservableList<String> tmp = FXCollections.observableArrayList();
+        for (LifedomainValue domain : BuilderCORE.DOMAINS) {
+            tmp.add("--" + domain.toString() + "--");
+            chooseConnection(UseCases.Userdb);
+            PreparedStatement stmt = BuilderCORE.conn.prepareStatement("SELECT * FROM CreatedSpecies WHERE LifeDomain = ?");
+            stmt.setString(1, domain.toString());
+            String[] columns = {"SpeciesName"};
+            ObservableList<String> tmpget = BuilderCORE.getData(stmt, columns, null, 0);
+            for (int i = 0; i < tmpget.size(); i++) {
+                tmp.add(tmpget.get(i));
+            }
+            tmp.add(" ");
+        }
+        return tmp;
+    }
+    
     /**
      *
      * @return @throws SQLException
@@ -158,7 +141,7 @@ public class DatabaseReader {
         ObservableList tmp = FXCollections.observableArrayList();
         tmp.setAll(DatabaseHolder.TOPDROP);
         chooseConnection(UseCases.Userdb);
-        PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT * FROM CreatedClasses WHERE (SpeciesName =?) AND (CultureName =?)");
+        PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT * FROM CreatedClasses WHERE SpeciesName =? AND CultureName =?");
         stmt.setString(1, fromwhats);
         stmt.setString(2, fromwhatc);
         String[] columns = {"ClassName"};
@@ -180,12 +163,12 @@ public class DatabaseReader {
         chooseConnection(UseCases.Userdb);
         String[] columns = {"HeroName"};
         if (DatabaseHolder.TOPDROP.equals(fromwhatcl) && !(DatabaseHolder.TOPDROP.equals(fromwhats) && DatabaseHolder.TOPDROP.equals(fromwhatc))) {
-            PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT * FROM CreatedHeroes WHERE (SpeciesName =?) AND (CultureName =?)");
+            PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT * FROM CreatedHeroes WHERE SpeciesName =? AND CultureName =?");
             stmt.setString(1, fromwhats);
             stmt.setString(2, fromwhatc);
             tmp.addAll(BuilderCORE.getData(stmt, columns, null, 0));
         } else {
-            PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT * FROM CreatedHeroes WHERE (SpeciesName =?) AND (CultureName =?) AND (BasedOn =?)");
+            PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT * FROM CreatedHeroes WHERE SpeciesName =? AND CultureName =? AND BasedOn =?");
             stmt.setString(1, fromwhats);
             stmt.setString(2, fromwhatc);
             stmt.setString(3, fromwhatcl);
@@ -348,7 +331,6 @@ public class DatabaseReader {
         }
         return tmp;
     }
-
 
     /**
      *
@@ -680,26 +662,6 @@ public class DatabaseReader {
         return data;
     }
 
-    /**
-     *
-     * @return @throws SQLException
-     */
-    public static ObservableList<String> getSpeciesList() throws SQLException {
-        ObservableList<String> tmp = FXCollections.observableArrayList();
-        for (LifedomainValue domain : BuilderCORE.DOMAINS) {
-            tmp.add("--" + domain.toString() + "--");
-            BuilderCORE.chooseConnection(UseCases.Userdb);
-            PreparedStatement stmt = BuilderCORE.conn.prepareStatement("SELECT * FROM CreatedSpecies WHERE LifeDomain = ?");
-            stmt.setString(1, domain.toString());
-            String[] columns = {"SpeciesName"};
-            ObservableList<String> tmpget = BuilderCORE.getData(stmt, columns, null, 0);
-            for (int i = 0; i < tmpget.size(); i++) {
-                tmp.add(tmpget.get(i));
-            }
-            tmp.add(" ");
-        }
-        return tmp;
-    }
 
     /**
      *
@@ -713,7 +675,7 @@ public class DatabaseReader {
             skillsL.append("\"").append(skillsList1.getItems().get(i).toString().split(" \\(")[0]).append("\"").append(", ");
         }
         String skills = skillsL.substring(0, skillsL.length() - 2);
-        BuilderCORE.chooseConnection(UseCases.COREdb);
+        chooseConnection(UseCases.COREdb);
         PreparedStatement stmt = BuilderCORE.conn.prepareStatement("SELECT max(Age) FROM Skills WHERE SkillName IN (" + skills + ")");
         String[] columns = {"max(Age)"};
         ObservableList<String> tmpget = BuilderCORE.getData(stmt, columns, null, 0);
@@ -732,13 +694,13 @@ public class DatabaseReader {
         int[] CharacteristicModifiers = {BuilderFXMLController.HOLD_MODIFIERS.getStrengthModifier(), BuilderFXMLController.HOLD_MODIFIERS.getToughnessModifier(), BuilderFXMLController.HOLD_MODIFIERS.getMovementModifier(), BuilderFXMLController.HOLD_MODIFIERS.getMartialModifier(), BuilderFXMLController.HOLD_MODIFIERS.getRangedModifier(), BuilderFXMLController.HOLD_MODIFIERS.getDefenseModifier(), BuilderFXMLController.HOLD_MODIFIERS.getDisciplineModifier(), BuilderFXMLController.HOLD_MODIFIERS.getWillpowerModifier(), BuilderFXMLController.HOLD_MODIFIERS.getCommandModifier(), BuilderFXMLController.HOLD_MODIFIERS.getWoundsModifier(), BuilderFXMLController.HOLD_MODIFIERS.getAttacksModifier(), BuilderFXMLController.HOLD_MODIFIERS.getSizeModifier(), BuilderFXMLController.HOLD_MODIFIERS.getMTModifier(), BuilderFXMLController.HOLD_MODIFIERS.getRTModifier(), BuilderFXMLController.HOLD_MODIFIERS.getMoraleModifier()};
         for (int j = 0; j < BuilderCORE.CHARACTERISTICS.length; j++) {
             if ("Size".equals(BuilderCORE.CHARACTERISTICS[j]) && j < 12) {
-                BuilderCORE.chooseConnection(UseCases.COREdb);
+                chooseConnection(UseCases.COREdb);
                 PreparedStatement stmt = BuilderCORE.conn.prepareStatement("SELECT * FROM StartingCharacteristics WHERE LifeDomain = ? AND CharacteristicGroup = ?");
                 stmt.setString(1, lifedomain);
                 stmt.setString(2, characteristicGroup);
                 outputValues[j] = BuilderCORE.SIZES[(Integer.parseInt(BuilderCORE.getValue(stmt, BuilderCORE.CHARACTERISTICS[j])) + CharacteristicModifiers[j])];
             } else if (j < 12) {
-                BuilderCORE.chooseConnection(UseCases.COREdb);
+                chooseConnection(UseCases.COREdb);
                 PreparedStatement stmt1 = BuilderCORE.conn.prepareStatement("SELECT * FROM StartingCharacteristics WHERE LifeDomain = ? AND CharacteristicGroup = ?");
                 stmt1.setString(1, lifedomain);
                 stmt1.setString(2, characteristicGroup);
@@ -777,4 +739,127 @@ public class DatabaseReader {
         return out;
     }
 
+    public static ObservableList getLifeDomainTree1OnLifeDomainAndLifeDomain2AndAge(String[] columns2, LifedomainValue lifeDomain, String skillSubSet, int maxAge) throws SQLException {
+        chooseConnection(Enums.Enmuerations.UseCases.COREdb);
+        PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT DISTINCT LifeDomainTree1 FROM Skills WHERE LifeDomain = ? AND LifeDomainTree2 = ? AND Age <= ?");
+        stmt.setString(1, lifeDomain.toString());
+        stmt.setString(2, skillSubSet);
+        stmt.setInt(3, maxAge);
+        return BuilderCORE.getData(stmt, columns2, null, 0);
+    }
+
+    public static ObservableList getLifeDomainTree3OnLifeDomainTree2OrLifeDomainTree3AndSkillNameAndAgeITERATED(String[] columns1, String skillSubSet, String[] reptiliaSpecific, ObservableList IgnoreSkillsList, int maxAge, int i) throws SQLException {
+        chooseConnection(Enums.Enmuerations.UseCases.COREdb);
+        PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT DISTINCT LifeDomainTree3 FROM Skills WHERE (LifeDomainTree2 = ? OR LifeDomainTree3 = ?) AND SkillName = ? AND Age <= ?");
+        stmt.setString(1, skillSubSet);
+        stmt.setString(2, reptiliaSpecific[1]);
+        stmt.setString(3, IgnoreSkillsList.get(i).toString().split(" \\(p")[0]);
+        stmt.setInt(4, maxAge);
+        return BuilderCORE.getData(stmt, columns1, null, 0);
+    }
+
+    public static ObservableList getSkillNameOnLifeDomainTree2AndLifeDomainTree3AndAge(String[] columns, String skillSubSet, String basic, int maxAge, ObservableList IgnoreSkillsList) throws SQLException {
+        chooseConnection(Enums.Enmuerations.UseCases.COREdb);
+        PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT DISTINCT SkillName FROM Skills WHERE LifeDomainTree2 = ? AND LifeDomainTree3 = ? AND Age <= ?");
+        stmt.setString(1, skillSubSet);
+        stmt.setString(2, basic);
+        stmt.setInt(3, maxAge);
+        return BuilderCORE.getData(stmt, columns, IgnoreSkillsList, 1);
+    }
+
+    public static ObservableList getSkillNameOnLifeDomainTree2AndLifeDomainTree3OrLifeDomainTree3AndAge(String[] columns, String skillSubSet, String basic0, String basic1, int maxAge, ObservableList IgnoreSkillsList) throws SQLException {
+        chooseConnection(Enums.Enmuerations.UseCases.COREdb);
+        PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT DISTINCT SkillName FROM Skills WHERE LifeDomainTree2 = ? AND (LifeDomainTree3 = ? OR LifeDomainTree3 = ?) AND Age <= ?");
+        stmt.setString(1, skillSubSet);
+        stmt.setString(2, basic0);
+        stmt.setString(3, basic1);
+        stmt.setInt(4, maxAge);
+        return BuilderCORE.getData(stmt, columns, IgnoreSkillsList, 1);
+    }
+
+    public static ObservableList getSkillNameOnLifeDomainTree2AndLifeDomainTree3OrLifeDomainTree3OrLifeDomainTree3AndAge(String[] columns, String skillSubSet, String basic2, String basic4, String basic5, int maxAge, ObservableList IgnoreSkillsList, ObservableList<String> lifeDomainTree3) throws SQLException {
+        chooseConnection(Enums.Enmuerations.UseCases.COREdb);
+        PreparedStatement stmt2 = BuilderCORE.getConnection().prepareStatement("SELECT DISTINCT SkillName FROM Skills WHERE LifeDomainTree2 = ? AND (LifeDomainTree3 = ? OR LifeDomainTree3 = ? OR LifeDomainTree3 = ?) AND Age <= ?");
+        stmt2.setString(1, skillSubSet);
+        stmt2.setString(2, basic2);
+        stmt2.setString(3, basic4);
+        stmt2.setString(4, basic4);
+        stmt2.setInt(5, maxAge);
+        if (lifeDomainTree3.contains(basic4)) {
+            stmt2.setString(4, basic5);
+        }
+        return BuilderCORE.getData(stmt2, columns, IgnoreSkillsList, 1);
+    }
+
+    public static ObservableList getSkillNameOnLifeDomainTree2AndLifeDomainTree3AndAgeV2(String[] columns, String skillSubSet, String basic3, String basic4, int maxAge, ObservableList IgnoreSkillsList, Enums.Enmuerations.LifeDomainTree1Values lifeDomainTree1Value) throws SQLException {
+        chooseConnection(Enums.Enmuerations.UseCases.COREdb);
+        PreparedStatement stmt2 = BuilderCORE.getConnection().prepareStatement("SELECT DISTINCT SkillName FROM Skills WHERE LifeDomainTree2 = ? AND LifeDomainTree3 = ? AND Age <= ?");
+        stmt2.setString(1, skillSubSet);
+        stmt2.setInt(3, maxAge);
+        switch (lifeDomainTree1Value) {
+            case BiestialKingdoms:
+            case RegionalTraits:
+                stmt2.setString(2, basic4);
+                break;
+            case GeneticMutation:
+            case EnvironmentalAdaptability:
+            case SpiritualandScientificKnowledge:
+                stmt2.setString(2, basic3);
+                break;
+            default:
+                break;
+        }
+        return BuilderCORE.getData(stmt2, columns, IgnoreSkillsList, 1);
+    }
+
+    public static ObservableList getSkillNameOnLifeDomainTree2AndLifeDomainTree3AndAgeV3(String[] columns, String skillSubSet, String basic3, String basic4, int maxAge, ObservableList IgnoreSkillsList, Enums.Enmuerations.LifeDomainTree1Values lifeDomainTree1Value, Enums.Enmuerations.LifeDomainTree2Values lifeDomainTree2Value) throws SQLException {
+        chooseConnection(Enums.Enmuerations.UseCases.COREdb);
+        PreparedStatement stmt2 = BuilderCORE.getConnection().prepareStatement("SELECT DISTINCT SkillName FROM Skills WHERE LifeDomainTree2 = ? AND LifeDomainTree3 = ? AND Age <= ?");
+        stmt2.setString(1, skillSubSet);
+        stmt2.setInt(3, maxAge);
+        switch (lifeDomainTree1Value) {
+            case Arachnea:
+            case Crustacea:
+            case Insecta:
+            case Myriapoda:
+            case GeneticMorphology:
+            case EnvironmentalAdaptation:
+                stmt2.setString(2, basic4);
+                break;
+            case GeneticMutation:
+                stmt2.setString(2, basic3);
+                break;
+            default:
+                break;
+        }
+        switch (lifeDomainTree2Value) {
+            case Eusociality:
+            case Combat:
+                stmt2.setString(2, basic4);
+                break;
+            case EnvironmentalExtremes:
+            case AdvancedKnowledge:
+            case PsychiccNodes:
+                stmt2.setString(2, basic3);
+                break;
+            default:
+                break;
+        }
+        return BuilderCORE.getData(stmt2, columns, IgnoreSkillsList, 1);
+    }
+
+    public static String[] getClassTypes(String Lifedomain) throws SQLException {
+        chooseConnection(UseCases.COREdb);
+        PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT ClassTypes FROM StartingCharacteristics WHERE LifeDomain =?");
+        stmt.setString(1, Lifedomain);
+        return BuilderCORE.getValue(stmt, "ClassTypes").split(",");
+    }
+
+    public static int getNumberOfClases(String species, String culture) throws SQLException {
+        chooseConnection(UseCases.Userdb);
+        PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT COUNT (*) FROM CreatedClasses WHERE SpeciesName=? AND CultureName =?");
+        stmt.setString(1, species);
+        stmt.setString(2, culture);
+        return Integer.parseInt(BuilderCORE.getValue(stmt, "COUNT (*)"));
+    }
 }

@@ -206,7 +206,7 @@ public class SpeciesCreatorWindowController implements Initializable {
         if (DatabaseHolder.holdSpecies.getSkills() == null || "".equals(DatabaseHolder.holdSpecies.getSkills())) {
             skillsList1.getItems().clear();
         } else {
-            skillsList1.setItems(DatabaseReader.getAddedSkills(DatabaseHolder.holdSpecies.getSkills()));
+            skillsList1.setItems(AvailableSkillsLister.getAddedSkills(DatabaseHolder.holdSpecies.getSkills()));
             BuilderFXMLController.getSkillModifiers(DatabaseHolder.ruledskills);
         }
         switch (DatabaseHolder.holdSpecies.getLifedomain()) {
@@ -482,7 +482,7 @@ public class SpeciesCreatorWindowController implements Initializable {
             DatabaseHolder.holdSpecies.setSkills(DatabaseHolder.holdSpecies.getSkills().replace(skillsList1.getSelectionModel().getSelectedItem().toString().split(" \\(p")[0] + ";", ""));
         }
         if (!("".equals(DatabaseHolder.holdSpecies.getSkills()) || DatabaseHolder.holdSpecies.getSkills() == null)) {
-            skillsList1.setItems(DatabaseReader.getAddedSkills(DatabaseHolder.holdSpecies.getSkills()));
+            skillsList1.setItems(AvailableSkillsLister.getAddedSkills(DatabaseHolder.holdSpecies.getSkills()));
             BuilderFXMLController.getSkillModifiers(DatabaseHolder.ruledskills);
         } else {
             skillsList1.getItems().clear();

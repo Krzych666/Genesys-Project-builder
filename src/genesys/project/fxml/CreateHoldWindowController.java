@@ -5,6 +5,7 @@
  */
 package genesys.project.fxml;
 
+import genesys.project.builder.AvailableSkillsLister;
 import genesys.project.builder.BuilderCORE;
 import genesys.project.builder.Enums.Enmuerations.LifedomainValue;
 import genesys.project.builder.DatabaseReader;
@@ -153,7 +154,7 @@ public class CreateHoldWindowController implements Initializable {
             DatabaseHolder.classList1Holder = classList1.getSelectionModel().getSelectedItem().toString();
             int cost;
             if ("<base species>".equals(classList1.getSelectionModel().getSelectedItem().toString())) {
-                skillsList3.setItems(DatabaseReader.getAddedSkills(DatabaseHolder.holdSpecies.getSkills()));
+                skillsList3.setItems(AvailableSkillsLister.getAddedSkills(DatabaseHolder.holdSpecies.getSkills()));
                 BuilderFXMLController.getSkillModifiers(DatabaseHolder.ruledskills);
                 classTypeValue3.setText("");
                 basedOnValue3.setText("");
@@ -165,7 +166,7 @@ public class CreateHoldWindowController implements Initializable {
                     }
                 }
                 DatabaseHolder.fullSkillList1 = "";
-                skillsList3.setItems(DatabaseReader.getAddedSkills(BuilderCORE.getBaseAddedSkills(classList1.getSelectionModel().getSelectedItem().toString())));
+                skillsList3.setItems(AvailableSkillsLister.getAddedSkills(BuilderCORE.getBaseAddedSkills(classList1.getSelectionModel().getSelectedItem().toString())));
                 BuilderFXMLController.getSkillModifiers(DatabaseHolder.ruledskills);
                 classTypeValue3.setText(DatabaseHolder.holdClass[DatabaseHolder.b].getType());
                 basedOnValue3.setText(DatabaseHolder.holdClass[DatabaseHolder.b].getBasedOn());

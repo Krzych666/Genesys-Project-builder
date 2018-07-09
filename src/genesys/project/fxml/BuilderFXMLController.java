@@ -6,17 +6,14 @@
 package genesys.project.fxml;
 
 import genesys.project.builder.BuilderCORE;
-import static genesys.project.builder.BuilderCORE.chooseConnection;
 import genesys.project.builder.DatabaseReader;
 import genesys.project.builder.DatabaseHolder;
 import genesys.project.builder.Enums.Enmuerations.LifedomainValue;
 import genesys.project.builder.Enums.Enmuerations.CharacteristicGroup;
-import genesys.project.builder.Enums.Enmuerations.UseCases;
 import genesys.project.builder.Enums.TheModifiers;
 import genesys.project.builder.GenesysProjectBuilder;
 import java.io.IOException;
 import java.net.URL;
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -206,7 +203,7 @@ public class BuilderFXMLController implements Initializable {
         editActionPerformed("Choose");
     }
 
-    private void createActionPerformed(String What, String Selection) throws IOException, SQLException {
+    private void createActionPerformed(String What, String Selection) throws IOException, SQLException, CloneNotSupportedException {
         GenesysProjectBuilder.hideOtherThanMainStage();
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/genesys/project/fxml/CreateWindowWhatFXML.fxml"));
         Parent root = loader.load();
@@ -223,47 +220,47 @@ public class BuilderFXMLController implements Initializable {
     }
 
     @FXML
-    private void createChooseActionPerformed() throws IOException, SQLException {
+    private void createChooseActionPerformed() throws IOException, SQLException, CloneNotSupportedException {
         createActionPerformed("Choose", null);
     }
 
     @FXML
-    private void createSpeciesActionPerformed() throws IOException, SQLException {
+    private void createSpeciesActionPerformed() throws IOException, SQLException, CloneNotSupportedException {
         createActionPerformed("Species", null);
     }
 
     @FXML
-    private void createCultureActionPerformed() throws IOException, SQLException {
+    private void createCultureActionPerformed() throws IOException, SQLException, CloneNotSupportedException {
         createActionPerformed("Culture", null);
     }
 
     @FXML
-    private void createRosterActionPerformed() throws IOException, SQLException {
+    private void createRosterActionPerformed() throws IOException, SQLException, CloneNotSupportedException {
         createActionPerformed("Roster", null);
     }
 
     @FXML
-    private void createHumanoidActionPerformed() throws IOException, SQLException {
+    private void createHumanoidActionPerformed() throws IOException, SQLException, CloneNotSupportedException {
         createActionPerformed("Humanoid", null);
     }
 
     @FXML
-    private void createFeyActionPerformed() throws IOException, SQLException {
+    private void createFeyActionPerformed() throws IOException, SQLException, CloneNotSupportedException {
         createActionPerformed("Fey", null);
     }
 
     @FXML
-    private void createReptiliaActionPerformed() throws IOException, SQLException {
+    private void createReptiliaActionPerformed() throws IOException, SQLException, CloneNotSupportedException {
         createActionPerformed("Reptilia", null);
     }
 
     @FXML
-    private void createBiestActionPerformed() throws IOException, SQLException {
+    private void createBiestActionPerformed() throws IOException, SQLException, CloneNotSupportedException {
         createActionPerformed("Biest", null);
     }
 
     @FXML
-    private void createInsectaActionPerformed() throws IOException, SQLException {
+    private void createInsectaActionPerformed() throws IOException, SQLException, CloneNotSupportedException {
         createActionPerformed("Insecta", null);
     }
 
@@ -341,7 +338,7 @@ public class BuilderFXMLController implements Initializable {
             ObservableList dataCulture = DatabaseReader.getCultureData(speciesList.getSelectionModel().getSelectedItem().toString(), culturesList.getSelectionModel().getSelectedItem().toString());
             classList.setItems(DatabaseReader.populateDropdownsClasses(speciesList.getSelectionModel().getSelectedItem().toString(), culturesList.getSelectionModel().getSelectedItem().toString()));
             classList.getItems().remove(DatabaseHolder.TOPDROP);
-            heroesList.setItems(DatabaseReader.populateDropdownsHeroes(speciesList.getSelectionModel().getSelectedItem().toString(), culturesList.getSelectionModel().getSelectedItem().toString(), null));
+            heroesList.setItems(DatabaseReader.populateDropdownsHeroes(speciesList.getSelectionModel().getSelectedItem().toString(), culturesList.getSelectionModel().getSelectedItem().toString(), DatabaseHolder.TOPDROP));
             heroesList.getItems().remove(DatabaseHolder.TOPDROP);
             cultureProgressList.setItems(DatabaseReader.populateDropdownsProgress(speciesList.getSelectionModel().getSelectedItem().toString(), culturesList.getSelectionModel().getSelectedItem().toString()));
             cultureProgressList.getItems().remove(DatabaseHolder.TOPDROP);
@@ -736,24 +733,14 @@ public class BuilderFXMLController implements Initializable {
     @FXML
     private void rosterListMousePressed() throws SQLException {
         if (!rostersList.getSelectionModel().isEmpty() && !speciesList.getSelectionModel().isEmpty() && !culturesList.getSelectionModel().isEmpty()) {
-            chooseConnection(UseCases.Userdb);
-            PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT * FROM CreatedRosters WHERE RosterName = ? AND SpeciesName = ? AND CultureName = ?");
-            stmt.setString(1, rostersList.getSelectionModel().getSelectedItem().toString());
-            stmt.setString(2, speciesList.getSelectionModel().getSelectedItem().toString());
-            stmt.setString(3, culturesList.getSelectionModel().getSelectedItem().toString());
-            fullroster.getItems().setAll(FXCollections.observableArrayList(BuilderCORE.getValue(stmt, "Roster").split(";")));
+            fullroster.getItems().setAll(FXCollections.observableArrayList(DatabaseReader.getRosterData(speciesList.getSelectionModel().getSelectedItem().toString(), culturesList.getSelectionModel().getSelectedItem().toString(), rostersList.getSelectionModel().getSelectedItem().toString()).get(0).toString().split(";")));
         }
     }
 
     @FXML
     private void cultureProgressListMousePressed() throws SQLException {
         if (!cultureProgressList.getSelectionModel().isEmpty() && !speciesList.getSelectionModel().isEmpty() && !culturesList.getSelectionModel().isEmpty()) {
-            chooseConnection(UseCases.Userdb);
-            PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT * FROM CreatedProgress WHERE ProgressName = ? AND SpeciesName = ? AND CultureName = ?");
-            stmt.setString(1, cultureProgressList.getSelectionModel().getSelectedItem().toString());
-            stmt.setString(2, speciesList.getSelectionModel().getSelectedItem().toString());
-            stmt.setString(3, culturesList.getSelectionModel().getSelectedItem().toString());
-            String add = BuilderCORE.getValue(stmt, "Progress");
+            String add = DatabaseReader.getProgressData(speciesList.getSelectionModel().getSelectedItem().toString(), culturesList.getSelectionModel().getSelectedItem().toString(), cultureProgressList.getSelectionModel().getSelectedItem().toString()).get(0).toString();
         }
     }
 

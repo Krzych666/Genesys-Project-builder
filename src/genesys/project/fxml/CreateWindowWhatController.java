@@ -77,7 +77,7 @@ public class CreateWindowWhatController implements Initializable {
         newSpeciesActions("Choose");
     }
 
-    private void newCultureActions(String Selection) throws IOException, SQLException {
+    private void newCultureActions(String Selection) throws IOException, SQLException, CloneNotSupportedException {
         GenesysProjectBuilder.hideOtherThanMainStage();
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/genesys/project/fxml/CreateCultureFXML.fxml"));
         Parent root = loader.load();
@@ -93,7 +93,7 @@ public class CreateWindowWhatController implements Initializable {
     }
 
     @FXML
-    private void createCultureChooseActionPerformed() throws IOException, SQLException {
+    private void createCultureChooseActionPerformed() throws IOException, SQLException, CloneNotSupportedException {
         newCultureActions("Choose");
     }
 
@@ -132,7 +132,7 @@ public class CreateWindowWhatController implements Initializable {
         this.speciesList = speciesList;
     }
 
-    void newWhat(String What, String Selection) throws IOException, SQLException {
+    void newWhat(String What, String Selection) throws IOException, SQLException, CloneNotSupportedException {
         switch (What) {
             case "Species":
                 newSpeciesActions("Choose");

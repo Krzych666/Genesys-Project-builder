@@ -14,15 +14,11 @@ import genesys.project.builder.Enums.Enmuerations.MainKingdomValue;
 import genesys.project.builder.Enums.Enmuerations.MainLineageValue;
 import genesys.project.builder.Enums.Enmuerations.MainOrderValue;
 import genesys.project.builder.Enums.Enmuerations.MainRegionValue;
-import genesys.project.builder.Enums.Enmuerations.UseCases;
 import genesys.project.fxml.BuilderFXMLController;
 import java.io.IOException;
-import static java.lang.Integer.max;
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import static genesys.project.builder.BuilderCORE.chooseConnection;
 import lombok.Getter;
 import lombok.Setter;
 
