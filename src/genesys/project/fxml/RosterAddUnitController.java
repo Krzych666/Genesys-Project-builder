@@ -142,7 +142,7 @@ public class RosterAddUnitController implements Initializable {
      */
     @FXML
     public void equipmentTypeChooserStateChangedActions() throws SQLException {
-        IMPROVEMENTS.clear();        
+        IMPROVEMENTS.clear();
         availableEquipmentList.setItems(DatabaseReader.getItemsNames(equipmentTypeChooser.getSelectionModel().getSelectedItem().toString()));
         improvementsList.getItems().clear();
         improvementsDetailsList.getItems().clear();
@@ -154,9 +154,11 @@ public class RosterAddUnitController implements Initializable {
      */
     @FXML
     public void availableEquipmentListMousePressed() throws SQLException {
-        IMPROVEMENTS.clear();
-        generateImprovementsList();
-        improvementsDetailsList.getItems().clear();
+        if (!availableEquipmentList.getSelectionModel().isEmpty()) {
+            IMPROVEMENTS.clear();
+            generateImprovementsList();
+            improvementsDetailsList.getItems().clear();
+        }
     }
 
     private void generateImprovementsList() throws SQLException {

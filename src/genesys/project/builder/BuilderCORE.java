@@ -434,67 +434,72 @@ public class BuilderCORE {
     }
 
     static Boolean decider(String requirement, String classSkillsRules) {
-        if (requirement.contains(" any ")) {
-            if (requirement.contains("any Fire Arm Trait")) {
-                requirement = requirement.replace("any Fire Arm Trait", "Flintlocks or Blunderbuss"); //dirty code
+        String req = DatabaseHolder.skillsSeparatorRepalcer(requirement);
+        if (req.contains(",")) {
+            req = req.replaceAll(",", " and ");
+            req = req.replaceAll("   ", " ").replaceAll("  ", " ");
+        }
+        if (req.contains(" any ")) {
+            if (req.contains("any Fire Arm Trait")) {
+                req = req.replace("any Fire Arm Trait", "Flintlocks or Blunderbuss"); //dirty code
             }
         }
-        if (requirement.contains(" or ") || requirement.contains(" and ")) {
-            if (requirement.contains(" or ") || !requirement.contains(" and ")) {
-                for (String split : requirement.split(" or ")) {
-                    if (classSkillsRules.contains(split)) {
-                        return true;
+        if (req.contains(" or ") || req.contains(" and ")) {
+            String tmp = req.replaceAll(" or ", " # ").replaceAll(" and ", " # ");
+            String tmp2 = req.replaceAll(" or ", " # ").replaceAll(" and ", " # ");
+            String tmp3 = req.replaceAll(" or ", " o ").replaceAll(" and ", " a ");
+            StringBuilder logicString = new StringBuilder();
+            for (String split : tmp.split(" \\# ")) {
+                Boolean present = false;
+                for (String split1 : classSkillsRules.split(";")) {
+                    if (convertSkillToRequirement(split1).equals(split)) {
+                        present = true;
                     }
+                }
+                if (present) {
+                    logicString.append("1");
+                } else {
+                    logicString.append("0");
+                }
+                if (tmp2.contains("#")) {
+                    logicString.append(tmp3.charAt(tmp2.indexOf("#")));
+                    tmp2 = tmp2.replaceFirst("\\#", "*");
                 }
             }
-            if (!requirement.contains(" or ") || requirement.contains(" and ")) {
-                int andCounter = 0;
-                for (String split : requirement.split(" and ")) {
-                    if (classSkillsRules.contains(split)) {
-                        andCounter++;
-                    }
-                }
-                if (requirement.split(" and ").length == andCounter) {
+            String gate = logicString.toString().replaceAll(" ", "");
+            while (gate.contains("o") || gate.contains("a")) {
+                gate = gate.replaceFirst("1o1", "1");
+                gate = gate.replaceFirst("1o0", "1");
+                gate = gate.replaceFirst("0o1", "1");
+                gate = gate.replaceFirst("0o0", "0");
+                gate = gate.replaceFirst("1a1", "1");
+                gate = gate.replaceFirst("1a0", "0");
+                gate = gate.replaceFirst("0a1", "0");
+                gate = gate.replaceFirst("0a0", "0");
+            }
+            if (gate.equals("1")) {
+                return true;
+            } else if (gate.equals("0")) {
+                return false;
+            }
+        } else {
+            for (String split : classSkillsRules.split(";")) {
+                if (convertSkillToRequirement(split).equals(req)) {
                     return true;
                 }
             }
-            if (requirement.contains(" or ") && requirement.contains(" and ")) {
-                String tmp = requirement.replaceAll(" or ", " # ").replaceAll(" and ", " # ");
-                String tmp2 = requirement.replaceAll(" or ", " # ").replaceAll(" and ", " # ");
-                String tmp3 = requirement.replaceAll(" or ", " o ").replaceAll(" and ", " a ");
-                StringBuilder logicString = new StringBuilder();
-                for (String split : tmp.split(" \\# ")) {
-                    if (classSkillsRules.contains(split)) {
-                        logicString.append("1");
-                    } else {
-                        logicString.append("0");
-                    }
-                    if (tmp2.contains("#")) {
-                        logicString.append(tmp3.charAt(tmp2.indexOf("#")));
-                        tmp2 = tmp2.replaceFirst("\\#", "*");
-                    }
-                }
-                String gate = logicString.toString().replaceAll(" ", "");
-                while (gate.contains("o") || gate.contains("a")) {
-                    gate = gate.replaceFirst("1o1", "1");
-                    gate = gate.replaceFirst("1o0", "1");
-                    gate = gate.replaceFirst("0o1", "1");
-                    gate = gate.replaceFirst("0o0", "0");
-                    gate = gate.replaceFirst("1a1", "1");
-                    gate = gate.replaceFirst("1a0", "0");
-                    gate = gate.replaceFirst("0a1", "0");
-                    gate = gate.replaceFirst("0a0", "0");
-                }
-                if (gate.equals("1")) {
-                    return true;
-                } else if (gate.equals("0")) {
-                    return false;
-                }
-            }
-        } else if (classSkillsRules.contains(requirement)) { // split skills, revert db changes on warhorses
-            return true;
         }
         return false;
+    }
+
+    public static String convertSkillToRequirement(String skill) {
+        if (skill.contains("Special Weapon:_")) {
+            return skill.replaceAll("Special Weapon:_", "");
+        }
+        if (skill.contains("Heavy Military Weapons")) {
+            return "Military Weapons";
+        }
+        return skill;
     }
 
     /**
