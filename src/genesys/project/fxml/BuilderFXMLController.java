@@ -402,7 +402,7 @@ public class BuilderFXMLController implements Initializable {
      */
     public ObservableList<String> getFullSkillsDescription(String rawSkills) throws SQLException {
         ObservableList<String> tmp = FXCollections.observableArrayList();
-        tmp.addAll(rawSkills.split(","));
+        tmp.addAll(rawSkills.replaceAll(";", ",").split(","));
         List<String> ruledskills = new ArrayList<>();
         String lst[] = new String[tmp.size()];
         ObservableList allSkills = DatabaseReader.loadAllSkillsFromDB();
@@ -748,7 +748,7 @@ public class BuilderFXMLController implements Initializable {
     private void skillsListMousePressed() throws SQLException {
         skillFullText.setText("");
         if (!skillsList.getSelectionModel().isEmpty()) {
-            subSkillsList.setItems(BuilderCORE.generateSubSkills(skillsList.getSelectionModel().getSelectedItem().toString(), simplifyToCoreSkills));
+            subSkillsList.setItems(BuilderCORE.generateSubSkills(skillsList.getSelectionModel().getSelectedItem().toString().split(" \\(pts : ")[0], simplifyToCoreSkills));
         }
     }
 

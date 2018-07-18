@@ -491,7 +491,7 @@ public class BuilderCORE {
                     return false;
                 }
             }
-        } else if (classSkillsRules.contains(requirement)) {
+        } else if (classSkillsRules.contains(requirement)) { // split skills, revert db changes on warhorses
             return true;
         }
         return false;

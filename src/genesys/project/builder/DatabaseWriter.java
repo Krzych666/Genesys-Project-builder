@@ -82,10 +82,12 @@ public class DatabaseWriter {
         }
         executeSQL("INSERT INTO `CreatedCultures`(CultureName,SpeciesName) VALUES ('" + DatabaseHolder.holdCulture.getCultureName() + "','" + DatabaseHolder.holdCulture.getSpeciesName() + "');");
         for (DatabaseHolder.AClass holdClas : DatabaseHolder.holdClass) {
-            if (holdClas.getSkills().length() > 2) {
-                holdClas.setSkills(holdClas.getSkills().substring(0, holdClas.getSkills().length() - 1));
+            if (holdClas.getClassName() != null && !holdClas.getClassName().equals("")) {
+                if (holdClas.getSkills().length() > 2) {
+                    holdClas.setSkills(holdClas.getSkills().substring(0, holdClas.getSkills().length() - 1));
+                }
+                executeSQL("INSERT INTO `CreatedClasses`(ClassName,Skills,SpeciesName,CultureName,Advancements,Type,BasedOn,AdditionalCost) VALUES ('" + holdClas.getClassName() + "','" + holdClas.getSkills() + "','" + DatabaseHolder.holdSpecies.getSpeciesName() + "','" + DatabaseHolder.holdCulture.getCultureName() + "'," + null + ",'" + holdClas.getType() + "','" + holdClas.getBasedOn() + "','" + holdClas.getAdditionalCost() + "');");
             }
-            executeSQL("INSERT INTO `CreatedClasses`(ClassName,Skills,SpeciesName,CultureName,Advancements,Type,BasedOn,AdditionalCost) VALUES ('" + holdClas.getClassName() + "','" + holdClas.getSkills() + "','" + DatabaseHolder.holdSpecies.getSpeciesName() + "','" + DatabaseHolder.holdCulture.getCultureName() + "'," + null + ",'" + holdClas.getType() + "','" + holdClas.getBasedOn() + "','" + holdClas.getAdditionalCost() + "');");
         }
         DatabaseHolder.holdSpecies = null;
     }

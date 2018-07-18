@@ -360,7 +360,7 @@ public class DatabaseReader {
         switch (itemType) {
             case "Armor":
             case "Weapon":
-            case "Comapnion":
+            case "Companion":
             case "Vehicle":
                 columns = new String[]{itemTypeOneWord + "Name", "SubType"};
                 break;
@@ -383,7 +383,7 @@ public class DatabaseReader {
                 case "Weapon":
                     requirement = data.get(i).toString().split("\\|")[0];
                     break;
-                case "Comapnion":
+                case "Companion":
                     requirement = data.get(i).toString().split("\\|")[0];
                     break;
                 case "Vehicle":
@@ -536,7 +536,7 @@ public class DatabaseReader {
                         break;
                 }
                 break;
-            case "Comapnion":
+            case "Companion":
                 stmt = BuilderCORE.getConnection().prepareStatement("SELECT * FROM EquipmentImprovements WHERE Type = 'Exotic Animal Attributes'");
                 break;
             case "Vehicle":

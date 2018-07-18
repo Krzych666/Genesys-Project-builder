@@ -269,7 +269,7 @@ public class AvailableSkillsLister {
     public static String getSkillsRules(String skills) throws SQLException {
         ObservableList allSkills = DatabaseReader.loadAllSkillsFromDB();
         StringBuilder skillsRules = new StringBuilder();
-        for (String split : skills.split(",")) {
+        for (String split : skills.replaceAll(";", ",").split(",")) {
             if (!split.equals("")) {
                 int index = BuilderCORE.getSkillIndex(allSkills, split);
                 skillsRules.append(allSkills.get(index).toString().split("\\|")[2]).append(";");
