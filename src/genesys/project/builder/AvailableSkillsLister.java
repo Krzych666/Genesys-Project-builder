@@ -269,7 +269,7 @@ public class AvailableSkillsLister {
     public static String getSkillsRules(String skills) throws SQLException {
         ObservableList allSkills = DatabaseReader.loadAllSkillsFromDB();
         StringBuilder skillsRules = new StringBuilder();
-        for (String split : skills.replaceAll(";", ",").split(",")) {
+        for (String split : DatabaseHolder.skillsSeparatorRepalcer(skills).split(",")) {
             if (!split.equals("")) {
                 int index = BuilderCORE.getSkillIndex(allSkills, split);
                 skillsRules.append(allSkills.get(index).toString().split("\\|")[2]).append(";");
@@ -290,8 +290,8 @@ public class AvailableSkillsLister {
         }
         DatabaseHolder.fullSkillList1 = "";
         DatabaseHolder.ruledskills.clear();
-        String[] lst = HoldSkills.replaceAll(";", ",").split(",");
-        String[] lstref = HoldSkills.replaceAll(";", ",").split(",");
+        String[] lst = DatabaseHolder.skillsSeparatorRepalcer(HoldSkills).split(",");
+        String[] lstref = DatabaseHolder.skillsSeparatorRepalcer(HoldSkills).split(",");
         for (int i = 0; i < lst.length; i++) {
             if (!lstref[i].equals("")) {
                 ObservableList data = DatabaseReader.loadSkillFromDB(lstref[i]);

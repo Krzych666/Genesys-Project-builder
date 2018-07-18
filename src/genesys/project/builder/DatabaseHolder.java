@@ -176,7 +176,6 @@ public class DatabaseHolder {
         }
     }
 
-
     /**
      *
      * @return
@@ -313,6 +312,17 @@ public class DatabaseHolder {
                 b = numberOfClases;
             }
         }
+    }
+
+    public static String skillsSeparatorRepalcer(String skills) {
+        if (skills != null && !skills.equals("")) {
+            String temp = skills.replaceAll(";", ",").replaceAll(",,", ",");
+            if (temp.endsWith(",")) {
+                temp = temp.substring(0, temp.length() - 1);
+            }
+            return temp;
+        }
+        return skills;
     }
 
     /**

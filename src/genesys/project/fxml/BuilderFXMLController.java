@@ -402,7 +402,7 @@ public class BuilderFXMLController implements Initializable {
      */
     public ObservableList<String> getFullSkillsDescription(String rawSkills) throws SQLException {
         ObservableList<String> tmp = FXCollections.observableArrayList();
-        tmp.addAll(rawSkills.replaceAll(";", ",").split(","));
+        tmp.addAll(DatabaseHolder.skillsSeparatorRepalcer(rawSkills).split(","));
         List<String> ruledskills = new ArrayList<>();
         String lst[] = new String[tmp.size()];
         ObservableList allSkills = DatabaseReader.loadAllSkillsFromDB();
@@ -484,7 +484,7 @@ public class BuilderFXMLController implements Initializable {
                 default:
                     break;
             }
-            String[] lst = ((dataClass.get(0).toString().split("\\|")[0]).split(","));
+            String[] lst = (DatabaseHolder.skillsSeparatorRepalcer(dataClass.get(0).toString().split("\\|")[0]).split(","));
             String basedOn = dataClass.get(0).toString().split("\\|")[3];
             if (basedOn != null && !basedOn.equals("null") && !basedOn.equals("")) {
                 points += a * baseCost(species, culture, basedOn, points);
@@ -506,7 +506,7 @@ public class BuilderFXMLController implements Initializable {
             }
             points += Integer.parseInt(dataClass.get(0).toString().split("\\|")[4]);
         } else {
-            String[] lst = (dataSpecies.get(0).toString().split("\\|")[3]).split(",");
+            String[] lst = DatabaseHolder.skillsSeparatorRepalcer(dataSpecies.get(0).toString().split("\\|")[3]).split(",");
             for (String lst1 : lst) {
                 int index = BuilderCORE.getSkillIndex(allSkills, lst1);
                 String pointCost = allSkills.get(index).toString().split("\\|")[1];

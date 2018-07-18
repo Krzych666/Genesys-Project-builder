@@ -171,16 +171,11 @@ public class DatabaseWriter {
                 stmt2.setString(2, tmpCult.get(i).toString());
                 stmt2.setString(3, tmpClass.get(ii).toString());
                 String tmpSkill = BuilderCORE.getValue(stmt2, "Skills");
-                String tmpSkillRep = tmpSkill;
-                for (String split : deleteSkills.replaceAll(";", ",").split(",")) {
+                String tmpSkillRep = DatabaseHolder.skillsSeparatorRepalcer(tmpSkill);
+                for (String split : DatabaseHolder.skillsSeparatorRepalcer(deleteSkills).split(",")) {
                     tmpSkillRep = tmpSkillRep.replace(split, "");
                 }
-                if (tmpSkillRep != null && !tmpSkillRep.equals("")) {
-                    tmpSkillRep = tmpSkillRep.replace(",,", ",");
-                    if (tmpSkillRep.endsWith(",")) {
-                        tmpSkillRep = tmpSkillRep.substring(0, tmpSkillRep.length() - 1);
-                    }
-                }
+                tmpSkillRep = DatabaseHolder.skillsSeparatorRepalcer(tmpSkillRep);
                 if (!tmpSkill.equals(tmpSkillRep)) {
                     executeSQL("UPDATE CreatedClasses SET Skills='" + tmpSkillRep + "' WHERE SpeciesName='" + DatabaseHolder.holdSpecies.getSpeciesName() + "' AND CultureName='" + tmpCult.get(i).toString() + "' AND ClassName='" + tmpClass.get(ii).toString() + "'");
                 }
@@ -264,16 +259,11 @@ public class DatabaseWriter {
             stmt2.setString(2, DatabaseHolder.holdClass[a].getCultureName());
             stmt2.setString(3, tmpBased.get(i).toString());
             String tmpSkill = BuilderCORE.getValue(stmt2, "Skills");
-            String tmpSkillRep = tmpSkill;
-            for (String split : deleteSkills.replaceAll(";", ",").split(",")) {
+            String tmpSkillRep = DatabaseHolder.skillsSeparatorRepalcer(tmpSkill);
+            for (String split : DatabaseHolder.skillsSeparatorRepalcer(deleteSkills).split(",")) {
                 tmpSkillRep = tmpSkillRep.replace(split, "");
             }
-            if (tmpSkillRep != null && !tmpSkillRep.equals("")) {
-                tmpSkillRep = tmpSkillRep.replace(",,", ",");
-                if (tmpSkillRep.endsWith(",")) {
-                    tmpSkillRep = tmpSkillRep.substring(0, tmpSkillRep.length() - 1);
-                }
-            }
+            tmpSkillRep = DatabaseHolder.skillsSeparatorRepalcer(tmpSkillRep);
             if (!tmpSkill.equals(tmpSkillRep)) {
                 executeSQL("UPDATE CreatedClasses SET Skills='" + tmpSkillRep + "' WHERE SpeciesName='" + DatabaseHolder.holdClass[a].getSpeciesName() + "' AND CultureName='" + DatabaseHolder.holdClass[a].getCultureName() + "' AND ClassName='" + tmpBased.get(i).toString() + "'");
             }

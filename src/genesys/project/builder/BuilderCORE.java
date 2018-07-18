@@ -572,7 +572,7 @@ public class BuilderCORE {
             }
             if (!"".equals(classname[bb].getType()) && !"null".equals(classname[bb].getType()) && !(BuilderCORE.BASE.equals(DatabaseHolder.classList1Holder))) {
                 if (classname[bb].getBasedOn() != null && !classname[bb].getBasedOn().equals(BuilderCORE.BASE) && !BuilderCORE.BASE.equals(DatabaseHolder.classList1Holder)) {
-                    String[] lst = (classname[bb].getSkills()).replaceAll(";", ",").split(",");
+                    String[] lst = DatabaseHolder.skillsSeparatorRepalcer(classname[bb].getSkills()).split(",");
                     for (int s = 0; s < classname.length; s++) {
                         if (classname[bb].getBasedOn().equals(classname[s].getClassName())) {
                             source = s;
@@ -589,7 +589,7 @@ public class BuilderCORE {
                         }
                     }
                 } else if (classname[bb].getBasedOn() != null && classname[bb].getBasedOn().equals(BuilderCORE.BASE) && !BuilderCORE.BASE.equals(DatabaseHolder.classList1Holder) && !"".equals(classname[bb].getSkills()) && !",".equals(classname[bb].getSkills())) {
-                    String[] lst = (classname[bb].getSkills()).replaceAll(";", ",").split(",");
+                    String[] lst = DatabaseHolder.skillsSeparatorRepalcer(classname[bb].getSkills()).split(",");
                     for (String lst1 : lst) {
                         String add = DatabaseReader.loadSkillFromDB(lst1).get(0).toString().split("\\|")[1];
                         if (add.contains("/")) {
@@ -599,7 +599,7 @@ public class BuilderCORE {
                     }
                 }
                 if (!"".equals(species.getSkills()) && classname[bb].getBasedOn().equals(BuilderCORE.BASE)) {
-                    String[] lst = species.getSkills().replaceAll(";", ",").split(",");
+                    String[] lst = DatabaseHolder.skillsSeparatorRepalcer(species.getSkills()).split(",");
                     for (String lst1 : lst) {
                         String add = DatabaseReader.loadSkillFromDB(lst1).get(0).toString().split("\\|")[1];
                         if (add.contains("/")) {
@@ -609,7 +609,7 @@ public class BuilderCORE {
                     }
                 }
             } else {
-                String[] lst = species.getSkills().replaceAll(";", ",").split(",");
+                String[] lst = DatabaseHolder.skillsSeparatorRepalcer(species.getSkills()).split(",");
                 for (String lst1 : lst) {
                     String add = DatabaseReader.loadSkillFromDB(lst1).get(0).toString().split("\\|")[1];
                     if (add.contains("/")) {
@@ -619,7 +619,7 @@ public class BuilderCORE {
                 }
             }
         } else if (!"".equals(species.getSkills())) {
-            String[] lst = species.getSkills().replaceAll(";", ",").split(",");
+            String[] lst = DatabaseHolder.skillsSeparatorRepalcer(species.getSkills()).split(",");
             for (String lst1 : lst) {
                 String add = DatabaseReader.loadSkillFromDB(lst1).get(0).toString().split("\\|")[1];
                 if (add.contains("/")) {
