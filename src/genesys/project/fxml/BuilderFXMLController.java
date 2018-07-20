@@ -14,7 +14,6 @@ import genesys.project.builder.Enums.TheModifiers;
 import genesys.project.builder.GenesysProjectBuilder;
 import java.io.IOException;
 import java.net.URL;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -182,131 +181,151 @@ public class BuilderFXMLController implements Initializable {
     MenuItem deleteIt = new MenuItem("Delete selected");
     final ContextMenu rightClickContextMenu = new ContextMenu(createIt, editIt, duplicateIt, deleteIt);
 
-    private void editActionPerformed(String What) throws IOException, SQLException, CloneNotSupportedException {
-        GenesysProjectBuilder.hideOtherThanMainStage();
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/genesys/project/fxml/EditWindowFXML.fxml"));
-        Parent root = loader.load();
-        editWindowController = loader.getController();
-        editWindowController.setSpeciesAndCultureAndRosterList(speciesList, culturesList, rostersList);
-        Scene scene = new Scene(root);
-        editWindowStage.setScene(scene);
-        editWindowStage.setTitle("Edit");
-        if (What.equals("Choose")) {
-            editWindowStage.show();
-        } else {
-            editWindowController.editWhat();
+    private void editActionPerformed(String What) {
+        try {
+            GenesysProjectBuilder.hideOtherThanMainStage();
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/genesys/project/fxml/EditWindowFXML.fxml"));
+            Parent root = loader.load();
+            editWindowController = loader.getController();
+            editWindowController.setSpeciesAndCultureAndRosterList(speciesList, culturesList, rostersList);
+            Scene scene = new Scene(root);
+            editWindowStage.setScene(scene);
+            editWindowStage.setTitle("Edit");
+            if (What.equals("Choose")) {
+                editWindowStage.show();
+            } else {
+                editWindowController.editWhat();
+            }
+        } catch (IOException ex) {
+            ErrorController.ErrorController(ex);
+            Logger.getLogger(BuilderFXMLController.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
     @FXML
-    private void editChooseActionPerformed() throws IOException, SQLException, CloneNotSupportedException {
+    private void editChooseActionPerformed() {
         editActionPerformed("Choose");
     }
 
-    private void createActionPerformed(String What, String Selection) throws IOException, SQLException, CloneNotSupportedException {
-        GenesysProjectBuilder.hideOtherThanMainStage();
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/genesys/project/fxml/CreateWindowWhatFXML.fxml"));
-        Parent root = loader.load();
-        createWindowWhatController = loader.getController();
-        createWindowWhatController.setSpeciesList(speciesList);
-        Scene scene = new Scene(root);
-        createWindowWhatStage.setScene(scene);
-        createWindowWhatStage.setTitle("Create");
-        if (What.equals("Choose")) {
-            createWindowWhatStage.show();
-        } else {
-            createWindowWhatController.newWhat(What, Selection);
+    private void createActionPerformed(String What, String Selection) {
+        try {
+            GenesysProjectBuilder.hideOtherThanMainStage();
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/genesys/project/fxml/CreateWindowWhatFXML.fxml"));
+            Parent root = loader.load();
+            createWindowWhatController = loader.getController();
+            createWindowWhatController.setSpeciesList(speciesList);
+            Scene scene = new Scene(root);
+            createWindowWhatStage.setScene(scene);
+            createWindowWhatStage.setTitle("Create");
+            if (What.equals("Choose")) {
+                createWindowWhatStage.show();
+            } else {
+                createWindowWhatController.newWhat(What, Selection);
+            }
+        } catch (IOException ex) {
+            ErrorController.ErrorController(ex);
+            Logger.getLogger(BuilderFXMLController.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
     @FXML
-    private void createChooseActionPerformed() throws IOException, SQLException, CloneNotSupportedException {
+    private void createChooseActionPerformed() {
         createActionPerformed("Choose", null);
     }
 
     @FXML
-    private void createSpeciesActionPerformed() throws IOException, SQLException, CloneNotSupportedException {
+    private void createSpeciesActionPerformed() {
         createActionPerformed("Species", null);
     }
 
     @FXML
-    private void createCultureActionPerformed() throws IOException, SQLException, CloneNotSupportedException {
+    private void createCultureActionPerformed() {
         createActionPerformed("Culture", null);
     }
 
     @FXML
-    private void createRosterActionPerformed() throws IOException, SQLException, CloneNotSupportedException {
+    private void createRosterActionPerformed() {
         createActionPerformed("Roster", null);
     }
 
     @FXML
-    private void createHumanoidActionPerformed() throws IOException, SQLException, CloneNotSupportedException {
+    private void createHumanoidActionPerformed() {
         createActionPerformed("Humanoid", null);
     }
 
     @FXML
-    private void createFeyActionPerformed() throws IOException, SQLException, CloneNotSupportedException {
+    private void createFeyActionPerformed() {
         createActionPerformed("Fey", null);
     }
 
     @FXML
-    private void createReptiliaActionPerformed() throws IOException, SQLException, CloneNotSupportedException {
+    private void createReptiliaActionPerformed() {
         createActionPerformed("Reptilia", null);
     }
 
     @FXML
-    private void createBiestActionPerformed() throws IOException, SQLException, CloneNotSupportedException {
+    private void createBiestActionPerformed() {
         createActionPerformed("Biest", null);
     }
 
     @FXML
-    private void createInsectaActionPerformed() throws IOException, SQLException, CloneNotSupportedException {
+    private void createInsectaActionPerformed() {
         createActionPerformed("Insecta", null);
     }
 
-    private void duplicateActionPerformed(String menuItem) throws IOException, SQLException {
-        GenesysProjectBuilder.hideOtherThanMainStage();
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/genesys/project/fxml/DuplicateWindowFXML.fxml"));
-        Parent root = loader.load();
-        duplicateWindowController = loader.getController();
-        duplicateWindowController.setSpeciesAndCultureAndRosterList(speciesList, culturesList, rostersList);
-        duplicateWindowController.setDuplicateWindowController(duplicateWindowController);
-        Scene scene = new Scene(root);
-        duplicateWindowStage.setScene(scene);
-        duplicateWindowStage.setTitle("Duplicate");
-        if (!menuItem.equals("Choose")) {
-            duplicateWindowController.setSelected();
+    private void duplicateActionPerformed(String menuItem) {
+        try {
+            GenesysProjectBuilder.hideOtherThanMainStage();
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/genesys/project/fxml/DuplicateWindowFXML.fxml"));
+            Parent root = loader.load();
+            duplicateWindowController = loader.getController();
+            duplicateWindowController.setSpeciesAndCultureAndRosterList(speciesList, culturesList, rostersList);
+            duplicateWindowController.setDuplicateWindowController(duplicateWindowController);
+            Scene scene = new Scene(root);
+            duplicateWindowStage.setScene(scene);
+            duplicateWindowStage.setTitle("Duplicate");
+            if (!menuItem.equals("Choose")) {
+                duplicateWindowController.setSelected();
+            }
+            duplicateWindowStage.show();
+        } catch (IOException ex) {
+            ErrorController.ErrorController(ex);
+            Logger.getLogger(BuilderFXMLController.class.getName()).log(Level.SEVERE, null, ex);
         }
-        duplicateWindowStage.show();
     }
 
     @FXML
-    private void duplicateChooseActionPerformed() throws IOException, SQLException, CloneNotSupportedException {
+    private void duplicateChooseActionPerformed() {
         duplicateActionPerformed("Choose");
     }
 
-    private void deleteActionPerformed(String menuItem) throws IOException, SQLException {
-        GenesysProjectBuilder.hideOtherThanMainStage();
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/genesys/project/fxml/DeleteWindowFXML.fxml"));
-        Parent root = loader.load();
-        deleteWindowController = loader.getController();
-        deleteWindowController.setSpeciesAndCultureAndRosterList(speciesList, culturesList, rostersList);
-        Scene scene = new Scene(root);
-        deleteWindowStage.setScene(scene);
-        deleteWindowStage.setTitle("Delete");
-        if (!menuItem.equals("Choose")) {
-            deleteWindowController.setSelected();
+    private void deleteActionPerformed(String menuItem) {
+        try {
+            GenesysProjectBuilder.hideOtherThanMainStage();
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/genesys/project/fxml/DeleteWindowFXML.fxml"));
+            Parent root = loader.load();
+            deleteWindowController = loader.getController();
+            deleteWindowController.setSpeciesAndCultureAndRosterList(speciesList, culturesList, rostersList);
+            Scene scene = new Scene(root);
+            deleteWindowStage.setScene(scene);
+            deleteWindowStage.setTitle("Delete");
+            if (!menuItem.equals("Choose")) {
+                deleteWindowController.setSelected();
+            }
+            deleteWindowStage.show();
+        } catch (IOException ex) {
+            ErrorController.ErrorController(ex);
+            Logger.getLogger(BuilderFXMLController.class.getName()).log(Level.SEVERE, null, ex);
         }
-        deleteWindowStage.show();
     }
 
     @FXML
-    private void deleteChooseActionPerformed() throws IOException, SQLException, CloneNotSupportedException {
+    private void deleteChooseActionPerformed() {
         deleteActionPerformed("Choose");
     }
 
     @FXML
-    private void speciesListMousePressed() throws SQLException, CloneNotSupportedException {
+    private void speciesListMousePressed() {
         if (!speciesList.getSelectionModel().isEmpty()) {
             HOLD_MODIFIERS.clearModifiers();
             ObservableList dataSpecies = DatabaseReader.getSpeciesData(speciesList.getSelectionModel().getSelectedItem().toString());
@@ -325,7 +344,7 @@ public class BuilderFXMLController implements Initializable {
     }
 
     @FXML
-    private void culturesListMousePressed() throws SQLException, CloneNotSupportedException {
+    private void culturesListMousePressed() {
         if (!culturesList.getSelectionModel().isEmpty() && !speciesList.getSelectionModel().isEmpty()) {
             ObservableList dataSpecies = DatabaseReader.getSpeciesData(speciesList.getSelectionModel().getSelectedItem().toString());
             skillsList.setItems(getFullSkillsDescription(dataSpecies.get(0).toString().split("\\|")[3]));
@@ -351,7 +370,7 @@ public class BuilderFXMLController implements Initializable {
     }
 
     @FXML
-    private void classListMousePressed() throws SQLException, CloneNotSupportedException {
+    private void classListMousePressed() {
         if (!classList.getSelectionModel().isEmpty() && !speciesList.getSelectionModel().isEmpty() && !culturesList.getSelectionModel().isEmpty()) {
             heroesList.getSelectionModel().clearSelection();
             String simpleSkillList;
@@ -376,7 +395,7 @@ public class BuilderFXMLController implements Initializable {
     }
 
     @FXML
-    private void heroesListMousePressed() throws SQLException, CloneNotSupportedException {
+    private void heroesListMousePressed() {
         if (!heroesList.getSelectionModel().isEmpty() && !speciesList.getSelectionModel().isEmpty() && !culturesList.getSelectionModel().isEmpty()) {
             classList.getSelectionModel().clearSelection();
             ObservableList dataSpecies = DatabaseReader.getSpeciesData(speciesList.getSelectionModel().getSelectedItem().toString());
@@ -398,9 +417,9 @@ public class BuilderFXMLController implements Initializable {
      *
      * @param rawSkills
      * @return
-     * @throws SQLException
+     * @
      */
-    public ObservableList<String> getFullSkillsDescription(String rawSkills) throws SQLException {
+    public ObservableList<String> getFullSkillsDescription(String rawSkills) {
         ObservableList<String> tmp = FXCollections.observableArrayList();
         tmp.addAll(DatabaseHolder.skillsSeparatorRepalcer(rawSkills).split(","));
         List<String> ruledskills = new ArrayList<>();
@@ -432,7 +451,7 @@ public class BuilderFXMLController implements Initializable {
         return tmp;
     }
 
-    private String getSourceBaseSkills(ObservableList dataSpecies, ObservableList dataClass) throws SQLException {
+    private String getSourceBaseSkills(ObservableList dataSpecies, ObservableList dataClass) {
         String skillsThis = "";
         String basedOn = "";
         String skillsBefore = "";
@@ -459,10 +478,8 @@ public class BuilderFXMLController implements Initializable {
      * @param classname
      * @param points
      * @return
-     * @throws java.sql.SQLException
-     * @throws java.lang.CloneNotSupportedException
      */
-    public int baseCost(String species, String culture, String classname, int points) throws SQLException, CloneNotSupportedException {
+    public int baseCost(String species, String culture, String classname, int points) {
         int a = 1;
         ObservableList dataSpecies = DatabaseReader.getSpeciesData(species);
         ObservableList allSkills = DatabaseReader.loadAllSkillsFromDB();
@@ -693,9 +710,9 @@ public class BuilderFXMLController implements Initializable {
 
     /**
      *
-     * @throws SQLException
+     * @
      */
-    public void populateLabels() throws SQLException {
+    public void populateLabels() {
         for (int i = 0; i < valuesLabels.length; i++) {
             valuesLabels[i].setText(DatabaseReader.getCharacteristics(currentLifeDomain.toString(), currentCharacteristicGroup.toString())[i]);
         }
@@ -723,29 +740,29 @@ public class BuilderFXMLController implements Initializable {
 
     /**
      *
-     * @throws SQLException
+     * @
      */
-    public void clearSelectionEvent() throws SQLException {
+    public void clearSelectionEvent() {
         clearLists();
         speciesList.setItems(DatabaseReader.getSpeciesList());
     }
 
     @FXML
-    private void rosterListMousePressed() throws SQLException {
+    private void rosterListMousePressed() {
         if (!rostersList.getSelectionModel().isEmpty() && !speciesList.getSelectionModel().isEmpty() && !culturesList.getSelectionModel().isEmpty()) {
             fullroster.getItems().setAll(FXCollections.observableArrayList(DatabaseReader.getRosterData(speciesList.getSelectionModel().getSelectedItem().toString(), culturesList.getSelectionModel().getSelectedItem().toString(), rostersList.getSelectionModel().getSelectedItem().toString()).get(0).toString().split(";")));
         }
     }
 
     @FXML
-    private void cultureProgressListMousePressed() throws SQLException {
+    private void cultureProgressListMousePressed() {
         if (!cultureProgressList.getSelectionModel().isEmpty() && !speciesList.getSelectionModel().isEmpty() && !culturesList.getSelectionModel().isEmpty()) {
             String add = DatabaseReader.getProgressData(speciesList.getSelectionModel().getSelectedItem().toString(), culturesList.getSelectionModel().getSelectedItem().toString(), cultureProgressList.getSelectionModel().getSelectedItem().toString()).get(0).toString();
         }
     }
 
     @FXML
-    private void skillsListMousePressed() throws SQLException {
+    private void skillsListMousePressed() {
         skillFullText.setText("");
         if (!skillsList.getSelectionModel().isEmpty()) {
             subSkillsList.setItems(BuilderCORE.generateSubSkills(skillsList.getSelectionModel().getSelectedItem().toString().split(" \\(pts : ")[0], simplifyToCoreSkills));
@@ -753,14 +770,14 @@ public class BuilderFXMLController implements Initializable {
     }
 
     @FXML
-    private void subSkillsListMousePressed() throws SQLException {
+    private void subSkillsListMousePressed() {
         if (!subSkillsList.getSelectionModel().isEmpty()) {
             skillFullText.setText(BuilderCORE.generateSubSkillText(subSkillsList.getSelectionModel().getSelectedItem().toString(), !simplifyToCoreSkills));
         }
     }
 
     @FXML
-    private void showAsCoreSkillsPressed() throws SQLException {
+    private void showAsCoreSkillsPressed() {
         simplifyToCoreSkills = showAsCoreSkills.isSelected();
         int i = -1;
         if (!subSkillsList.getSelectionModel().isEmpty()) {
@@ -784,11 +801,7 @@ public class BuilderFXMLController implements Initializable {
     public void initialize(URL url, ResourceBundle rb) {
         simplifyToCoreSkills = false;
         this.valuesLabels = new Label[]{strengthValue, toughnessValue, movementValue, martialValue, rangedValue, defenseValue, disciplineValue, willpowerValue, commandValue, woundsValue, attacksValue, sizeValue, mTValue, rTValue, moraleValue};
-        try {
-            speciesList.setItems(DatabaseReader.getSpeciesList());
-        } catch (SQLException ex) {
-            Logger.getLogger(BuilderFXMLController.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        speciesList.setItems(DatabaseReader.getSpeciesList());
         speciesList.setCellFactory(new Callback<ListView<String>, ListCell<String>>() {
             @Override
             public ListCell<String> call(ListView<String> param) {
@@ -813,17 +826,9 @@ public class BuilderFXMLController implements Initializable {
         });
         speciesList.getSelectionModel().selectedItemProperty().addListener((ObservableValue observable, Object oldValue, Object newValue) -> {
             if (speciesList.getSelectionModel().getSelectedItem() == null) {
-                try {
-                    clearSelectionEvent();
-                } catch (SQLException ex) {
-                    Logger.getLogger(BuilderFXMLController.class.getName()).log(Level.SEVERE, null, ex);
-                }
+                clearSelectionEvent();
             } else {
-                try {
-                    speciesListMousePressed();
-                } catch (SQLException | CloneNotSupportedException ex) {
-                    Logger.getLogger(BuilderFXMLController.class.getName()).log(Level.SEVERE, null, ex);
-                }
+                speciesListMousePressed();
             }
         });
 
@@ -843,16 +848,12 @@ public class BuilderFXMLController implements Initializable {
         rightClickContextMenu.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                try {
-                    checkListAndMenuItemThenDecide(((MenuItem) event.getTarget()).getText());
-                } catch (IOException | SQLException | CloneNotSupportedException ex) {
-                    Logger.getLogger(BuilderFXMLController.class.getName()).log(Level.SEVERE, null, ex);
-                }
+                checkListAndMenuItemThenDecide(((MenuItem) event.getTarget()).getText());
             }
         });
     }
 
-    private void checkListAndMenuItemThenDecide(String menuItem) throws IOException, SQLException, CloneNotSupportedException {
+    private void checkListAndMenuItemThenDecide(String menuItem) {
         switch (menuItem) {
             case "Create new":
                 if (rostersList.isFocused() && !culturesList.getSelectionModel().isEmpty()) {

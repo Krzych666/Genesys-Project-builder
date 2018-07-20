@@ -7,7 +7,6 @@ package genesys.project.fxml;
 
 import genesys.project.builder.DatabaseReader;
 import java.net.URL;
-import java.sql.SQLException;
 import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -24,7 +23,7 @@ public class DuplicateAreYouSureController implements Initializable {
 
     /**
      * @FXML private DuplicateAreYouSure = new javax.swing.JDialog;
- *
+     *
      */
     @FXML
     private Label areYouSureMessage1;
@@ -39,20 +38,19 @@ public class DuplicateAreYouSureController implements Initializable {
     Window duplicateWindow;
 
     /**
-     *duplicateWindowController
+     * duplicateWindowController
      */
     public DuplicateWindowController duplicateWindowController;
 
     /**
      *
-     * @throws SQLException
+     *
      */
     @FXML
-    public void duplicateYesButtonActions() throws SQLException {
+    public void duplicateYesButtonActions() {
         duplicateWindowController.commenceDuplicating();
         speciesList.setItems(DatabaseReader.getSpeciesList());
         speciesList.getSelectionModel().clearSelection();
-
         Stage stage = (Stage) duplicateYesButton.getScene().getWindow();
         stage.hide();
         duplicateWindow.hide();
@@ -62,7 +60,7 @@ public class DuplicateAreYouSureController implements Initializable {
     }
 
     /**
-     *duplicateNoButtonActions
+     * duplicateNoButtonActions
      */
     @FXML
     public void duplicateNoButtonActions() {
@@ -72,6 +70,7 @@ public class DuplicateAreYouSureController implements Initializable {
 
     /**
      * Initializes the controller class.
+     *
      * @param url
      * @param rb
      */

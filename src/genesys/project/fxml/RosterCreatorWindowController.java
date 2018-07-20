@@ -12,8 +12,9 @@ import genesys.project.builder.DatabaseReader;
 import genesys.project.builder.DatabaseWriter;
 import java.io.IOException;
 import java.net.URL;
-import java.sql.SQLException;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -156,10 +157,10 @@ public class RosterCreatorWindowController implements Initializable {
 
     /**
      *
-     * @throws SQLException
+     *
      */
     @FXML
-    public void classListMousePressedActions() throws SQLException {
+    public void classListMousePressedActions() {
         if (!classList.getSelectionModel().isEmpty()) {
             DatabaseHolder.classList1Holder = classList.getSelectionModel().getSelectedItem().toString();
             for (int i = 0; i < DatabaseHolder.holdClass.length; i++) {
@@ -181,9 +182,9 @@ public class RosterCreatorWindowController implements Initializable {
 
     /**
      *
-     * @throws SQLException
+     *
      */
-    public void populateLabels() throws SQLException {
+    public void populateLabels() {
         for (int i = 0; i < valuesLabels.length; i++) {
             valuesLabels[i].setText(DatabaseReader.getCharacteristics(DatabaseHolder.holdSpecies.getLifedomain().toString(), DatabaseHolder.holdSpecies.getCharacteristicGroup().toString())[i]);
         }
@@ -191,24 +192,26 @@ public class RosterCreatorWindowController implements Initializable {
 
     /**
      *
-     * @throws IOException
-     * @throws java.sql.SQLException
-     * @throws java.lang.CloneNotSupportedException
      */
     @FXML
-    public void addUnitActions() throws IOException, SQLException, CloneNotSupportedException {
+    public void addUnitActions() {
         if (!classList.getSelectionModel().isEmpty()) {
             if (rosterAddUnitStage.isShowing()) {
                 rosterAddUnitStage.requestFocus();
             } else {
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("/genesys/project/fxml/RosterAddUnitFXML.fxml"));
-                Parent root = loader.load();
-                Scene scene = new Scene(root);
-                rosterAddUnitController = loader.getController();
-                rosterAddUnitController.setNameBasePointsRoster(classList.getSelectionModel().getSelectedItem().toString(), Integer.parseInt(pointsPerModelValue.getText()), Roster, currentPointsValue, maxPointsValue);
-                rosterAddUnitStage.setScene(scene);
-                rosterAddUnitStage.setTitle("Add Unit to " + DatabaseHolder.holdRoster.getRosterName() + " for " + DatabaseHolder.holdRoster.getSpeciesName() + " - " + DatabaseHolder.holdRoster.getCultureName());
-                rosterAddUnitStage.show();
+                try {
+                    FXMLLoader loader = new FXMLLoader(getClass().getResource("/genesys/project/fxml/RosterAddUnitFXML.fxml"));
+                    Parent root = loader.load();
+                    Scene scene = new Scene(root);
+                    rosterAddUnitController = loader.getController();
+                    rosterAddUnitController.setNameBasePointsRoster(classList.getSelectionModel().getSelectedItem().toString(), Integer.parseInt(pointsPerModelValue.getText()), Roster, currentPointsValue, maxPointsValue);
+                    rosterAddUnitStage.setScene(scene);
+                    rosterAddUnitStage.setTitle("Add Unit to " + DatabaseHolder.holdRoster.getRosterName() + " for " + DatabaseHolder.holdRoster.getSpeciesName() + " - " + DatabaseHolder.holdRoster.getCultureName());
+                    rosterAddUnitStage.show();
+                } catch (IOException ex) {
+                    ErrorController.ErrorController(ex);
+                    Logger.getLogger(RosterCreatorWindowController.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
         }
     }

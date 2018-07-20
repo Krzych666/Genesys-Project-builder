@@ -9,7 +9,6 @@ import genesys.project.builder.DatabaseReader;
 import genesys.project.builder.DatabaseHolder;
 import java.io.IOException;
 import java.net.URL;
-import java.sql.SQLException;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -84,20 +83,20 @@ public class DuplicateWindowController implements Initializable {
 
     /**
      *
-     * @throws SQLException
+     * @
      */
     @FXML
-    public void speciesDuplicateDropdownItemStateChangedActions() throws SQLException {
+    public void speciesDuplicateDropdownItemStateChangedActions() {
         cultureDuplicateDropdown.setItems(DatabaseReader.populateDropdownsCultures(speciesDuplicateDropdown.getSelectionModel().getSelectedItem().toString()));
         cultureDuplicateDropdown.getSelectionModel().select(0);
     }
 
     /**
      *
-     * @throws SQLException
+     * @
      */
     @FXML
-    public void cultureDuplicateDropdownItemStateChangedActions() throws SQLException {
+    public void cultureDuplicateDropdownItemStateChangedActions() {
         if (cultureDuplicateDropdown.getSelectionModel().isEmpty()) {
             cultureDuplicateDropdown.getSelectionModel().select(0);
         }
@@ -113,10 +112,10 @@ public class DuplicateWindowController implements Initializable {
 
     /**
      *
-     * @throws SQLException
+     * @
      */
     @FXML
-    public void classDuplicateDropdownItemStateChangedActions() throws SQLException {
+    public void classDuplicateDropdownItemStateChangedActions() {
         if (classDuplicateDropdown.getSelectionModel().isEmpty()) {
             classDuplicateDropdown.getSelectionModel().select(0);
         }
@@ -165,25 +164,30 @@ public class DuplicateWindowController implements Initializable {
 
     /**
      *
-     * @throws IOException
+     *
      */
     @FXML
-    public void duplicateFinishButtonActions() throws IOException {
+    public void duplicateFinishButtonActions() {
 
         if (duplicateAreYouSureStage.isShowing()) {
             duplicateAreYouSureStage.requestFocus();
         } else {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/genesys/project/fxml/DuplicateAreYouSureFXML.fxml"));
-            Parent root = loader.load();
-            duplicateAreYouSureController = loader.getController();
-            duplicateAreYouSureController.setSpeciesList(speciesList);
-            duplicateAreYouSureController.getDeleteWindow(duplicateFinishButton.getScene().getWindow());
-            toDuplicate = duplicateAreYouSureController.getToDuplicate();
-            duplicateAreYouSureController.setDuplicateWindowController(duplicateWindowController);
-            Scene scene = new Scene(root);
-            duplicateAreYouSureStage.setScene(scene);
-            duplicateAreYouSureStage.setTitle("Confirm Duplication");
-            duplicateAreYouSureStage.show();
+            try {
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/genesys/project/fxml/DuplicateAreYouSureFXML.fxml"));
+                Parent root = loader.load();
+                duplicateAreYouSureController = loader.getController();
+                duplicateAreYouSureController.setSpeciesList(speciesList);
+                duplicateAreYouSureController.getDeleteWindow(duplicateFinishButton.getScene().getWindow());
+                toDuplicate = duplicateAreYouSureController.getToDuplicate();
+                duplicateAreYouSureController.setDuplicateWindowController(duplicateWindowController);
+                Scene scene = new Scene(root);
+                duplicateAreYouSureStage.setScene(scene);
+                duplicateAreYouSureStage.setTitle("Confirm Duplication");
+                duplicateAreYouSureStage.show();
+            } catch (IOException ex) {
+                ErrorController.ErrorController(ex);
+                Logger.getLogger(DuplicateWindowController.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
         showWhatToDuplicate();
     }
@@ -229,35 +233,35 @@ public class DuplicateWindowController implements Initializable {
 
     /**
      *
-     * @throws SQLException
+     * @
      */
-    public void commenceDuplicating() throws SQLException {
+    public void commenceDuplicating() {
         if (!speciesDuplicateDropdown.getSelectionModel().getSelectedItem().toString().equals(DatabaseHolder.TOPDROP) && cultureDuplicateDropdown.getSelectionModel().getSelectedItem().toString().equals(DatabaseHolder.TOPDROP)) {
-            DatabaseWriter.duplicateSpecies(speciesDuplicateDropdown.getSelectionModel().getSelectedItem().toString(),duplicateNewNameValue.getText());
-            DatabaseWriter.duplicateCulture(speciesDuplicateDropdown.getSelectionModel().getSelectedItem().toString(), "--all--",duplicateNewNameValue.getText());
-            DatabaseWriter.duplicateClass(speciesDuplicateDropdown.getSelectionModel().getSelectedItem().toString(), "--all--", "--all--",duplicateNewNameValue.getText());
-            DatabaseWriter.duplicateHero(speciesDuplicateDropdown.getSelectionModel().getSelectedItem().toString(), "--all--", "--all--",duplicateNewNameValue.getText());
-            DatabaseWriter.duplicateProgress(speciesDuplicateDropdown.getSelectionModel().getSelectedItem().toString(), "--all--", "--all--",duplicateNewNameValue.getText());
-            DatabaseWriter.duplicateRoster(speciesDuplicateDropdown.getSelectionModel().getSelectedItem().toString(), "--all--", "--all--",duplicateNewNameValue.getText());
+            DatabaseWriter.duplicateSpecies(speciesDuplicateDropdown.getSelectionModel().getSelectedItem().toString(), duplicateNewNameValue.getText());
+            DatabaseWriter.duplicateCulture(speciesDuplicateDropdown.getSelectionModel().getSelectedItem().toString(), "--all--", duplicateNewNameValue.getText());
+            DatabaseWriter.duplicateClass(speciesDuplicateDropdown.getSelectionModel().getSelectedItem().toString(), "--all--", "--all--", duplicateNewNameValue.getText());
+            DatabaseWriter.duplicateHero(speciesDuplicateDropdown.getSelectionModel().getSelectedItem().toString(), "--all--", "--all--", duplicateNewNameValue.getText());
+            DatabaseWriter.duplicateProgress(speciesDuplicateDropdown.getSelectionModel().getSelectedItem().toString(), "--all--", "--all--", duplicateNewNameValue.getText());
+            DatabaseWriter.duplicateRoster(speciesDuplicateDropdown.getSelectionModel().getSelectedItem().toString(), "--all--", "--all--", duplicateNewNameValue.getText());
         }
         if (!cultureDuplicateDropdown.getSelectionModel().getSelectedItem().toString().equals(DatabaseHolder.TOPDROP) && classDuplicateDropdown.getSelectionModel().getSelectedItem().toString().equals(DatabaseHolder.TOPDROP) && heroDuplicateDropdown.getSelectionModel().getSelectedItem().toString().equals(DatabaseHolder.TOPDROP) && progressDuplicateDropdown.getSelectionModel().getSelectedItem().toString().equals(DatabaseHolder.TOPDROP) && rosterDuplicateDropdown.getSelectionModel().getSelectedItem().toString().equals(DatabaseHolder.TOPDROP)) {
-            DatabaseWriter.duplicateCulture(speciesDuplicateDropdown.getSelectionModel().getSelectedItem().toString(), cultureDuplicateDropdown.getSelectionModel().getSelectedItem().toString(),duplicateNewNameValue.getText());
-            DatabaseWriter.duplicateClass(speciesDuplicateDropdown.getSelectionModel().getSelectedItem().toString(), cultureDuplicateDropdown.getSelectionModel().getSelectedItem().toString(), "--all--",duplicateNewNameValue.getText());
-            DatabaseWriter.duplicateHero(speciesDuplicateDropdown.getSelectionModel().getSelectedItem().toString(), cultureDuplicateDropdown.getSelectionModel().getSelectedItem().toString(), "--all--",duplicateNewNameValue.getText());
-            DatabaseWriter.duplicateProgress(speciesDuplicateDropdown.getSelectionModel().getSelectedItem().toString(), cultureDuplicateDropdown.getSelectionModel().getSelectedItem().toString(), "--all--",duplicateNewNameValue.getText());
-            DatabaseWriter.duplicateRoster(speciesDuplicateDropdown.getSelectionModel().getSelectedItem().toString(), cultureDuplicateDropdown.getSelectionModel().getSelectedItem().toString(), "--all--",duplicateNewNameValue.getText());
+            DatabaseWriter.duplicateCulture(speciesDuplicateDropdown.getSelectionModel().getSelectedItem().toString(), cultureDuplicateDropdown.getSelectionModel().getSelectedItem().toString(), duplicateNewNameValue.getText());
+            DatabaseWriter.duplicateClass(speciesDuplicateDropdown.getSelectionModel().getSelectedItem().toString(), cultureDuplicateDropdown.getSelectionModel().getSelectedItem().toString(), "--all--", duplicateNewNameValue.getText());
+            DatabaseWriter.duplicateHero(speciesDuplicateDropdown.getSelectionModel().getSelectedItem().toString(), cultureDuplicateDropdown.getSelectionModel().getSelectedItem().toString(), "--all--", duplicateNewNameValue.getText());
+            DatabaseWriter.duplicateProgress(speciesDuplicateDropdown.getSelectionModel().getSelectedItem().toString(), cultureDuplicateDropdown.getSelectionModel().getSelectedItem().toString(), "--all--", duplicateNewNameValue.getText());
+            DatabaseWriter.duplicateRoster(speciesDuplicateDropdown.getSelectionModel().getSelectedItem().toString(), cultureDuplicateDropdown.getSelectionModel().getSelectedItem().toString(), "--all--", duplicateNewNameValue.getText());
         }
         if (!classDuplicateDropdown.getSelectionModel().getSelectedItem().toString().equals(DatabaseHolder.TOPDROP) && heroDuplicateDropdown.getSelectionModel().getSelectedItem().toString().equals(DatabaseHolder.TOPDROP)) {
-            DatabaseWriter.duplicateClass(speciesDuplicateDropdown.getSelectionModel().getSelectedItem().toString(), cultureDuplicateDropdown.getSelectionModel().getSelectedItem().toString(), classDuplicateDropdown.getSelectionModel().getSelectedItem().toString(),duplicateNewNameValue.getText());
+            DatabaseWriter.duplicateClass(speciesDuplicateDropdown.getSelectionModel().getSelectedItem().toString(), cultureDuplicateDropdown.getSelectionModel().getSelectedItem().toString(), classDuplicateDropdown.getSelectionModel().getSelectedItem().toString(), duplicateNewNameValue.getText());
         }
         if (!heroDuplicateDropdown.getSelectionModel().getSelectedItem().toString().equals(DatabaseHolder.TOPDROP)) {
-            DatabaseWriter.duplicateHero(speciesDuplicateDropdown.getSelectionModel().getSelectedItem().toString(), cultureDuplicateDropdown.getSelectionModel().getSelectedItem().toString(), heroDuplicateDropdown.getSelectionModel().getSelectedItem().toString(),duplicateNewNameValue.getText());
+            DatabaseWriter.duplicateHero(speciesDuplicateDropdown.getSelectionModel().getSelectedItem().toString(), cultureDuplicateDropdown.getSelectionModel().getSelectedItem().toString(), heroDuplicateDropdown.getSelectionModel().getSelectedItem().toString(), duplicateNewNameValue.getText());
         }
         if (!progressDuplicateDropdown.getSelectionModel().getSelectedItem().toString().equals(DatabaseHolder.TOPDROP)) {
-            DatabaseWriter.duplicateProgress(speciesDuplicateDropdown.getSelectionModel().getSelectedItem().toString(), cultureDuplicateDropdown.getSelectionModel().getSelectedItem().toString(), progressDuplicateDropdown.getSelectionModel().getSelectedItem().toString(),duplicateNewNameValue.getText());
+            DatabaseWriter.duplicateProgress(speciesDuplicateDropdown.getSelectionModel().getSelectedItem().toString(), cultureDuplicateDropdown.getSelectionModel().getSelectedItem().toString(), progressDuplicateDropdown.getSelectionModel().getSelectedItem().toString(), duplicateNewNameValue.getText());
         }
         if (!rosterDuplicateDropdown.getSelectionModel().getSelectedItem().toString().equals(DatabaseHolder.TOPDROP)) {
-            DatabaseWriter.duplicateRoster(speciesDuplicateDropdown.getSelectionModel().getSelectedItem().toString(), cultureDuplicateDropdown.getSelectionModel().getSelectedItem().toString(), rosterDuplicateDropdown.getSelectionModel().getSelectedItem().toString(),duplicateNewNameValue.getText());
+            DatabaseWriter.duplicateRoster(speciesDuplicateDropdown.getSelectionModel().getSelectedItem().toString(), cultureDuplicateDropdown.getSelectionModel().getSelectedItem().toString(), rosterDuplicateDropdown.getSelectionModel().getSelectedItem().toString(), duplicateNewNameValue.getText());
         }
     }
 
@@ -269,18 +273,10 @@ public class DuplicateWindowController implements Initializable {
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        try {
-            speciesDuplicateDropdown.setItems(DatabaseReader.populateDropdownsSpecies());
-        } catch (SQLException ex) {
-            Logger.getLogger(DuplicateWindowController.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        speciesDuplicateDropdown.setItems(DatabaseReader.populateDropdownsSpecies());
         speciesDuplicateDropdown.getSelectionModel().select(0);
-        try {
-            speciesDuplicateDropdownItemStateChangedActions();
-            cultureDuplicateDropdownItemStateChangedActions();
-        } catch (SQLException ex) {
-            Logger.getLogger(DuplicateWindowController.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        speciesDuplicateDropdownItemStateChangedActions();
+        cultureDuplicateDropdownItemStateChangedActions();
     }
 
     void setSpeciesAndCultureAndRosterList(ListView speciesList, ListView cultureList, ListView rosterList) {
@@ -293,7 +289,7 @@ public class DuplicateWindowController implements Initializable {
         this.duplicateWindowController = duplicateWindowController;
     }
 
-    void setSelected() throws SQLException {
+    void setSelected() {
         if (!speciesList.getSelectionModel().isEmpty()) {
             speciesDuplicateDropdown.getSelectionModel().select(speciesList.getSelectionModel().getSelectedItem());
             speciesDuplicateDropdownItemStateChangedActions();

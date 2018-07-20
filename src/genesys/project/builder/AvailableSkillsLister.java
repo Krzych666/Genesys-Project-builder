@@ -2,9 +2,6 @@ package genesys.project.builder;
 
 import genesys.project.builder.Enums.Enmuerations.LifeDomainTree1Values;
 import genesys.project.builder.Enums.Enmuerations.LifeDomainTree2Values;
-import java.sql.SQLException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
@@ -35,9 +32,8 @@ public class AvailableSkillsLister {
      * @param skillSubSet
      * @param IgnoreSkillsList
      * @return
-     * @throws SQLException
      */
-    public static ObservableList<String> getAvailableSkills(Enums.Enmuerations.LifedomainValue lifeDomain, int maxAge, String skillSubSet, ObservableList IgnoreSkillsList) throws SQLException {
+    public static ObservableList<String> getAvailableSkills(Enums.Enmuerations.LifedomainValue lifeDomain, int maxAge, String skillSubSet, ObservableList IgnoreSkillsList) {
         ObservableList<String> tmp = FXCollections.observableArrayList();
         ObservableList<String> lifeDomainTree3 = FXCollections.observableArrayList();
         ObservableList data = DatabaseReader.getLifeDomainTree1OnLifeDomainAndLifeDomain2AndAge(columns2, lifeDomain, skillSubSet, maxAge);
@@ -77,11 +73,7 @@ public class AvailableSkillsLister {
                     }
                 } else if ((!lifeDomainTree3.contains(reptiliaSpecific[1])) || (IgnoreSkillsList.stream().anyMatch(skill -> {
                     ObservableList<String> tmp3 = FXCollections.observableArrayList();
-                    try {
-                        tmp3 = DatabaseReader.getSkillNameOnLifeDomainTree2AndLifeDomainTree3AndAge(columns, skillSubSet, reptiliaSpecific[1], maxAge, null);
-                    } catch (SQLException ex) {
-                        Logger.getLogger(DatabaseReader.class.getName()).log(Level.SEVERE, null, ex);
-                    }
+                    tmp3 = DatabaseReader.getSkillNameOnLifeDomainTree2AndLifeDomainTree3AndAge(columns, skillSubSet, reptiliaSpecific[1], maxAge, null);
                     return (skill.toString().split(" \\(p")[0]).equals(tmp3.get(0));
                 })) || (IgnoreSkillsList.contains("Ophidian"/*To implement for rare and ancient blodline swap*/))) {
                     data = DatabaseReader.getSkillNameOnLifeDomainTree2AndLifeDomainTree3AndAge(columns, skillSubSet, reptiliaSpecific[1], maxAge, IgnoreSkillsList);
@@ -183,13 +175,13 @@ public class AvailableSkillsLister {
                         }
                         if (traitLevel.equals(basic[3]) || traitLevel.equals(basic[4])) {
                             traitNumbers[1] += 1;
-
+                            
                         }
                         if (traitLevel.equals(reptiliaSpecific[0])) {
                             traitNumbers[2] += 1;
                         }
                     });
-
+                    
                     if (traitNumbers[0] / 2 >= traitNumbers[1] + 1) {
                         data = DatabaseReader.getSkillNameOnLifeDomainTree2AndLifeDomainTree3AndAge(columns, skillSubSet, basic[4], maxAge, IgnoreSkillsList);
                         if (!data.isEmpty()) {
@@ -266,9 +258,14 @@ public class AvailableSkillsLister {
         return tmp;
     }
 
-    public static String getSkillsRules(String skills) throws SQLException {
-        ObservableList allSkills = DatabaseReader.loadAllSkillsFromDB();
+    /**
+     *
+     * @param skills
+     * @return
+     */
+    public static String getSkillsRules(String skills) {
         StringBuilder skillsRules = new StringBuilder();
+        ObservableList allSkills = DatabaseReader.loadAllSkillsFromDB();
         for (String split : DatabaseHolder.skillsSeparatorRepalcer(skills).split(",")) {
             if (!split.equals("")) {
                 int index = BuilderCORE.getSkillIndex(allSkills, split);
@@ -282,9 +279,8 @@ public class AvailableSkillsLister {
      *
      * @param HoldSkills
      * @return
-     * @throws SQLException
      */
-    public static ObservableList<String> getAddedSkills(String HoldSkills) throws SQLException {
+    public static ObservableList<String> getAddedSkills(String HoldSkills) {
         if (HoldSkills == null || "".equals(HoldSkills)) {
             return null;
         }

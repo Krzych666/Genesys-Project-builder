@@ -14,7 +14,6 @@ import genesys.project.builder.DatabaseHolder;
 import genesys.project.builder.DatabaseReader;
 import java.io.IOException;
 import java.net.URL;
-import java.sql.SQLException;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -111,20 +110,20 @@ public class EditWindowController implements Initializable {
 
     /**
      *
-     * @throws SQLException
+     * @
      */
     @FXML
-    public void speciesEditDropdownItemStateChangedActions() throws SQLException {
+    public void speciesEditDropdownItemStateChangedActions() {
         cultureEditDropdown.setItems(DatabaseReader.populateDropdownsCultures(speciesEditDropdown.getSelectionModel().getSelectedItem().toString()));
         cultureEditDropdown.getSelectionModel().select(0);
     }
 
     /**
      *
-     * @throws SQLException
+     * @
      */
     @FXML
-    public void cultureEditDropdownItemStateChangedActions() throws SQLException {
+    public void cultureEditDropdownItemStateChangedActions() {
         if (cultureEditDropdown.getSelectionModel().isEmpty()) {
             cultureEditDropdown.getSelectionModel().select(0);
         }
@@ -140,10 +139,10 @@ public class EditWindowController implements Initializable {
 
     /**
      *
-     * @throws SQLException
+     * @
      */
     @FXML
-    public void classEditDropdownItemStateChangedActions() throws SQLException {
+    public void classEditDropdownItemStateChangedActions() {
         if (classEditDropdown.getSelectionModel().isEmpty()) {
             classEditDropdown.getSelectionModel().select(0);
         }
@@ -192,12 +191,9 @@ public class EditWindowController implements Initializable {
 
     /**
      *
-     * @throws IOException
-     * @throws SQLException
-     * @throws CloneNotSupportedException
      */
     @FXML
-    public void editFinishButtonActions() throws IOException, SQLException, CloneNotSupportedException {
+    public void editFinishButtonActions() {
         Stage stage = (Stage) editFinishButton.getScene().getWindow();
         stage.hide();
         commenceEditing();
@@ -214,11 +210,8 @@ public class EditWindowController implements Initializable {
 
     /**
      *
-     * @throws IOException
-     * @throws SQLException
-     * @throws CloneNotSupportedException
      */
-    public void commenceEditing() throws IOException, SQLException, CloneNotSupportedException {
+    public void commenceEditing() {
         if (!speciesEditDropdown.getSelectionModel().getSelectedItem().toString().equals(DatabaseHolder.TOPDROP)) {
             DatabaseHolder.loadSpeciesToHold(speciesEditDropdown.getSelectionModel().getSelectedItem().toString());
         }
@@ -240,8 +233,8 @@ public class EditWindowController implements Initializable {
                 toNameOnly();
                 editWindowNameOld.setText(DatabaseHolder.holdCulture.getCultureName());
                 editWindowNameOnlyText1.setText("Change the folowing culture name:");
-            } else {                
-                DatabaseHolder.numberOfClases = DatabaseReader.getNumberOfClases(speciesEditDropdown.getSelectionModel().getSelectedItem().toString(),cultureEditDropdown.getSelectionModel().getSelectedItem().toString());
+            } else {
+                DatabaseHolder.numberOfClases = DatabaseReader.getNumberOfClases(speciesEditDropdown.getSelectionModel().getSelectedItem().toString(), cultureEditDropdown.getSelectionModel().getSelectedItem().toString());
                 BuilderCORE.setNumberOfClases();
                 DatabaseHolder.modifiedHoldClass = new DatabaseHolder.AClass[DatabaseHolder.holdClass.length];
                 for (int i = 0; i < DatabaseHolder.numberOfClases; i++) {
@@ -311,97 +304,106 @@ public class EditWindowController implements Initializable {
 
     /**
      *
-     * @throws IOException
+     * @
      */
-    public void toNameOnly() throws IOException {
+    public void toNameOnly() {
         if (editWindowNameOnlyStage.isShowing()) {
             editWindowNameOnlyStage.requestFocus();
         } else {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/genesys/project/fxml/EditWindowNameOnlyFXML.fxml"));
-            Parent root = loader.load();
-            editWindowNameOnlyController = loader.getController();
-            editWindowNameOnlyController.setSpeciesList(speciesList);
-            editWindowNameOnlyText1 = editWindowNameOnlyController.getEditWindowNameOnlyText1();
-            editWindowNameOld = editWindowNameOnlyController.getEditWindowNameOld();
-            Scene scene = new Scene(root);
-            editWindowNameOnlyStage.setScene(scene);
-            editWindowNameOnlyStage.setTitle("Edit Name");
-            editWindowNameOnlyStage.show();
+            try {
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/genesys/project/fxml/EditWindowNameOnlyFXML.fxml"));
+                Parent root = loader.load();
+                editWindowNameOnlyController = loader.getController();
+                editWindowNameOnlyController.setSpeciesList(speciesList);
+                editWindowNameOnlyText1 = editWindowNameOnlyController.getEditWindowNameOnlyText1();
+                editWindowNameOld = editWindowNameOnlyController.getEditWindowNameOld();
+                Scene scene = new Scene(root);
+                editWindowNameOnlyStage.setScene(scene);
+                editWindowNameOnlyStage.setTitle("Edit Name");
+                editWindowNameOnlyStage.show();
+            } catch (IOException ex) {
+                ErrorController.ErrorController(ex);
+                Logger.getLogger(EditWindowController.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
     }
 
-    private void modificator(Enum what) throws IOException {
-
-        switch (DatabaseHolder.holdSpecies.getLifedomain()) {
-            case Humanoid:
-                DatabaseHolder.arcana = Boolean.valueOf(DatabaseHolder.holdSpecies.getSpeciesModifiers().split("=")[1]);
-                break;
-            case Fey:
-                ((DatabaseHolder.AFey) DatabaseHolder.holdSpecies).setMainDomain(MainDomainValue.getEnum(DatabaseHolder.holdSpecies.getSpeciesModifiers().split(",")[0].split("=")[1]));
-                DatabaseHolder.outcasts = Boolean.valueOf(DatabaseHolder.holdSpecies.getSpeciesModifiers().split(",")[1].split("=")[1]);
-                ((DatabaseHolder.AFey) DatabaseHolder.holdSpecies).setSecondaryDomain(MainDomainValue.getEnum(DatabaseHolder.holdSpecies.getSpeciesModifiers().split(",")[2].split("=")[1]));
-                break;
-            case Reptilia:
-                ((DatabaseHolder.AReptilia) DatabaseHolder.holdSpecies).setMainLineage(MainLineageValue.getEnum(DatabaseHolder.holdSpecies.getSpeciesModifiers().split(",")[0].split("=")[1]));
-                DatabaseHolder.arcana = Boolean.valueOf(DatabaseHolder.holdSpecies.getSpeciesModifiers().split(",")[1].split("=")[1]);
-                break;
-            case Biest:
-                break;
-            case Insecta:
-                break;
-        }
-        if (Modificators.ModifySpecies.equals(what)) {
-            DatabaseHolder.isModyfyinfg = true;
-            if (speciesCreatorWindowStage.isShowing()) {
-                speciesCreatorWindowStage.requestFocus();
-            } else {
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("/genesys/project/fxml/SpeciesCreatorWindowFXML.fxml"));
-                Parent root = loader.load();
-                Scene scene = new Scene(root);
-                speciesCreatorWindowController = loader.getController();
-                speciesCreatorWindowController.setSpeciesList(speciesList);
-                speciesCreatorWindowStage.setScene(scene);
-                speciesCreatorWindowStage.setTitle("Modify Species");
-                speciesCreatorWindowStage.show();
+    private void modificator(Enum what) {
+        try {
+            switch (DatabaseHolder.holdSpecies.getLifedomain()) {
+                case Humanoid:
+                    DatabaseHolder.arcana = Boolean.valueOf(DatabaseHolder.holdSpecies.getSpeciesModifiers().split("=")[1]);
+                    break;
+                case Fey:
+                    ((DatabaseHolder.AFey) DatabaseHolder.holdSpecies).setMainDomain(MainDomainValue.getEnum(DatabaseHolder.holdSpecies.getSpeciesModifiers().split(",")[0].split("=")[1]));
+                    DatabaseHolder.outcasts = Boolean.valueOf(DatabaseHolder.holdSpecies.getSpeciesModifiers().split(",")[1].split("=")[1]);
+                    ((DatabaseHolder.AFey) DatabaseHolder.holdSpecies).setSecondaryDomain(MainDomainValue.getEnum(DatabaseHolder.holdSpecies.getSpeciesModifiers().split(",")[2].split("=")[1]));
+                    break;
+                case Reptilia:
+                    ((DatabaseHolder.AReptilia) DatabaseHolder.holdSpecies).setMainLineage(MainLineageValue.getEnum(DatabaseHolder.holdSpecies.getSpeciesModifiers().split(",")[0].split("=")[1]));
+                    DatabaseHolder.arcana = Boolean.valueOf(DatabaseHolder.holdSpecies.getSpeciesModifiers().split(",")[1].split("=")[1]);
+                    break;
+                case Biest:
+                    break;
+                case Insecta:
+                    break;
             }
-            //GenesysProjectBuilder.CORE.getCharacteristics(UseCases.CreatingSpecies,BuilderFXMLController.HOLD_MODIFIERS);
-            //populateLabels();
-        }
-        if (Modificators.ModifyCulture.equals(what)) {
-            DatabaseHolder.isModyfyinfg = true;
-            if (createHoldWindowStage.isShowing()) {
-                createHoldWindowStage.requestFocus();
-            } else {
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("/genesys/project/fxml/CreateHoldWindowFXML.fxml"));
-                Parent root = loader.load();
-                Scene scene = new Scene(root);
-                createHoldWindowController = loader.getController();
-                createHoldWindowController.setSpeciesList(speciesList);
-                createHoldWindowStage.setScene(scene);
-                createHoldWindowStage.setTitle("Modify Classes");
-                createHoldWindowStage.show();
+            if (Modificators.ModifySpecies.equals(what)) {
+                DatabaseHolder.isModyfyinfg = true;
+                if (speciesCreatorWindowStage.isShowing()) {
+                    speciesCreatorWindowStage.requestFocus();
+                } else {
+                    FXMLLoader loader = new FXMLLoader(getClass().getResource("/genesys/project/fxml/SpeciesCreatorWindowFXML.fxml"));
+                    Parent root = loader.load();
+                    Scene scene = new Scene(root);
+                    speciesCreatorWindowController = loader.getController();
+                    speciesCreatorWindowController.setSpeciesList(speciesList);
+                    speciesCreatorWindowStage.setScene(scene);
+                    speciesCreatorWindowStage.setTitle("Modify Species");
+                    speciesCreatorWindowStage.show();
+                }
+                //GenesysProjectBuilder.CORE.getCharacteristics(UseCases.CreatingSpecies,BuilderFXMLController.HOLD_MODIFIERS);
+                //populateLabels();
             }
-        }
-        if (Modificators.ModifyClass.equals(what)) {
-            DatabaseHolder.classIsModyfying = true;
-            if (classCreatorWindowStage.isShowing()) {
-                classCreatorWindowStage.requestFocus();
-            } else {
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("/genesys/project/fxml/ClassCreatorWindowFXML.fxml"));
-                Parent root = loader.load();
-                Scene scene = new Scene(root);
-                classCreatorWindowController = loader.getController();
-                classCreatorWindowController.setSpeciesList(speciesList);
-                classCreatorWindowStage.setScene(scene);
-                createHoldWindowStage.setTitle("Modify Class");
-                classCreatorWindowStage.show();
+            if (Modificators.ModifyCulture.equals(what)) {
+                DatabaseHolder.isModyfyinfg = true;
+                if (createHoldWindowStage.isShowing()) {
+                    createHoldWindowStage.requestFocus();
+                } else {
+                    FXMLLoader loader = new FXMLLoader(getClass().getResource("/genesys/project/fxml/CreateHoldWindowFXML.fxml"));
+                    Parent root = loader.load();
+                    Scene scene = new Scene(root);
+                    createHoldWindowController = loader.getController();
+                    createHoldWindowController.setSpeciesList(speciesList);
+                    createHoldWindowStage.setScene(scene);
+                    createHoldWindowStage.setTitle("Modify Classes");
+                    createHoldWindowStage.show();
+                }
             }
-        }
-        if (Modificators.ModifyHero.equals(what)) {
-        }
-        if (Modificators.ModifyProgress.equals(what)) {
-        }
-        if (Modificators.ModifyRoster.equals(what)) {
+            if (Modificators.ModifyClass.equals(what)) {
+                DatabaseHolder.classIsModyfying = true;
+                if (classCreatorWindowStage.isShowing()) {
+                    classCreatorWindowStage.requestFocus();
+                } else {
+                    FXMLLoader loader = new FXMLLoader(getClass().getResource("/genesys/project/fxml/ClassCreatorWindowFXML.fxml"));
+                    Parent root = loader.load();
+                    Scene scene = new Scene(root);
+                    classCreatorWindowController = loader.getController();
+                    classCreatorWindowController.setSpeciesList(speciesList);
+                    classCreatorWindowStage.setScene(scene);
+                    createHoldWindowStage.setTitle("Modify Class");
+                    classCreatorWindowStage.show();
+                }
+            }
+            if (Modificators.ModifyHero.equals(what)) {
+            }
+            if (Modificators.ModifyProgress.equals(what)) {
+            }
+            if (Modificators.ModifyRoster.equals(what)) {
+            }
+        } catch (IOException ex) {
+            ErrorController.ErrorController(ex);
+            Logger.getLogger(EditWindowController.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -413,18 +415,10 @@ public class EditWindowController implements Initializable {
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        try {
-            speciesEditDropdown.setItems(DatabaseReader.populateDropdownsSpecies());
-        } catch (SQLException ex) {
-            Logger.getLogger(EditWindowController.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        speciesEditDropdown.setItems(DatabaseReader.populateDropdownsSpecies());
         speciesEditDropdown.getSelectionModel().select(0);
-        try {
-            speciesEditDropdownItemStateChangedActions();
-            cultureEditDropdownItemStateChangedActions();
-        } catch (SQLException ex) {
-            Logger.getLogger(EditWindowController.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        speciesEditDropdownItemStateChangedActions();
+        cultureEditDropdownItemStateChangedActions();
     }
 
     void setSpeciesAndCultureAndRosterList(ListView speciesList, ListView cultureList, ListView rosterList) {
@@ -433,7 +427,7 @@ public class EditWindowController implements Initializable {
         this.rosterList = rosterList;
     }
 
-    void editWhat() throws SQLException, IOException, CloneNotSupportedException {
+    void editWhat() {
         if (!speciesList.getSelectionModel().isEmpty()) {
             speciesEditDropdown.getSelectionModel().select(speciesList.getSelectionModel().getSelectedItem());
             speciesEditDropdownItemStateChangedActions();

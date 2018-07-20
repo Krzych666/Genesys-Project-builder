@@ -10,7 +10,6 @@ import genesys.project.builder.DatabaseHolder;
 import genesys.project.builder.DatabaseReader;
 import java.io.IOException;
 import java.net.URL;
-import java.sql.SQLException;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -69,11 +68,9 @@ public class CreateRosterController implements Initializable {
 
     /**
      *
-     * @throws IOException
-     * @throws SQLException
      */
     @FXML
-    public void speciesChooseDropdownItemStateChangedActions() throws IOException, SQLException {
+    public void speciesChooseDropdownItemStateChangedActions()  {
         if (!speciesChooseDropdown.getSelectionModel().getSelectedItem().equals("--CHOOSE--")) {
             cultureChooseDropdown.setItems(DatabaseReader.populateDropdownsCultures(speciesChooseDropdown.getSelectionModel().getSelectedItem().toString()));
             cultureChooseDropdown.getSelectionModel().select(0);
@@ -84,12 +81,9 @@ public class CreateRosterController implements Initializable {
 
     /**
      *
-     * @throws IOException
-     * @throws java.sql.SQLException
-     * @throws java.lang.CloneNotSupportedException
      */
     @FXML
-    public void selectDataForRosterActions() throws IOException, SQLException, CloneNotSupportedException {
+    public void selectDataForRosterActions() {
         if (pointsTextField.getText().isEmpty()) {
             pointsTextField.setText("0");
         }
@@ -104,20 +98,25 @@ public class CreateRosterController implements Initializable {
             if (rosterCreatorWindowStage.isShowing()) {
                 rosterCreatorWindowStage.requestFocus();
             } else {
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("/genesys/project/fxml/RosterCreatorWindowFXML.fxml"));
-                Parent root = loader.load();
-                Scene scene = new Scene(root);
-                rosterCreatorWindowController = loader.getController();
-                rosterCreatorWindowController.setMaxPoints(pointsTextField.getText());
-                rosterCreatorWindowStage.setScene(scene);
-                rosterCreatorWindowStage.setTitle("Create Roster " + DatabaseHolder.holdRoster.getRosterName() + " for " + DatabaseHolder.holdRoster.getSpeciesName() + " - " + DatabaseHolder.holdRoster.getCultureName());
-                rosterCreatorWindowStage.show();
+                try {
+                    FXMLLoader loader = new FXMLLoader(getClass().getResource("/genesys/project/fxml/RosterCreatorWindowFXML.fxml"));
+                    Parent root = loader.load();
+                    Scene scene = new Scene(root);
+                    rosterCreatorWindowController = loader.getController();
+                    rosterCreatorWindowController.setMaxPoints(pointsTextField.getText());
+                    rosterCreatorWindowStage.setScene(scene);
+                    rosterCreatorWindowStage.setTitle("Create Roster " + DatabaseHolder.holdRoster.getRosterName() + " for " + DatabaseHolder.holdRoster.getSpeciesName() + " - " + DatabaseHolder.holdRoster.getCultureName());
+                    rosterCreatorWindowStage.show();
+                } catch (IOException ex) {
+                    ErrorController.ErrorController(ex);
+                    Logger.getLogger(CreateRosterController.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
         }
 
     }
 
-    private void loadSpecies() throws SQLException, CloneNotSupportedException {
+    private void loadSpecies()  {
         DatabaseHolder.loadSpeciesToHold(speciesChooseDropdown.getSelectionModel().getSelectedItem().toString());
         DatabaseHolder.holdCulture = new DatabaseHolder.ACulture();
         DatabaseHolder.loadCultureToHold(speciesChooseDropdown.getSelectionModel().getSelectedItem().toString(), cultureChooseDropdown.getSelectionModel().getSelectedItem().toString());
@@ -149,12 +148,8 @@ public class CreateRosterController implements Initializable {
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        try {
-            speciesChooseDropdown.setItems(DatabaseReader.populateDropdownsSpecies());
-            gameTypeDropdown.setItems(FXCollections.observableArrayList(BuilderCORE.GAME_TYPES));
-        } catch (SQLException ex) {
-            Logger.getLogger(CreateCultureController.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        speciesChooseDropdown.setItems(DatabaseReader.populateDropdownsSpecies());
+        gameTypeDropdown.setItems(FXCollections.observableArrayList(BuilderCORE.GAME_TYPES));
         speciesChooseDropdown.getSelectionModel().select(0);
         gameTypeDropdown.getSelectionModel().select(0);
         pointsTextField.addEventFilter(KeyEvent.KEY_TYPED, BuilderCORE.numeric_Validation(10));
@@ -164,7 +159,7 @@ public class CreateRosterController implements Initializable {
         this.speciesList = speciesList;
     }
 
-    void setSpeciesAndCultureSelection(String Selection) throws IOException, SQLException {
+    void setSpeciesAndCultureSelection(String Selection)  {
         speciesChooseDropdown.getSelectionModel().select(speciesList.getSelectionModel().getSelectedItem());
         speciesChooseDropdownItemStateChangedActions();
         cultureChooseDropdown.getSelectionModel().select(Selection);

@@ -15,7 +15,6 @@ import genesys.project.builder.DatabaseHolder;
 import genesys.project.builder.DatabaseReader;
 import java.io.IOException;
 import java.net.URL;
-import java.sql.SQLException;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -140,11 +139,8 @@ public class CreateCultureController implements Initializable {
 
     /**
      *
-     * @throws SQLException
-     * @throws java.lang.CloneNotSupportedException
-     * @throws java.io.IOException
      */
-    public void createCulture() throws SQLException, CloneNotSupportedException, IOException {
+    public void createCulture()  {
         ObservableList data = DatabaseReader.getSpeciesData(speciesChooseDropdown4.getSelectionModel().getSelectedItem().toString());
         DatabaseHolder.creator(LifedomainValue.valueOf(data.get(0).toString().split("\\|")[0]), Creators.CreateCulture);
         DatabaseHolder.holdCulture.setSpeciesName(speciesChooseDropdown4.getSelectionModel().getSelectedItem().toString());
@@ -184,12 +180,9 @@ public class CreateCultureController implements Initializable {
 
     /**
      *
-     * @throws IOException
-     * @throws SQLException
-     * @throws java.lang.CloneNotSupportedException
      */
     @FXML
-    public void speciesChooseDropdown4ItemStateChangedActions() throws IOException, SQLException, CloneNotSupportedException {
+    public void speciesChooseDropdown4ItemStateChangedActions()  {
         if (speciesChooseDropdown4.getSelectionModel().getSelectedItem().equals("--CHOOSE--")) {
             clearLists4();
         }
@@ -198,24 +191,29 @@ public class CreateCultureController implements Initializable {
 
     /**
      *
-     * @throws IOException
+     * @
      */
     @FXML
-    public void selectSpecies4Actions() throws IOException {
+    public void selectSpecies4Actions()  {
         Stage stage = (Stage) selectSpecies4.getScene().getWindow();
         stage.hide();
         DatabaseHolder.holdCulture.setCultureName(cultureNameValue4.getText());
         if (createHoldWindowStage.isShowing()) {
             createHoldWindowStage.requestFocus();
         } else {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/genesys/project/fxml/CreateHoldWindowFXML.fxml"));
-            Parent root = loader.load();
-            Scene scene = new Scene(root);
-            createHoldWindowController = loader.getController();
-            createHoldWindowController.setSpeciesList(speciesList);
-            createHoldWindowStage.setScene(scene);
-            createHoldWindowStage.setTitle("Create Classes for " + DatabaseHolder.holdCulture.getSpeciesName() + " - " + DatabaseHolder.holdCulture.getCultureName());
-            createHoldWindowStage.show();
+            try {
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/genesys/project/fxml/CreateHoldWindowFXML.fxml"));
+                Parent root = loader.load();
+                Scene scene = new Scene(root);
+                createHoldWindowController = loader.getController();
+                createHoldWindowController.setSpeciesList(speciesList);
+                createHoldWindowStage.setScene(scene);
+                createHoldWindowStage.setTitle("Create Classes for " + DatabaseHolder.holdCulture.getSpeciesName() + " - " + DatabaseHolder.holdCulture.getCultureName());
+                createHoldWindowStage.show();
+            } catch (IOException ex) {
+                ErrorController.ErrorController(ex);
+                Logger.getLogger(CreateCultureController.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
     }
 
@@ -230,9 +228,9 @@ public class CreateCultureController implements Initializable {
 
     /**
      *
-     * @throws SQLException
+     * @
      */
-    public void populateLabels() throws SQLException {
+    public void populateLabels()  {
         for (int i = 0; i < valuesLabels4.length; i++) {
             valuesLabels4[i].setText(DatabaseReader.getCharacteristics(DatabaseHolder.holdSpecies.getLifedomain().toString(), DatabaseHolder.holdSpecies.getCharacteristicGroup().toString())[i]);
         }
@@ -270,11 +268,7 @@ public class CreateCultureController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         this.valuesLabels4 = new Label[]{strengthValue4, toughnessValue4, movementValue4, martialValue4, rangedValue4, defenseValue4, disciplineValue4, willpowerValue4, commandValue4, woundsValue4, attacksValue4, sizeValue4, mTValue4, rTValue4, moraleValue4};
-        try {
-            speciesChooseDropdown4.setItems(DatabaseReader.populateDropdownsSpecies());
-        } catch (SQLException ex) {
-            Logger.getLogger(CreateCultureController.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        speciesChooseDropdown4.setItems(DatabaseReader.populateDropdownsSpecies());
         speciesChooseDropdown4.getSelectionModel().select(0);
     }
 
@@ -282,7 +276,7 @@ public class CreateCultureController implements Initializable {
         this.speciesList = speciesList;
     }
 
-    void setSpeciesSelection(String Selection) throws SQLException, IOException, CloneNotSupportedException {
+    void setSpeciesSelection(String Selection) {
         speciesChooseDropdown4.getSelectionModel().select(Selection);
         speciesChooseDropdown4ItemStateChangedActions();
     }

@@ -189,10 +189,8 @@ public class SpeciesCreatorWindowController implements Initializable {
 
     /**
      *
-     * @throws IOException
-     * @throws SQLException
      */
-    public void createSpecies() throws IOException, SQLException {
+    public void createSpecies() {
         if (DatabaseHolder.isModyfyinfg) {
             nameInputField.setText(DatabaseHolder.holdSpecies.getSpeciesName());
         } else {
@@ -253,7 +251,7 @@ public class SpeciesCreatorWindowController implements Initializable {
         skillsLeft1b.setText(BuilderCORE.skillsLeftModify("0", true));
     }
 
-    void setAvailableSkills() throws SQLException {
+    void setAvailableSkills() {
         int age = Integer.max(DatabaseHolder.holdCulture.getAge(), DatabaseHolder.holdSpecies.getAge());
         availableSkillsList.setItems(AvailableSkillsLister.getAvailableSkills(DatabaseHolder.holdSpecies.getLifedomain(), age, skillSubSetChooser.getSelectionModel().getSelectedItem().toString(), skillsList1.getItems()));
         availableSkillsList.setCellFactory(new Callback<ListView<String>, ListCell<String>>() {
@@ -285,9 +283,9 @@ public class SpeciesCreatorWindowController implements Initializable {
 
     /**
      *
-     * @throws SQLException
+     *
      */
-    public void wipeSkills() throws SQLException {
+    public void wipeSkills() {
         skillsList1.getItems().clear();
         DatabaseHolder.holdSpecies.setAllTraitsAndPowers(0, 0, 0, 0, 0, 0);
         skillsLeft1b.setText(BuilderCORE.skillsLeftModify("0", true));
@@ -315,11 +313,10 @@ public class SpeciesCreatorWindowController implements Initializable {
 
     /**
      *
-     * @throws IOException
-     * @throws SQLException
+     *
      */
     @FXML
-    public void createFinishActions() throws IOException, SQLException {
+    public void createFinishActions() {
         setMaxClassNumber();
         Stage stage = (Stage) createFinish.getScene().getWindow();
         stage.hide();
@@ -338,14 +335,19 @@ public class SpeciesCreatorWindowController implements Initializable {
             if (createHoldWindowStage.isShowing()) {
                 createHoldWindowStage.requestFocus();
             } else {
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("/genesys/project/fxml/CreateHoldWindowFXML.fxml"));
-                Parent root = loader.load();
-                createHoldWindowController = loader.getController();
-                createHoldWindowController.setSpeciesList(speciesList);
-                Scene scene = new Scene(root);
-                createHoldWindowStage.setScene(scene);
-                createHoldWindowStage.setTitle("Create Classes for " + DatabaseHolder.holdCulture.getSpeciesName() + " - " + DatabaseHolder.holdCulture.getCultureName());
-                createHoldWindowStage.show();
+                try {
+                    FXMLLoader loader = new FXMLLoader(getClass().getResource("/genesys/project/fxml/CreateHoldWindowFXML.fxml"));
+                    Parent root = loader.load();
+                    createHoldWindowController = loader.getController();
+                    createHoldWindowController.setSpeciesList(speciesList);
+                    Scene scene = new Scene(root);
+                    createHoldWindowStage.setScene(scene);
+                    createHoldWindowStage.setTitle("Create Classes for " + DatabaseHolder.holdCulture.getSpeciesName() + " - " + DatabaseHolder.holdCulture.getCultureName());
+                    createHoldWindowStage.show();
+                } catch (IOException ex) {
+                    ErrorController.ErrorController(ex);
+                    Logger.getLogger(SpeciesCreatorWindowController.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
         }
 
@@ -353,10 +355,10 @@ public class SpeciesCreatorWindowController implements Initializable {
 
     /**
      *
-     * @throws SQLException
+     *
      */
     @FXML
-    public void outcastCheckboxActions() throws SQLException {
+    public void outcastCheckboxActions() {
         DatabaseHolder.outcasts = !DatabaseHolder.outcasts;
         DatabaseHolder.holdSpecies.setSpeciesModifiers("Outcasts=" + DatabaseHolder.outcasts + ",SecondaryDomain=" + ((AFey) DatabaseHolder.holdSpecies).getSecondaryDomain().getText());
         PrimaryChooseActions();
@@ -364,10 +366,10 @@ public class SpeciesCreatorWindowController implements Initializable {
 
     /**
      *
-     * @throws SQLException
+     *
      */
     @FXML
-    public void PrimaryChooseActions() throws SQLException {
+    public void PrimaryChooseActions() {
         switch (PrimaryChooserValue.getEnum(primaryChooser.getSelectionModel().getSelectedItem().toString())) {
             case Light:
             case Darkness:
@@ -425,10 +427,10 @@ public class SpeciesCreatorWindowController implements Initializable {
 
     /**
      *
-     * @throws SQLException
+     *
      */
     @FXML
-    public void SecondaryChooseActions() throws SQLException {
+    public void SecondaryChooseActions() {
         switch (SecondaryChooserValue.getEnum(secondaryChooser.getSelectionModel().getSelectedItem().toString())) {
             case Light:
             case Darkness:
@@ -456,17 +458,17 @@ public class SpeciesCreatorWindowController implements Initializable {
 
     /**
      *
-     * @throws SQLException
+     *
      */
     @FXML
-    public void moveSkillButtonActions() throws SQLException {
+    public void moveSkillButtonActions() {
         moveSkill();
         availableSkillsList.getSelectionModel().clearSelection();
         skillsList1.getSelectionModel().clearSelection();
 
     }
 
-    void moveSkill() throws SQLException {
+    void moveSkill() {
         if (DatabaseHolder.holdSpecies.getSkills().length() > 1) {
             if (!";".equals(DatabaseHolder.holdSpecies.getSkills().substring(DatabaseHolder.holdSpecies.getSkills().length() - 1))) {
                 DatabaseHolder.holdSpecies.addSkills(";");
@@ -502,10 +504,10 @@ public class SpeciesCreatorWindowController implements Initializable {
 
     /**
      *
-     * @throws SQLException
+     *
      */
     @FXML
-    public void skillSetChooserItemStateChangedActions() throws SQLException {
+    public void skillSetChooserItemStateChangedActions() {
         if (skillSetChooser.getSelectionModel().isEmpty()) {
             skillSetChooser.setItems(DatabaseReader.getSkillSet());
             skillSetChooser.getSelectionModel().select(0);
@@ -516,10 +518,10 @@ public class SpeciesCreatorWindowController implements Initializable {
 
     /**
      *
-     * @throws SQLException
+     *
      */
     @FXML
-    public void skillSubSetChooserItemStateChangedActions() throws SQLException {
+    public void skillSubSetChooserItemStateChangedActions() {
         if (skillSubSetChooser.getSelectionModel().isEmpty()) {
             skillSubSetChooser.setItems(DatabaseReader.getSubSkillSet(skillSetChooser.getSelectionModel().getSelectedItem().toString(), primaryChooserString, secondaryChooserString));
             skillSubSetChooser.getSelectionModel().select(0);
@@ -530,10 +532,9 @@ public class SpeciesCreatorWindowController implements Initializable {
     /**
      * availableSkillsListMousePressedActions
      *
-     * @throws java.sql.SQLException
      */
     @FXML
-    public void availableSkillsListMousePressedActions() throws SQLException {
+    public void availableSkillsListMousePressedActions() {
         skillsList1.getSelectionModel().clearSelection();
         subSkillText1.setText("");
         if (!availableSkillsList.getSelectionModel().isEmpty()) {
@@ -544,10 +545,9 @@ public class SpeciesCreatorWindowController implements Initializable {
     /**
      * skillsList1MousePressedActions
      *
-     * @throws java.sql.SQLException
      */
     @FXML
-    public void skillsList1MousePressedActions() throws SQLException {
+    public void skillsList1MousePressedActions() {
         availableSkillsList.getSelectionModel().clearSelection();
         subSkillText1.setText("");
         if (!skillsList1.getSelectionModel().isEmpty()) {
@@ -586,23 +586,23 @@ public class SpeciesCreatorWindowController implements Initializable {
 
     /**
      *
-     * @throws SQLException
+     *
      */
-    public void populateLabels() throws SQLException {
+    public void populateLabels() {
         for (int i = 0; i < valuesLabels.length; i++) {
             valuesLabels[i].setText(DatabaseReader.getCharacteristics(DatabaseHolder.holdSpecies.getLifedomain().toString(), DatabaseHolder.holdSpecies.getCharacteristicGroup().toString())[i]);
         }
     }
 
     @FXML
-    private void subSkillsListMouse1Pressed() throws SQLException {
+    private void subSkillsListMouse1Pressed() {
         if (!subSkillsList1.getSelectionModel().isEmpty()) {
             subSkillText1.setText(BuilderCORE.generateSubSkillText(subSkillsList1.getSelectionModel().getSelectedItem().toString(), !simplifyToCoreSkills));
         }
     }
 
     @FXML
-    private void showAsCoreSkillsPressed() throws SQLException {
+    private void showAsCoreSkillsPressed() {
         simplifyToCoreSkills = showAsCoreSkills.isSelected();
         int i = -1;
         if (!subSkillsList1.getSelectionModel().isEmpty()) {
@@ -633,11 +633,7 @@ public class SpeciesCreatorWindowController implements Initializable {
             DatabaseHolder.holdSpecies.setAge(1);
             DatabaseHolder.holdCulture.setAge(1);
         }
-        try {
-            createSpecies();
-        } catch (IOException | SQLException ex) {
-            Logger.getLogger(SpeciesCreatorWindowController.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        createSpecies();
         switch (DatabaseHolder.holdSpecies.getLifedomain()) {
             case Humanoid:
                 primaryChooser.setVisible(false);

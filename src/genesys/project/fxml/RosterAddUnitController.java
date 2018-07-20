@@ -7,13 +7,9 @@ package genesys.project.fxml;
 
 import genesys.project.builder.BuilderCORE;
 import genesys.project.builder.DatabaseReader;
-import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
-import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.ResourceBundle;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -82,10 +78,9 @@ public class RosterAddUnitController implements Initializable {
     /**
      * squadSizeChangeActions
      *
-     * @throws java.sql.SQLException
      */
     @FXML
-    public void squadSizeChangeActions() throws SQLException {
+    public void squadSizeChangeActions() {
         if (!squadSizeValue.getText().isEmpty()) {
             totalPointsValue.setText(Integer.toString(basePoints * Integer.parseInt(squadSizeValue.getText()) + itemsCost()));
         }
@@ -94,14 +89,9 @@ public class RosterAddUnitController implements Initializable {
     /**
      * addEquipmentButtonActions
      *
-     * @throws java.sql.SQLException
-     * @throws java.lang.NoSuchMethodException
-     * @throws java.lang.IllegalAccessException
-     * @throws java.lang.ClassNotFoundException
-     * @throws java.lang.reflect.InvocationTargetException
      */
     @FXML
-    public void addEquipmentButtonActions() throws SQLException, NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, ClassNotFoundException {
+    public void addEquipmentButtonActions() {
         if (addEquipmentValue.getText().isEmpty() || Integer.parseInt(addEquipmentValue.getText()) == 0) {
             addEquipmentValue.setText("1");
         }
@@ -110,7 +100,7 @@ public class RosterAddUnitController implements Initializable {
         currentEquipmentList.getSelectionModel().clearSelection();
     }
 
-    private void moveItem() throws SQLException, NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, ClassNotFoundException {
+    private void moveItem() {
         if (!availableEquipmentList.getSelectionModel().isEmpty()) {
             currentEquipmentList.getItems().add(availableEquipmentList.getSelectionModel().getSelectedItem() + getImprovements() + " X" + addEquipmentValue.getText());
         }
@@ -123,7 +113,7 @@ public class RosterAddUnitController implements Initializable {
         improvementsDetailsList.getItems().clear();
     }
 
-    private int itemsCost() throws SQLException {
+    private int itemsCost() {
         int cost = 0;
         for (int i = 0; i < currentEquipmentList.getItems().size(); i++) {
             if (currentEquipmentList.getItems().get(i).toString().contains("} X")) {
@@ -138,10 +128,9 @@ public class RosterAddUnitController implements Initializable {
     /**
      * equipmentTypeChooserStateChangedActions
      *
-     * @throws java.sql.SQLException
      */
     @FXML
-    public void equipmentTypeChooserStateChangedActions() throws SQLException {
+    public void equipmentTypeChooserStateChangedActions() {
         IMPROVEMENTS.clear();
         availableEquipmentList.setItems(DatabaseReader.getItemsNames(equipmentTypeChooser.getSelectionModel().getSelectedItem().toString()));
         improvementsList.getItems().clear();
@@ -150,10 +139,10 @@ public class RosterAddUnitController implements Initializable {
 
     /**
      *
-     * @throws SQLException
+     *
      */
     @FXML
-    public void availableEquipmentListMousePressed() throws SQLException {
+    public void availableEquipmentListMousePressed() {
         if (!availableEquipmentList.getSelectionModel().isEmpty()) {
             IMPROVEMENTS.clear();
             generateImprovementsList();
@@ -161,7 +150,7 @@ public class RosterAddUnitController implements Initializable {
         }
     }
 
-    private void generateImprovementsList() throws SQLException {
+    private void generateImprovementsList() {
         ObservableList<String> improvementsObservableList = DatabaseReader.getImprovements(availableEquipmentList.getSelectionModel().getSelectedItem().toString(), equipmentTypeChooser.getSelectionModel().getSelectedItem().toString());
         improvementsList.setItems(improvementsObservableList);
         improvementsList.setCellFactory(new Callback<ListView<String>, ListCell<String>>() {
@@ -217,7 +206,7 @@ public class RosterAddUnitController implements Initializable {
         }
     }
 
-    private String getImprovements() throws NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, ClassNotFoundException {
+    private String getImprovements() {
         StringBuilder tempList = new StringBuilder();
         tempList.append(" {");
         IMPROVEMENTS.entrySet().forEach((entry) -> {
@@ -239,25 +228,23 @@ public class RosterAddUnitController implements Initializable {
 
     /**
      *
-     * @throws SQLException
+     *
      */
     @FXML
-    public void improvementsListMousePressed() throws SQLException {
-        String availableEquipmentName = availableEquipmentList.getSelectionModel().getSelectedItem().toString();
-        String improvementsName = improvementsList.getSelectionModel().getSelectedItem().toString();
-        String equipmentTypeNamme = equipmentTypeChooser.getSelectionModel().getSelectedItem().toString();
-        improvementsDetailsList.setItems(DatabaseReader.getImprovementDetails(availableEquipmentName, improvementsName, equipmentTypeNamme));
+    public void improvementsListMousePressed() {
+        if (!availableEquipmentList.getSelectionModel().isEmpty()) {
+            String availableEquipmentName = availableEquipmentList.getSelectionModel().getSelectedItem().toString();
+            String improvementsName = improvementsList.getSelectionModel().getSelectedItem().toString();
+            String equipmentTypeNamme = equipmentTypeChooser.getSelectionModel().getSelectedItem().toString();
+            improvementsDetailsList.setItems(DatabaseReader.getImprovementDetails(availableEquipmentName, improvementsName, equipmentTypeNamme));
+        }
     }
 
     /**
      * addaquadButtonActions
-     *
-     * @throws java.lang.NoSuchMethodException
-     * @throws java.lang.IllegalAccessException
-     * @throws java.lang.reflect.InvocationTargetException
      */
     @FXML
-    public void addSquadButtonActions() throws NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+    public void addSquadButtonActions() {
         roster.getItems().add(className
                 + " x" + squadSizeValue.getText()
                 + "   \n" + currentEquipmentList.getItems().toString()
@@ -315,12 +302,8 @@ public class RosterAddUnitController implements Initializable {
         equipmentTypeChooser.getSelectionModel().select(0);
         squadSizeValue.setText("1");
         addEquipmentValue.setText("1");
-        try {
-            equipmentTypeChooserStateChangedActions();
-            squadSizeChangeActions();
-        } catch (SQLException ex) {
-            Logger.getLogger(RosterAddUnitController.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        equipmentTypeChooserStateChangedActions();
+        squadSizeChangeActions();
     }
 
     private static class ImprovementsItem {

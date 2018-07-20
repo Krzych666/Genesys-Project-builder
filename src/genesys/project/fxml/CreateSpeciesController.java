@@ -12,6 +12,8 @@ import genesys.project.builder.GenesysProjectBuilder;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -53,10 +55,10 @@ public class CreateSpeciesController implements Initializable {
 
     /**
      *
-     * @throws IOException
+     * @
      */
     @FXML
-    public void createHumanoidActions() throws IOException {
+    public void createHumanoidActions()  {
         GenesysProjectBuilder.hideOtherThanMainStage();
         DatabaseHolder.creator(LifedomainValue.Humanoid, Creators.CreateSpecies);
         showNextStage();
@@ -64,10 +66,10 @@ public class CreateSpeciesController implements Initializable {
 
     /**
      *
-     * @throws IOException
+     * @
      */
     @FXML
-    public void createFeyActions() throws IOException {
+    public void createFeyActions()  {
         GenesysProjectBuilder.hideOtherThanMainStage();
         DatabaseHolder.creator(LifedomainValue.Fey, Creators.CreateSpecies);
         showNextStage();
@@ -75,10 +77,10 @@ public class CreateSpeciesController implements Initializable {
 
     /**
      *
-     * @throws IOException
+     * @
      */
     @FXML
-    public void createReptiliaActions() throws IOException {
+    public void createReptiliaActions()  {
         GenesysProjectBuilder.hideOtherThanMainStage();
         DatabaseHolder.creator(LifedomainValue.Reptilia, Creators.CreateSpecies);
         showNextStage();
@@ -86,10 +88,10 @@ public class CreateSpeciesController implements Initializable {
 
     /**
      *
-     * @throws IOException
+     * @
      */
     @FXML
-    public void createBiestActions() throws IOException {
+    public void createBiestActions()  {
         GenesysProjectBuilder.hideOtherThanMainStage();
         DatabaseHolder.creator(LifedomainValue.Biest, Creators.CreateSpecies);
         showNextStage();
@@ -97,10 +99,10 @@ public class CreateSpeciesController implements Initializable {
 
     /**
      *
-     * @throws IOException
+     * @
      */
     @FXML
-    public void createInsectaActions() throws IOException {
+    public void createInsectaActions()  {
         GenesysProjectBuilder.hideOtherThanMainStage();
         DatabaseHolder.creator(LifedomainValue.Insecta, Creators.CreateSpecies);
         showNextStage();
@@ -108,18 +110,23 @@ public class CreateSpeciesController implements Initializable {
 
     /**
      *
-     * @throws IOException
+     * @
      */
-    public void showNextStage() throws IOException {
-        GenesysProjectBuilder.hideOtherThanMainStage();
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/genesys/project/fxml/SpeciesCreatorWindowFXML.fxml"));
-        Parent root = loader.load();
-        speciesCreatorWindowController = loader.getController();
-        speciesCreatorWindowController.setSpeciesList(speciesList);
-        Scene scene = new Scene(root);
-        speciesCreatorWindowStage.setScene(scene);
-        speciesCreatorWindowStage.setTitle("Create Species");
-        speciesCreatorWindowStage.show();
+    public void showNextStage()  {
+        try {
+            GenesysProjectBuilder.hideOtherThanMainStage();
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/genesys/project/fxml/SpeciesCreatorWindowFXML.fxml"));
+            Parent root = loader.load();
+            speciesCreatorWindowController = loader.getController();
+            speciesCreatorWindowController.setSpeciesList(speciesList);
+            Scene scene = new Scene(root);
+            speciesCreatorWindowStage.setScene(scene);
+            speciesCreatorWindowStage.setTitle("Create Species");
+            speciesCreatorWindowStage.show();
+        } catch (IOException ex) {
+            ErrorController.ErrorController(ex);
+            Logger.getLogger(CreateSpeciesController.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     /**
@@ -137,7 +144,7 @@ public class CreateSpeciesController implements Initializable {
         this.speciesList = speciesList;
     }
 
-    void newWhat(String What) throws IOException {
+    void newWhat(String What)  {
         switch (What) {
             case "Humanoid":
                 createHumanoidActions();

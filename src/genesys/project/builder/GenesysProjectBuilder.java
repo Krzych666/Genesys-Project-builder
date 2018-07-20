@@ -5,6 +5,10 @@
  */
 package genesys.project.builder;
 
+import genesys.project.fxml.ErrorController;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
@@ -22,14 +26,19 @@ public final class GenesysProjectBuilder extends Application {
     private static Window primaryStageWindow;
 
     @Override
-    public void start(Stage primaryStage) throws Exception {
-        Parent root = FXMLLoader.load(getClass().getResource("/genesys/project/fxml/BuilderFXML.fxml"));
-        Scene scene = new Scene(root);
-        primaryStage.setScene(scene);
-        primaryStage.setTitle("Genesys Project Builder");
-        primaryStage.show();
-        primaryStage.setOnCloseRequest(e -> Platform.exit());
-        primaryStageWindow = Window.getWindows().get(0);
+    public void start(Stage primaryStage) {
+        try {
+            Parent root = FXMLLoader.load(getClass().getResource("/genesys/project/fxml/BuilderFXML.fxml"));
+            Scene scene = new Scene(root);
+            primaryStage.setScene(scene);
+            primaryStage.setTitle("Genesys Project Builder");
+            primaryStage.show();
+            primaryStage.setOnCloseRequest(e -> Platform.exit());
+            primaryStageWindow = Window.getWindows().get(0);
+        } catch (IOException ex) {
+            ErrorController.ErrorController(ex);
+            Logger.getLogger(GenesysProjectBuilder.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     /**
@@ -40,7 +49,7 @@ public final class GenesysProjectBuilder extends Application {
     }
 
     /**
-     *hideOtherThanMainStage
+     * hideOtherThanMainStage
      */
     public static void hideOtherThanMainStage() {
         for (int i = 0; i < Window.getWindows().size(); i++) {

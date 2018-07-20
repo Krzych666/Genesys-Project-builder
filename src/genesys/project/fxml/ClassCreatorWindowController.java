@@ -11,10 +11,7 @@ import genesys.project.builder.DatabaseReader;
 import genesys.project.builder.DatabaseHolder;
 import genesys.project.builder.DatabaseWriter;
 import java.net.URL;
-import java.sql.SQLException;
 import java.util.ResourceBundle;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -163,10 +160,9 @@ public class ClassCreatorWindowController implements Initializable {
     /**
      * skillsList2MousePressedActions
      *
-     * @throws java.sql.SQLException
      */
     @FXML
-    public void skillsList2MousePressedActions() throws SQLException {
+    public void skillsList2MousePressedActions()  {
         availableSkillsList1.getSelectionModel().clearSelection();
         skillsList4.getSelectionModel().clearSelection();
         if (!skillsList2.getSelectionModel().isEmpty()) {
@@ -177,10 +173,9 @@ public class ClassCreatorWindowController implements Initializable {
     /**
      * availableSkillsList1MousePressedActions
      *
-     * @throws java.sql.SQLException
      */
     @FXML
-    public void availableSkillsList1MousePressedActions() throws SQLException {
+    public void availableSkillsList1MousePressedActions()  {
         skillsList2.getSelectionModel().clearSelection();
         skillsList4.getSelectionModel().clearSelection();
         if (!availableSkillsList1.getSelectionModel().isEmpty()) {
@@ -191,10 +186,9 @@ public class ClassCreatorWindowController implements Initializable {
     /**
      * skillsList4MousePressedActions
      *
-     * @throws java.sql.SQLException
      */
     @FXML
-    public void skillsList4MousePressedActions() throws SQLException {
+    public void skillsList4MousePressedActions()  {
         availableSkillsList1.getSelectionModel().clearSelection();
         skillsList2.getSelectionModel().clearSelection();
         if (!skillsList4.getSelectionModel().isEmpty()) {
@@ -202,7 +196,7 @@ public class ClassCreatorWindowController implements Initializable {
         }
     }
 
-    private void setAvailableSkills(ObservableList exclude) throws SQLException {
+    private void setAvailableSkills(ObservableList exclude)  {
         availableSkillsList1.setItems(AvailableSkillsLister.getAvailableSkills(DatabaseHolder.holdSpecies.getLifedomain(), DatabaseHolder.holdCulture.getAge(), skillSubSetChooser2.getSelectionModel().getSelectedItem().toString(), exclude));
         availableSkillsList1.setCellFactory(new Callback<ListView<String>, ListCell<String>>() {
             @Override
@@ -233,10 +227,10 @@ public class ClassCreatorWindowController implements Initializable {
 
     /**
      *
-     * @throws SQLException
+     * @
      */
     @FXML
-    public void basedOnChooserItemStateChangedActions() throws SQLException {
+    public void basedOnChooserItemStateChangedActions()  {
         DatabaseHolder.holdClass[DatabaseHolder.b].setBasedOn(basedOnChooser.getSelectionModel().getSelectedItem().toString());
         showBase();
         setAvailableSkills(BuilderCORE.mergeListViews(skillsList2, skillsList4));
@@ -244,10 +238,10 @@ public class ClassCreatorWindowController implements Initializable {
 
     /**
      *
-     * @throws SQLException
+     * @
      */
     @FXML
-    public void classTypeChooserItemStateChangedActions() throws SQLException {
+    public void classTypeChooserItemStateChangedActions()  {
         DatabaseHolder.holdClass[DatabaseHolder.b].setType(classTypeChooser.getSelectionModel().getSelectedItem().toString());
         showBase();
         setAvailableSkills(BuilderCORE.mergeListViews(skillsList2, skillsList4));
@@ -255,10 +249,10 @@ public class ClassCreatorWindowController implements Initializable {
 
     /**
      *
-     * @throws SQLException
+     * @
      */
     @FXML
-    public void skillSetChooser2ItemStateChangedActions() throws SQLException {
+    public void skillSetChooser2ItemStateChangedActions()  {
         if (skillSetChooser2.getSelectionModel().isEmpty()) {
             skillSetChooser2.setItems(DatabaseReader.getSkillSet());
             skillSetChooser2.getSelectionModel().select(0);
@@ -269,10 +263,10 @@ public class ClassCreatorWindowController implements Initializable {
 
     /**
      *
-     * @throws SQLException
+     * @
      */
     @FXML
-    public void skillSubSetChooser2ItemStateChangedActions() throws SQLException {
+    public void skillSubSetChooser2ItemStateChangedActions()  {
         if (skillSubSetChooser2.getSelectionModel().isEmpty()) {
             skillSubSetChooser2.setItems(DatabaseReader.getSubSkillSet(skillSetChooser2.getSelectionModel().getSelectedItem().toString(), DatabaseHolder.holdSpecies.getCharacteristicGroup().toString(), null)); //TODO beast envir
             skillSubSetChooser2.getSelectionModel().select(0);
@@ -282,10 +276,10 @@ public class ClassCreatorWindowController implements Initializable {
 
     /**
      *
-     * @throws SQLException
+     * @
      */
     @FXML
-    public void moveSkillButton2Actions() throws SQLException {
+    public void moveSkillButton2Actions()  {
         moveSkill1();
         availableSkillsList1.getSelectionModel().clearSelection();
         setAvailableSkills(BuilderCORE.mergeListViews(skillsList2, skillsList4));
@@ -301,7 +295,7 @@ public class ClassCreatorWindowController implements Initializable {
         subSkillText2.setText("");
     }
 
-    void moveSkill1() throws SQLException {
+    void moveSkill1()  {
         if (availableSkillsList1.getSelectionModel().getSelectedItem() != null) {
             //SkillsLeftActual2.setText(skillsLeftModify(AvailableSkillsList1.getSelectedValue(),true));
             DatabaseHolder.holdClass[DatabaseHolder.b].addSkills(availableSkillsList1.getSelectionModel().getSelectedItem().toString());
@@ -346,9 +340,9 @@ public class ClassCreatorWindowController implements Initializable {
 
     /**
      *
-     * @throws SQLException
+     * @
      */
-    public void showBase() throws SQLException {
+    public void showBase()  {
         if ("<base species>".equals(basedOnChooser.getSelectionModel().getSelectedItem().toString())) {
             skillsList4.setItems(AvailableSkillsLister.getAddedSkills(DatabaseHolder.holdSpecies.getSkills()));
             BuilderFXMLController.getSkillModifiers(DatabaseHolder.ruledskills);
@@ -365,9 +359,9 @@ public class ClassCreatorWindowController implements Initializable {
 
     /**
      *
-     * @throws SQLException
+     * @
      */
-    public void populateDropdownsClassType() throws SQLException {
+    public void populateDropdownsClassType()  {
         ObservableList tmp = FXCollections.observableArrayList();
         tmp.setAll((Object[]) DatabaseReader.getClassTypes(DatabaseHolder.holdSpecies.getLifedomain().toString()));
         classTypeChooser.setItems(tmp);
@@ -377,10 +371,9 @@ public class ClassCreatorWindowController implements Initializable {
     /**
      * createFinish2Actions
      *
-     * @throws java.sql.SQLException
      */
     @FXML
-    public void createFinish2Actions() throws SQLException {
+    public void createFinish2Actions()  {
         //SpeciesCreatorWindowController.SetMaxClassNumber(); //why?
         Stage stage = (Stage) createFinish2.getScene().getWindow();
         stage.hide();
@@ -404,9 +397,9 @@ public class ClassCreatorWindowController implements Initializable {
 
     /**
      *
-     * @throws SQLException
+     * @
      */
-    public void populateLabels() throws SQLException {
+    public void populateLabels()  {
         for (int i = 0; i < valuesLabels2.length; i++) {
             valuesLabels2[i].setText(DatabaseReader.getCharacteristics(DatabaseHolder.holdSpecies.getLifedomain().toString(), DatabaseHolder.holdSpecies.getCharacteristicGroup().toString())[i]);
         }
@@ -436,14 +429,14 @@ public class ClassCreatorWindowController implements Initializable {
     }
 
     @FXML
-    private void subSkillsListMouse2Pressed() throws SQLException {
+    private void subSkillsListMouse2Pressed()  {
         if (!subSkillsList2.getSelectionModel().isEmpty()) {
             subSkillText2.setText(BuilderCORE.generateSubSkillText(subSkillsList2.getSelectionModel().getSelectedItem().toString(), !simplifyToCoreSkills));
         }
     }
 
     @FXML
-    private void showAsCoreSkillsPressed() throws SQLException {
+    private void showAsCoreSkillsPressed()  {
         simplifyToCoreSkills = showAsCoreSkills.isSelected();
         int i = -1;
         if (!subSkillsList2.getSelectionModel().isEmpty()) {
@@ -493,35 +486,30 @@ public class ClassCreatorWindowController implements Initializable {
         }
         speciesNameValue2.setText(DatabaseHolder.holdSpecies.getSpeciesName());
         populateBasedOnClasses();
-        try {
-            populateDropdownsClassType();
-            skillSetChooser2.setItems(DatabaseReader.getSkillSet());
-            skillSetChooser2.getSelectionModel().select(0);
-            skillSubSetChooser2.setItems(DatabaseReader.getSubSkillSet(skillSetChooser2.getSelectionModel().getSelectedItem().toString(), DatabaseHolder.holdSpecies.getCharacteristicGroup().toString(), null)); //TODO beast envir
-            skillSubSetChooser2.getSelectionModel().select(0);
-            if (DatabaseHolder.classIsModyfying) {
-                createFinish2.setText("Modify Class");
-                //fill basedOn in hold class of a new class
-                nameInputField2.setText(DatabaseHolder.holdClass[0].getClassName());
-                basedOnChooser.getSelectionModel().select(DatabaseHolder.holdClass[0].getBasedOn());
-                classTypeChooser.getSelectionModel().select(DatabaseHolder.holdClass[0].getType());
-                skillsList2.setItems(AvailableSkillsLister.getAddedSkills(DatabaseHolder.holdClass[0].getSkills()));
-                showBase();
-                setAvailableSkills(BuilderCORE.mergeListViews(skillsList2, skillsList4));
-            } else {
-                createFinish2.setText("Add Class");
-                nameInputField2.setText(">enter name here<");
-                clearLists2();
-                DatabaseHolder.searchFreeClassSpot();
-                DatabaseHolder.holdClass[DatabaseHolder.b].setBasedOn(basedOnChooser.getSelectionModel().getSelectedItem().toString());
-                DatabaseHolder.holdClass[DatabaseHolder.b].setType(classTypeChooser.getSelectionModel().getSelectedItem().toString());
-                DatabaseHolder.holdClass[DatabaseHolder.b].setAdditionalCost("0");
-                setAvailableSkills(AvailableSkillsLister.getAddedSkills(DatabaseHolder.holdSpecies.getSkills()));
-                showBase();
-            }
-
-        } catch (SQLException ex) {
-            Logger.getLogger(ClassCreatorWindowController.class.getName()).log(Level.SEVERE, null, ex);
+        populateDropdownsClassType();
+        skillSetChooser2.setItems(DatabaseReader.getSkillSet());
+        skillSetChooser2.getSelectionModel().select(0);
+        skillSubSetChooser2.setItems(DatabaseReader.getSubSkillSet(skillSetChooser2.getSelectionModel().getSelectedItem().toString(), DatabaseHolder.holdSpecies.getCharacteristicGroup().toString(), null)); //TODO beast envir
+        skillSubSetChooser2.getSelectionModel().select(0);
+        if (DatabaseHolder.classIsModyfying) {
+            createFinish2.setText("Modify Class");
+            //fill basedOn in hold class of a new class
+            nameInputField2.setText(DatabaseHolder.holdClass[0].getClassName());
+            basedOnChooser.getSelectionModel().select(DatabaseHolder.holdClass[0].getBasedOn());
+            classTypeChooser.getSelectionModel().select(DatabaseHolder.holdClass[0].getType());
+            skillsList2.setItems(AvailableSkillsLister.getAddedSkills(DatabaseHolder.holdClass[0].getSkills()));
+            showBase();
+            setAvailableSkills(BuilderCORE.mergeListViews(skillsList2, skillsList4));
+        } else {
+            createFinish2.setText("Add Class");
+            nameInputField2.setText(">enter name here<");
+            clearLists2();
+            DatabaseHolder.searchFreeClassSpot();
+            DatabaseHolder.holdClass[DatabaseHolder.b].setBasedOn(basedOnChooser.getSelectionModel().getSelectedItem().toString());
+            DatabaseHolder.holdClass[DatabaseHolder.b].setType(classTypeChooser.getSelectionModel().getSelectedItem().toString());
+            DatabaseHolder.holdClass[DatabaseHolder.b].setAdditionalCost("0");
+            setAvailableSkills(AvailableSkillsLister.getAddedSkills(DatabaseHolder.holdSpecies.getSkills()));
+            showBase();
         }
         simplifyToCoreSkills = false;
     }

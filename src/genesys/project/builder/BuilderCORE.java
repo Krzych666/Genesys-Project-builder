@@ -12,12 +12,15 @@ import static genesys.project.builder.Enums.Enmuerations.LifedomainValue.Humanoi
 import static genesys.project.builder.Enums.Enmuerations.LifedomainValue.Insecta;
 import static genesys.project.builder.Enums.Enmuerations.LifedomainValue.Reptilia;
 import genesys.project.builder.Enums.Enmuerations.UseCases;
+import genesys.project.fxml.ErrorController;
 import static java.lang.Integer.max;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
@@ -154,16 +157,20 @@ public class BuilderCORE {
     /**
      *
      * @param uc
-     * @throws SQLException
      */
-    public static void chooseConnection(UseCases uc) throws SQLException {
-        if (UseCases.COREdb.equals(uc)) {
-            conn = DBCOREConnect();
+    public static void chooseConnection(UseCases uc) {
+        try {
+            if (UseCases.COREdb.equals(uc)) {
+                conn = DBCOREConnect();
+            }
+            if (UseCases.Userdb.equals(uc)) {
+                conn = DBUserDataConnect();
+            }
+            conn.setAutoCommit(false);
+        } catch (SQLException ex) {
+            ErrorController.ErrorController(ex);
+            Logger.getLogger(BuilderCORE.class.getName()).log(Level.SEVERE, null, ex);
         }
-        if (UseCases.Userdb.equals(uc)) {
-            conn = DBUserDataConnect();
-        }
-        conn.setAutoCommit(false);
     }
 
     /**
@@ -176,6 +183,7 @@ public class BuilderCORE {
             Class.forName("org.sqlite.JDBC");
             cCORE = DriverManager.getConnection("jdbc:sqlite:src\\genesys\\project\\database\\GenPr_CORE.db");
         } catch (ClassNotFoundException | SQLException e) {
+            ErrorController.ErrorController(e);
             System.err.println(e.getClass().getName() + ": " + e.getMessage());
         }
         return cCORE;
@@ -191,6 +199,7 @@ public class BuilderCORE {
             Class.forName("org.sqlite.JDBC");
             cUserData = DriverManager.getConnection("jdbc:sqlite:src\\genesys\\project\\database\\GenPr_UserData.db");
         } catch (ClassNotFoundException | SQLException e) {
+            ErrorController.ErrorController(e);
             System.err.println(e.getClass().getName() + ": " + e.getMessage());
         }
         return cUserData;
@@ -203,54 +212,60 @@ public class BuilderCORE {
      * @param exclude
      * @param excludeCompareColumn
      * @return
-     * @throws java.sql.SQLException
      */
-    public static ObservableList getData(PreparedStatement stmt, String[] columns, ObservableList exclude, int excludeCompareColumn) throws SQLException {
-        int exCompColu = (excludeCompareColumn > columns.length || excludeCompareColumn < 0) ? 0 : excludeCompareColumn - 1;
+    public static ObservableList getData(PreparedStatement stmt, String[] columns, ObservableList exclude, int excludeCompareColumn) {
         ObservableList temp = FXCollections.observableArrayList();
-        ResultSet rs = stmt.executeQuery();
-        try //(            
-        //PreparedStatement stmt  = conn.prepareStatement(sql);             
-        //)
-        {
-            // loop through the result set
-            while (rs.next()) {
-                //System.out.println(rs.getString(columns[j]) +  "\t");
-                boolean isPresent = false;
-                if (exclude != null) {
-                    for (int i = 0; i < exclude.size(); i++) {
-                        if ((exclude.get(i).toString().split(" \\(p")[0]).equals(rs.getString(columns[exCompColu]))) {
-                            isPresent = true;
+        try {
+            int exCompColu = (excludeCompareColumn > columns.length || excludeCompareColumn < 0) ? 0 : excludeCompareColumn - 1;
+            ResultSet rs = stmt.executeQuery();
+            try {
+                // loop through the result set
+                while (rs.next()) {
+                    //System.out.println(rs.getString(columns[j]) +  "\t");
+                    boolean isPresent = false;
+                    if (exclude != null) {
+                        for (int i = 0; i < exclude.size(); i++) {
+                            if ((exclude.get(i).toString().split(" \\(p")[0]).equals(rs.getString(columns[exCompColu]))) {
+                                isPresent = true;
+                            }
                         }
                     }
-                }
-                if (!isPresent) {
-                    StringBuilder row = new StringBuilder();
-                    for (int j = 0; j < columns.length; j++) {
-                        row.append(rs.getString(columns[j]));
-                        if (columns.length > 1 && j != columns.length - 1) {
-                            row.append("|");
+                    if (!isPresent) {
+                        StringBuilder row = new StringBuilder();
+                        for (int j = 0; j < columns.length; j++) {
+                            row.append(rs.getString(columns[j]));
+                            if (columns.length > 1 && j != columns.length - 1) {
+                                row.append("|");
+                            }
                         }
+                        temp.add(row.toString());
                     }
-                    temp.add(row.toString());
+                    //if (j != columns.length - 1) {temp.add("");} //Why?
                 }
-                //if (j != columns.length - 1) {temp.add("");} //Why?
+            } catch (SQLException e) {
+                ErrorController.ErrorController(e);
+                System.out.println(e.getMessage());
+            } finally {
+                try {
+                    rs.close();
+                } catch (SQLException e) {
+                    ErrorController.ErrorController(e);
+                }
+                try {
+                    stmt.close();
+                } catch (SQLException e) {
+                    ErrorController.ErrorController(e);
+                }
+                try {
+                    conn.close();
+                } catch (SQLException e) {
+                    ErrorController.ErrorController(e);
+                }
             }
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-        } finally {
-            try {
-                rs.close();
-            } catch (SQLException e) {
-                /* ignored */ }
-            try {
-                stmt.close();
-            } catch (SQLException e) {
-                /* ignored */ }
-            try {
-                conn.close();
-            } catch (SQLException e) {
-                /* ignored */ }
+            return temp;
+        } catch (SQLException ex) {
+            ErrorController.ErrorController(ex);
+            Logger.getLogger(BuilderCORE.class.getName()).log(Level.SEVERE, null, ex);
         }
         return temp;
     }
@@ -260,31 +275,36 @@ public class BuilderCORE {
      * @param stmt
      * @param column
      * @return
-     * @throws java.sql.SQLException
      */
-    public static String getValue(PreparedStatement stmt, String column) throws SQLException {
+    public static String getValue(PreparedStatement stmt, String column) {
         String Tmp = "";
-        ResultSet rs = stmt.executeQuery();
-        try// (
-        //Statement stmt = conn.createStatement();
-        //    )
-        {
-            Tmp = rs.getString(column);
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-        } finally {
+        try {
+            ResultSet rs = stmt.executeQuery();
             try {
-                rs.close();
+                Tmp = rs.getString(column);
             } catch (SQLException e) {
-                /* ignored */ }
-            try {
-                stmt.close();
-            } catch (SQLException e) {
-                /* ignored */ }
-            try {
-                conn.close();
-            } catch (SQLException e) {
-                /* ignored */ }
+                System.out.println(e.getMessage());
+            } finally {
+                try {
+                    rs.close();
+                } catch (SQLException e) {
+                    ErrorController.ErrorController(e);
+                }
+                try {
+                    stmt.close();
+                } catch (SQLException e) {
+                    ErrorController.ErrorController(e);
+                }
+                try {
+                    conn.close();
+                } catch (SQLException e) {
+                    ErrorController.ErrorController(e);
+                }
+            }
+            return Tmp;
+        } catch (SQLException ex) {
+            ErrorController.ErrorController(ex);
+            Logger.getLogger(BuilderCORE.class.getName()).log(Level.SEVERE, null, ex);
         }
         return Tmp;
     }
@@ -315,9 +335,9 @@ public class BuilderCORE {
      * @param skill
      * @param simplifyToCoreSkills
      * @return
-     * @throws SQLException
      */
-    public static ObservableList generateSubSkills(String skill, Boolean simplifyToCoreSkills) throws SQLException {
+    public static ObservableList generateSubSkills(String skill, Boolean simplifyToCoreSkills) {
+        ObservableList<String> tmp = FXCollections.observableArrayList();
         String skl = DatabaseReader.loadSkillFromDB(skill).get(0).toString().split("\\|")[2];
         if (!simplifyToCoreSkills) {
             skl = skl.replace("_", " ");
@@ -330,7 +350,6 @@ public class BuilderCORE {
         } else {
             sklSplit = skl.split(";");
         }
-        ObservableList<String> tmp = FXCollections.observableArrayList();
         tmp.addAll(sklSplit);
         return tmp;
     }
@@ -340,9 +359,9 @@ public class BuilderCORE {
      * @param subSkill
      * @param simplifyToCoreSkills
      * @return
-     * @throws SQLException
      */
-    public static String generateSubSkillText(String subSkill, Boolean simplifyToCoreSkills) throws SQLException {
+    public static String generateSubSkillText(String subSkill, Boolean simplifyToCoreSkills) {
+        String out = "";
         if (simplifyToCoreSkills) {
             subSkill = subSkill.replace("-", "").replace("+", "").replaceAll("[0-9]", "X").replace(" Xpts", "");
         }
@@ -367,7 +386,8 @@ public class BuilderCORE {
         if (subSkill.contains("Remove Trait")) {
             subSkill = "Remove Trait";
         }
-        return DatabaseReader.getSkillRuleExplanation(subSkill);
+        out = DatabaseReader.getSkillRuleExplanation(subSkill);
+        return out;
     }
 
     /**
@@ -553,9 +573,8 @@ public class BuilderCORE {
      * @param bb
      * @param points
      * @return
-     * @throws SQLException
      */
-    public static int baseAddedCost(LifedomainValue lifeDomain, DatabaseHolder.ASpecies species, DatabaseHolder.AClass[] classname, int bb, int points) throws SQLException {
+    public static int baseAddedCost(LifedomainValue lifeDomain, DatabaseHolder.ASpecies species, DatabaseHolder.AClass[] classname, int bb, int points) {
         int a = 1;
         int source = 0;
         if (classname != null) {
@@ -638,9 +657,9 @@ public class BuilderCORE {
 
     /**
      *
-     * @return @throws SQLException
+     * @return
      */
-    public static String skillsCanTake() throws SQLException {
+    public static String skillsCanTake() {
         String rules = DatabaseReader.getStartingNumberOfSkills(DatabaseHolder.holdSpecies.getLifedomain().toString());
         switch (DatabaseHolder.holdSpecies.getLifedomain()) {
             case Humanoid:
@@ -688,9 +707,8 @@ public class BuilderCORE {
      * @param Skill
      * @param Add
      * @return
-     * @throws SQLException
      */
-    public static String skillsLeftModify(String Skill, Boolean Add) throws SQLException {
+    public static String skillsLeftModify(String Skill, Boolean Add) {
         String[] LdTrees = DatabaseReader.getLdTrees(Skill);
         String SkillType1 = LdTrees[0];
         String SkillType3 = LdTrees[1];

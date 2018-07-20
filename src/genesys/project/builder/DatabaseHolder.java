@@ -15,8 +15,6 @@ import genesys.project.builder.Enums.Enmuerations.MainLineageValue;
 import genesys.project.builder.Enums.Enmuerations.MainOrderValue;
 import genesys.project.builder.Enums.Enmuerations.MainRegionValue;
 import genesys.project.fxml.BuilderFXMLController;
-import java.io.IOException;
-import java.sql.SQLException;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import lombok.Getter;
@@ -146,9 +144,8 @@ public class DatabaseHolder {
      *
      * @param lifedomain
      * @param what
-     * @throws IOException
      */
-    public static void creator(LifedomainValue lifedomain, Enum what) throws IOException {
+    public static void creator(LifedomainValue lifedomain, Enum what) {
         isModyfyinfg = false;
         holdSpecies = null;
         holdSpecies = ASpecies.createASpecies(lifedomain);
@@ -328,10 +325,8 @@ public class DatabaseHolder {
     /**
      *
      * @param selSpecies
-     * @throws SQLException
-     * @throws CloneNotSupportedException
      */
-    public static void loadSpeciesToHold(String selSpecies) throws SQLException, CloneNotSupportedException {
+    public static void loadSpeciesToHold(String selSpecies) {
         ObservableList data = DatabaseReader.getSpeciesData(selSpecies);
         holdSpecies = ASpecies.createASpecies(LifedomainValue.valueOf(data.get(0).toString().split("\\|")[0]));
         holdSpecies.setLifedomain(LifedomainValue.valueOf(data.get(0).toString().split("\\|")[0]));
@@ -347,10 +342,8 @@ public class DatabaseHolder {
      *
      * @param selSpecies
      * @param selCulture
-     * @throws java.lang.CloneNotSupportedException
-     * @throws java.sql.SQLException
      */
-    public static void loadCultureToHold(String selSpecies, String selCulture) throws CloneNotSupportedException, SQLException {
+    public static void loadCultureToHold(String selSpecies, String selCulture) {
         ObservableList data = DatabaseReader.getCultureData(selSpecies, selCulture);
         holdCulture.setSpeciesName(selSpecies);
         holdCulture.setCultureName(selCulture);
@@ -364,9 +357,8 @@ public class DatabaseHolder {
      * @param selCulture
      * @param selClass
      * @param a
-     * @throws SQLException
      */
-    public static void loadClassToHold(String selSpecies, String selCulture, String selClass, int a) throws SQLException {
+    public static void loadClassToHold(String selSpecies, String selCulture, String selClass, int a) {
         ObservableList data = DatabaseReader.getClassData(selSpecies, selCulture, selClass);
         holdClass[a].setClassName(selClass);
         holdClass[a].setSkills(data.get(0).toString().split("\\|")[0] + ",");
@@ -384,10 +376,8 @@ public class DatabaseHolder {
      * @param selSpecies
      * @param selCulture
      * @param selHero
-     * @throws SQLException
-     * @throws java.lang.CloneNotSupportedException
      */
-    public static void loadHeroToHold(String selSpecies, String selCulture, String selHero) throws SQLException, CloneNotSupportedException {
+    public static void loadHeroToHold(String selSpecies, String selCulture, String selHero) {
         ObservableList data = DatabaseReader.getHeroData(selSpecies, selCulture, selHero);
         holdHero.setHeroName(selHero);
         holdHero.setSpeciesName(selSpecies);
@@ -403,10 +393,8 @@ public class DatabaseHolder {
      * @param selSpecies
      * @param selCulture
      * @param selProgress
-     * @throws SQLException
-     * @throws java.lang.CloneNotSupportedException
      */
-    public static void loadProgressToHold(String selSpecies, String selCulture, String selProgress) throws SQLException, CloneNotSupportedException {
+    public static void loadProgressToHold(String selSpecies, String selCulture, String selProgress) {
         ObservableList data = DatabaseReader.getProgressData(selSpecies, selCulture, selProgress);
         holdProgress.setSpeciesName(selSpecies);
         holdProgress.setCultureName(selCulture);
@@ -420,10 +408,8 @@ public class DatabaseHolder {
      * @param selSpecies
      * @param selCulture
      * @param selRoster
-     * @throws SQLException
-     * @throws java.lang.CloneNotSupportedException
      */
-    public static void loadRosterToHold(String selSpecies, String selCulture, String selRoster) throws SQLException, CloneNotSupportedException {
+    public static void loadRosterToHold(String selSpecies, String selCulture, String selRoster) {
         ObservableList data = DatabaseReader.getRosterData(selSpecies, selCulture, selRoster);
         holdRoster.setSpeciesName(selSpecies);
         holdRoster.setCultureName(selCulture);

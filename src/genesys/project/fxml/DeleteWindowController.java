@@ -10,7 +10,6 @@ import genesys.project.builder.DatabaseReader;
 import genesys.project.builder.DatabaseWriter;
 import java.io.IOException;
 import java.net.URL;
-import java.sql.SQLException;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -75,20 +74,20 @@ public class DeleteWindowController implements Initializable {
 
     /**
      *
-     * @throws SQLException
+     * @
      */
     @FXML
-    public void speciesDeleteDropdownItemStateChangedActions() throws SQLException {
+    public void speciesDeleteDropdownItemStateChangedActions() {
         cultureDeleteDropdown.setItems(DatabaseReader.populateDropdownsCultures(speciesDeleteDropdown.getSelectionModel().getSelectedItem().toString()));
         cultureDeleteDropdown.getSelectionModel().select(0);
     }
 
     /**
      *
-     * @throws SQLException
+     * @
      */
     @FXML
-    public void cultureDeleteDropdownItemStateChangedActions() throws SQLException {
+    public void cultureDeleteDropdownItemStateChangedActions() {
         if (cultureDeleteDropdown.getSelectionModel().isEmpty()) {
             cultureDeleteDropdown.getSelectionModel().select(0);
         }
@@ -104,10 +103,10 @@ public class DeleteWindowController implements Initializable {
 
     /**
      *
-     * @throws SQLException
+     * @
      */
     @FXML
-    public void classDeleteDropdownItemStateChangedActions() throws SQLException {
+    public void classDeleteDropdownItemStateChangedActions() {
         if (classDeleteDropdown.getSelectionModel().isEmpty()) {
             classDeleteDropdown.getSelectionModel().select(0);
         }
@@ -156,24 +155,29 @@ public class DeleteWindowController implements Initializable {
 
     /**
      *
-     * @throws IOException
+     *
      */
     @FXML
-    public void deleteFinishButtonActions() throws IOException {
+    public void deleteFinishButtonActions() {
         prepareDeleteScript();
         if (deleteAreYouSureStage.isShowing()) {
             deleteAreYouSureStage.requestFocus();
         } else {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/genesys/project/fxml/DeleteAreYouSureFXML.fxml"));
-            Parent root = loader.load();
-            deleteAreYouSureController = loader.getController();
-            deleteAreYouSureController.setSpeciesList(speciesList);
-            toDelete = deleteAreYouSureController.getToDelete();
-            deleteAreYouSureController.getDeleteWindow(deleteFinishButton.getScene().getWindow());
-            Scene scene = new Scene(root);
-            deleteAreYouSureStage.setScene(scene);
-            deleteAreYouSureStage.setTitle("Confirm Deletion");
-            deleteAreYouSureStage.show();
+            try {
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/genesys/project/fxml/DeleteAreYouSureFXML.fxml"));
+                Parent root = loader.load();
+                deleteAreYouSureController = loader.getController();
+                deleteAreYouSureController.setSpeciesList(speciesList);
+                toDelete = deleteAreYouSureController.getToDelete();
+                deleteAreYouSureController.getDeleteWindow(deleteFinishButton.getScene().getWindow());
+                Scene scene = new Scene(root);
+                deleteAreYouSureStage.setScene(scene);
+                deleteAreYouSureStage.setTitle("Confirm Deletion");
+                deleteAreYouSureStage.show();
+            } catch (IOException ex) {
+                ErrorController.ErrorController(ex);
+                Logger.getLogger(DeleteWindowController.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
         showWhatToDelete();
     }
@@ -269,14 +273,10 @@ public class DeleteWindowController implements Initializable {
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        try {
-            speciesDeleteDropdown.setItems(DatabaseReader.populateDropdownsSpecies());
-            speciesDeleteDropdown.getSelectionModel().select(0);
-            speciesDeleteDropdownItemStateChangedActions();
-            cultureDeleteDropdownItemStateChangedActions();
-        } catch (SQLException ex) {
-            Logger.getLogger(DeleteWindowController.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        speciesDeleteDropdown.setItems(DatabaseReader.populateDropdownsSpecies());
+        speciesDeleteDropdown.getSelectionModel().select(0);
+        speciesDeleteDropdownItemStateChangedActions();
+        cultureDeleteDropdownItemStateChangedActions();
     }
 
     void setSpeciesAndCultureAndRosterList(ListView speciesList, ListView cultureList, ListView rosterList) {
@@ -285,7 +285,7 @@ public class DeleteWindowController implements Initializable {
         this.rosterList = rosterList;
     }
 
-    void setSelected() throws SQLException {
+    void setSelected() {
         if (!speciesList.getSelectionModel().isEmpty()) {
             speciesDeleteDropdown.getSelectionModel().select(speciesList.getSelectionModel().getSelectedItem());
             speciesDeleteDropdownItemStateChangedActions();

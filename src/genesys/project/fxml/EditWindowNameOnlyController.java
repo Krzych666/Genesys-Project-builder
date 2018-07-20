@@ -9,7 +9,6 @@ import genesys.project.builder.DatabaseHolder;
 import genesys.project.builder.DatabaseReader;
 import genesys.project.builder.DatabaseWriter;
 import java.net.URL;
-import java.sql.SQLException;
 import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -44,10 +43,10 @@ public class EditWindowNameOnlyController implements Initializable {
 
     /**
      *
-     * @throws SQLException
+     * 
      */
     @FXML
-    public void editWindowNameButtonOkAction() throws SQLException {
+    public void editWindowNameButtonOkAction() {
         Stage stage = (Stage) editWindowNameButtonOk.getScene().getWindow();
         stage.hide();
         switch (DatabaseHolder.currentTable) {
@@ -75,9 +74,9 @@ public class EditWindowNameOnlyController implements Initializable {
 
     /**
      *
-     * @throws SQLException
+     * 
      */
-    public void editCloseAfterSaveActions() throws SQLException {
+    public void editCloseAfterSaveActions() {
         speciesList.setItems(DatabaseReader.getSpeciesList());
         speciesList.getSelectionModel().clearSelection();
     }

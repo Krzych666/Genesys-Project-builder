@@ -146,10 +146,10 @@ public class CreateHoldWindowController implements Initializable {
 
     /**
      *
-     * @throws SQLException
+     * @
      */
     @FXML
-    public void classList1MousePressedActions() throws SQLException {
+    public void classList1MousePressedActions()  {
         if (!classList1.getSelectionModel().isEmpty()) {
             DatabaseHolder.classList1Holder = classList1.getSelectionModel().getSelectedItem().toString();
             int cost;
@@ -180,31 +180,35 @@ public class CreateHoldWindowController implements Initializable {
 
     /**
      *
-     * @throws IOException
      */
     @FXML
-    public void addClassButtonActions() throws IOException {
+    public void addClassButtonActions()  {
         if (classCreatorWindowStage.isShowing()) {
             classCreatorWindowStage.requestFocus();
         } else {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/genesys/project/fxml/ClassCreatorWindowFXML.fxml"));
-            Parent root = loader.load();
-            classCreatorWindowController = loader.getController();
-            classCreatorWindowController.setClassList1(classList1);
-            classCreatorWindowController.setClassesLeft3b(classesLeft3b);
-            Scene scene = new Scene(root);
-            classCreatorWindowStage.setScene(scene);
-            classCreatorWindowStage.setTitle("Create Class for " + DatabaseHolder.holdCulture.getSpeciesName() + " - " + DatabaseHolder.holdCulture.getCultureName());
-            classCreatorWindowStage.show();
+            try {
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/genesys/project/fxml/ClassCreatorWindowFXML.fxml"));
+                Parent root = loader.load();
+                classCreatorWindowController = loader.getController();
+                classCreatorWindowController.setClassList1(classList1);
+                classCreatorWindowController.setClassesLeft3b(classesLeft3b);
+                Scene scene = new Scene(root);
+                classCreatorWindowStage.setScene(scene);
+                classCreatorWindowStage.setTitle("Create Class for " + DatabaseHolder.holdCulture.getSpeciesName() + " - " + DatabaseHolder.holdCulture.getCultureName());
+                classCreatorWindowStage.show();
+            } catch (IOException ex) {
+                ErrorController.ErrorController(ex);
+                Logger.getLogger(CreateHoldWindowController.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
     }
 
     /**
      *
-     * @throws SQLException
+     * @
      */
     @FXML
-    public void createSpeciesFinalButtonActions() throws SQLException {
+    public void createSpeciesFinalButtonActions()  {
         if (DatabaseHolder.isModyfyinfg) {
             DatabaseHolder.isModyfyinfg = !DatabaseHolder.isModyfyinfg;
             for (int i = 0; i < DatabaseHolder.holdClass.length; i++) {
@@ -230,9 +234,9 @@ public class CreateHoldWindowController implements Initializable {
 
     /**
      *
-     * @throws SQLException
+     * @
      */
-    public void createHoldUpdate() throws SQLException {
+    public void createHoldUpdate()  {
         lifeDomainValue3.setText(DatabaseHolder.holdSpecies.getLifedomain().toString());
         speciesNameValue3.setText(DatabaseHolder.holdSpecies.getSpeciesName());
         ObservableList tmp = FXCollections.observableArrayList();
@@ -256,9 +260,9 @@ public class CreateHoldWindowController implements Initializable {
 
     /**
      *
-     * @throws SQLException
+     * @
      */
-    public void populateLabels() throws SQLException {
+    public void populateLabels()  {
         for (int i = 0; i < valuesLabels3.length; i++) {
             valuesLabels3[i].setText(DatabaseReader.getCharacteristics(DatabaseHolder.holdSpecies.getLifedomain().toString(), DatabaseHolder.holdSpecies.getCharacteristicGroup().toString())[i]);
         }
@@ -296,11 +300,7 @@ public class CreateHoldWindowController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         this.valuesLabels3 = new Label[]{strengthValue3, toughnessValue3, movementValue3, martialValue3, rangedValue3, defenseValue3, disciplineValue3, willpowerValue3, commandValue3, woundsValue3, attacksValue3, sizeValue3, mTValue3, rTValue3, moraleValue3};
-        try {
-            createHoldUpdate();
-        } catch (SQLException ex) {
-            Logger.getLogger(CreateHoldWindowController.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        createHoldUpdate();
         if (!DatabaseHolder.isModyfyinfg && DatabaseHolder.holdCulture != null && DatabaseHolder.holdCulture.getAge() < 1) {
             DatabaseHolder.holdCulture.setAge(1);
         }

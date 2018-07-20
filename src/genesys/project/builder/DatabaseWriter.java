@@ -12,6 +12,9 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import javafx.collections.ObservableList;
 import static genesys.project.builder.BuilderCORE.chooseConnection;
+import genesys.project.fxml.ErrorController;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -36,19 +39,22 @@ public class DatabaseWriter {
             stmt = conn.createStatement();
             stmt.executeUpdate(sql);
         } catch (SQLException e) {
+            ErrorController.ErrorController(e);
             System.out.println(e.getMessage());
         } finally {
             if (stmt != null) {
                 try {
                     stmt.close();
                 } catch (SQLException e) {
-                    /* ignored */ }
+                    ErrorController.ErrorController(e);
+                }
             }
             if (conn != null) {
                 try {
                     conn.close();
                 } catch (SQLException e) {
-                    /* ignored */ }
+                    ErrorController.ErrorController(e);
+                }
             }
         }
     }
@@ -123,9 +129,9 @@ public class DatabaseWriter {
 
     /**
      *
-     * @throws SQLException
+     *
      */
-    public static void modifySpecies() throws SQLException {
+    public static void modifySpecies() {
         executeSQL("UPDATE CreatedSpecies SET Lifedomain='" + DatabaseHolder.holdSpecies.getLifedomain() + "', CharacteristicGroup='" + DatabaseHolder.holdSpecies.getCharacteristicGroup() + "', SpeciesName='" + DatabaseHolder.holdSpecies.getSpeciesName() + "', Age='" + DatabaseHolder.holdSpecies.getAge() + "', Skills='" + DatabaseHolder.holdSpecies.getSkills() + "', SpeciesModifiers='" + DatabaseHolder.holdSpecies.getSpeciesModifiers() + "' WHERE SpeciesName='" + DatabaseHolder.modifiedHoldSpecies.getSpeciesName() + "'");
         executeSQL("UPDATE CreatedCultures SET SpeciesName='" + DatabaseHolder.holdSpecies.getSpeciesName() + "' WHERE SpeciesName='" + DatabaseHolder.modifiedHoldSpecies.getSpeciesName() + "'");
         executeSQL("UPDATE CreatedClasses SET SpeciesName='" + DatabaseHolder.holdSpecies.getSpeciesName() + "' WHERE SpeciesName='" + DatabaseHolder.modifiedHoldSpecies.getSpeciesName() + "'");
@@ -135,51 +141,56 @@ public class DatabaseWriter {
         checkClassSkillsSpecies();
     }
 
-    private static void checkClassSkillsSpecies() throws SQLException {
-        StringBuilder newFoundSkills = new StringBuilder();
-        for (String split1 : DatabaseHolder.holdSpecies.getSkills().split(",")) {
-            boolean present = false;
-            for (String split : DatabaseHolder.modifiedHoldSpecies.getSkills().split(",")) {
-                if (split.equals(split1)) {
-                    present = true;
+    private static void checkClassSkillsSpecies() {
+        try {
+            StringBuilder newFoundSkills = new StringBuilder();
+            for (String split1 : DatabaseHolder.holdSpecies.getSkills().split(",")) {
+                boolean present = false;
+                for (String split : DatabaseHolder.modifiedHoldSpecies.getSkills().split(",")) {
+                    if (split.equals(split1)) {
+                        present = true;
+                    }
+                }
+                if (!present) {
+                    newFoundSkills.append(split1).append(",");
                 }
             }
-            if (!present) {
-                newFoundSkills.append(split1).append(",");
+            String deleteSkills = newFoundSkills.toString();
+            if (deleteSkills.length() >= 2) {
+                deleteSkills = deleteSkills.substring(0, deleteSkills.length() - 1);
             }
-        }
-        String deleteSkills = newFoundSkills.toString();
-        if (deleteSkills.length() >= 2) {
-            deleteSkills = deleteSkills.substring(0, deleteSkills.length() - 1);
-        }
-        chooseConnection(UseCases.Userdb);
-        PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT DISTINCT CultureName FROM CreatedClasses WHERE SpeciesName=?");
-        stmt.setString(1, DatabaseHolder.holdSpecies.getSpeciesName());
-        String[] columns = {"CultureName"};
-        ObservableList tmpCult = BuilderCORE.getData(stmt, columns, null, 0);
-        for (int i = 0; i < tmpCult.size(); i++) {
             chooseConnection(UseCases.Userdb);
-            PreparedStatement stmt1 = BuilderCORE.getConnection().prepareStatement("SELECT DISTINCT ClassName FROM CreatedClasses WHERE SpeciesName=? AND CultureName=?");
-            stmt1.setString(1, DatabaseHolder.holdSpecies.getSpeciesName());
-            stmt1.setString(2, tmpCult.get(i).toString());
-            String[] columns1 = {"ClassName"};
-            ObservableList tmpClass = BuilderCORE.getData(stmt1, columns1, null, 0);
-            for (int ii = 0; ii < tmpClass.size(); ii++) {
+            PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT DISTINCT CultureName FROM CreatedClasses WHERE SpeciesName=?");
+            stmt.setString(1, DatabaseHolder.holdSpecies.getSpeciesName());
+            String[] columns = {"CultureName"};
+            ObservableList tmpCult = BuilderCORE.getData(stmt, columns, null, 0);
+            for (int i = 0; i < tmpCult.size(); i++) {
                 chooseConnection(UseCases.Userdb);
-                PreparedStatement stmt2 = BuilderCORE.getConnection().prepareStatement("SELECT * FROM CreatedClasses WHERE SpeciesName=? AND CultureName=? AND ClassName=?");
-                stmt2.setString(1, DatabaseHolder.holdSpecies.getSpeciesName());
-                stmt2.setString(2, tmpCult.get(i).toString());
-                stmt2.setString(3, tmpClass.get(ii).toString());
-                String tmpSkill = BuilderCORE.getValue(stmt2, "Skills");
-                String tmpSkillRep = DatabaseHolder.skillsSeparatorRepalcer(tmpSkill);
-                for (String split : DatabaseHolder.skillsSeparatorRepalcer(deleteSkills).split(",")) {
-                    tmpSkillRep = tmpSkillRep.replace(split, "");
-                }
-                tmpSkillRep = DatabaseHolder.skillsSeparatorRepalcer(tmpSkillRep);
-                if (!tmpSkill.equals(tmpSkillRep)) {
-                    executeSQL("UPDATE CreatedClasses SET Skills='" + tmpSkillRep + "' WHERE SpeciesName='" + DatabaseHolder.holdSpecies.getSpeciesName() + "' AND CultureName='" + tmpCult.get(i).toString() + "' AND ClassName='" + tmpClass.get(ii).toString() + "'");
+                PreparedStatement stmt1 = BuilderCORE.getConnection().prepareStatement("SELECT DISTINCT ClassName FROM CreatedClasses WHERE SpeciesName=? AND CultureName=?");
+                stmt1.setString(1, DatabaseHolder.holdSpecies.getSpeciesName());
+                stmt1.setString(2, tmpCult.get(i).toString());
+                String[] columns1 = {"ClassName"};
+                ObservableList tmpClass = BuilderCORE.getData(stmt1, columns1, null, 0);
+                for (int ii = 0; ii < tmpClass.size(); ii++) {
+                    chooseConnection(UseCases.Userdb);
+                    PreparedStatement stmt2 = BuilderCORE.getConnection().prepareStatement("SELECT * FROM CreatedClasses WHERE SpeciesName=? AND CultureName=? AND ClassName=?");
+                    stmt2.setString(1, DatabaseHolder.holdSpecies.getSpeciesName());
+                    stmt2.setString(2, tmpCult.get(i).toString());
+                    stmt2.setString(3, tmpClass.get(ii).toString());
+                    String tmpSkill = BuilderCORE.getValue(stmt2, "Skills");
+                    String tmpSkillRep = DatabaseHolder.skillsSeparatorRepalcer(tmpSkill);
+                    for (String split : DatabaseHolder.skillsSeparatorRepalcer(deleteSkills).split(",")) {
+                        tmpSkillRep = tmpSkillRep.replace(split, "");
+                    }
+                    tmpSkillRep = DatabaseHolder.skillsSeparatorRepalcer(tmpSkillRep);
+                    if (!tmpSkill.equals(tmpSkillRep)) {
+                        executeSQL("UPDATE CreatedClasses SET Skills='" + tmpSkillRep + "' WHERE SpeciesName='" + DatabaseHolder.holdSpecies.getSpeciesName() + "' AND CultureName='" + tmpCult.get(i).toString() + "' AND ClassName='" + tmpClass.get(ii).toString() + "'");
+                    }
                 }
             }
+        } catch (SQLException ex) {
+            ErrorController.ErrorController(ex);
+            Logger.getLogger(DatabaseWriter.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -216,9 +227,8 @@ public class DatabaseWriter {
     /**
      *
      * @param a
-     * @throws java.sql.SQLException
      */
-    public static void modifyClass(int a) throws SQLException {
+    public static void modifyClass(int a) {
         if (a < DatabaseHolder.modifiedHoldClass.length - 1) {
             if (DatabaseHolder.holdClass[a].getSkills().endsWith(",")) {
                 DatabaseHolder.holdClass[a].setSkills(DatabaseHolder.holdClass[a].getSkills().substring(0, DatabaseHolder.holdClass[a].getSkills().length() - 1));
@@ -231,42 +241,47 @@ public class DatabaseWriter {
         }
     }
 
-    private static void checkClassSkillsBasedon(int a) throws SQLException {
-        StringBuilder newFoundSkills = new StringBuilder();
-        for (String split1 : DatabaseHolder.holdClass[a].getSkills().split(",")) {
-            boolean present = false;
-            for (String split : DatabaseHolder.modifiedHoldClass[a].getSkills().split(",")) {
-                if (split.equals(split1)) {
-                    present = true;
+    private static void checkClassSkillsBasedon(int a) {
+        try {
+            StringBuilder newFoundSkills = new StringBuilder();
+            for (String split1 : DatabaseHolder.holdClass[a].getSkills().split(",")) {
+                boolean present = false;
+                for (String split : DatabaseHolder.modifiedHoldClass[a].getSkills().split(",")) {
+                    if (split.equals(split1)) {
+                        present = true;
+                    }
+                }
+                if (!present) {
+                    newFoundSkills.append(split1).append(",");
                 }
             }
-            if (!present) {
-                newFoundSkills.append(split1).append(",");
-            }
-        }
-        String deleteSkills = newFoundSkills.toString();
-        chooseConnection(UseCases.Userdb);
-        PreparedStatement stmt1 = BuilderCORE.getConnection().prepareStatement("SELECT * FROM CreatedClasses WHERE SpeciesName=? AND CultureName=? AND BasedOn=?");
-        stmt1.setString(1, DatabaseHolder.holdClass[a].getSpeciesName());
-        stmt1.setString(2, DatabaseHolder.holdClass[a].getCultureName());
-        stmt1.setString(3, DatabaseHolder.holdClass[a].getClassName());
-        String[] columns1 = {"ClassName"};
-        ObservableList tmpBased = BuilderCORE.getData(stmt1, columns1, null, 0);
-        for (int i = 0; i < tmpBased.size(); i++) {
+            String deleteSkills = newFoundSkills.toString();
             chooseConnection(UseCases.Userdb);
-            PreparedStatement stmt2 = BuilderCORE.getConnection().prepareStatement("SELECT * FROM CreatedClasses WHERE SpeciesName=? AND CultureName=? AND ClassName=?");
-            stmt2.setString(1, DatabaseHolder.holdClass[a].getSpeciesName());
-            stmt2.setString(2, DatabaseHolder.holdClass[a].getCultureName());
-            stmt2.setString(3, tmpBased.get(i).toString());
-            String tmpSkill = BuilderCORE.getValue(stmt2, "Skills");
-            String tmpSkillRep = DatabaseHolder.skillsSeparatorRepalcer(tmpSkill);
-            for (String split : DatabaseHolder.skillsSeparatorRepalcer(deleteSkills).split(",")) {
-                tmpSkillRep = tmpSkillRep.replace(split, "");
+            PreparedStatement stmt1 = BuilderCORE.getConnection().prepareStatement("SELECT * FROM CreatedClasses WHERE SpeciesName=? AND CultureName=? AND BasedOn=?");
+            stmt1.setString(1, DatabaseHolder.holdClass[a].getSpeciesName());
+            stmt1.setString(2, DatabaseHolder.holdClass[a].getCultureName());
+            stmt1.setString(3, DatabaseHolder.holdClass[a].getClassName());
+            String[] columns1 = {"ClassName"};
+            ObservableList tmpBased = BuilderCORE.getData(stmt1, columns1, null, 0);
+            for (int i = 0; i < tmpBased.size(); i++) {
+                chooseConnection(UseCases.Userdb);
+                PreparedStatement stmt2 = BuilderCORE.getConnection().prepareStatement("SELECT * FROM CreatedClasses WHERE SpeciesName=? AND CultureName=? AND ClassName=?");
+                stmt2.setString(1, DatabaseHolder.holdClass[a].getSpeciesName());
+                stmt2.setString(2, DatabaseHolder.holdClass[a].getCultureName());
+                stmt2.setString(3, tmpBased.get(i).toString());
+                String tmpSkill = BuilderCORE.getValue(stmt2, "Skills");
+                String tmpSkillRep = DatabaseHolder.skillsSeparatorRepalcer(tmpSkill);
+                for (String split : DatabaseHolder.skillsSeparatorRepalcer(deleteSkills).split(",")) {
+                    tmpSkillRep = tmpSkillRep.replace(split, "");
+                }
+                tmpSkillRep = DatabaseHolder.skillsSeparatorRepalcer(tmpSkillRep);
+                if (!tmpSkill.equals(tmpSkillRep)) {
+                    executeSQL("UPDATE CreatedClasses SET Skills='" + tmpSkillRep + "' WHERE SpeciesName='" + DatabaseHolder.holdClass[a].getSpeciesName() + "' AND CultureName='" + DatabaseHolder.holdClass[a].getCultureName() + "' AND ClassName='" + tmpBased.get(i).toString() + "'");
+                }
             }
-            tmpSkillRep = DatabaseHolder.skillsSeparatorRepalcer(tmpSkillRep);
-            if (!tmpSkill.equals(tmpSkillRep)) {
-                executeSQL("UPDATE CreatedClasses SET Skills='" + tmpSkillRep + "' WHERE SpeciesName='" + DatabaseHolder.holdClass[a].getSpeciesName() + "' AND CultureName='" + DatabaseHolder.holdClass[a].getCultureName() + "' AND ClassName='" + tmpBased.get(i).toString() + "'");
-            }
+        } catch (SQLException ex) {
+            ErrorController.ErrorController(ex);
+            Logger.getLogger(DatabaseWriter.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -319,38 +334,49 @@ public class DatabaseWriter {
      *
      * @param selSpecies
      * @param duplicateNewNameValue
-     * @throws SQLException
+     *
      */
-    public static void duplicateSpecies(String selSpecies, String duplicateNewNameValue) throws SQLException {
-        chooseConnection(UseCases.Userdb);
-        PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT * FROM CreatedSpecies WHERE SpeciesName =?");
-        stmt.setString(1, selSpecies);
-        String[] columns = {"LifeDomain", "CharacteristicGroup", "Age", "Skills", "SpeciesModifiers"};
-        ObservableList data = BuilderCORE.getData(stmt, columns, null, 0);
-        executeSQL("INSERT INTO `CreatedSpecies`(LifeDomain, CharacteristicGroup,SpeciesName,Age,Skills,SpeciesModifiers) VALUES ('" + data.get(0).toString().split("\\|")[0] + "','" + data.get(0).toString().split("\\|")[1] + "','" + duplicateNewNameValue + "','" + data.get(0).toString().split("\\|")[2] + "''" + data.get(0).toString().split("\\|")[3] + "''" + data.get(0).toString().split("\\|")[4] + "');");
+    public static void duplicateSpecies(String selSpecies, String duplicateNewNameValue) {
+        try {
+            chooseConnection(UseCases.Userdb);
+            PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT * FROM CreatedSpecies WHERE SpeciesName =?");
+            stmt.setString(1, selSpecies);
+            String[] columns = {"LifeDomain", "CharacteristicGroup", "Age", "Skills", "SpeciesModifiers"};
+            ObservableList data = BuilderCORE.getData(stmt, columns, null, 0);
+            executeSQL("INSERT INTO `CreatedSpecies`(LifeDomain, CharacteristicGroup,SpeciesName,Age,Skills,SpeciesModifiers) VALUES ('" + data.get(0).toString().split("\\|")[0] + "','" + data.get(0).toString().split("\\|")[1] + "','" + duplicateNewNameValue + "','" + data.get(0).toString().split("\\|")[2] + "''" + data.get(0).toString().split("\\|")[3] + "''" + data.get(0).toString().split("\\|")[4] + "');");
+        } catch (SQLException ex) {
+            ErrorController.ErrorController(ex);
+            Logger.getLogger(DatabaseWriter.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     /**
      *
      * @param selSpecies
      * @param selCulture
-     * @throws SQLException
+     * @param duplicateNewNameValue
+     *
      */
-    public static void duplicateCulture(String selSpecies, String selCulture, String duplicateNewNameValue) throws SQLException {
-        chooseConnection(UseCases.Userdb);
-        PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("--all--".equals(selCulture) ? "SELECT * FROM CreatedCultures WHERE SpeciesName =?" : "SELECT * FROM CreatedCultures WHERE SpeciesName =? AND CultureName =");
-        stmt.setString(1, selSpecies);
-        if (!"--all--".equals(selCulture)) {
-            stmt.setString(2, selCulture);
-        }
-        String[] columns = {"CultureName", "Age"};
-        ObservableList data = BuilderCORE.getData(stmt, columns, null, 0);
-        if ("--all--".equals(selCulture)) {
-            for (int i = 0; i < data.size(); i++) {
-                executeSQL("INSERT INTO `CreatedCultures`(CultureName,SpeciesName,Age) VALUES ('" + data.get(i).toString().split("\\|")[0] + "','" + duplicateNewNameValue + "','" + data.get(i).toString().split("\\|")[1] + "');");
+    public static void duplicateCulture(String selSpecies, String selCulture, String duplicateNewNameValue) {
+        try {
+            chooseConnection(UseCases.Userdb);
+            PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("--all--".equals(selCulture) ? "SELECT * FROM CreatedCultures WHERE SpeciesName =?" : "SELECT * FROM CreatedCultures WHERE SpeciesName =? AND CultureName =");
+            stmt.setString(1, selSpecies);
+            if (!"--all--".equals(selCulture)) {
+                stmt.setString(2, selCulture);
             }
-        } else {
-            executeSQL("INSERT INTO `CreatedCultures`(CultureName,SpeciesName,Age) VALUES ('" + duplicateNewNameValue + "','" + selSpecies + "','" + data.get(0).toString().split("\\|")[1] + "');");
+            String[] columns = {"CultureName", "Age"};
+            ObservableList data = BuilderCORE.getData(stmt, columns, null, 0);
+            if ("--all--".equals(selCulture)) {
+                for (int i = 0; i < data.size(); i++) {
+                    executeSQL("INSERT INTO `CreatedCultures`(CultureName,SpeciesName,Age) VALUES ('" + data.get(i).toString().split("\\|")[0] + "','" + duplicateNewNameValue + "','" + data.get(i).toString().split("\\|")[1] + "');");
+                }
+            } else {
+                executeSQL("INSERT INTO `CreatedCultures`(CultureName,SpeciesName,Age) VALUES ('" + duplicateNewNameValue + "','" + selSpecies + "','" + data.get(0).toString().split("\\|")[1] + "');");
+            }
+        } catch (SQLException ex) {
+            ErrorController.ErrorController(ex);
+            Logger.getLogger(DatabaseWriter.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -359,22 +385,28 @@ public class DatabaseWriter {
      * @param selSpecies
      * @param selCulture
      * @param selClass
-     * @throws SQLException
+     * @param duplicateNewNameValue
+     *
      */
-    public static void duplicateClass(String selSpecies, String selCulture, String selClass, String duplicateNewNameValue) throws SQLException {
-        chooseConnection(UseCases.Userdb);
-        PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT * FROM CreatedClasses WHERE SpeciesName =?");
-        stmt.setString(1, selSpecies);
-        String[] columns = {"ClassName", "Skills", "CultureName", "Advancements", "Type", "BasedOn", "AdditionalCost"};
-        ObservableList data = BuilderCORE.getData(stmt, columns, null, 0);
-        for (int i = 0; i < data.size(); i++) {
-            if ("--all--".equals(selClass) && "--all--".equals(selCulture)) {
-                executeSQL("INSERT INTO `CreatedClasses`(ClassName,Skills,SpeciesName,CultureName,Advancements,Type,BasedOn,AdditionalCost) VALUES ('" + data.get(i).toString().split("\\|")[0] + "','" + data.get(i).toString().split("\\|")[1] + "','" + duplicateNewNameValue + "','" + data.get(i).toString().split("\\|")[2] + "','" + data.get(i).toString().split("\\|")[3] + "','" + data.get(i).toString().split("\\|")[4] + "','" + data.get(i).toString().split("\\|")[5] + "','" + data.get(i).toString().split("\\|")[6] + "');");
-            } else if ("--all--".equals(selClass) && !"--all--".equals(selCulture) && data.get(i).toString().split("\\|")[2].equals(selCulture)) {
-                executeSQL("INSERT INTO `CreatedClasses`(ClassName,Skills,SpeciesName,CultureName,Advancements,Type,BasedOn,AdditionalCost) VALUES ('" + data.get(i).toString().split("\\|")[0] + "','" + data.get(i).toString().split("\\|")[1] + "','" + selSpecies + "','" + duplicateNewNameValue + "','" + data.get(i).toString().split("\\|")[3] + "','" + data.get(i).toString().split("\\|")[4] + "','" + data.get(i).toString().split("\\|")[5] + "','" + data.get(i).toString().split("\\|")[6] + "');");
-            } else if (!"--all--".equals(selClass) && !"--all--".equals(selCulture) && data.get(i).toString().split("\\|")[2].equals(selCulture) && data.get(i).toString().split("\\|")[2].equals(selClass)) {
-                executeSQL("INSERT INTO `CreatedClasses`(ClassName,Skills,SpeciesName,CultureName,Advancements,Type,BasedOn,AdditionalCost) VALUES ('" + duplicateNewNameValue + "','" + data.get(i).toString().split("\\|")[1] + "','" + selSpecies + "','" + selCulture + "','" + data.get(i).toString().split("\\|")[3] + "','" + data.get(i).toString().split("\\|")[4] + "','" + data.get(i).toString().split("\\|")[5] + "','" + data.get(i).toString().split("\\|")[6] + "');");
+    public static void duplicateClass(String selSpecies, String selCulture, String selClass, String duplicateNewNameValue) {
+        try {
+            chooseConnection(UseCases.Userdb);
+            PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT * FROM CreatedClasses WHERE SpeciesName =?");
+            stmt.setString(1, selSpecies);
+            String[] columns = {"ClassName", "Skills", "CultureName", "Advancements", "Type", "BasedOn", "AdditionalCost"};
+            ObservableList data = BuilderCORE.getData(stmt, columns, null, 0);
+            for (int i = 0; i < data.size(); i++) {
+                if ("--all--".equals(selClass) && "--all--".equals(selCulture)) {
+                    executeSQL("INSERT INTO `CreatedClasses`(ClassName,Skills,SpeciesName,CultureName,Advancements,Type,BasedOn,AdditionalCost) VALUES ('" + data.get(i).toString().split("\\|")[0] + "','" + data.get(i).toString().split("\\|")[1] + "','" + duplicateNewNameValue + "','" + data.get(i).toString().split("\\|")[2] + "','" + data.get(i).toString().split("\\|")[3] + "','" + data.get(i).toString().split("\\|")[4] + "','" + data.get(i).toString().split("\\|")[5] + "','" + data.get(i).toString().split("\\|")[6] + "');");
+                } else if ("--all--".equals(selClass) && !"--all--".equals(selCulture) && data.get(i).toString().split("\\|")[2].equals(selCulture)) {
+                    executeSQL("INSERT INTO `CreatedClasses`(ClassName,Skills,SpeciesName,CultureName,Advancements,Type,BasedOn,AdditionalCost) VALUES ('" + data.get(i).toString().split("\\|")[0] + "','" + data.get(i).toString().split("\\|")[1] + "','" + selSpecies + "','" + duplicateNewNameValue + "','" + data.get(i).toString().split("\\|")[3] + "','" + data.get(i).toString().split("\\|")[4] + "','" + data.get(i).toString().split("\\|")[5] + "','" + data.get(i).toString().split("\\|")[6] + "');");
+                } else if (!"--all--".equals(selClass) && !"--all--".equals(selCulture) && data.get(i).toString().split("\\|")[2].equals(selCulture) && data.get(i).toString().split("\\|")[2].equals(selClass)) {
+                    executeSQL("INSERT INTO `CreatedClasses`(ClassName,Skills,SpeciesName,CultureName,Advancements,Type,BasedOn,AdditionalCost) VALUES ('" + duplicateNewNameValue + "','" + data.get(i).toString().split("\\|")[1] + "','" + selSpecies + "','" + selCulture + "','" + data.get(i).toString().split("\\|")[3] + "','" + data.get(i).toString().split("\\|")[4] + "','" + data.get(i).toString().split("\\|")[5] + "','" + data.get(i).toString().split("\\|")[6] + "');");
+                }
             }
+        } catch (SQLException ex) {
+            ErrorController.ErrorController(ex);
+            Logger.getLogger(DatabaseWriter.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -383,22 +415,28 @@ public class DatabaseWriter {
      * @param selSpecies
      * @param selCulture
      * @param selHero
-     * @throws SQLException
+     * @param duplicateNewNameValue
+     *
      */
-    public static void duplicateHero(String selSpecies, String selCulture, String selHero, String duplicateNewNameValue) throws SQLException {
-        chooseConnection(UseCases.Userdb);
-        PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT * FROM CreatedHeroes WHERE SpeciesName =?");
-        stmt.setString(1, selSpecies);
-        String[] columns = {"HeroName", "CultureName", "Advancements", "BasedOn", "AdditionalCost"};
-        ObservableList data = BuilderCORE.getData(stmt, columns, null, 0);
-        for (int i = 0; i < data.size(); i++) {
-            if ("--all--".equals(selHero) && "--all--".equals(selCulture)) {
-                executeSQL("INSERT INTO `CreatedHeroes`(HeroName,SpeciesName,CultureName,Advancements,BasedOn,AdditionalCost) VALUES ('" + data.get(i).toString().split("\\|")[0] + "','" + duplicateNewNameValue + "','" + data.get(i).toString().split("\\|")[1] + "','" + data.get(i).toString().split("\\|")[2] + "','" + data.get(i).toString().split("\\|")[3] + "','" + data.get(i).toString().split("\\|")[4] + "');");
-            } else if ("--all--".equals(selHero) && !"--all--".equals(selCulture) && data.get(i).toString().split("\\|")[2].equals(selCulture)) {
-                executeSQL("INSERT INTO `CreatedHeroes`(HeroName,SpeciesName,CultureName,Advancements,BasedOn,AdditionalCost) VALUES ('" + data.get(i).toString().split("\\|")[0] + "','" + selSpecies + "','" + duplicateNewNameValue + "','" + data.get(i).toString().split("\\|")[2] + "','" + data.get(i).toString().split("\\|")[3] + "','" + data.get(i).toString().split("\\|")[4] + "');");
-            } else if (!"--all--".equals(selHero) && !"--all--".equals(selCulture) && data.get(i).toString().split("\\|")[2].equals(selCulture) && data.get(i).toString().split("\\|")[2].equals(selHero)) {
-                executeSQL("INSERT INTO `CreatedHeroes`(HeroName,SpeciesName,CultureName,Advancements,BasedOn,AdditionalCost) VALUES ('" + duplicateNewNameValue + "','" + selSpecies + "','" + selCulture + "','" + data.get(i).toString().split("\\|")[2] + "','" + data.get(i).toString().split("\\|")[3] + "','" + data.get(i).toString().split("\\|")[4] + "');");
+    public static void duplicateHero(String selSpecies, String selCulture, String selHero, String duplicateNewNameValue) {
+        try {
+            chooseConnection(UseCases.Userdb);
+            PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT * FROM CreatedHeroes WHERE SpeciesName =?");
+            stmt.setString(1, selSpecies);
+            String[] columns = {"HeroName", "CultureName", "Advancements", "BasedOn", "AdditionalCost"};
+            ObservableList data = BuilderCORE.getData(stmt, columns, null, 0);
+            for (int i = 0; i < data.size(); i++) {
+                if ("--all--".equals(selHero) && "--all--".equals(selCulture)) {
+                    executeSQL("INSERT INTO `CreatedHeroes`(HeroName,SpeciesName,CultureName,Advancements,BasedOn,AdditionalCost) VALUES ('" + data.get(i).toString().split("\\|")[0] + "','" + duplicateNewNameValue + "','" + data.get(i).toString().split("\\|")[1] + "','" + data.get(i).toString().split("\\|")[2] + "','" + data.get(i).toString().split("\\|")[3] + "','" + data.get(i).toString().split("\\|")[4] + "');");
+                } else if ("--all--".equals(selHero) && !"--all--".equals(selCulture) && data.get(i).toString().split("\\|")[2].equals(selCulture)) {
+                    executeSQL("INSERT INTO `CreatedHeroes`(HeroName,SpeciesName,CultureName,Advancements,BasedOn,AdditionalCost) VALUES ('" + data.get(i).toString().split("\\|")[0] + "','" + selSpecies + "','" + duplicateNewNameValue + "','" + data.get(i).toString().split("\\|")[2] + "','" + data.get(i).toString().split("\\|")[3] + "','" + data.get(i).toString().split("\\|")[4] + "');");
+                } else if (!"--all--".equals(selHero) && !"--all--".equals(selCulture) && data.get(i).toString().split("\\|")[2].equals(selCulture) && data.get(i).toString().split("\\|")[2].equals(selHero)) {
+                    executeSQL("INSERT INTO `CreatedHeroes`(HeroName,SpeciesName,CultureName,Advancements,BasedOn,AdditionalCost) VALUES ('" + duplicateNewNameValue + "','" + selSpecies + "','" + selCulture + "','" + data.get(i).toString().split("\\|")[2] + "','" + data.get(i).toString().split("\\|")[3] + "','" + data.get(i).toString().split("\\|")[4] + "');");
+                }
             }
+        } catch (SQLException ex) {
+            ErrorController.ErrorController(ex);
+            Logger.getLogger(DatabaseWriter.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -407,22 +445,28 @@ public class DatabaseWriter {
      * @param selSpecies
      * @param selCulture
      * @param selProgress
-     * @throws SQLException
+     * @param duplicateNewNameValue
+     *
      */
-    public static void duplicateProgress(String selSpecies, String selCulture, String selProgress, String duplicateNewNameValue) throws SQLException {
-        chooseConnection(UseCases.Userdb);
-        PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT * FROM CreatedProgress WHERE SpeciesName =?");
-        stmt.setString(1, selSpecies);
-        String[] columns = {"CultureName", "ProgressName", "Progress"};
-        ObservableList data = BuilderCORE.getData(stmt, columns, null, 0);
-        for (int i = 0; i < data.size(); i++) {
-            if ("--all--".equals(selProgress) && "--all--".equals(selCulture)) {
-                executeSQL("INSERT INTO `CreatedProgress`(SpeciesName,CultureName,ProgressName,Progress) VALUES ('" + duplicateNewNameValue + "','" + data.get(i).toString().split("\\|")[0] + "','" + data.get(i).toString().split("\\|")[1] + "','" + data.get(i).toString().split("\\|")[2] + "');");
-            } else if ("--all--".equals(selProgress) && !"--all--".equals(selCulture) && data.get(i).toString().split("\\|")[2].equals(selCulture)) {
-                executeSQL("INSERT INTO `CreatedProgress`(SpeciesName,CultureName,ProgressName,Progress) VALUES ('" + selSpecies + "','" + duplicateNewNameValue + "','" + data.get(i).toString().split("\\|")[1] + "','" + data.get(i).toString().split("\\|")[2] + "');");
-            } else if (!"--all--".equals(selProgress) && !"--all--".equals(selCulture) && data.get(i).toString().split("\\|")[2].equals(selCulture) && data.get(i).toString().split("\\|")[2].equals(selProgress)) {
-                executeSQL("INSERT INTO `CreatedProgress`(SpeciesName,CultureName,ProgressName,Progress) VALUES ('" + selSpecies + "','" + selCulture + "','" + duplicateNewNameValue + "','" + data.get(i).toString().split("\\|")[2] + "');");
+    public static void duplicateProgress(String selSpecies, String selCulture, String selProgress, String duplicateNewNameValue) {
+        try {
+            chooseConnection(UseCases.Userdb);
+            PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT * FROM CreatedProgress WHERE SpeciesName =?");
+            stmt.setString(1, selSpecies);
+            String[] columns = {"CultureName", "ProgressName", "Progress"};
+            ObservableList data = BuilderCORE.getData(stmt, columns, null, 0);
+            for (int i = 0; i < data.size(); i++) {
+                if ("--all--".equals(selProgress) && "--all--".equals(selCulture)) {
+                    executeSQL("INSERT INTO `CreatedProgress`(SpeciesName,CultureName,ProgressName,Progress) VALUES ('" + duplicateNewNameValue + "','" + data.get(i).toString().split("\\|")[0] + "','" + data.get(i).toString().split("\\|")[1] + "','" + data.get(i).toString().split("\\|")[2] + "');");
+                } else if ("--all--".equals(selProgress) && !"--all--".equals(selCulture) && data.get(i).toString().split("\\|")[2].equals(selCulture)) {
+                    executeSQL("INSERT INTO `CreatedProgress`(SpeciesName,CultureName,ProgressName,Progress) VALUES ('" + selSpecies + "','" + duplicateNewNameValue + "','" + data.get(i).toString().split("\\|")[1] + "','" + data.get(i).toString().split("\\|")[2] + "');");
+                } else if (!"--all--".equals(selProgress) && !"--all--".equals(selCulture) && data.get(i).toString().split("\\|")[2].equals(selCulture) && data.get(i).toString().split("\\|")[2].equals(selProgress)) {
+                    executeSQL("INSERT INTO `CreatedProgress`(SpeciesName,CultureName,ProgressName,Progress) VALUES ('" + selSpecies + "','" + selCulture + "','" + duplicateNewNameValue + "','" + data.get(i).toString().split("\\|")[2] + "');");
+                }
             }
+        } catch (SQLException ex) {
+            ErrorController.ErrorController(ex);
+            Logger.getLogger(DatabaseWriter.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -431,22 +475,28 @@ public class DatabaseWriter {
      * @param selSpecies
      * @param selCulture
      * @param selRoster
-     * @throws SQLException
+     * @param duplicateNewNameValue
+     *
      */
-    public static void duplicateRoster(String selSpecies, String selCulture, String selRoster, String duplicateNewNameValue) throws SQLException {
-        chooseConnection(UseCases.Userdb);
-        PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT * FROM CreatedRoster WHERE SpeciesName =?");
-        stmt.setString(1, selSpecies);
-        String[] columns = {"RosterName", "CultureName", "Roster"};
-        ObservableList data = BuilderCORE.getData(stmt, columns, null, 0);
-        for (int i = 0; i < data.size(); i++) {
-            if ("--all--".equals(selRoster) && "--all--".equals(selCulture)) {
-                executeSQL("INSERT INTO `CreatedRoster`(RosterName,SpeciesName,CultureName,Roster) VALUES ('" + data.get(i).toString().split("\\|")[0] + "','" + duplicateNewNameValue + "','" + data.get(i).toString().split("\\|")[1] + "','" + data.get(i).toString().split("\\|")[2] + "');");
-            } else if ("--all--".equals(selRoster) && !"--all--".equals(selCulture) && data.get(i).toString().split("\\|")[2].equals(selCulture)) {
-                executeSQL("INSERT INTO `CreatedRoster`(RosterName,SpeciesName,CultureName,Roster) VALUES ('" + data.get(i).toString().split("\\|")[0] + "','" + selSpecies + "','" + duplicateNewNameValue + "','" + data.get(i).toString().split("\\|")[2] + "');");
-            } else if (!"--all--".equals(selRoster) && !"--all--".equals(selCulture) && data.get(i).toString().split("\\|")[2].equals(selCulture) && data.get(i).toString().split("\\|")[2].equals(selRoster)) {
-                executeSQL("INSERT INTO `CreatedRoster`(RosterName,SpeciesName,CultureName,Roster) VALUES ('" + duplicateNewNameValue + "','" + selSpecies + "','" + selCulture + "','" + data.get(i).toString().split("\\|")[2] + "');");
+    public static void duplicateRoster(String selSpecies, String selCulture, String selRoster, String duplicateNewNameValue) {
+        try {
+            chooseConnection(UseCases.Userdb);
+            PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT * FROM CreatedRoster WHERE SpeciesName =?");
+            stmt.setString(1, selSpecies);
+            String[] columns = {"RosterName", "CultureName", "Roster"};
+            ObservableList data = BuilderCORE.getData(stmt, columns, null, 0);
+            for (int i = 0; i < data.size(); i++) {
+                if ("--all--".equals(selRoster) && "--all--".equals(selCulture)) {
+                    executeSQL("INSERT INTO `CreatedRoster`(RosterName,SpeciesName,CultureName,Roster) VALUES ('" + data.get(i).toString().split("\\|")[0] + "','" + duplicateNewNameValue + "','" + data.get(i).toString().split("\\|")[1] + "','" + data.get(i).toString().split("\\|")[2] + "');");
+                } else if ("--all--".equals(selRoster) && !"--all--".equals(selCulture) && data.get(i).toString().split("\\|")[2].equals(selCulture)) {
+                    executeSQL("INSERT INTO `CreatedRoster`(RosterName,SpeciesName,CultureName,Roster) VALUES ('" + data.get(i).toString().split("\\|")[0] + "','" + selSpecies + "','" + duplicateNewNameValue + "','" + data.get(i).toString().split("\\|")[2] + "');");
+                } else if (!"--all--".equals(selRoster) && !"--all--".equals(selCulture) && data.get(i).toString().split("\\|")[2].equals(selCulture) && data.get(i).toString().split("\\|")[2].equals(selRoster)) {
+                    executeSQL("INSERT INTO `CreatedRoster`(RosterName,SpeciesName,CultureName,Roster) VALUES ('" + duplicateNewNameValue + "','" + selSpecies + "','" + selCulture + "','" + data.get(i).toString().split("\\|")[2] + "');");
+                }
             }
+        } catch (SQLException ex) {
+            ErrorController.ErrorController(ex);
+            Logger.getLogger(DatabaseWriter.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
