@@ -417,7 +417,6 @@ public class BuilderFXMLController implements Initializable {
      *
      * @param rawSkills
      * @return
-     * @
      */
     public ObservableList<String> getFullSkillsDescription(String rawSkills) {
         ObservableList<String> tmp = FXCollections.observableArrayList();
@@ -710,7 +709,6 @@ public class BuilderFXMLController implements Initializable {
 
     /**
      *
-     * @
      */
     public void populateLabels() {
         for (int i = 0; i < valuesLabels.length; i++) {
@@ -740,7 +738,6 @@ public class BuilderFXMLController implements Initializable {
 
     /**
      *
-     * @
      */
     public void clearSelectionEvent() {
         clearLists();
