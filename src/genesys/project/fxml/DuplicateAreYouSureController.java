@@ -43,7 +43,7 @@ public class DuplicateAreYouSureController implements Initializable {
     public DuplicateWindowController duplicateWindowController;
 
     /**
-     *
+     * duplicateYesButtonActions
      *
      */
     @FXML

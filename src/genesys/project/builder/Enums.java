@@ -58,27 +58,85 @@ public class Enums {
         }
 
         /**
-         *LifeDomainTree1Values
+         * LifeDomainTree1Values
          */
         public enum LifeDomainTree1Values {
+
+            /**
+             * GeneticMutation
+             */
             GeneticMutation("Genetic Mutation"),
+            /**
+             * EnvironmentalAdaptation
+             */
             EnvironmentalAdaptation("Environmental Adaptation"),
+            /**
+             * KnowledgeandScience
+             */
             KnowledgeandScience("Knowledge and Science"),
+            /**
+             * PathofLight
+             */
             PathofLight("Path of Light"),
+            /**
+             * ShadowsofTwilight
+             */
             ShadowsofTwilight("Shadows of Twilight"),
+            /**
+             * PrimordialForces
+             */
             PrimordialForces("Primordial Forces"),
+            /**
+             * PathofDarkness
+             */
             PathofDarkness("Path of Darkness"),
+            /**
+             * ReptiliaLineages
+             */
             ReptiliaLineages("Reptilia Lineages"),
+            /**
+             * EnvironmentalAdaptability
+             */
             EnvironmentalAdaptability("Environmental Adaptability"),
+            /**
+             * ExtremisAffinity
+             */
             ExtremisAffinity("Extremis Affinity"),
+            /**
+             * BiestialKingdoms
+             */
             BiestialKingdoms("Biestial Kingdoms"),
+            /**
+             * RegionalTraits
+             */
             RegionalTraits("Regional Traits"),
+            /**
+             * SpiritualandScientificKnowledge
+             */
             SpiritualandScientificKnowledge("Spiritual and Scientific Knowledge"),
+            /**
+             * Arachnea
+             */
             Arachnea("Arachnea"),
+            /**
+             * Crustacea
+             */
             Crustacea("Crustacea"),
+            /**
+             * Insecta
+             */
             Insecta("Insecta"),
+            /**
+             * Myriapoda
+             */
             Myriapoda("Myriapoda"),
+            /**
+             * GeneticMorphology
+             */
             GeneticMorphology("Genetic Morphology"),
+            /**
+             * Knowledge
+             */
             Knowledge("Knowledge");
 
             private String lifedomaintree1value;
@@ -107,133 +165,517 @@ public class Enums {
             }
         }
 
+        /**
+         * LifeDomainTree2Values
+         */
         public enum LifeDomainTree2Values {
+            /**
+             * AdaptiveSpecies
+             */
             AdaptiveSpecies("Adaptive Species"),
+            /**
+             * Albinism
+             */
             Albinism("Albinism"),
+            /**
+             * Dwarfism
+             */
             Dwarfism("Dwarfism"),
+            /**
+             * Giantism
+             */
             Giantism("Giantism"),
+            /**
+             * Goblyn
+             */
             Goblyn("Goblyn"),
+            /**
+             * KnowledgeableSpecies
+             */
             KnowledgeableSpecies("Knowledgeable Species"),
+            /**
+             * PhysicalToughness
+             */
             PhysicalToughness("Physical Toughness"),
+            /**
+             * Tetrachromacy
+             */
             Tetrachromacy("Tetrachromacy"),
+            /**
+             * Aberration
+             */
             Aberration("Aberration"),
+            /**
+             * AdaptiveAdvantage
+             */
             AdaptiveAdvantage("Adaptive Advantage"),
+            /**
+             * AnimalKinship
+             */
             AnimalKinship("Animal Kinship"),
+            /**
+             * Survivalist
+             */
             Survivalist("Survivalist"),
+            /**
+             * CulturalandSocialAdaptations
+             */
             CulturalandSocialAdaptations("Cultural and Social Adaptations"),
+            /**
+             * EnvironmentalExtremes
+             */
             EnvironmentalExtremes("Environmental Extremes"),
+            /**
+             * Fayrie
+             */
             Fayrie("Fay-rie"),
+            /**
+             * Feral
+             */
             Feral("Feral"),
+            /**
+             * Mobility
+             */
             Mobility("Mobility"),
+            /**
+             * ReligiousBelief
+             */
             ReligiousBelief("Religious Belief"),
+            /**
+             * TheSacredFaiths
+             */
             TheSacredFaiths("The Sacred Faiths"),
+            /**
+             * ScientificAdaptability
+             */
             ScientificAdaptability("Scientific Adaptability"),
+            /**
+             * WealthofResources
+             */
             WealthofResources("Wealth of Resources"),
+            /**
+             * AdvancedArchery
+             */
             AdvancedArchery("Advanced Archery"),
+            /**
+             * AdvancedMeleeWeaponry
+             */
             AdvancedMeleeWeaponry("Advanced Melee Weaponry"),
+            /**
+             * Alchemy
+             */
             Alchemy("Alchemy"),
+            /**
+             * Armor
+             */
             Armor("Armor"),
+            /**
+             * ArcaneSecrets
+             */
             ArcaneSecrets("Arcane Secrets"),
+            /**
+             * CombatTactics
+             */
             CombatTactics("Combat Tactics"),
+            /**
+             * Command
+             */
             Command("Command"),
+            /**
+             * Concentration
+             */
             Concentration("Concentration"),
+            /**
+             * ExoticBeasts
+             */
             ExoticBeasts("Exotic Beasts"),
+            /**
+             * ForbiddenKnowledge
+             */
             ForbiddenKnowledge("Forbidden Knowledge"),
+            /**
+             * GunpowderWeapons
+             */
             GunpowderWeapons("Gunpowder Weapons"),
+            /**
+             * HeavyMilitaryWeapons
+             */
             HeavyMilitaryWeapons("Heavy Military Weapons"),
+            /**
+             * MilitaryTrainingTechniques
+             */
             MilitaryTrainingTechniques("Military Training Techniques"),
+            /**
+             * StrengthTraining
+             */
             StrengthTraining("Strength Training"),
+            /**
+             * WarMachines
+             */
             WarMachines("War Machines"),
+            /**
+             * TheWeaponsmith
+             */
             TheWeaponsmith("The Weaponsmith"),
+            /**
+             * Celestial
+             */
             Celestial("Celestial"),
+            /**
+             * Justice
+             */
             Justice("Justice"),
+            /**
+             * Truth
+             */
             Truth("Truth"),
+            /**
+             * Heroism
+             */
             Heroism("Heroism"),
+            /**
+             * Healing
+             */
             Healing("Healing"),
+            /**
+             * Courage
+             */
             Courage("Courage"),
+            /**
+             * Ascended
+             */
             Ascended("Ascended"),
+            /**
+             * Protection
+             */
             Protection("Protection"),
+            /**
+             * Primal
+             */
             Primal("Primal"),
+            /**
+             * Fire
+             */
             Fire("Fire"),
+            /**
+             * Air
+             */
             Air("Air"),
+            /**
+             * Earth
+             */
             Earth("Earth"),
+            /**
+             * Water
+             */
             Water("Water"),
+            /**
+             * Ethereal
+             */
             Ethereal("Ethereal"),
+            /**
+             * Chaos
+             */
             Chaos("Chaos"),
+            /**
+             * Order
+             */
             Order("Order"),
+            /**
+             * Time
+             */
             Time("Time"),
+            /**
+             * Infernal
+             */
             Infernal("Infernal"),
+            /**
+             * Corruption
+             */
             Corruption("Corruption"),
+            /**
+             * Deceit
+             */
             Deceit("Deceit"),
+            /**
+             * Madness
+             */
             Madness("Madness"),
+            /**
+             * Pain
+             */
             Pain("Pain"),
+            /**
+             * Fear
+             */
             Fear("Fear"),
+            /**
+             * Death
+             */
             Death("Death"),
+            /**
+             * Destruction
+             */
             Destruction("Destruction"),
+            /**
+             * Draconic
+             */
             Draconic("Draconic"),
+            /**
+             * Troglodyte
+             */
             Troglodyte("Troglodyte"),
+            /**
+             * Saurien
+             */
             Saurien("Saurien"),
+            /**
+             * Tuatara
+             */
             Tuatara("Tuatara"),
+            /**
+             * Gargoyle
+             */
             Gargoyle("Gargoyle"),
+            /**
+             * Ophidian
+             */
             Ophidian("Ophidian"),
+            /**
+             * SocialAdaptation
+             */
             SocialAdaptation("Social Adaptation"),
+            /**
+             * AdaptiveAdvantages
+             */
             AdaptiveAdvantages("Adaptive Advantages"),
+            /**
+             * WeaponAdaptation
+             */
             WeaponAdaptation("Weapon Adaptation"),
+            /**
+             * ExtremisAcid
+             */
             ExtremisAcid("Extremis Acid"),
+            /**
+             * ExtremisCold
+             */
             ExtremisCold("Extremis Cold"),
+            /**
+             * ExtremisElectricity
+             */
             ExtremisElectricity("Extremis Electricity"),
+            /**
+             * ExtremisFire
+             */
             ExtremisFire("Extremis Fire"),
+            /**
+             * ExtremisPoison
+             */
             ExtremisPoison("Extremis Poison"),
+            /**
+             * ExtremisRadiation
+             */
             ExtremisRadiation("Extremis Radiation"),
+            /**
+             * ExtremisResonance
+             */
             ExtremisResonance("Extremis Resonance"),
+            /**
+             * Ursidae
+             */
             Ursidae("Ursidae"),
+            /**
+             * CanusLupis
+             */
             CanusLupis("Canus Lupis"),
+            /**
+             * AvianAves
+             */
             AvianAves("Avian Aves"),
+            /**
+             * Bor
+             */
             Bor("Bor"),
+            /**
+             * Ovis
+             */
             Ovis("Ovis"),
+            /**
+             * Taurus
+             */
             Taurus("Taurus"),
+            /**
+             * Feline
+             */
             Feline("Feline"),
+            /**
+             * Vermin
+             */
             Vermin("Vermin"),
+            /**
+             * Caballis
+             */
             Caballis("Caballis"),
+            /**
+             * Ichthyes
+             */
             Ichthyes("Ichthyes"),
+            /**
+             * Caverns
+             */
             Caverns("Caverns"),
+            /**
+             * Desert
+             */
             Desert("Desert"),
+            /**
+             * Forests
+             */
             Forests("Forests"),
+            /**
+             * Marsh
+             */
             Marsh("Marsh"),
+            /**
+             * Mountains
+             */
             Mountains("Mountains"),
+            /**
+             * Moon
+             */
             Moon("Moon"),
+            /**
+             * Oceans
+             */
             Oceans("Oceans"),
+            /**
+             * Plains
+             */
             Plains("Plains"),
+            /**
+             * Sky
+             */
             Sky("Sky"),
+            /**
+             * Tundra
+             */
             Tundra("Tundra"),
+            /**
+             * MonstrousBiests
+             */
             MonstrousBiests("Monstrous Biests"),
+            /**
+             * BreedingAdaptations
+             */
             BreedingAdaptations("Breeding Adaptations"),
+            /**
+             * GoverningIdeology
+             */
             GoverningIdeology("Governing Ideology"),
+            /**
+             * OmnivoreAdaptations
+             */
             OmnivoreAdaptations("Omnivore Adaptations"),
+            /**
+             * PredatorialAdvantage
+             */
             PredatorialAdvantage("Predatorial Advantage"),
+            /**
+             * PreyAdaptations
+             */
             PreyAdaptations("Prey Adaptations"),
+            /**
+             * AmbushTactics
+             */
             AmbushTactics("Ambush Tactics"),
+            /**
+             * Armory
+             */
             Armory("Armory"),
+            /**
+             * Occult
+             */
             Occult("Occult"),
+            /**
+             * Shamanism
+             */
             Shamanism("Shamanism"),
+            /**
+             * Arachnid
+             */
             Arachnid("Arachnid"),
+            /**
+             * Scorpionoid
+             */
             Scorpionoid("Scorpionoid"),
+            /**
+             * Decapod
+             */
             Decapod("Decapod"),
+            /**
+             * Isopod
+             */
             Isopod("Isopod"),
+            /**
+             * Coleoptera
+             */
             Coleoptera("Coleoptera"),
+            /**
+             * Dipteran
+             */
             Dipteran("Dipteran"),
+            /**
+             * Formicadae
+             */
             Formicadae("Formicadae"),
+            /**
+             * Mantid
+             */
             Mantid("Mantid"),
+            /**
+             * Vespidae
+             */
             Vespidae("Vespidae"),
+            /**
+             * Centipedea
+             */
             Centipedea("Centipedea"),
+            /**
+             * Millipedea
+             */
             Millipedea("Millipedea"),
+            /**
+             * Exoskeleton
+             */
             Exoskeleton("Exoskeleton"),
+            /**
+             * GeneticMutations
+             */
             GeneticMutations("Genetic Mutations"),
+            /**
+             * Circulatory
+             */
             Circulatory("Circulatory"),
+            /**
+             * BioWeaponry
+             */
             BioWeaponry("BioWeaponry"),
+            /**
+             * Eusociality
+             */
             Eusociality("Eusociality"),
+            /**
+             * Combat
+             */
             Combat("Combat"),
+            /**
+             * AdvancedKnowledge
+             */
             AdvancedKnowledge("Advanced Knowledge"),
+            /**
+             * PsychiccNodes
+             */
             PsychiccNodes("Psychicc Nodes");
 
             private String lifedomaintree2value;
@@ -262,21 +704,70 @@ public class Enums {
             }
         }
 
+        /**
+         * CharacteristicGroup
+         */
         public enum CharacteristicGroup {
-            standard("standard"),            
+
+            /**
+             * standard
+             */
+            standard("standard"),
+            /**
+             * Ursidae
+             */
             Ursidae("Ursidae"),
+            /**
+             * CanusLupis
+             */
             CanusLupis("Canus Lupis"),
+            /**
+             * AvianAves
+             */
             AvianAves("Avian Aves"),
+            /**
+             * Bor
+             */
             Bor("Bor"),
+            /**
+             * Ovis
+             */
             Ovis("Ovis"),
+            /**
+             * Taurus
+             */
             Taurus("Taurus"),
+            /**
+             * Feline
+             */
             Feline("Feline"),
+            /**
+             * Vermin
+             */
             Vermin("Vermin"),
+            /**
+             * Caballis
+             */
             Caballis("Caballis"),
+            /**
+             * Ichthyes
+             */
             Ichthyes("Ichthyes"),
+            /**
+             * Arachnea
+             */
             Arachnea("Arachnea"),
+            /**
+             * Crustacea
+             */
             Crustacea("Crustacea"),
+            /**
+             * Insecta
+             */
             Insecta("Insecta"),
+            /**
+             * Myriapoda
+             */
             Myriapoda("Myriapoda");
 
             private String characteristicgroup;
@@ -361,10 +852,25 @@ public class Enums {
              * Draconic
              */
             Draconic("Draconic"),
+            /**
+             * Troglodyte
+             */
             Troglodyte("Troglodyte"),
+            /**
+             * Saurien
+             */
             Saurien("Saurien"),
+            /**
+             * Tuatara
+             */
             Tuatara("Tuatara"),
+            /**
+             * Gargoyle
+             */
             Gargoyle("Gargoyle"),
+            /**
+             * Ophidian
+             */
             Ophidian("Ophidian");
 
             private String mainlineagevalue;
@@ -400,16 +906,50 @@ public class Enums {
          * Main Kingdom Values
          */
         public enum MainKingdomValue {
+
+            /**
+             * NONE
+             */
             NONE(""),
+            /**
+             * Ursidae
+             */
             Ursidae("Ursidae"),
+            /**
+             * CanusLupis
+             */
             CanusLupis("Canus Lupis"),
+            /**
+             * AvianAves
+             */
             AvianAves("Avian Aves"),
+            /**
+             * Bor
+             */
             Bor("Bor"),
+            /**
+             * Ovis
+             */
             Ovis("Ovis"),
+            /**
+             * Taurus
+             */
             Taurus("Taurus"),
+            /**
+             * Feline
+             */
             Feline("Feline"),
+            /**
+             * Vermin
+             */
             Vermin("Vermin"),
+            /**
+             * Caballis
+             */
             Caballis("Caballis"),
+            /**
+             * Ichthyes
+             */
             Ichthyes("Ichthyes");
 
             private String mainkingdomvalue;
@@ -445,16 +985,49 @@ public class Enums {
          * Main Region Values
          */
         public enum MainRegionValue {
+            /**
+             * NONE
+             */
             NONE(""),
+            /**
+             * Caverns
+             */
             Caverns("Caverns"),
+            /**
+             * Desert
+             */
             Desert("Desert"),
+            /**
+             * Forests
+             */
             Forests("Forests"),
+            /**
+             * Marsh
+             */
             Marsh("Marsh"),
+            /**
+             * Mountains
+             */
             Mountains("Mountains"),
+            /**
+             * Moon
+             */
             Moon("Moon"),
+            /**
+             * Oceans
+             */
             Oceans("Oceans"),
+            /**
+             * Plains
+             */
             Plains("Plains"),
+            /**
+             * Sky
+             */
             Sky("Sky"),
+            /**
+             * Tundra
+             */
             Tundra("Tundra");
             private String mainregionvalue;
 
@@ -489,10 +1062,26 @@ public class Enums {
          * Main Clasification Values
          */
         public enum MainClasificationValue {
+
+            /**
+             * NONE
+             */
             NONE(""),
+            /**
+             * Arachnea
+             */
             Arachnea("Arachnea"),
+            /**
+             * Crustacea
+             */
             Crustacea("Crustacea"),
+            /**
+             * Insecta
+             */
             Insecta("Insecta"),
+            /**
+             * Myriapoda
+             */
             Myriapoda("Myriapoda");
             private String mainclasificationvalue;
 
@@ -527,17 +1116,54 @@ public class Enums {
          * Main Order Values
          */
         public enum MainOrderValue {
+
+            /**
+             * NONE
+             */
             NONE(""),
+            /**
+             * Arachnid
+             */
             Arachnid("Arachnid"),
+            /**
+             * Scorpionoid
+             */
             Scorpionoid("Scorpionoid"),
+            /**
+             * Decapod
+             */
             Decapod("Decapod"),
+            /**
+             * Isopod
+             */
             Isopod("Isopod"),
+            /**
+             * Coleoptera
+             */
             Coleoptera("Coleoptera"),
+            /**
+             * Dipteran
+             */
             Dipteran("Dipteran"),
+            /**
+             * Formicadae
+             */
             Formicadae("Formicadae"),
+            /**
+             * Mantid
+             */
             Mantid("Mantid"),
+            /**
+             * Vespidae
+             */
             Vespidae("Vespidae"),
+            /**
+             * Centipedea
+             */
             Centipedea("Centipedea"),
+            /**
+             * Millipedea
+             */
             Millipedea("Millipedea");
             private String mainordervalue;
 
@@ -568,24 +1194,82 @@ public class Enums {
             }
         }
 
+        /**
+         * PrimaryChooserValue
+         */
         public enum PrimaryChooserValue {
+
+            /**
+             * NONE
+             */
             NONE("-None-"),
+            /**
+             * Light
+             */
             Light("Path of Light"),
+            /**
+             * Darkness
+             */
             Darkness("Path of Darkness"),
+            /**
+             * Twilight
+             */
             Twilight("Shadows of Twilight"),
+            /**
+             * Ursidae
+             */
             Ursidae("Ursidae"),
+            /**
+             * CanusLupis
+             */
             CanusLupis("Canus Lupis"),
+            /**
+             * AvianAves
+             */
             AvianAves("Avian Aves"),
+            /**
+             * Bor
+             */
             Bor("Bor"),
+            /**
+             * Ovis
+             */
             Ovis("Ovis"),
+            /**
+             * Taurus
+             */
             Taurus("Taurus"),
+            /**
+             * Feline
+             */
             Feline("Feline"),
+            /**
+             * Vermin
+             */
             Vermin("Vermin"),
+            /**
+             * Caballis
+             */
             Caballis("Caballis"),
+            /**
+             * Ichthyes
+             */
             Ichthyes("Ichthyes"),
+            /**
+             * Arachnea
+             */
             Arachnea("Arachnea"),
+            /**
+             * Crustacea
+             */
             Crustacea("Crustacea"),
+            /**
+             * Insecta
+             */
             Insecta("Insecta"),
+            /**
+             * Myriapoda
+             */
             Myriapoda("Myriapoda");
 
             private String primarychooservalue;
@@ -617,30 +1301,105 @@ public class Enums {
             }
         }
 
+        /**
+         * SecondaryChooserValue
+         */
         public enum SecondaryChooserValue {
+            /**
+             * NONE
+             */
             NONE("-None-"),
+            /**
+             * Light
+             */
             Light("Path of Light"),
+            /**
+             * Darkness
+             */
             Darkness("Path of Darkness"),
+            /**
+             * Caverns
+             */
             Caverns("Caverns"),
+            /**
+             * Desert
+             */
             Desert("Desert"),
+            /**
+             * Forests
+             */
             Forests("Forests"),
+            /**
+             * Marsh
+             */
             Marsh("Marsh"),
+            /**
+             * Mountains
+             */
             Mountains("Mountains"),
+            /**
+             * Moon
+             */
             Moon("Moon"),
+            /**
+             * Oceans
+             */
             Oceans("Oceans"),
+            /**
+             * Plains
+             */
             Plains("Plains"),
+            /**
+             * Sky
+             */
             Sky("Sky"),
+            /**
+             * Tundra
+             */
             Tundra("Tundra"),
+            /**
+             * Arachnid
+             */
             Arachnid("Arachnid"),
+            /**
+             * Scorpionoid
+             */
             Scorpionoid("Scorpionoid"),
+            /**
+             * Decapod
+             */
             Decapod("Decapod"),
+            /**
+             * Isopod
+             */
             Isopod("Isopod"),
+            /**
+             * Coleoptera
+             */
             Coleoptera("Coleoptera"),
+            /**
+             * Dipteran
+             */
             Dipteran("Dipteran"),
+            /**
+             * Formicadae
+             */
             Formicadae("Formicadae"),
+            /**
+             * Mantid
+             */
             Mantid("Mantid"),
+            /**
+             * Vespidae
+             */
             Vespidae("Vespidae"),
+            /**
+             * Centipedea
+             */
             Centipedea("Centipedea"),
+            /**
+             * Millipedea
+             */
             Millipedea("Millipedea");
 
             private String secondarychooservalue;
@@ -848,10 +1607,26 @@ public class Enums {
          * DBClassColumns
          */
         public enum DBClassColumns {
+
+            /**
+             * Skills
+             */
             Skills("Skills"),
+            /**
+             * Advancements
+             */
             Advancements("Advancements"),
+            /**
+             * Type
+             */
             Type("Type"),
+            /**
+             * BasedOn
+             */
             BasedOn("BasedOn"),
+            /**
+             * AdditionalCost
+             */
             AdditionalCost("AdditionalCost");
 
             private String columns;
@@ -870,8 +1645,18 @@ public class Enums {
          * DBHeroColumns
          */
         public enum DBHeroColumns {
+
+            /**
+             * Advancements
+             */
             Advancements("Advancements"),
+            /**
+             * BasedOn
+             */
             BasedOn("BasedOn"),
+            /**
+             * AdditionalCost
+             */
             AdditionalCost("AdditionalCost");
             private String columns;
 

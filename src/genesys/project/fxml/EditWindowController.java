@@ -190,7 +190,7 @@ public class EditWindowController implements Initializable {
     }
 
     /**
-     *
+     * editFinishButtonActions
      */
     @FXML
     public void editFinishButtonActions() {
@@ -209,7 +209,7 @@ public class EditWindowController implements Initializable {
     }
 
     /**
-     *
+     * commenceEditing
      */
     public void commenceEditing() {
         if (!speciesEditDropdown.getSelectionModel().getSelectedItem().toString().equals(DatabaseHolder.TOPDROP)) {

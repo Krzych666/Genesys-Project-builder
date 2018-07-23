@@ -138,9 +138,9 @@ public class CreateCultureController implements Initializable {
     private Label[] valuesLabels4;
 
     /**
-     *
+     * createCulture
      */
-    public void createCulture()  {
+    public void createCulture() {
         ObservableList data = DatabaseReader.getSpeciesData(speciesChooseDropdown4.getSelectionModel().getSelectedItem().toString());
         DatabaseHolder.creator(LifedomainValue.valueOf(data.get(0).toString().split("\\|")[0]), Creators.CreateCulture);
         DatabaseHolder.holdCulture.setSpeciesName(speciesChooseDropdown4.getSelectionModel().getSelectedItem().toString());
@@ -150,7 +150,7 @@ public class CreateCultureController implements Initializable {
         //skillsList1 = DatabaseReader.getAddedSkills(DatabaseReader.holdSpecies.getFullSkills());
         //BuilderFXMLController.getSkillModifiers(ruledskills);
         DatabaseHolder.holdSpecies.setSpeciesModifiers(data.get(0).toString().split("\\|")[4]);
-        
+
         switch (DatabaseHolder.holdSpecies.getLifedomain()) {
             case Humanoid:
                 DatabaseHolder.arcana = Boolean.valueOf(DatabaseHolder.holdSpecies.getSpeciesModifiers().split("=")[1]);
@@ -179,10 +179,10 @@ public class CreateCultureController implements Initializable {
     }
 
     /**
-     *
+     * speciesChooseDropdown4ItemStateChangedActions
      */
     @FXML
-    public void speciesChooseDropdown4ItemStateChangedActions()  {
+    public void speciesChooseDropdown4ItemStateChangedActions() {
         if (speciesChooseDropdown4.getSelectionModel().getSelectedItem().equals("--CHOOSE--")) {
             clearLists4();
         }
@@ -194,7 +194,7 @@ public class CreateCultureController implements Initializable {
      * @
      */
     @FXML
-    public void selectSpecies4Actions()  {
+    public void selectSpecies4Actions() {
         Stage stage = (Stage) selectSpecies4.getScene().getWindow();
         stage.hide();
         DatabaseHolder.holdCulture.setCultureName(cultureNameValue4.getText());
@@ -230,7 +230,7 @@ public class CreateCultureController implements Initializable {
      *
      * @
      */
-    public void populateLabels()  {
+    public void populateLabels() {
         for (int i = 0; i < valuesLabels4.length; i++) {
             valuesLabels4[i].setText(DatabaseReader.getCharacteristics(DatabaseHolder.holdSpecies.getLifedomain().toString(), DatabaseHolder.holdSpecies.getCharacteristicGroup().toString())[i]);
         }

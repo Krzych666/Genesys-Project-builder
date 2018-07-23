@@ -39,10 +39,19 @@ public class BuilderCORE {
      */
     public static Connection conn;
 
+    /**
+     * CHARACTERISTICS
+     */
     public static final String[] CHARACTERISTICS = {"Strength", "Toughness", "Movement", "Martial", "Ranged", "Defense", "Discipline", "Willpower", "Command", "Wounds", "Attacks", "Size", "MT", "RT", "Morale"};
 
+    /**
+     * SIZES
+     */
     public static final String[] SIZES = {"T", "S", "M", "L", "XL", "XXL"};
 
+    /**
+     * DOMAINS
+     */
     public static final LifedomainValue[] DOMAINS = {Humanoid, Fey, Reptilia, Biest, Insecta};
     /**
      * LIGHT = "Path of Light"
@@ -361,7 +370,6 @@ public class BuilderCORE {
      * @return
      */
     public static String generateSubSkillText(String subSkill, Boolean simplifyToCoreSkills) {
-        String out = "";
         if (simplifyToCoreSkills) {
             subSkill = subSkill.replace("-", "").replace("+", "").replaceAll("[0-9]", "X").replace(" Xpts", "");
         }
@@ -386,8 +394,7 @@ public class BuilderCORE {
         if (subSkill.contains("Remove Trait")) {
             subSkill = "Remove Trait";
         }
-        out = DatabaseReader.getSkillRuleExplanation(subSkill);
-        return out;
+        return DatabaseReader.getSkillRuleExplanation(subSkill);
     }
 
     /**
@@ -411,6 +418,12 @@ public class BuilderCORE {
         };
     }
 
+    /**
+     *
+     * @param allSkills
+     * @param skillName
+     * @return
+     */
     public static int getSkillIndex(ObservableList allSkills, String skillName) {
         int index = -1;
         for (int j = 0; j < allSkills.size(); j++) {
@@ -512,6 +525,11 @@ public class BuilderCORE {
         return false;
     }
 
+    /**
+     *
+     * @param skill
+     * @return
+     */
     public static String convertSkillToRequirement(String skill) {
         if (skill.contains("Special Weapon:_")) {
             return skill.replaceAll("Special Weapon:_", "");

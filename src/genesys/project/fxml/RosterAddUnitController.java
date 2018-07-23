@@ -138,7 +138,7 @@ public class RosterAddUnitController implements Initializable {
     }
 
     /**
-     *
+     * availableEquipmentListMousePressed
      *
      */
     @FXML
@@ -227,7 +227,7 @@ public class RosterAddUnitController implements Initializable {
     }
 
     /**
-     *
+     * improvementsListMousePressed
      *
      */
     @FXML
@@ -342,7 +342,7 @@ public class RosterAddUnitController implements Initializable {
 
         @Getter
         @Setter
-        private TextField numberbox = new TextField("0");
+        TextField numberbox = new TextField("0");
 
         @Getter
         @Setter

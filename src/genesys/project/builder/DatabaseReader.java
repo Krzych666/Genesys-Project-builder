@@ -38,9 +38,8 @@ public class DatabaseReader {
         } catch (SQLException ex) {
             ErrorController.ErrorController(ex);
             Logger.getLogger(DatabaseReader.class.getName()).log(Level.SEVERE, null, ex);
-        } finally {
-            return out;
         }
+        return out;
     }
 
     /**
@@ -60,9 +59,8 @@ public class DatabaseReader {
         } catch (SQLException ex) {
             ErrorController.ErrorController(ex);
             Logger.getLogger(DatabaseReader.class.getName()).log(Level.SEVERE, null, ex);
-        } finally {
-            return out;
         }
+        return out;
     }
 
     /**
@@ -81,9 +79,8 @@ public class DatabaseReader {
         } catch (SQLException ex) {
             ErrorController.ErrorController(ex);
             Logger.getLogger(DatabaseReader.class.getName()).log(Level.SEVERE, null, ex);
-        } finally {
-            return out;
         }
+        return out;
     }
 
     /**
@@ -107,9 +104,8 @@ public class DatabaseReader {
         } catch (SQLException ex) {
             ErrorController.ErrorController(ex);
             Logger.getLogger(DatabaseReader.class.getName()).log(Level.SEVERE, null, ex);
-        } finally {
-            return out;
         }
+        return out;
     }
 
     /**
@@ -153,9 +149,8 @@ public class DatabaseReader {
         } catch (SQLException ex) {
             ErrorController.ErrorController(ex);
             Logger.getLogger(DatabaseReader.class.getName()).log(Level.SEVERE, null, ex);
-        } finally {
-            return tmp;
         }
+        return tmp;
     }
 
     /**
@@ -176,9 +171,8 @@ public class DatabaseReader {
         } catch (SQLException ex) {
             ErrorController.ErrorController(ex);
             Logger.getLogger(DatabaseReader.class.getName()).log(Level.SEVERE, null, ex);
-        } finally {
-            return tmp;
         }
+        return tmp;
     }
 
     /**
@@ -200,9 +194,8 @@ public class DatabaseReader {
         } catch (SQLException ex) {
             ErrorController.ErrorController(ex);
             Logger.getLogger(DatabaseReader.class.getName()).log(Level.SEVERE, null, ex);
-        } finally {
-            return tmp;
         }
+        return tmp;
     }
 
     /**
@@ -233,9 +226,8 @@ public class DatabaseReader {
         } catch (SQLException ex) {
             ErrorController.ErrorController(ex);
             Logger.getLogger(DatabaseReader.class.getName()).log(Level.SEVERE, null, ex);
-        } finally {
-            return tmp;
         }
+        return tmp;
     }
 
     /**
@@ -257,9 +249,8 @@ public class DatabaseReader {
         } catch (SQLException ex) {
             ErrorController.ErrorController(ex);
             Logger.getLogger(DatabaseReader.class.getName()).log(Level.SEVERE, null, ex);
-        } finally {
-            return tmp;
         }
+        return tmp;
     }
 
     /**
@@ -281,9 +272,8 @@ public class DatabaseReader {
         } catch (SQLException ex) {
             ErrorController.ErrorController(ex);
             Logger.getLogger(DatabaseReader.class.getName()).log(Level.SEVERE, null, ex);
-        } finally {
-            return tmp;
         }
+        return tmp;
     }
 
     /**
@@ -410,9 +400,8 @@ public class DatabaseReader {
         } catch (SQLException ex) {
             ErrorController.ErrorController(ex);
             Logger.getLogger(DatabaseReader.class.getName()).log(Level.SEVERE, null, ex);
-        } finally {
-            return tmp;
         }
+        return tmp;
     }
 
     /**
@@ -434,9 +423,8 @@ public class DatabaseReader {
         } catch (SQLException ex) {
             ErrorController.ErrorController(ex);
             Logger.getLogger(DatabaseReader.class.getName()).log(Level.SEVERE, null, ex);
-        } finally {
-            return tmp;
         }
+        return tmp;
     }
 
     /**
@@ -497,9 +485,8 @@ public class DatabaseReader {
         } catch (SQLException ex) {
             ErrorController.ErrorController(ex);
             Logger.getLogger(DatabaseReader.class.getName()).log(Level.SEVERE, null, ex);
-        } finally {
-            return tmp;
         }
+        return tmp;
     }
 
     /**
@@ -526,9 +513,8 @@ public class DatabaseReader {
         } catch (SQLException ex) {
             ErrorController.ErrorController(ex);
             Logger.getLogger(DatabaseReader.class.getName()).log(Level.SEVERE, null, ex);
-        } finally {
-            return cost;
         }
+        return cost;
     }
 
     /**
@@ -591,9 +577,8 @@ public class DatabaseReader {
         } catch (SQLException ex) {
             ErrorController.ErrorController(ex);
             Logger.getLogger(DatabaseReader.class.getName()).log(Level.SEVERE, null, ex);
-        } finally {
-            return tmp;
         }
+        return tmp;
     }
 
     /**
@@ -614,9 +599,8 @@ public class DatabaseReader {
         } catch (SQLException ex) {
             ErrorController.ErrorController(ex);
             Logger.getLogger(DatabaseReader.class.getName()).log(Level.SEVERE, null, ex);
-        } finally {
-            return tmp;
         }
+        return tmp;
     }
 
     /**
@@ -672,9 +656,8 @@ public class DatabaseReader {
         } catch (SQLException ex) {
             ErrorController.ErrorController(ex);
             Logger.getLogger(DatabaseReader.class.getName()).log(Level.SEVERE, null, ex);
-        } finally {
-            return tmp;
         }
+        return tmp;
     }
 
     //change to private and do setters/getters
@@ -695,9 +678,8 @@ public class DatabaseReader {
         } catch (SQLException ex) {
             ErrorController.ErrorController(ex);
             Logger.getLogger(DatabaseReader.class.getName()).log(Level.SEVERE, null, ex);
-        } finally {
-            return data;
         }
+        return data;
     }
 
     /**
@@ -719,9 +701,8 @@ public class DatabaseReader {
         } catch (SQLException ex) {
             ErrorController.ErrorController(ex);
             Logger.getLogger(DatabaseReader.class.getName()).log(Level.SEVERE, null, ex);
-        } finally {
-            return data;
         }
+        return data;
     }
 
     /**
@@ -745,9 +726,8 @@ public class DatabaseReader {
         } catch (SQLException ex) {
             ErrorController.ErrorController(ex);
             Logger.getLogger(DatabaseReader.class.getName()).log(Level.SEVERE, null, ex);
-        } finally {
-            return data;
         }
+        return data;
     }
 
     /**
@@ -772,9 +752,8 @@ public class DatabaseReader {
         } catch (SQLException ex) {
             ErrorController.ErrorController(ex);
             Logger.getLogger(DatabaseReader.class.getName()).log(Level.SEVERE, null, ex);
-        } finally {
-            return data;
         }
+        return data;
     }
 
     /**
@@ -799,9 +778,8 @@ public class DatabaseReader {
         } catch (SQLException ex) {
             ErrorController.ErrorController(ex);
             Logger.getLogger(DatabaseReader.class.getName()).log(Level.SEVERE, null, ex);
-        } finally {
-            return data;
         }
+        return data;
     }
 
     /**
@@ -825,9 +803,8 @@ public class DatabaseReader {
         } catch (SQLException ex) {
             ErrorController.ErrorController(ex);
             Logger.getLogger(DatabaseReader.class.getName()).log(Level.SEVERE, null, ex);
-        } finally {
-            return data;
         }
+        return data;
     }
 
     /**
@@ -852,9 +829,8 @@ public class DatabaseReader {
         } catch (SQLException ex) {
             ErrorController.ErrorController(ex);
             Logger.getLogger(DatabaseReader.class.getName()).log(Level.SEVERE, null, ex);
-        } finally {
-            return out;
         }
+        return out;
     }
 
     /**
@@ -894,9 +870,8 @@ public class DatabaseReader {
         } catch (SQLException ex) {
             ErrorController.ErrorController(ex);
             Logger.getLogger(DatabaseReader.class.getName()).log(Level.SEVERE, null, ex);
-        } finally {
-            return outputValues;
         }
+        return outputValues;
     }
 
     /**
@@ -914,9 +889,8 @@ public class DatabaseReader {
         } catch (SQLException ex) {
             ErrorController.ErrorController(ex);
             Logger.getLogger(DatabaseReader.class.getName()).log(Level.SEVERE, null, ex);
-        } finally {
-            return out;
         }
+        return out;
     }
 
     /**
@@ -938,9 +912,8 @@ public class DatabaseReader {
         } catch (SQLException ex) {
             ErrorController.ErrorController(ex);
             Logger.getLogger(DatabaseReader.class.getName()).log(Level.SEVERE, null, ex);
-        } finally {
-            return out;
         }
+        return out;
     }
 
     /**
@@ -963,9 +936,8 @@ public class DatabaseReader {
         } catch (SQLException ex) {
             ErrorController.ErrorController(ex);
             Logger.getLogger(DatabaseReader.class.getName()).log(Level.SEVERE, null, ex);
-        } finally {
-            return out;
         }
+        return out;
     }
 
     /**
@@ -991,9 +963,8 @@ public class DatabaseReader {
         } catch (SQLException ex) {
             ErrorController.ErrorController(ex);
             Logger.getLogger(DatabaseReader.class.getName()).log(Level.SEVERE, null, ex);
-        } finally {
-            return out;
         }
+        return out;
     }
 
     /**
@@ -1017,9 +988,8 @@ public class DatabaseReader {
         } catch (SQLException ex) {
             ErrorController.ErrorController(ex);
             Logger.getLogger(DatabaseReader.class.getName()).log(Level.SEVERE, null, ex);
-        } finally {
-            return out;
         }
+        return out;
     }
 
     /**
@@ -1045,9 +1015,8 @@ public class DatabaseReader {
         } catch (SQLException ex) {
             ErrorController.ErrorController(ex);
             Logger.getLogger(DatabaseReader.class.getName()).log(Level.SEVERE, null, ex);
-        } finally {
-            return out;
         }
+        return out;
     }
 
     /**
@@ -1079,9 +1048,8 @@ public class DatabaseReader {
         } catch (SQLException ex) {
             ErrorController.ErrorController(ex);
             Logger.getLogger(DatabaseReader.class.getName()).log(Level.SEVERE, null, ex);
-        } finally {
-            return out;
         }
+        return out;
     }
 
     /**
@@ -1119,9 +1087,8 @@ public class DatabaseReader {
         } catch (SQLException ex) {
             ErrorController.ErrorController(ex);
             Logger.getLogger(DatabaseReader.class.getName()).log(Level.SEVERE, null, ex);
-        } finally {
-            return out;
         }
+        return out;
     }
 
     /**
@@ -1175,9 +1142,8 @@ public class DatabaseReader {
         } catch (SQLException ex) {
             ErrorController.ErrorController(ex);
             Logger.getLogger(DatabaseReader.class.getName()).log(Level.SEVERE, null, ex);
-        } finally {
-            return out;
         }
+        return out;
     }
 
     /**
@@ -1195,9 +1161,8 @@ public class DatabaseReader {
         } catch (SQLException ex) {
             ErrorController.ErrorController(ex);
             Logger.getLogger(DatabaseReader.class.getName()).log(Level.SEVERE, null, ex);
-        } finally {
-            return out;
         }
+        return out;
     }
 
     /**
@@ -1217,8 +1182,7 @@ public class DatabaseReader {
         } catch (SQLException ex) {
             ErrorController.ErrorController(ex);
             Logger.getLogger(DatabaseReader.class.getName()).log(Level.SEVERE, null, ex);
-        } finally {
-            return out;
         }
+        return out;
     }
 }

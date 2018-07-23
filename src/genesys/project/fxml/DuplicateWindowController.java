@@ -163,7 +163,7 @@ public class DuplicateWindowController implements Initializable {
     }
 
     /**
-     *
+     * duplicateFinishButtonActions
      *
      */
     @FXML

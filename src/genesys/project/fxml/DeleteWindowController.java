@@ -154,7 +154,7 @@ public class DeleteWindowController implements Initializable {
     }
 
     /**
-     *
+     * deleteFinishButtonActions
      *
      */
     @FXML

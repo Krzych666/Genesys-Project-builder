@@ -13,7 +13,6 @@ import genesys.project.builder.DatabaseHolder;
 import genesys.project.builder.DatabaseWriter;
 import java.io.IOException;
 import java.net.URL;
-import java.sql.SQLException;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -149,7 +148,7 @@ public class CreateHoldWindowController implements Initializable {
      * @
      */
     @FXML
-    public void classList1MousePressedActions()  {
+    public void classList1MousePressedActions() {
         if (!classList1.getSelectionModel().isEmpty()) {
             DatabaseHolder.classList1Holder = classList1.getSelectionModel().getSelectedItem().toString();
             int cost;
@@ -179,10 +178,10 @@ public class CreateHoldWindowController implements Initializable {
     }
 
     /**
-     *
+     * addClassButtonActions
      */
     @FXML
-    public void addClassButtonActions()  {
+    public void addClassButtonActions() {
         if (classCreatorWindowStage.isShowing()) {
             classCreatorWindowStage.requestFocus();
         } else {
@@ -208,7 +207,7 @@ public class CreateHoldWindowController implements Initializable {
      * @
      */
     @FXML
-    public void createSpeciesFinalButtonActions()  {
+    public void createSpeciesFinalButtonActions() {
         if (DatabaseHolder.isModyfyinfg) {
             DatabaseHolder.isModyfyinfg = !DatabaseHolder.isModyfyinfg;
             for (int i = 0; i < DatabaseHolder.holdClass.length; i++) {
@@ -236,7 +235,7 @@ public class CreateHoldWindowController implements Initializable {
      *
      * @
      */
-    public void createHoldUpdate()  {
+    public void createHoldUpdate() {
         lifeDomainValue3.setText(DatabaseHolder.holdSpecies.getLifedomain().toString());
         speciesNameValue3.setText(DatabaseHolder.holdSpecies.getSpeciesName());
         ObservableList tmp = FXCollections.observableArrayList();
@@ -262,7 +261,7 @@ public class CreateHoldWindowController implements Initializable {
      *
      * @
      */
-    public void populateLabels()  {
+    public void populateLabels() {
         for (int i = 0; i < valuesLabels3.length; i++) {
             valuesLabels3[i].setText(DatabaseReader.getCharacteristics(DatabaseHolder.holdSpecies.getLifedomain().toString(), DatabaseHolder.holdSpecies.getCharacteristicGroup().toString())[i]);
         }

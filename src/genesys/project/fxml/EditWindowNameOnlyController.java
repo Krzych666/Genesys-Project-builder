@@ -42,8 +42,8 @@ public class EditWindowNameOnlyController implements Initializable {
     private ListView speciesList;
 
     /**
+     * editWindowNameButtonOkAction
      *
-     * 
      */
     @FXML
     public void editWindowNameButtonOkAction() {
@@ -73,8 +73,8 @@ public class EditWindowNameOnlyController implements Initializable {
     }
 
     /**
+     * editCloseAfterSaveActions
      *
-     * 
      */
     public void editCloseAfterSaveActions() {
         speciesList.setItems(DatabaseReader.getSpeciesList());
@@ -82,7 +82,7 @@ public class EditWindowNameOnlyController implements Initializable {
     }
 
     /**
-     *editWindowNameButtonCancelAction
+     * editWindowNameButtonCancelAction
      */
     @FXML
     public void editWindowNameButtonCancelAction() {

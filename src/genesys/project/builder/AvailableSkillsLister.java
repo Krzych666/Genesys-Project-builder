@@ -72,8 +72,7 @@ public class AvailableSkillsLister {
                         tmp.add(" ");
                     }
                 } else if ((!lifeDomainTree3.contains(reptiliaSpecific[1])) || (IgnoreSkillsList.stream().anyMatch(skill -> {
-                    ObservableList<String> tmp3 = FXCollections.observableArrayList();
-                    tmp3 = DatabaseReader.getSkillNameOnLifeDomainTree2AndLifeDomainTree3AndAge(columns, skillSubSet, reptiliaSpecific[1], maxAge, null);
+                    ObservableList<String> tmp3 = DatabaseReader.getSkillNameOnLifeDomainTree2AndLifeDomainTree3AndAge(columns, skillSubSet, reptiliaSpecific[1], maxAge, null);
                     return (skill.toString().split(" \\(p")[0]).equals(tmp3.get(0));
                 })) || (IgnoreSkillsList.contains("Ophidian"/*To implement for rare and ancient blodline swap*/))) {
                     data = DatabaseReader.getSkillNameOnLifeDomainTree2AndLifeDomainTree3AndAge(columns, skillSubSet, reptiliaSpecific[1], maxAge, IgnoreSkillsList);

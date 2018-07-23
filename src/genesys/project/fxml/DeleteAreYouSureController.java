@@ -24,7 +24,7 @@ public class DeleteAreYouSureController implements Initializable {
 
     /**
      * @FXML private DeleteAreYouSure = new javax.swing.JDialog;
- *
+     *
      */
     @FXML
     private Label areYouSureMessage;
@@ -39,11 +39,10 @@ public class DeleteAreYouSureController implements Initializable {
     Window deleteWindow;
 
     /**
-     *
-     *
+     * deleteYesButtonActions
      */
     @FXML
-    public void deleteYesButtonActions()  {
+    public void deleteYesButtonActions() {
         DatabaseWriter.commenceDeleting();
         speciesList.setItems(DatabaseReader.getSpeciesList());
         speciesList.getSelectionModel().clearSelection();
@@ -57,7 +56,7 @@ public class DeleteAreYouSureController implements Initializable {
     }
 
     /**
-     *deleteNoButtonActions
+     * deleteNoButtonActions
      */
     @FXML
     public void deleteNoButtonActions() {
@@ -67,6 +66,7 @@ public class DeleteAreYouSureController implements Initializable {
 
     /**
      * Initializes the controller class.
+     *
      * @param url
      * @param rb
      */

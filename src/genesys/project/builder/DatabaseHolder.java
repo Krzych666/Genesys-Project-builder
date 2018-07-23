@@ -311,6 +311,11 @@ public class DatabaseHolder {
         }
     }
 
+    /**
+     *
+     * @param skills
+     * @return
+     */
     public static String skillsSeparatorRepalcer(String skills) {
         if (skills != null && !skills.equals("")) {
             String temp = skills.replaceAll(";", ",").replaceAll(",,", ",");

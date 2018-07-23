@@ -29,7 +29,6 @@ import java.io.IOException;
 import static java.lang.Integer.max;
 import static java.lang.Integer.min;
 import java.net.URL;
-import java.sql.SQLException;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -188,7 +187,7 @@ public class SpeciesCreatorWindowController implements Initializable {
     private String primaryChooserString = "", secondaryChooserString = "";
 
     /**
-     *
+     * createSpecies
      */
     public void createSpecies() {
         if (DatabaseHolder.isModyfyinfg) {
@@ -282,7 +281,7 @@ public class SpeciesCreatorWindowController implements Initializable {
     }
 
     /**
-     *
+     * wipeSkills
      *
      */
     public void wipeSkills() {
@@ -312,7 +311,7 @@ public class SpeciesCreatorWindowController implements Initializable {
     }
 
     /**
-     *
+     * createFinishActions
      *
      */
     @FXML
@@ -354,7 +353,7 @@ public class SpeciesCreatorWindowController implements Initializable {
     }
 
     /**
-     *
+     * outcastCheckboxActions
      *
      */
     @FXML
@@ -365,7 +364,7 @@ public class SpeciesCreatorWindowController implements Initializable {
     }
 
     /**
-     *
+     * PrimaryChooseActions
      *
      */
     @FXML
@@ -426,7 +425,7 @@ public class SpeciesCreatorWindowController implements Initializable {
     }
 
     /**
-     *
+     * SecondaryChooseActions
      *
      */
     @FXML
@@ -457,7 +456,7 @@ public class SpeciesCreatorWindowController implements Initializable {
     }
 
     /**
-     *
+     * moveSkillButtonActions
      *
      */
     @FXML
@@ -503,7 +502,7 @@ public class SpeciesCreatorWindowController implements Initializable {
     }
 
     /**
-     *
+     * skillSetChooserItemStateChangedActions
      *
      */
     @FXML
@@ -517,7 +516,7 @@ public class SpeciesCreatorWindowController implements Initializable {
     }
 
     /**
-     *
+     * skillSubSetChooserItemStateChangedActions
      *
      */
     @FXML
@@ -585,7 +584,7 @@ public class SpeciesCreatorWindowController implements Initializable {
     }
 
     /**
-     *
+     * populateLabels
      *
      */
     public void populateLabels() {

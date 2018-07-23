@@ -67,10 +67,10 @@ public class CreateRosterController implements Initializable {
     private ListView speciesList;
 
     /**
-     *
+     * speciesChooseDropdownItemStateChangedActions
      */
     @FXML
-    public void speciesChooseDropdownItemStateChangedActions()  {
+    public void speciesChooseDropdownItemStateChangedActions() {
         if (!speciesChooseDropdown.getSelectionModel().getSelectedItem().equals("--CHOOSE--")) {
             cultureChooseDropdown.setItems(DatabaseReader.populateDropdownsCultures(speciesChooseDropdown.getSelectionModel().getSelectedItem().toString()));
             cultureChooseDropdown.getSelectionModel().select(0);
@@ -80,7 +80,7 @@ public class CreateRosterController implements Initializable {
     }
 
     /**
-     *
+     * selectDataForRosterActions
      */
     @FXML
     public void selectDataForRosterActions() {
@@ -116,7 +116,7 @@ public class CreateRosterController implements Initializable {
 
     }
 
-    private void loadSpecies()  {
+    private void loadSpecies() {
         DatabaseHolder.loadSpeciesToHold(speciesChooseDropdown.getSelectionModel().getSelectedItem().toString());
         DatabaseHolder.holdCulture = new DatabaseHolder.ACulture();
         DatabaseHolder.loadCultureToHold(speciesChooseDropdown.getSelectionModel().getSelectedItem().toString(), cultureChooseDropdown.getSelectionModel().getSelectedItem().toString());
@@ -159,7 +159,7 @@ public class CreateRosterController implements Initializable {
         this.speciesList = speciesList;
     }
 
-    void setSpeciesAndCultureSelection(String Selection)  {
+    void setSpeciesAndCultureSelection(String Selection) {
         speciesChooseDropdown.getSelectionModel().select(speciesList.getSelectionModel().getSelectedItem());
         speciesChooseDropdownItemStateChangedActions();
         cultureChooseDropdown.getSelectionModel().select(Selection);

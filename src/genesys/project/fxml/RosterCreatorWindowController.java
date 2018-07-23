@@ -156,7 +156,7 @@ public class RosterCreatorWindowController implements Initializable {
     private RosterAddUnitController rosterAddUnitController;
 
     /**
-     *
+     * classListMousePressedActions
      *
      */
     @FXML
@@ -181,7 +181,7 @@ public class RosterCreatorWindowController implements Initializable {
     }
 
     /**
-     *
+     * populateLabels
      *
      */
     public void populateLabels() {
@@ -191,7 +191,7 @@ public class RosterCreatorWindowController implements Initializable {
     }
 
     /**
-     *
+     * addUnitActions
      */
     @FXML
     public void addUnitActions() {

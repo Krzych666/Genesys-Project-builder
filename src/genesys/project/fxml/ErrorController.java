@@ -20,6 +20,10 @@ import javafx.scene.layout.Priority;
  */
 public class ErrorController extends Throwable {
 
+    /**
+     *
+     * @param ex
+     */
     public static void ErrorController(Exception ex) {
         Alert alert = new Alert(AlertType.ERROR);
         alert.setTitle("Error");
