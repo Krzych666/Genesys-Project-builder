@@ -353,13 +353,7 @@ public class BuilderCORE {
         } else {
             skl = skl.replace("_", " ").replace("-", "").replace("+", "").replaceAll("[0-9]", "X").replace(" Xpts", "");
         }
-        String[] sklSplit = new String[skl.split(";").length < 2 ? 1 : skl.split(";").length];
-        if (skl.split(";").length == 0) {
-            sklSplit[0] = skl;
-        } else {
-            sklSplit = skl.split(";");
-        }
-        tmp.addAll(sklSplit);
+        tmp.addAll(skl.split(";"));
         return tmp;
     }
 

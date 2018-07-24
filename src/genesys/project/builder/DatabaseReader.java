@@ -521,7 +521,7 @@ public class DatabaseReader {
     public static int getItemCost(String ItemName) {
         int cost = 0;
         try {
-            String itemNameSplit = ItemName.contains("{") ? ItemName.split(" \\{")[0] : ItemName;
+            String itemNameSplit = ItemName.split(" \\{")[0];
             String itemType = getItemTypreFromItemName(itemNameSplit);
             String itemTypeOneWord = itemType.replaceAll(" ", "");
             chooseConnection(UseCases.COREdb);
@@ -554,7 +554,7 @@ public class DatabaseReader {
         int cost = 0;
         if (itemWithImprovements.contains("{")) {
             String itemImprovements = itemWithImprovements.split(" \\{")[1].split("}")[0];
-            String[] improvementsList = itemImprovements.split(", ").length > 1 ? itemImprovements.split(", ") : new String[]{itemImprovements};
+            String[] improvementsList = itemImprovements.split(", ");
             String[] columns = {"Cost"};
             int howManyImprovements[] = new int[2];//TODO
             for (String improvementsList1 : improvementsList) {
@@ -599,7 +599,7 @@ public class DatabaseReader {
             stmt.setString(3, "Flintlock");
             stmt.setString(4, itemType.equals("Weapon") ? "Extreme Weapons" : "Resistance");
             String data = BuilderCORE.getData(stmt, columns, null, 0).get(0).toString();
-            String lst[] = data.split(";").length > 1 ? data.split(";") : new String[]{data};
+            String lst[] = data.split(";");
             tmp.addAll(lst);
         } catch (SQLException ex) {
             ErrorController.ErrorController(ex);

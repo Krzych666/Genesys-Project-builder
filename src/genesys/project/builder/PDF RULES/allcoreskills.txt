@@ -1695,7 +1695,7 @@ INSERT INTO `SkillRules`(`SkillRuleName`,`SkillRuleExplanation`) VALUES ('Whip T
 INSERT INTO `SkillRules`(`SkillRuleName`,`SkillRuleExplanation`) VALUES ('Withdraw from Combat','Models with this ability can freely back away when engaged to withdraw from combat without causing a provoked attack. Effectively this allows a model to leave Melee Combat without penalties during their movement.');
 
 
-modifications in skill rules:
+modifications in skill rules:				//to compare with DB
 Increase: -> Increase X and change 'Decrease' to 'Increase' in text.
 Reduction -> Reduction X and change all 'Enhancement' to 'Reduction' in text.
 Species Variation -> Species Variant
@@ -1710,7 +1710,7 @@ Squad Size X : Standard Classes -> selected classes
 Religious Followers: models -> Models
 Instant Death x2 ? which is proper?
 
-modifications in skills from branches
+modifications in skills from branches:				//to compare with DB
 Abberation: Species Variation -> Species Variant, Fayrie: Species Variation -> Species Variant, Feral: Species Variation -> Species Variant
 Dense Bones: Increase Toughness +1 -> Increase Toughness 1
 Heroic Nobility : Enhancement Command +1 -> Enhancement Command 1
@@ -1789,10 +1789,22 @@ Dwarven Stature: Enhancement 1 Mtn -> Enhancement 1 Mtn
 INSECTA Lesser & Greater VS Primary & Secondary Traits
 REPTILIA add "Mount" skill do degenerative
 
+Fey Book 5.04:
+p.36 Look at Humanoid and refactor that to match pattern
+p.36 Disciple/ Lesser Classes/ Lesser Incarnates: Maximum Squad Size --- missing 2000+
+p.36 Paragon use -1999/2000 insted of 2000/2001 AND no <20000?
 
+Reptilia Book 5.04:
+p.26 Look at Humanoid and refactor that to match pattern
+p.26 Ancient use -1999/2000 insted of 2000/2001 AND no <20000?
 
+Insect 5.04:
+p.22 Look at Humanoid and refactor that to match pattern
+p.22 text is a copy paste from biest - change that
+p.22 Apex class descr is a copy paste form humanoid - change that
 
-
+Biest 5.04:
+p.28 Legendary class descr is a copy paste form humanoid - change that
 
 ideas:
 Refactor 'Fantastic Beasts' branch in humanoid to allow to creaate fey, draco and insecta (beast already in feral);
