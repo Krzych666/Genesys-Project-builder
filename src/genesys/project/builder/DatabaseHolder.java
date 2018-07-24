@@ -92,9 +92,9 @@ public class DatabaseHolder {
     public static DBTables currentTable;
 
     /**
-     * isModyfyinfg
+     * isModyfying
      */
-    public static boolean isModyfyinfg = false;
+    public static boolean isModyfying = false;
 
     /**
      * classIsModyfying
@@ -146,7 +146,7 @@ public class DatabaseHolder {
      * @param what
      */
     public static void creator(LifedomainValue lifedomain, Enum what) {
-        isModyfyinfg = false;
+        isModyfying = false;
         holdSpecies = null;
         holdSpecies = ASpecies.createASpecies(lifedomain);
         holdSpecies.Lifedomain = lifedomain;
@@ -353,6 +353,8 @@ public class DatabaseHolder {
         holdCulture.setSpeciesName(selSpecies);
         holdCulture.setCultureName(selCulture);
         holdCulture.setAge(Integer.parseInt(data.get(0).toString().split("\\|")[0]));
+        holdCulture.setTotalProgressionPoints(Integer.parseInt(data.get(0).toString().split("\\|")[1]));
+        holdCulture.setLeftProgressionPoints(Integer.parseInt(data.get(0).toString().split("\\|")[2]));
         modifiedHoldCulture = holdCulture.getClone();
     }
 
@@ -420,6 +422,7 @@ public class DatabaseHolder {
         holdRoster.setCultureName(selCulture);
         holdRoster.setRosterName(selRoster);
         holdRoster.setRoster(data.get(0).toString().split("\\|")[0]);
+        holdRoster.setMaxPoints(data.get(0).toString().split("\\|")[1]);
         modifiedHoldRoster = holdRoster.getClone();
     }
 
@@ -673,7 +676,7 @@ public class DatabaseHolder {
 
         @Getter
         @Setter
-        private int Age;
+        private int Age, TotalProgressionPoints, LeftProgressionPoints;
 
         /**
          * aCulture
@@ -686,11 +689,15 @@ public class DatabaseHolder {
          * @param SpeciesName
          * @param CultureName
          * @param Age
+         * @param TotalProgressionPoints
+         * @param LeftProgressionPoints
          */
-        public ACulture(String SpeciesName, String CultureName, int Age) {
+        public ACulture(String SpeciesName, String CultureName, int Age, int TotalProgressionPoints, int LeftProgressionPoints) {
             this.SpeciesName = SpeciesName;
             this.CultureName = CultureName;
             this.Age = Age;
+            this.TotalProgressionPoints = TotalProgressionPoints;
+            this.LeftProgressionPoints = LeftProgressionPoints;
         }
 
         /**
@@ -698,7 +705,7 @@ public class DatabaseHolder {
          * @return
          */
         public ACulture getClone() {
-            ACulture aClone = new ACulture(this.SpeciesName, this.CultureName, this.Age);
+            ACulture aClone = new ACulture(this.SpeciesName, this.CultureName, this.Age, this.TotalProgressionPoints, this.LeftProgressionPoints);
             return aClone;
         }
     }
@@ -762,6 +769,12 @@ public class DatabaseHolder {
          */
         public AHero getClone() {
             AHero aClone = new AHero();
+            aClone.HeroName = this.HeroName;
+            aClone.SpeciesName = this.SpeciesName;
+            aClone.CultureName = this.CultureName;
+            aClone.Advancements = this.Advancements;
+            aClone.BasedOn = this.BasedOn;
+            aClone.AdditionalCost = this.AdditionalCost;
             return aClone;
         }
     }
@@ -781,6 +794,10 @@ public class DatabaseHolder {
          */
         public AProgress getClone() {
             AProgress aClone = new AProgress();
+            aClone.ProgressName = this.ProgressName;
+            aClone.SpeciesName = this.SpeciesName;
+            aClone.CultureName = this.CultureName;
+            aClone.Progress = this.Progress;
             return aClone;
         }
     }
@@ -792,7 +809,7 @@ public class DatabaseHolder {
 
         @Getter
         @Setter
-        private String RosterName, SpeciesName, CultureName, Roster;
+        private String RosterName, SpeciesName, CultureName, Roster, MaxPoints;
 
         /**
          *
@@ -800,6 +817,11 @@ public class DatabaseHolder {
          */
         public ARoster getClone() {
             ARoster aClone = new ARoster();
+            aClone.RosterName = this.RosterName;
+            aClone.SpeciesName = this.SpeciesName;
+            aClone.CultureName = this.CultureName;
+            aClone.Roster = this.Roster;
+            aClone.MaxPoints = this.MaxPoints;
             return aClone;
         }
     }

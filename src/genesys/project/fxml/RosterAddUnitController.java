@@ -116,11 +116,16 @@ public class RosterAddUnitController implements Initializable {
     private int itemsCost() {
         int cost = 0;
         for (int i = 0; i < currentEquipmentList.getItems().size(); i++) {
+            String itemName;
+            int howMany;
             if (currentEquipmentList.getItems().get(i).toString().contains("} X")) {
-                cost += DatabaseReader.getItemCost(currentEquipmentList.getItems().get(i).toString().split("} X")[0], equipmentTypeChooser.getSelectionModel().getSelectedItem().toString()) * Integer.parseInt(currentEquipmentList.getItems().get(i).toString().split("} X")[1]);
+                itemName = currentEquipmentList.getItems().get(i).toString().split("} X")[0];
+                howMany = Integer.parseInt(currentEquipmentList.getItems().get(i).toString().split("} X")[1]);
             } else {
-                cost += DatabaseReader.getItemCost(currentEquipmentList.getItems().get(i).toString().split(" X")[0], equipmentTypeChooser.getSelectionModel().getSelectedItem().toString()) * Integer.parseInt(currentEquipmentList.getItems().get(i).toString().split(" X")[1]);
+                itemName = currentEquipmentList.getItems().get(i).toString().split(" X")[0];
+                howMany = Integer.parseInt(currentEquipmentList.getItems().get(i).toString().split(" X")[1]);
             }
+            cost += DatabaseReader.getItemCost(itemName) * howMany;
         }
         return cost;
     }
@@ -247,8 +252,8 @@ public class RosterAddUnitController implements Initializable {
     public void addSquadButtonActions() {
         roster.getItems().add(className
                 + " x" + squadSizeValue.getText()
-                + "   \n" + currentEquipmentList.getItems().toString()
-                + "   \n total points:" + totalPointsValue.getText());
+                + "\n\t" + currentEquipmentList.getItems().toString()
+                + "\n\ttotal points:" + totalPointsValue.getText());
         currentPointsValue.setText(Integer.toString(Integer.parseInt(currentPointsValue.getText()) + Integer.parseInt(totalPointsValue.getText())));
         checkCurrentToMaxPoints();
         Stage stage = (Stage) addSquadButton.getScene().getWindow();

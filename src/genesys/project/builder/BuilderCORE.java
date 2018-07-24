@@ -614,63 +614,49 @@ public class BuilderCORE {
             }
             if (!"".equals(classname[bb].getType()) && !"null".equals(classname[bb].getType()) && !(BuilderCORE.BASE.equals(DatabaseHolder.classList1Holder))) {
                 if (classname[bb].getBasedOn() != null && !classname[bb].getBasedOn().equals(BuilderCORE.BASE) && !BuilderCORE.BASE.equals(DatabaseHolder.classList1Holder)) {
-                    String[] lst = DatabaseHolder.skillsSeparatorRepalcer(classname[bb].getSkills()).split(",");
                     for (int s = 0; s < classname.length; s++) {
                         if (classname[bb].getBasedOn().equals(classname[s].getClassName())) {
                             source = s;
                         }
                     }
                     points += a * baseAddedCost(lifeDomain, species, classname, source, points);
-                    for (String lst1 : lst) {
-                        String add = DatabaseReader.loadSkillFromDB(lst1).get(0).toString().split("\\|")[1];
-                        if (add.contains("/")) {
-                            add = add.split("/")[0];
-                        }
-                        if (!"".equals(add)) {
-                            points += Integer.parseInt(add);
-                        }
-                    }
+                    String[] lst = DatabaseHolder.skillsSeparatorRepalcer(classname[bb].getSkills()).split(",");
+                    points += pointGetter(lst);
                 } else if (classname[bb].getBasedOn() != null && classname[bb].getBasedOn().equals(BuilderCORE.BASE) && !BuilderCORE.BASE.equals(DatabaseHolder.classList1Holder) && !"".equals(classname[bb].getSkills()) && !",".equals(classname[bb].getSkills())) {
                     String[] lst = DatabaseHolder.skillsSeparatorRepalcer(classname[bb].getSkills()).split(",");
-                    for (String lst1 : lst) {
-                        String add = DatabaseReader.loadSkillFromDB(lst1).get(0).toString().split("\\|")[1];
-                        if (add.contains("/")) {
-                            add = add.split("/")[0];
-                        }
-                        points += Integer.parseInt(add);
-                    }
+                    points += pointGetter(lst);
                 }
                 if (!"".equals(species.getSkills()) && classname[bb].getBasedOn().equals(BuilderCORE.BASE)) {
                     String[] lst = DatabaseHolder.skillsSeparatorRepalcer(species.getSkills()).split(",");
-                    for (String lst1 : lst) {
-                        String add = DatabaseReader.loadSkillFromDB(lst1).get(0).toString().split("\\|")[1];
-                        if (add.contains("/")) {
-                            add = add.split("/")[0];
-                        }
-                        points += a * Integer.parseInt(add);
-                    }
+                    points += pointGetter(lst);
                 }
             } else {
                 String[] lst = DatabaseHolder.skillsSeparatorRepalcer(species.getSkills()).split(",");
-                for (String lst1 : lst) {
-                    String add = DatabaseReader.loadSkillFromDB(lst1).get(0).toString().split("\\|")[1];
-                    if (add.contains("/")) {
-                        add = add.split("/")[0];
-                    }
-                    points += Integer.parseInt(add);
-                }
+                points += pointGetter(lst);
             }
         } else if (!"".equals(species.getSkills())) {
             String[] lst = DatabaseHolder.skillsSeparatorRepalcer(species.getSkills()).split(",");
-            for (String lst1 : lst) {
-                String add = DatabaseReader.loadSkillFromDB(lst1).get(0).toString().split("\\|")[1];
+            points += pointGetter(lst);
+        }
+        return points;
+    }
+
+    private static int pointGetter(String[] lst) {
+        int out = 0;
+        for (String lst1 : lst) {
+            ObservableList readed = DatabaseReader.loadSkillFromDB(lst1);
+            if (!readed.isEmpty()) {
+                String add = readed.get(0).toString();
+                add = add.contains("|") ? add.split("\\|")[1] : add;
                 if (add.contains("/")) {
                     add = add.split("/")[0];
                 }
-                points += Integer.parseInt(add);
+                if (!"".equals(add)) {
+                    out += Integer.parseInt(add);
+                }
             }
         }
-        return points;
+        return out;
     }
 
     /**

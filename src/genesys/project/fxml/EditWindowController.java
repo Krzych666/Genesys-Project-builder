@@ -17,6 +17,7 @@ import java.net.URL;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -88,6 +89,13 @@ public class EditWindowController implements Initializable {
      */
     public Stage classCreatorWindowStage = new Stage();
     private ClassCreatorWindowController classCreatorWindowController;
+
+    /**
+     * rosterCreatorWindowStage
+     */
+    public Stage rosterCreatorWindowStage = new Stage();
+    private RosterCreatorWindowController rosterCreatorWindowController;
+
     private ListView speciesList;
     private ListView cultureList;
     private ListView rosterList;
@@ -109,8 +117,7 @@ public class EditWindowController implements Initializable {
     }
 
     /**
-     *
-     * @
+     * speciesEditDropdownItemStateChangedActions
      */
     @FXML
     public void speciesEditDropdownItemStateChangedActions() {
@@ -119,8 +126,7 @@ public class EditWindowController implements Initializable {
     }
 
     /**
-     *
-     * @
+     * cultureEditDropdownItemStateChangedActions
      */
     @FXML
     public void cultureEditDropdownItemStateChangedActions() {
@@ -138,8 +144,7 @@ public class EditWindowController implements Initializable {
     }
 
     /**
-     *
-     * @
+     * classEditDropdownItemStateChangedActions
      */
     @FXML
     public void classEditDropdownItemStateChangedActions() {
@@ -296,6 +301,18 @@ public class EditWindowController implements Initializable {
                 editWindowNameOld.setText(DatabaseHolder.holdRoster.getRosterName());
                 editWindowNameOnlyText1.setText("Change the folowing roster name:");
             } else {
+                DatabaseHolder.loadSpeciesToHold(speciesEditDropdown.getSelectionModel().getSelectedItem().toString());
+                DatabaseHolder.holdCulture = new DatabaseHolder.ACulture();
+                DatabaseHolder.loadCultureToHold(speciesEditDropdown.getSelectionModel().getSelectedItem().toString(), cultureEditDropdown.getSelectionModel().getSelectedItem().toString());
+                ObservableList classesList = DatabaseReader.populateDropdownsClasses(speciesEditDropdown.getSelectionModel().getSelectedItem().toString(), cultureEditDropdown.getSelectionModel().getSelectedItem().toString());
+                classesList.remove(DatabaseHolder.TOPDROP);
+                DatabaseHolder.holdClass = new DatabaseHolder.AClass[classesList.size()];
+                DatabaseHolder.modifiedHoldClass = new DatabaseHolder.AClass[DatabaseHolder.holdClass.length];
+                for (int i = 0; i < classesList.size(); i++) {
+                    DatabaseHolder.holdClass[i] = new DatabaseHolder.AClass();
+                    DatabaseHolder.holdClass[i].clearAClass();
+                    DatabaseHolder.loadClassToHold(speciesEditDropdown.getSelectionModel().getSelectedItem().toString(), cultureEditDropdown.getSelectionModel().getSelectedItem().toString(), classesList.get(i).toString(), i);
+                }
                 modificator(Modificators.ModifyRoster);
             }
         }
@@ -303,8 +320,7 @@ public class EditWindowController implements Initializable {
     }
 
     /**
-     *
-     * @
+     * toNameOnly
      */
     public void toNameOnly() {
         if (editWindowNameOnlyStage.isShowing()) {
@@ -348,8 +364,8 @@ public class EditWindowController implements Initializable {
                 case Insecta:
                     break;
             }
+            DatabaseHolder.isModyfying = true;
             if (Modificators.ModifySpecies.equals(what)) {
-                DatabaseHolder.isModyfyinfg = true;
                 if (speciesCreatorWindowStage.isShowing()) {
                     speciesCreatorWindowStage.requestFocus();
                 } else {
@@ -366,7 +382,6 @@ public class EditWindowController implements Initializable {
                 //populateLabels();
             }
             if (Modificators.ModifyCulture.equals(what)) {
-                DatabaseHolder.isModyfyinfg = true;
                 if (createHoldWindowStage.isShowing()) {
                     createHoldWindowStage.requestFocus();
                 } else {
@@ -381,7 +396,6 @@ public class EditWindowController implements Initializable {
                 }
             }
             if (Modificators.ModifyClass.equals(what)) {
-                DatabaseHolder.classIsModyfying = true;
                 if (classCreatorWindowStage.isShowing()) {
                     classCreatorWindowStage.requestFocus();
                 } else {
@@ -400,6 +414,23 @@ public class EditWindowController implements Initializable {
             if (Modificators.ModifyProgress.equals(what)) {
             }
             if (Modificators.ModifyRoster.equals(what)) {
+                if (rosterCreatorWindowStage.isShowing()) {
+                    rosterCreatorWindowStage.requestFocus();
+                } else {
+                    try {
+                        FXMLLoader loader = new FXMLLoader(getClass().getResource("/genesys/project/fxml/RosterCreatorWindowFXML.fxml"));
+                        Parent root = loader.load();
+                        Scene scene = new Scene(root);
+                        rosterCreatorWindowController = loader.getController();
+                        rosterCreatorWindowController.setMaxPoints(DatabaseHolder.holdRoster.getMaxPoints());
+                        rosterCreatorWindowStage.setScene(scene);
+                        rosterCreatorWindowStage.setTitle("Create Roster " + DatabaseHolder.holdRoster.getRosterName() + " for " + DatabaseHolder.holdRoster.getSpeciesName() + " - " + DatabaseHolder.holdRoster.getCultureName());
+                        rosterCreatorWindowStage.show();
+                    } catch (IOException ex) {
+                        ErrorController.ErrorController(ex);
+                        Logger.getLogger(CreateRosterController.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
             }
         } catch (IOException ex) {
             ErrorController.ErrorController(ex);

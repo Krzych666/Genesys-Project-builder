@@ -167,18 +167,18 @@ public class DeleteWindowController implements Initializable {
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("/genesys/project/fxml/DeleteAreYouSureFXML.fxml"));
                 Parent root = loader.load();
                 deleteAreYouSureController = loader.getController();
-                deleteAreYouSureController.setSpeciesList(speciesList);
-                toDelete = deleteAreYouSureController.getToDelete();
-                deleteAreYouSureController.getDeleteWindow(deleteFinishButton.getScene().getWindow());
+                deleteAreYouSureController.setSpeciesList(speciesList);                
+                deleteAreYouSureController.setDeleteWindow(deleteFinishButton.getScene().getWindow());
                 Scene scene = new Scene(root);
                 deleteAreYouSureStage.setScene(scene);
                 deleteAreYouSureStage.setTitle("Confirm Deletion");
                 deleteAreYouSureStage.show();
+                toDelete = deleteAreYouSureController.getToDelete();
             } catch (IOException ex) {
                 ErrorController.ErrorController(ex);
                 Logger.getLogger(DeleteWindowController.class.getName()).log(Level.SEVERE, null, ex);
             }
-        }
+        }        
         showWhatToDelete();
     }
 

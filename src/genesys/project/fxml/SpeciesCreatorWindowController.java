@@ -190,7 +190,7 @@ public class SpeciesCreatorWindowController implements Initializable {
      * createSpecies
      */
     public void createSpecies() {
-        if (DatabaseHolder.isModyfyinfg) {
+        if (DatabaseHolder.isModyfying) {
             nameInputField.setText(DatabaseHolder.holdSpecies.getSpeciesName());
         } else {
             DatabaseHolder.holdSpecies.setSkills("");
@@ -321,8 +321,8 @@ public class SpeciesCreatorWindowController implements Initializable {
         stage.hide();
         DatabaseHolder.holdSpecies.setSpeciesName(nameInputField.getText());
         DatabaseHolder.holdSpecies.setAge(DatabaseReader.findMaxAge(skillsList1));
-        if (DatabaseHolder.isModyfyinfg) {
-            DatabaseHolder.isModyfyinfg = !DatabaseHolder.isModyfyinfg;
+        if (DatabaseHolder.isModyfying) {
+            DatabaseHolder.isModyfying = !DatabaseHolder.isModyfying;
             DatabaseWriter.modifySpecies();
             DatabaseHolder.holdSpecies = null;
             DatabaseHolder.modifiedHoldSpecies = null;
@@ -628,7 +628,7 @@ public class SpeciesCreatorWindowController implements Initializable {
     public void initialize(URL url, ResourceBundle rb) {
         this.valuesLabels = new Label[]{strengthValue1, toughnessValue1, movementValue1, martialValue1, rangedValue1, defenseValue1, disciplineValue1, willpowerValue1, commandValue1, woundsValue1, attacksValue1, sizeValue1, mTValue1, rTValue1, moraleValue1};
 
-        if (!DatabaseHolder.isModyfyinfg) {
+        if (!DatabaseHolder.isModyfying) {
             DatabaseHolder.holdSpecies.setAge(1);
             DatabaseHolder.holdCulture.setAge(1);
         }

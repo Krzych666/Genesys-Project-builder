@@ -78,7 +78,7 @@ public class DeleteAreYouSureController implements Initializable {
         this.speciesList = speciesList;
     }
 
-    void getDeleteWindow(Window deleteWindow) {
+    void setDeleteWindow(Window deleteWindow) {
         this.deleteWindow = deleteWindow;
     }
 

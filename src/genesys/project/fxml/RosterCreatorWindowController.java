@@ -238,6 +238,17 @@ public class RosterCreatorWindowController implements Initializable {
     }
 
     /**
+     * checkCurrentPoints
+     */
+    public void checkCurrentPoints() {
+        int totalPoints = 0;
+        for (int i = 0; i < Roster.getItems().size(); i++) {
+            totalPoints += Integer.parseInt(Roster.getItems().get(i).toString().split("total points:")[1]);
+        }
+        currentPointsValue.setText(Integer.toString(totalPoints));
+    }
+
+    /**
      * createRosterFinalButtonActions
      */
     @FXML
@@ -250,7 +261,12 @@ public class RosterCreatorWindowController implements Initializable {
             }
         }
         DatabaseHolder.holdRoster.setRoster(rosterPrint.toString());
-        DatabaseWriter.writeRosterToDB();
+        if (DatabaseHolder.isModyfying) {
+            DatabaseHolder.isModyfying = !DatabaseHolder.isModyfying;
+            DatabaseWriter.modifyRoster();
+        } else {
+            DatabaseWriter.writeRosterToDB();
+        }
         Stage stage = (Stage) createRosterFinalButton.getScene().getWindow();
         stage.hide();
     }
@@ -294,6 +310,11 @@ public class RosterCreatorWindowController implements Initializable {
                 }
             }
         });
+        if (DatabaseHolder.isModyfying) {
+            ObservableList ros = FXCollections.observableArrayList(DatabaseHolder.holdRoster.getRoster().split(";"));
+            Roster.getItems().addAll(ros);
+            checkCurrentPoints();
+        }
     }
 
     void setMaxPoints(String maxPoints) {

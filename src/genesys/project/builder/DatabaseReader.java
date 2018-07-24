@@ -429,6 +429,30 @@ public class DatabaseReader {
 
     /**
      *
+     * @param itemName
+     * @return
+     */
+    public static String getItemTypreFromItemName(String itemName) {
+        String out = "";
+        try {
+            String[] columns = {"count(*)"};
+            for (String EQUIPMENT_TYPES : BuilderCORE.EQUIPMENT_TYPES) {
+                chooseConnection(UseCases.COREdb);
+                PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT count(*) FROM Equipment" + EQUIPMENT_TYPES.replaceAll(" ", "") + " WHERE " + EQUIPMENT_TYPES.replaceAll(" ", "") + "Name= ?");
+                stmt.setString(1, itemName);
+                if (BuilderCORE.getData(stmt, columns, null, 0).get(0).toString().equals("1")) {
+                    return EQUIPMENT_TYPES;
+                }
+            }
+        } catch (SQLException ex) {
+            ErrorController.ErrorController(ex);
+            Logger.getLogger(DatabaseReader.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return out;
+    }
+
+    /**
+     *
      * @param itemType
      * @return
      */
@@ -491,25 +515,28 @@ public class DatabaseReader {
 
     /**
      *
-     * @param item
-     * @param itemType
+     * @param ItemName
      * @return
      */
-    public static int getItemCost(String item, String itemType) {
+    public static int getItemCost(String ItemName) {
         int cost = 0;
         try {
-            String itemName;
-            itemName = item.contains("{") ? item.split(" \\{")[0] : item;
+            String itemNameSplit = ItemName.contains("{") ? ItemName.split(" \\{")[0] : ItemName;
+            String itemType = getItemTypreFromItemName(itemNameSplit);
             String itemTypeOneWord = itemType.replaceAll(" ", "");
             chooseConnection(UseCases.COREdb);
             PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT * FROM Equipment" + itemTypeOneWord + " WHERE " + itemTypeOneWord + "Name = ?");
-            stmt.setString(1, itemName);
+            stmt.setString(1, itemNameSplit);
             String[] columns = {"Cost"};
-            String data = BuilderCORE.getData(stmt, columns, null, 0).get(0).toString();
+            ObservableList loadedData = BuilderCORE.getData(stmt, columns, null, 0);
+            String data = "";
+            if (!loadedData.isEmpty()) {
+                data = loadedData.get(0).toString();
+            }
             if (data.contains("/")) {
                 data = data.split("/")[0];
             }
-            cost = Integer.parseInt(data) + getImprovementsCosts(item, itemType);
+            cost = Integer.parseInt(data) + getImprovementsCosts(ItemName, itemType);
         } catch (SQLException ex) {
             ErrorController.ErrorController(ex);
             Logger.getLogger(DatabaseReader.class.getName()).log(Level.SEVERE, null, ex);
@@ -696,7 +723,7 @@ public class DatabaseReader {
             PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT * FROM CreatedCultures WHERE SpeciesName = ? AND CultureName = ?");
             stmt.setString(1, selSpecies);
             stmt.setString(2, selCulture);
-            String[] columns = {"Age"};
+            String[] columns = {"Age","TotalProgressionPoints","LeftProgressionPoints"};
             data = BuilderCORE.getData(stmt, columns, null, 0);
         } catch (SQLException ex) {
             ErrorController.ErrorController(ex);
@@ -798,7 +825,7 @@ public class DatabaseReader {
             stmt.setString(1, selSpecies);
             stmt.setString(2, selCulture);
             stmt.setString(3, selRoster);
-            String[] columns = {"Roster"};
+            String[] columns = {"Roster", "MaxPoints"};
             data = BuilderCORE.getData(stmt, columns, null, 0);
         } catch (SQLException ex) {
             ErrorController.ErrorController(ex);

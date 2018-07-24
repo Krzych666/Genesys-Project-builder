@@ -208,8 +208,8 @@ public class CreateHoldWindowController implements Initializable {
      */
     @FXML
     public void createSpeciesFinalButtonActions() {
-        if (DatabaseHolder.isModyfyinfg) {
-            DatabaseHolder.isModyfyinfg = !DatabaseHolder.isModyfyinfg;
+        if (DatabaseHolder.isModyfying) {
+            DatabaseHolder.isModyfying = !DatabaseHolder.isModyfying;
             for (int i = 0; i < DatabaseHolder.holdClass.length; i++) {
                 if (DatabaseHolder.holdClass[i].getSkills().length() > 2) {
                     DatabaseHolder.holdClass[i].setSkills(DatabaseHolder.holdClass[i].getSkills().substring(0, DatabaseHolder.holdClass[i].getSkills().length() - 1));
@@ -300,7 +300,7 @@ public class CreateHoldWindowController implements Initializable {
     public void initialize(URL url, ResourceBundle rb) {
         this.valuesLabels3 = new Label[]{strengthValue3, toughnessValue3, movementValue3, martialValue3, rangedValue3, defenseValue3, disciplineValue3, willpowerValue3, commandValue3, woundsValue3, attacksValue3, sizeValue3, mTValue3, rTValue3, moraleValue3};
         createHoldUpdate();
-        if (!DatabaseHolder.isModyfyinfg && DatabaseHolder.holdCulture != null && DatabaseHolder.holdCulture.getAge() < 1) {
+        if (!DatabaseHolder.isModyfying && DatabaseHolder.holdCulture != null && DatabaseHolder.holdCulture.getAge() < 1) {
             DatabaseHolder.holdCulture.setAge(1);
         }
     }

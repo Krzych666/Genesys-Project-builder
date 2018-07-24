@@ -102,7 +102,7 @@ public class DatabaseWriter {
      * writeRosterToDB
      */
     public static void writeRosterToDB() {
-        executeSQL("INSERT INTO `CreatedRosters`(RosterName,CultureName,SpeciesName,Roster) VALUES ('" + DatabaseHolder.holdRoster.getRosterName() + "','" + DatabaseHolder.holdRoster.getCultureName() + "','" + DatabaseHolder.holdRoster.getSpeciesName() + "','" + DatabaseHolder.holdRoster.getRoster() + "');");
+        executeSQL("INSERT INTO `CreatedRosters`(RosterName,CultureName,SpeciesName,Roster,MaxPoints) VALUES ('" + DatabaseHolder.holdRoster.getRosterName() + "','" + DatabaseHolder.holdRoster.getCultureName() + "','" + DatabaseHolder.holdRoster.getSpeciesName() + "','" + DatabaseHolder.holdRoster.getRoster() + "','" + DatabaseHolder.holdRoster.getMaxPoints() + "');");
     }
 
     /**
@@ -210,7 +210,7 @@ public class DatabaseWriter {
      * modifyCulture
      */
     public static void modifyCulture() {
-        executeSQL("UPDATE CreatedCultures SET Age='" + DatabaseHolder.holdCulture.getAge() + "' WHERE SpeciesName='" + DatabaseHolder.holdCulture.getSpeciesName() + "' AND CultureName='" + DatabaseHolder.holdCulture.getCultureName() + "'");
+        executeSQL("UPDATE CreatedCultures SET Age='" + DatabaseHolder.holdCulture.getAge() + "', TotalProgressionPoints='" + DatabaseHolder.holdCulture.getTotalProgressionPoints() + "', LeftProgressionPoints='" + DatabaseHolder.holdCulture.getLeftProgressionPoints() + "' WHERE SpeciesName='" + DatabaseHolder.holdCulture.getSpeciesName() + "' AND CultureName='" + DatabaseHolder.holdCulture.getCultureName() + "'");
     }
 
     /**
@@ -327,7 +327,7 @@ public class DatabaseWriter {
      * modifyRoster
      */
     public static void modifyRoster() {
-        executeSQL("UPDATE CreatedProgress SET RosterName='" + DatabaseHolder.holdRoster.getRosterName() + "', SpeciesName='" + DatabaseHolder.holdRoster.getSpeciesName() + "', CultureName='" + DatabaseHolder.holdRoster.getCultureName() + "', Roster='" + DatabaseHolder.holdRoster.getRoster() + "' WHERE SpeciesName='" + DatabaseHolder.modifiedHoldRoster.getSpeciesName() + "' AND CultureName='" + DatabaseHolder.modifiedHoldRoster.getCultureName() + "' AND RosterName='" + DatabaseHolder.modifiedHoldRoster.getRosterName() + "'");
+        executeSQL("UPDATE CreatedRosters SET RosterName='" + DatabaseHolder.holdRoster.getRosterName() + "', SpeciesName='" + DatabaseHolder.holdRoster.getSpeciesName() + "', CultureName='" + DatabaseHolder.holdRoster.getCultureName() + "', Roster='" + DatabaseHolder.holdRoster.getRoster() + "', MaxPoints='" + DatabaseHolder.holdRoster.getMaxPoints() + "' WHERE SpeciesName='" + DatabaseHolder.modifiedHoldRoster.getSpeciesName() + "' AND CultureName='" + DatabaseHolder.modifiedHoldRoster.getCultureName() + "' AND RosterName='" + DatabaseHolder.modifiedHoldRoster.getRosterName() + "'");
     }
 
     /**
@@ -365,14 +365,14 @@ public class DatabaseWriter {
             if (!"--all--".equals(selCulture)) {
                 stmt.setString(2, selCulture);
             }
-            String[] columns = {"CultureName", "Age"};
+            String[] columns = {"CultureName", "Age", "TotalProgressionPoints", "LeftProgressionPoints"};
             ObservableList data = BuilderCORE.getData(stmt, columns, null, 0);
             if ("--all--".equals(selCulture)) {
                 for (int i = 0; i < data.size(); i++) {
-                    executeSQL("INSERT INTO `CreatedCultures`(CultureName,SpeciesName,Age) VALUES ('" + data.get(i).toString().split("\\|")[0] + "','" + duplicateNewNameValue + "','" + data.get(i).toString().split("\\|")[1] + "');");
+                    executeSQL("INSERT INTO `CreatedCultures`(CultureName,SpeciesName,Age,TotalProgressionPoints,LeftProgressionPoints) VALUES ('" + data.get(i).toString().split("\\|")[0] + "','" + duplicateNewNameValue + "','" + data.get(i).toString().split("\\|")[1] + "','" + data.get(i).toString().split("\\|")[2] + "','" + data.get(i).toString().split("\\|")[3] + "');");
                 }
             } else {
-                executeSQL("INSERT INTO `CreatedCultures`(CultureName,SpeciesName,Age) VALUES ('" + duplicateNewNameValue + "','" + selSpecies + "','" + data.get(0).toString().split("\\|")[1] + "');");
+                executeSQL("INSERT INTO `CreatedCultures`(CultureName,SpeciesName,Age,TotalProgressionPoints,LeftProgressionPoints) VALUES ('" + duplicateNewNameValue + "','" + selSpecies + "','" + data.get(0).toString().split("\\|")[1] + "','" + data.get(0).toString().split("\\|")[2] + "','" + data.get(0).toString().split("\\|")[3] + "');");
             }
         } catch (SQLException ex) {
             ErrorController.ErrorController(ex);
@@ -481,17 +481,17 @@ public class DatabaseWriter {
     public static void duplicateRoster(String selSpecies, String selCulture, String selRoster, String duplicateNewNameValue) {
         try {
             chooseConnection(UseCases.Userdb);
-            PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT * FROM CreatedRoster WHERE SpeciesName =?");
+            PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT * FROM CreatedRosters WHERE SpeciesName =?");
             stmt.setString(1, selSpecies);
-            String[] columns = {"RosterName", "CultureName", "Roster"};
+            String[] columns = {"RosterName", "CultureName", "Roster", "MaxPoints"};
             ObservableList data = BuilderCORE.getData(stmt, columns, null, 0);
             for (int i = 0; i < data.size(); i++) {
                 if ("--all--".equals(selRoster) && "--all--".equals(selCulture)) {
-                    executeSQL("INSERT INTO `CreatedRoster`(RosterName,SpeciesName,CultureName,Roster) VALUES ('" + data.get(i).toString().split("\\|")[0] + "','" + duplicateNewNameValue + "','" + data.get(i).toString().split("\\|")[1] + "','" + data.get(i).toString().split("\\|")[2] + "');");
+                    executeSQL("INSERT INTO `CreatedRosters`(RosterName,SpeciesName,CultureName,Roster,MaxPoints) VALUES ('" + data.get(i).toString().split("\\|")[0] + "','" + duplicateNewNameValue + "','" + data.get(i).toString().split("\\|")[1] + "','" + data.get(i).toString().split("\\|")[2] + "','" + data.get(i).toString().split("\\|")[3] + "');");
                 } else if ("--all--".equals(selRoster) && !"--all--".equals(selCulture) && data.get(i).toString().split("\\|")[2].equals(selCulture)) {
-                    executeSQL("INSERT INTO `CreatedRoster`(RosterName,SpeciesName,CultureName,Roster) VALUES ('" + data.get(i).toString().split("\\|")[0] + "','" + selSpecies + "','" + duplicateNewNameValue + "','" + data.get(i).toString().split("\\|")[2] + "');");
+                    executeSQL("INSERT INTO `CreatedRosters`(RosterName,SpeciesName,CultureName,Roster,MaxPoints) VALUES ('" + data.get(i).toString().split("\\|")[0] + "','" + selSpecies + "','" + duplicateNewNameValue + "','" + data.get(i).toString().split("\\|")[2] + "','" + data.get(i).toString().split("\\|")[3] + "');");
                 } else if (!"--all--".equals(selRoster) && !"--all--".equals(selCulture) && data.get(i).toString().split("\\|")[2].equals(selCulture) && data.get(i).toString().split("\\|")[2].equals(selRoster)) {
-                    executeSQL("INSERT INTO `CreatedRoster`(RosterName,SpeciesName,CultureName,Roster) VALUES ('" + duplicateNewNameValue + "','" + selSpecies + "','" + selCulture + "','" + data.get(i).toString().split("\\|")[2] + "');");
+                    executeSQL("INSERT INTO `CreatedRosters`(RosterName,SpeciesName,CultureName,Roster,MaxPoints) VALUES ('" + duplicateNewNameValue + "','" + selSpecies + "','" + selCulture + "','" + data.get(i).toString().split("\\|")[2] + "','" + data.get(i).toString().split("\\|")[3] + "');");
                 }
             }
         } catch (SQLException ex) {
