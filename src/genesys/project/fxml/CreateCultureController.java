@@ -171,7 +171,7 @@ public class CreateCultureController implements Initializable {
         //skillSetChooser.setItems(DatabaseReader.getSkillSet());
         lifeDomainValue4.setText(DatabaseHolder.holdSpecies.getLifedomain().toString());
         skillsList5.setItems(AvailableSkillsLister.getAddedSkills(DatabaseHolder.holdSpecies.getSkills()));
-        BuilderFXMLController.getSkillModifiers(DatabaseHolder.ruledskills);
+        BuilderCORE.getSkillModifiers(DatabaseHolder.ruledskills);
         int cost = BuilderCORE.baseAddedCost(DatabaseHolder.holdSpecies.getLifedomain(), DatabaseHolder.holdSpecies, null, DatabaseHolder.b, 0);
         String tex = Integer.toString(cost);
         pointsPerModelValue4.setText(tex);

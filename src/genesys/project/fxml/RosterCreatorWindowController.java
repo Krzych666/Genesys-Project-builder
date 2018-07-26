@@ -170,7 +170,7 @@ public class RosterCreatorWindowController implements Initializable {
             }
             DatabaseHolder.fullSkillList1 = "";
             skillsList.setItems(AvailableSkillsLister.getAddedSkills(BuilderCORE.getBaseAddedSkills(classList.getSelectionModel().getSelectedItem().toString())));
-            BuilderFXMLController.getSkillModifiers(DatabaseHolder.ruledskills);
+            BuilderCORE.getSkillModifiers(DatabaseHolder.ruledskills);
             classTypeValue.setText(DatabaseHolder.holdClass[DatabaseHolder.b].getType());
             basedOnValue.setText(DatabaseHolder.holdClass[DatabaseHolder.b].getBasedOn());
             int cost = BuilderCORE.baseAddedCost(DatabaseHolder.holdSpecies.getLifedomain(), DatabaseHolder.holdSpecies, DatabaseHolder.holdClass, DatabaseHolder.b, 0);

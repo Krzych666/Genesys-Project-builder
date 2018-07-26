@@ -8,6 +8,7 @@
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
 
 <AnchorPane id="AnchorPane" prefHeight="758.0" prefWidth="1551.0" styleClass="mainFxmlClass" xmlns="http://javafx.com/javafx/9" xmlns:fx="http://javafx.com/fxml/1" fx:controller="genesys.project.fxml.BuilderFXMLController">
@@ -48,6 +49,22 @@
                         <MenuItem mnemonicParsing="false" onAction="#deleteChooseActionPerformed" text="Delete" />
                     </items>
                 </Menu>
+            <Menu disable="true" mnemonicParsing="false" text="|" />
+            <Menu fx:id="progressMenu" mnemonicParsing="false" text="Progress">
+              <items>
+                  <MenuItem mnemonicParsing="false" onAction="#addProgressActionPerformed" text="Add progress" />
+                <MenuItem fx:id="editProgressMenuItem" mnemonicParsing="false" onAction="#editProgressActionPerformed" text="Edit progress" />
+                  <MenuItem fx:id="deleteProgressMenuItem" mnemonicParsing="false" onAction="#deleteProgressActionPerformed" text="Delete progress" />
+              </items>
+            </Menu>
+            <Menu fx:id="battlesMenu" mnemonicParsing="false" text="Battles">
+               <items>
+                  <MenuItem mnemonicParsing="false" onAction="#addBattleActionPerformed" text="Add battle" />
+                  <MenuItem fx:id="editBattleMenuItem" mnemonicParsing="false" onAction="#editBattleActionPerformed" text="Edit battle" />
+                  <MenuItem fx:id="deleteBattleMenuItem" mnemonicParsing="false" onAction="#deleteBattleActionPerformed" text="Delete battle" />
+               </items>
+            </Menu>
+            <Menu disable="true" mnemonicParsing="false" text="|" />
                 <Menu mnemonicParsing="false" text="Help">
                     <items>
                         <MenuItem mnemonicParsing="false" text="About" />
@@ -60,46 +77,46 @@
         <Label fx:id="culturesLabel" alignment="CENTER" layoutX="15.0" layoutY="315.0" prefHeight="17.0" prefWidth="157.0" text="Cultures" />
         <ListView fx:id="culturesList" layoutX="14.0" layoutY="332.0" onMouseClicked="#culturesListMousePressed" prefHeight="227.0" prefWidth="157.0" />
         <Label fx:id="pointsPerModelText" layoutX="203.0" layoutY="63.0" text="Points per Model:" />
-        <Label fx:id="pointsPerModelValue" layoutX="297.0" layoutY="63.0" prefHeight="17.0" prefWidth="37.0" />
+        <TextField fx:id="pointsPerModelValue" editable="false" layoutX="300.0" layoutY="59.0" prefHeight="17.0" prefWidth="37.0" />
         <Label fx:id="woundsText" layoutX="348.0" layoutY="63.0" text="Wounds:" />
-        <Label fx:id="woundsValue" layoutX="395.0" layoutY="63.0" prefHeight="17.0" prefWidth="37.0" />
+        <TextField fx:id="woundsValue" editable="false" layoutX="395.0" layoutY="59.0" prefHeight="17.0" prefWidth="37.0" />
         <Label fx:id="sizeText" layoutX="439.0" layoutY="63.0" text="Size:" />
-        <Label fx:id="sizeValue" layoutX="463.0" layoutY="63.0" prefHeight="17.0" prefWidth="37.0" />
+        <TextField fx:id="sizeValue" editable="false" layoutX="463.0" layoutY="59.0" prefHeight="17.0" prefWidth="37.0" />
         <Label fx:id="attacksText" layoutX="509.0" layoutY="63.0" text="Attacks:" />
-        <Label fx:id="attacksValue" layoutX="551.0" layoutY="63.0" prefHeight="17.0" prefWidth="37.0" />
+        <TextField fx:id="attacksValue" editable="false" layoutX="551.0" layoutY="59.0" prefHeight="17.0" prefWidth="37.0" />
         <Label fx:id="clasesLabel" alignment="CENTER" layoutX="607.0" layoutY="63.0" prefHeight="17.0" prefWidth="157.0" text="Classes" />
         <ListView fx:id="classList" layoutX="607.0" layoutY="80.0" onMouseClicked="#classListMousePressed" prefHeight="227.0" prefWidth="157.0" />
-        <Label fx:id="progressLabel" alignment="CENTER" layoutX="773.0" layoutY="315.0" prefHeight="17.0" prefWidth="157.0" text="Progress" />
+        <Label fx:id="progressLabel" alignment="CENTER" layoutX="773.0" layoutY="315.0" prefHeight="17.0" prefWidth="157.0" text="Progress/Battles" />
         <ListView fx:id="cultureProgressList" layoutX="773.0" layoutY="332.0" onMouseClicked="#cultureProgressListMousePressed" prefHeight="227.0" prefWidth="157.0" />
         <Label fx:id="classTypeText" layoutX="203.0" layoutY="95.0" text="Class Type:" />
-        <Label fx:id="classTypeValue" layoutX="261.0" layoutY="95.0" prefHeight="17.0" prefWidth="102.0" />
+        <TextField fx:id="classTypeValue" editable="false" layoutX="261.0" layoutY="93.0" prefHeight="17.0" prefWidth="102.0" />
         <Label fx:id="basedOnText" layoutX="381.0" layoutY="95.0" text="Based on:" />
-        <Label fx:id="basedOnValue" layoutX="437.0" layoutY="95.0" prefHeight="17.0" prefWidth="102.0" />
+        <TextField fx:id="basedOnValue" editable="false" layoutX="437.0" layoutY="93.0" prefHeight="17.0" prefWidth="102.0" />
         <Label fx:id="characteristicsText" layoutX="290.0" layoutY="129.0" text="Characteristics" />
         <Label fx:id="strengthText" layoutX="200.0" layoutY="154.0" text="Strength:" />
-        <Label fx:id="strengthValue" layoutX="255.0" layoutY="154.0" prefHeight="17.0" prefWidth="37.0" />
+        <TextField fx:id="strengthValue" editable="false" layoutX="255.0" layoutY="152.0" prefHeight="17.0" prefWidth="37.0" />
         <Label fx:id="toughnessText" layoutX="300.0" layoutY="154.0" text="Toughness:" />
-        <Label fx:id="toughnessValue" layoutX="365.0" layoutY="154.0" prefHeight="17.0" prefWidth="37.0" />
+        <TextField fx:id="toughnessValue" editable="false" layoutX="365.0" layoutY="152.0" prefHeight="17.0" prefWidth="37.0" />
         <Label fx:id="movementText" layoutX="420.0" layoutY="154.0" text="Movement:" />
-        <Label fx:id="movementValue" layoutX="490.0" layoutY="154.0" prefHeight="17.0" prefWidth="37.0" />
-        <Label fx:id="martialText" layoutX="200.0" layoutY="185.0" text="Martial:" />
-        <Label fx:id="martialValue" layoutX="255.0" layoutY="185.0" prefHeight="17.0" prefWidth="37.0" />
-        <Label fx:id="rangedText" layoutX="300.0" layoutY="185.0" text="Ranged:" />
-        <Label fx:id="rangedValue" layoutX="365.0" layoutY="185.0" prefHeight="17.0" prefWidth="37.0" />
-        <Label fx:id="defenseText" layoutX="420.0" layoutY="185.0" text="Defense:" />
-        <Label fx:id="defenseValue" layoutX="490.0" layoutY="185.0" prefHeight="17.0" prefWidth="37.0" />
+        <TextField fx:id="movementValue" editable="false" layoutX="490.0" layoutY="152.0" prefHeight="17.0" prefWidth="37.0" />
+        <Label fx:id="martialText" layoutX="200.0" layoutY="184.0" text="Martial:" />
+        <TextField fx:id="martialValue" editable="false" layoutX="255.0" layoutY="181.0" prefHeight="17.0" prefWidth="37.0" />
+        <Label fx:id="rangedText" layoutX="300.0" layoutY="184.0" text="Ranged:" />
+        <TextField fx:id="rangedValue" editable="false" layoutX="365.0" layoutY="181.0" prefHeight="17.0" prefWidth="37.0" />
+        <Label fx:id="defenseText" layoutX="420.0" layoutY="184.0" text="Defense:" />
+        <TextField fx:id="defenseValue" editable="false" layoutX="490.0" layoutY="181.0" prefHeight="17.0" prefWidth="37.0" />
         <Label fx:id="disciplineText" layoutX="200.0" layoutY="212.0" text="Discipline:" />
-        <Label fx:id="disciplineValue" layoutX="255.0" layoutY="212.0" prefHeight="17.0" prefWidth="37.0" />
+        <TextField fx:id="disciplineValue" editable="false" layoutX="255.0" layoutY="210.0" prefHeight="17.0" prefWidth="37.0" />
         <Label fx:id="willpowerText" layoutX="300.0" layoutY="212.0" text="Willpower:" />
-        <Label fx:id="willpowerValue" layoutX="365.0" layoutY="212.0" prefHeight="17.0" prefWidth="37.0" />
+        <TextField fx:id="willpowerValue" editable="false" layoutX="365.0" layoutY="210.0" prefHeight="17.0" prefWidth="37.0" />
         <Label fx:id="commandText" layoutX="420.0" layoutY="212.0" text="Command:" />
-        <Label fx:id="commandValue" layoutX="490.0" layoutY="212.0" prefHeight="17.0" prefWidth="37.0" />
+        <TextField fx:id="commandValue" editable="false" layoutX="490.0" layoutY="210.0" prefHeight="17.0" prefWidth="37.0" />
         <Label fx:id="mTText" layoutX="184.0" layoutY="276.0" text="Martial (MT):" />
-        <Label fx:id="mTValue" layoutX="252.0" layoutY="276.0" prefHeight="17.0" prefWidth="37.0" />
+        <TextField fx:id="mTValue" editable="false" layoutX="252.0" layoutY="274.0" prefHeight="17.0" prefWidth="37.0" />
         <Label fx:id="rTText" layoutX="312.0" layoutY="276.0" text="Ranged (RT):" />
-        <Label fx:id="rTValue" layoutX="383.0" layoutY="276.0" prefHeight="17.0" prefWidth="37.0" />
+        <TextField fx:id="rTValue" editable="false" layoutX="383.0" layoutY="274.0" prefHeight="17.0" prefWidth="37.0" />
         <Label fx:id="moraleText" layoutX="449.0" layoutY="276.0" text="Morale:" />
-        <Label fx:id="moraleValue" layoutX="491.0" layoutY="276.0" prefHeight="17.0" prefWidth="37.0" />
+        <TextField fx:id="moraleValue" editable="false" layoutX="491.0" layoutY="274.0" prefHeight="17.0" prefWidth="37.0" />
         <Label fx:id="targetNumbersText" layoutX="290.0" layoutY="249.0" text="Target Numbers" />
         <Label fx:id="skillsText" layoutX="367.0" layoutY="315.0" text="Skills" />
         <ListView fx:id="skillsList" layoutX="180.0" layoutY="332.0" onMouseClicked="#skillsListMousePressed" prefHeight="227.0" prefWidth="419.0" />
@@ -111,5 +128,11 @@
         <ListView fx:id="subSkillsList" layoutX="180.0" layoutY="588.0" onMouseClicked="#subSkillsListMousePressed" prefHeight="157.0" prefWidth="207.0" />
         <TextArea fx:id="skillFullText" editable="false" layoutX="398.0" layoutY="588.0" prefHeight="157.0" prefWidth="200.0" wrapText="true" />
         <CheckBox fx:id="showAsCoreSkills" layoutX="182.0" layoutY="567.0" mnemonicParsing="false" onAction="#showAsCoreSkillsPressed" text="Show as core skills" />
+      <Label fx:id="AgeLabel" layoutX="35.0" layoutY="588.0" text="Age:" />
+      <TextField fx:id="ageValue" alignment="CENTER" editable="false" layoutX="75.0" layoutY="584.0" prefHeight="25.0" prefWidth="37.0" />
+      <Label fx:id="totalProgressPointsLabel" layoutX="30.0" layoutY="617.0" text="Total progress points" />
+      <TextField fx:id="totalProgressPointsValue" alignment="CENTER" editable="false" layoutX="22.0" layoutY="642.0" prefHeight="25.0" prefWidth="134.0" />
+      <Label fx:id="remainingProgressPointsLabel" layoutX="15.0" layoutY="667.0" text="Remaining progress points" />
+      <TextField fx:id="remainingProgressPointsValue" alignment="CENTER" editable="false" layoutX="22.0" layoutY="694.0" prefHeight="25.0" prefWidth="134.0" />
     </children>
 </AnchorPane>

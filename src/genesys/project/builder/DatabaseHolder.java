@@ -407,6 +407,7 @@ public class DatabaseHolder {
         holdProgress.setCultureName(selCulture);
         holdProgress.setProgressName(selProgress);
         holdProgress.setProgress(data.get(0).toString().split("\\|")[0]);
+        holdProgress.setDate(data.get(0).toString().split("\\|")[1]);
         modifiedHoldProgress = holdProgress.getClone();
     }
 
@@ -786,7 +787,7 @@ public class DatabaseHolder {
 
         @Getter
         @Setter
-        private String SpeciesName, CultureName, ProgressName, Progress;
+        private String SpeciesName, CultureName, ProgressName, Progress, Date;
 
         /**
          *
@@ -798,6 +799,7 @@ public class DatabaseHolder {
             aClone.SpeciesName = this.SpeciesName;
             aClone.CultureName = this.CultureName;
             aClone.Progress = this.Progress;
+            aClone.Date = this.Date;
             return aClone;
         }
     }

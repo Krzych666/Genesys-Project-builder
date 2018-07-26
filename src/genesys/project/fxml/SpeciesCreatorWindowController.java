@@ -204,7 +204,7 @@ public class SpeciesCreatorWindowController implements Initializable {
             skillsList1.getItems().clear();
         } else {
             skillsList1.setItems(AvailableSkillsLister.getAddedSkills(DatabaseHolder.holdSpecies.getSkills()));
-            BuilderFXMLController.getSkillModifiers(DatabaseHolder.ruledskills);
+            BuilderCORE.getSkillModifiers(DatabaseHolder.ruledskills);
         }
         switch (DatabaseHolder.holdSpecies.getLifedomain()) {
             case Humanoid:
@@ -484,7 +484,7 @@ public class SpeciesCreatorWindowController implements Initializable {
         }
         if (!("".equals(DatabaseHolder.holdSpecies.getSkills()) || DatabaseHolder.holdSpecies.getSkills() == null)) {
             skillsList1.setItems(AvailableSkillsLister.getAddedSkills(DatabaseHolder.holdSpecies.getSkills()));
-            BuilderFXMLController.getSkillModifiers(DatabaseHolder.ruledskills);
+            BuilderCORE.getSkillModifiers(DatabaseHolder.ruledskills);
         } else {
             skillsList1.getItems().clear();
             BuilderFXMLController.HOLD_MODIFIERS.clearModifiers();

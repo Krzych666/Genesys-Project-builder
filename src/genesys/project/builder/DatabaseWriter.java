@@ -312,7 +312,7 @@ public class DatabaseWriter {
      * modifyProgress
      */
     public static void modifyProgress() {
-        executeSQL("UPDATE CreatedProgress SET ProgressName='" + DatabaseHolder.holdProgress.getProgressName() + "', SpeciesName='" + DatabaseHolder.holdProgress.getSpeciesName() + "', CultureName='" + DatabaseHolder.holdProgress.getCultureName() + "', Progress='" + DatabaseHolder.holdProgress.getProgress() + "' WHERE SpeciesName='" + DatabaseHolder.modifiedHoldProgress.getSpeciesName() + "' AND CultureName='" + DatabaseHolder.modifiedHoldProgress.getCultureName() + "' AND ProgressName='" + DatabaseHolder.modifiedHoldProgress.getProgressName() + "'");
+        executeSQL("UPDATE CreatedProgress SET ProgressName='" + DatabaseHolder.holdProgress.getProgressName() + "', SpeciesName='" + DatabaseHolder.holdProgress.getSpeciesName() + "', CultureName='" + DatabaseHolder.holdProgress.getCultureName() + "', Progress='" + DatabaseHolder.holdProgress.getProgress() + "', Date='" + DatabaseHolder.holdProgress.getDate() + "' WHERE SpeciesName='" + DatabaseHolder.modifiedHoldProgress.getSpeciesName() + "' AND CultureName='" + DatabaseHolder.modifiedHoldProgress.getCultureName() + "' AND ProgressName='" + DatabaseHolder.modifiedHoldProgress.getProgressName() + "'");
     }
 
     /**
@@ -453,15 +453,15 @@ public class DatabaseWriter {
             chooseConnection(UseCases.Userdb);
             PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT * FROM CreatedProgress WHERE SpeciesName =?");
             stmt.setString(1, selSpecies);
-            String[] columns = {"CultureName", "ProgressName", "Progress"};
+            String[] columns = {"CultureName", "ProgressName", "Progress", "Date"};
             ObservableList data = BuilderCORE.getData(stmt, columns, null, 0);
             for (int i = 0; i < data.size(); i++) {
                 if ("--all--".equals(selProgress) && "--all--".equals(selCulture)) {
-                    executeSQL("INSERT INTO `CreatedProgress`(SpeciesName,CultureName,ProgressName,Progress) VALUES ('" + duplicateNewNameValue + "','" + data.get(i).toString().split("\\|")[0] + "','" + data.get(i).toString().split("\\|")[1] + "','" + data.get(i).toString().split("\\|")[2] + "');");
+                    executeSQL("INSERT INTO `CreatedProgress`(SpeciesName,CultureName,ProgressName,Progress,Date) VALUES ('" + duplicateNewNameValue + "','" + data.get(i).toString().split("\\|")[0] + "','" + data.get(i).toString().split("\\|")[1] + "','" + data.get(i).toString().split("\\|")[2] + "','" + data.get(i).toString().split("\\|")[3] + "');");
                 } else if ("--all--".equals(selProgress) && !"--all--".equals(selCulture) && data.get(i).toString().split("\\|")[2].equals(selCulture)) {
-                    executeSQL("INSERT INTO `CreatedProgress`(SpeciesName,CultureName,ProgressName,Progress) VALUES ('" + selSpecies + "','" + duplicateNewNameValue + "','" + data.get(i).toString().split("\\|")[1] + "','" + data.get(i).toString().split("\\|")[2] + "');");
+                    executeSQL("INSERT INTO `CreatedProgress`(SpeciesName,CultureName,ProgressName,Progress,Date) VALUES ('" + selSpecies + "','" + duplicateNewNameValue + "','" + data.get(i).toString().split("\\|")[1] + "','" + data.get(i).toString().split("\\|")[2] + "','" + data.get(i).toString().split("\\|")[3] + "');");
                 } else if (!"--all--".equals(selProgress) && !"--all--".equals(selCulture) && data.get(i).toString().split("\\|")[2].equals(selCulture) && data.get(i).toString().split("\\|")[2].equals(selProgress)) {
-                    executeSQL("INSERT INTO `CreatedProgress`(SpeciesName,CultureName,ProgressName,Progress) VALUES ('" + selSpecies + "','" + selCulture + "','" + duplicateNewNameValue + "','" + data.get(i).toString().split("\\|")[2] + "');");
+                    executeSQL("INSERT INTO `CreatedProgress`(SpeciesName,CultureName,ProgressName,Progress,Date) VALUES ('" + selSpecies + "','" + selCulture + "','" + duplicateNewNameValue + "','" + data.get(i).toString().split("\\|")[2] + "','" + data.get(i).toString().split("\\|")[3] + "');");
                 }
             }
         } catch (SQLException ex) {

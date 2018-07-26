@@ -14,9 +14,6 @@ import genesys.project.builder.Enums.TheModifiers;
 import genesys.project.builder.GenesysProjectBuilder;
 import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -35,11 +32,12 @@ import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ContextMenu;
-import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
+import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 
 /**
@@ -53,16 +51,6 @@ public class BuilderFXMLController implements Initializable {
      * holding modifiers
      */
     public static final TheModifiers HOLD_MODIFIERS = new TheModifiers();
-
-    /**
-     * category number
-     */
-    private static int catnumber;
-
-    /**
-     * where
-     */
-    private static int where;
 
     /**
      * LifedomainValue currentLifeDomain
@@ -95,44 +83,61 @@ public class BuilderFXMLController implements Initializable {
     @FXML
     private ListView fullroster;
     @FXML
-    private Label strengthValue;
+    private TextField strengthValue;
     @FXML
-    private Label toughnessValue;
+    private TextField toughnessValue;
     @FXML
-    private Label movementValue;
+    private TextField movementValue;
     @FXML
-    private Label martialValue;
+    private TextField martialValue;
     @FXML
-    private Label rangedValue;
+    private TextField rangedValue;
     @FXML
-    private Label defenseValue;
+    private TextField defenseValue;
     @FXML
-    private Label disciplineValue;
+    private TextField disciplineValue;
     @FXML
-    private Label willpowerValue;
+    private TextField willpowerValue;
     @FXML
-    private Label commandValue;
+    private TextField commandValue;
     @FXML
-    private Label mTValue;
+    private TextField mTValue;
     @FXML
-    private Label rTValue;
+    private TextField rTValue;
     @FXML
-    private Label moraleValue;
+    private TextField moraleValue;
     @FXML
-    private Label pointsPerModelValue;
+    private TextField pointsPerModelValue;
     @FXML
-    private Label woundsValue;
+    private TextField woundsValue;
     @FXML
-    private Label sizeValue;
+    private TextField sizeValue;
     @FXML
-    private Label attacksValue;
+    private TextField attacksValue;
     @FXML
-    private Label classTypeValue;
+    private TextField classTypeValue;
     @FXML
-    private Label basedOnValue;
+    private TextField basedOnValue;
+    @FXML
+    private TextField ageValue;
+    @FXML
+    private TextField totalProgressPointsValue;
+    @FXML
+    private TextField remainingProgressPointsValue;
     @FXML
     private CheckBox showAsCoreSkills;
-
+    @FXML
+    private Menu progressMenu;
+    @FXML
+    private Menu battlesMenu;
+    @FXML
+    private MenuItem editProgressMenuItem;
+    @FXML
+    private MenuItem deleteProgressMenuItem;
+    @FXML
+    private MenuItem editBattleMenuItem;
+    @FXML
+    private MenuItem deleteBattleMenuItem;
     /**
      * createWindowWhatStage
      */
@@ -173,7 +178,17 @@ public class BuilderFXMLController implements Initializable {
      */
     public DeleteWindowController deleteWindowController;
 
-    private Label[] valuesLabels;
+    /**
+     * progressSelectorStage
+     */
+    public Stage progressSelectorStage = new Stage();
+
+    /**
+     * progressSelectorController
+     */
+    public ProgressSelectorController progressSelectorController;
+
+    private TextField[] valuesLabels;
     private Boolean simplifyToCoreSkills;
 
     MenuItem createIt = new MenuItem("Create new");
@@ -336,12 +351,17 @@ public class BuilderFXMLController implements Initializable {
             clearListsOnCultureClick();
             currentCharacteristicGroup = (CharacteristicGroup.valueOf(dataSpecies.get(0).toString().split("\\|")[1]));
             String simpleSkillList = dataSpecies.get(0).toString().split("\\|")[3];
-            skillsList.setItems(getFullSkillsDescription(simpleSkillList));
-            int cost = baseCost(speciesList.getSelectionModel().getSelectedItem().toString(), null, null, 0);
+            skillsList.setItems(BuilderCORE.getFullSkillsDescription(simpleSkillList));
+            int cost = BuilderCORE.baseCost(speciesList.getSelectionModel().getSelectedItem().toString(), null, null, 0, heroesList.getSelectionModel());
             pointsPerModelValue.setText(Integer.toString(cost));
             populateLabels();
             subSkillsList.getItems().clear();
             skillFullText.setText("");
+            ageValue.setText("");
+            totalProgressPointsValue.setText("");
+            remainingProgressPointsValue.setText("");
+            progressMenu.setDisable(true);
+            battlesMenu.setDisable(true);
         }
     }
 
@@ -349,7 +369,7 @@ public class BuilderFXMLController implements Initializable {
     private void culturesListMousePressed() {
         if (!culturesList.getSelectionModel().isEmpty() && !speciesList.getSelectionModel().isEmpty()) {
             ObservableList dataSpecies = DatabaseReader.getSpeciesData(speciesList.getSelectionModel().getSelectedItem().toString());
-            skillsList.setItems(getFullSkillsDescription(dataSpecies.get(0).toString().split("\\|")[3]));
+            skillsList.setItems(BuilderCORE.getFullSkillsDescription(dataSpecies.get(0).toString().split("\\|")[3]));
             ObservableList tmp = FXCollections.observableArrayList();
             tmp.add(BuilderCORE.BASE);
             if (LifedomainValue.Fey.equals(currentLifeDomain)) {
@@ -361,11 +381,27 @@ public class BuilderFXMLController implements Initializable {
             classList.getItems().remove(DatabaseHolder.TOPDROP);
             heroesList.setItems(DatabaseReader.populateDropdownsHeroes(speciesList.getSelectionModel().getSelectedItem().toString(), culturesList.getSelectionModel().getSelectedItem().toString(), DatabaseHolder.TOPDROP));
             heroesList.getItems().remove(DatabaseHolder.TOPDROP);
-            cultureProgressList.setItems(DatabaseReader.populateDropdownsProgress(speciesList.getSelectionModel().getSelectedItem().toString(), culturesList.getSelectionModel().getSelectedItem().toString()));
-            cultureProgressList.getItems().remove(DatabaseHolder.TOPDROP);
             rostersList.setItems(DatabaseReader.populateDropdownsRosters(speciesList.getSelectionModel().getSelectedItem().toString(), culturesList.getSelectionModel().getSelectedItem().toString()));
             rostersList.getItems().remove(DatabaseHolder.TOPDROP);
             populateLabels();
+            ageValue.setText(dataCulture.get(0).toString().split("\\|")[0]);
+            totalProgressPointsValue.setText(dataCulture.get(0).toString().split("\\|")[1]);
+            remainingProgressPointsValue.setText(dataCulture.get(0).toString().split("\\|")[2]);
+            cultureProgressList.setItems(BuilderCORE.generateAndAppyProgress(speciesList.getSelectionModel().getSelectedItem().toString(), culturesList.getSelectionModel().getSelectedItem().toString(), "both"));
+            cultureProgressList.getItems().remove(DatabaseHolder.TOPDROP);
+            progressMenu.setDisable(false);
+            battlesMenu.setDisable(false);
+            if (cultureProgressList.getItems().isEmpty()) {
+                editProgressMenuItem.setDisable(true);
+                deleteProgressMenuItem.setDisable(true);
+                editBattleMenuItem.setDisable(true);
+                deleteBattleMenuItem.setDisable(true);
+            } else {
+                editProgressMenuItem.setDisable(false);
+                deleteProgressMenuItem.setDisable(false);
+                editBattleMenuItem.setDisable(false);
+                deleteBattleMenuItem.setDisable(false);
+            }
         }
         fullroster.getItems().clear();
         subSkillsList.getItems().clear();
@@ -389,12 +425,12 @@ public class BuilderFXMLController implements Initializable {
             basedOnValue.setText("");
         } else {
             ObservableList dataClass = DatabaseReader.getClassData(speciesList.getSelectionModel().getSelectedItem().toString(), culturesList.getSelectionModel().getSelectedItem().toString(), className);
-            simpleSkillList = getSourceBaseSkills(dataSpecies, dataClass);
+            simpleSkillList = BuilderCORE.getSourceBaseSkills(dataSpecies, dataClass, speciesList.getSelectionModel().getSelectedItem().toString(), culturesList.getSelectionModel().getSelectedItem().toString());
             classTypeValue.setText(dataClass.get(0).toString().split("\\|")[2]);
             basedOnValue.setText(dataClass.get(0).toString().split("\\|")[3]);
         }
-        skillsList.setItems(getFullSkillsDescription(simpleSkillList));
-        int cost = baseCost(speciesList.getSelectionModel().getSelectedItem().toString(), culturesList.getSelectionModel().getSelectedItem().toString(), className, 0);
+        skillsList.setItems(BuilderCORE.getFullSkillsDescription(simpleSkillList));
+        int cost = BuilderCORE.baseCost(speciesList.getSelectionModel().getSelectedItem().toString(), culturesList.getSelectionModel().getSelectedItem().toString(), className, 0, heroesList.getSelectionModel());
         pointsPerModelValue.setText(Integer.toString(cost));
         populateLabels();
         subSkillsList.getItems().clear();
@@ -413,308 +449,86 @@ public class BuilderFXMLController implements Initializable {
         ObservableList dataSpecies = DatabaseReader.getSpeciesData(speciesList.getSelectionModel().getSelectedItem().toString());
         ObservableList dataHero = DatabaseReader.getHeroData(speciesList.getSelectionModel().getSelectedItem().toString(), culturesList.getSelectionModel().getSelectedItem().toString(), HeroName);
         ObservableList dataClass = DatabaseReader.getClassData(speciesList.getSelectionModel().getSelectedItem().toString(), culturesList.getSelectionModel().getSelectedItem().toString(), dataHero.get(0).toString().split("\\|")[1]);
-        String simpleSkillList = getSourceBaseSkills(dataSpecies, dataClass);
-        skillsList.setItems(getFullSkillsDescription(simpleSkillList));
+        String simpleSkillList = BuilderCORE.getSourceBaseSkills(dataSpecies, dataClass, speciesList.getSelectionModel().getSelectedItem().toString(), culturesList.getSelectionModel().getSelectedItem().toString());
+        skillsList.setItems(BuilderCORE.getFullSkillsDescription(simpleSkillList));
         basedOnValue.setText(dataHero.get(0).toString().split("\\|")[1]);
         classTypeValue.setText(dataClass.get(0).toString().split("\\|")[2]);
-        int cost = baseCost(speciesList.getSelectionModel().getSelectedItem().toString(), culturesList.getSelectionModel().getSelectedItem().toString(), dataHero.get(0).toString().split("\\|")[1], 0);
+        int cost = BuilderCORE.baseCost(speciesList.getSelectionModel().getSelectedItem().toString(), culturesList.getSelectionModel().getSelectedItem().toString(), dataHero.get(0).toString().split("\\|")[1], 0, heroesList.getSelectionModel());
         pointsPerModelValue.setText(Integer.toString(cost));
         populateLabels();
         subSkillsList.getItems().clear();
         skillFullText.setText("");
     }
 
-    /**
-     *
-     * @param rawSkills
-     * @return
-     */
-    public ObservableList<String> getFullSkillsDescription(String rawSkills) {
-        ObservableList<String> tmp = FXCollections.observableArrayList();
-        tmp.addAll(DatabaseHolder.skillsSeparatorRepalcer(rawSkills).split(","));
-        List<String> ruledskills = new ArrayList<>();
-        String lst[] = new String[tmp.size()];
-        ObservableList allSkills = DatabaseReader.loadAllSkillsFromDB();
-        for (int i = 0; i < tmp.size(); i++) {
-            int index = BuilderCORE.getSkillIndex(allSkills, tmp.get(i));
-            lst[i] = tmp.get(i);
-            String[] skl = (allSkills.get(index).toString().split("\\|")[2]).split(";");
-            lst[i] += " (pts : " + (allSkills.get(index).toString().split("\\|")[1]) + ") : ";
-            for (int j = 0; j < skl.length; j++) {
-                lst[i] += ((skl[j].split("_"))[0]);
-                if ((skl[j].split("_")).length >= 2) {
-                    lst[i] += (" " + ((skl[j].split("_"))[1]));
+    private void progresActions(String what, String selectedProgress) {
+        switch (what) {
+            case "AddProgress":
+                break;
+            case "AddBattle":
+                break;
+            case "EditProgress":
+            case "DeleteProgress":
+            case "EditBattle":
+            case "DeleteBattle":
+                try {
+                    GenesysProjectBuilder.hideOtherThanMainStage();
+                    FXMLLoader loader = new FXMLLoader(getClass().getResource("/genesys/project/fxml/ProgressSelectorFXML.fxml"));
+                    Parent root = loader.load();
+                    progressSelectorController = loader.getController();
+                    progressSelectorController.setProgressAndRosters(BuilderCORE.generateAndAppyProgress(speciesList.getSelectionModel().getSelectedItem().toString(), culturesList.getSelectionModel().getSelectedItem().toString(), what.replaceFirst("Edit", "").replaceFirst("Delete", "")), rostersList);
+                    Scene scene = new Scene(root);
+                    progressSelectorStage.setScene(scene);
+                    progressSelectorStage.setTitle(what.contains("Edit") ? what.replaceFirst("Edit", "Edit ") : (what.contains("Delete") ? what.replaceFirst("Delete", "Delete ") : ""));
+                    progressSelectorController.setProgresFieldTo(selectedProgress);
+                    progressSelectorStage.show();
+                } catch (IOException ex) {
+                    ErrorController.ErrorController(ex);
+                    Logger.getLogger(BuilderFXMLController.class.getName()).log(Level.SEVERE, null, ex);
                 }
-                if ((skl[j].split("_")).length >= 3) {
-                    lst[i] += (" " + ((skl[j].split("_"))[2]));
-                }
-                if (j < skl.length - 1) {
-                    lst[i] += ", ";
-                }
-                ruledskills.add((allSkills.get(index).toString().split("\\|")[6]) + ">" + skl[j]);
-            }
+            default:
+                break;
         }
-        tmp.setAll(lst);
-        if (!ruledskills.get(0).equals(">")) {
-            getSkillModifiers(ruledskills);
-        }
-        return tmp;
     }
 
-    private String getSourceBaseSkills(ObservableList dataSpecies, ObservableList dataClass) {
-        String skillsThis = "";
-        String basedOn = "";
-        String skillsBefore = "";
-        if (dataClass != null && !dataClass.isEmpty() && dataClass.get(0) != null && dataClass.get(0).toString().split("\\|").length != 0) {
-            skillsThis = dataClass.get(0).toString().split("\\|")[0];
-            basedOn = dataClass.get(0).toString().split("\\|")[3];
+    @FXML
+    private void addProgressActionPerformed() {
+        if (!speciesList.getSelectionModel().isEmpty() && !culturesList.getSelectionModel().isEmpty()) {
+            progresActions("AddProgress", cultureProgressList.getSelectionModel().isEmpty() ? "" : cultureProgressList.getSelectionModel().getSelectedItem().toString());
         }
-        if (!basedOn.equals("") && !basedOn.equals("null")) {
-            if (basedOn.equals("<base species>")) {
-                skillsBefore = dataSpecies.get(0).toString().split("\\|")[3];
-            } else {
-                ObservableList dataBaseClass = DatabaseReader.getClassData(speciesList.getSelectionModel().getSelectedItem().toString(), culturesList.getSelectionModel().getSelectedItem().toString(), basedOn);
-                skillsBefore = getSourceBaseSkills(dataSpecies, dataBaseClass);
-            }
-        }
-        String fullSkillList = !skillsThis.equals("") && !skillsThis.equals("null") && !skillsBefore.equals("") ? (skillsThis + "," + skillsBefore) : skillsBefore;
-        return fullSkillList;
     }
 
-    /**
-     *
-     * @param species
-     * @param culture
-     * @param classname
-     * @param points
-     * @return
-     */
-    public int baseCost(String species, String culture, String classname, int points) {
-        int a = 1;
-        ObservableList dataSpecies = DatabaseReader.getSpeciesData(species);
-        ObservableList allSkills = DatabaseReader.loadAllSkillsFromDB();
-        if (classname != null && !classname.equals(BuilderCORE.BASE) && !classname.equals(BuilderCORE.LESSER) && !classname.equals(BuilderCORE.GREATER)) {
-            ObservableList dataClass = DatabaseReader.getClassData(species, culture, classname);
-            switch (dataClass.get(0).toString().split("\\|")[2]) {
-                case "Standard Class":
-                    a = 1;
-                    break;
-                case "Elite Class":
-                    a = 2;
-                    break;
-                case "Leader Class":
-                    a = 3;
-                    break;
-                case "Unique Class":
-                    a = 2;
-                    break;
-                default:
-                    break;
-            }
-            String[] lst = (DatabaseHolder.skillsSeparatorRepalcer(dataClass.get(0).toString().split("\\|")[0]).split(","));
-            String basedOn = dataClass.get(0).toString().split("\\|")[3];
-            if (basedOn != null && !basedOn.equals("null") && !basedOn.equals("")) {
-                points += a * baseCost(species, culture, basedOn, points);
-            }
-            for (String lst1 : lst) {
-                int index = BuilderCORE.getSkillIndex(allSkills, lst1);
-                String pointCost = index < 0 ? "" : allSkills.get(index).toString().split("\\|")[1];
-                if (pointCost.equals("")) {
-                    pointCost = "0";
-                }
-                if (pointCost.contains("/")) {
-                    pointCost = pointCost.split("/")[0];
-                }
-                if (basedOn != null && !basedOn.equals("") && !basedOn.equals("null")) {
-                    if (!"".equals(pointCost)) {
-                        points += Integer.parseInt(pointCost);
-                    }
-                }
-            }
-            points += Integer.parseInt(dataClass.get(0).toString().split("\\|")[4]);
-        } else {
-            String[] lst = DatabaseHolder.skillsSeparatorRepalcer(dataSpecies.get(0).toString().split("\\|")[3]).split(",");
-            for (String lst1 : lst) {
-                int index = BuilderCORE.getSkillIndex(allSkills, lst1);
-                String pointCost = allSkills.get(index).toString().split("\\|")[1];
-                if (pointCost.equals("")) {
-                    pointCost = "0";
-                }
-                if (pointCost.contains("/")) {
-                    pointCost = pointCost.split("/")[0];
-                }
-                points += Integer.parseInt(pointCost);
-            }
+    @FXML
+    private void editProgressActionPerformed() {
+        if (!speciesList.getSelectionModel().isEmpty() && !culturesList.getSelectionModel().isEmpty() && !cultureProgressList.getItems().isEmpty()) {
+            progresActions("EditProgress", cultureProgressList.getSelectionModel().isEmpty() ? "" : cultureProgressList.getSelectionModel().getSelectedItem().toString());
         }
-        if (!heroesList.getSelectionModel().isEmpty()) {
-            String selHero = heroesList.getSelectionModel().getSelectedItem().toString();
-            ObservableList dataHero = DatabaseReader.getHeroData(species, culture, selHero);
-            String basedOn = dataHero.get(0).toString().split("\\|")[1];
-            if (basedOn != null && !basedOn.equals("null") && !basedOn.equals("") && basedOn.equals(classname)) {
-                points += Integer.parseInt(dataHero.get(0).toString().split("\\|")[2]);
-            }
-        }
-        return points;
     }
 
-    /**
-     *
-     * @param ruledskills
-     */
-    public static void getSkillModifiers(List<String> ruledskills) {
-        String[][] tmp = new String[2][ruledskills.size()];
-        catnumber = 0;
-        List<String> wheretabl = new ArrayList<>();
-        for (int i = 0; i < ruledskills.size(); i++) {
-            if (i == 0) {
-                wheretabl.add(ruledskills.get(i).split(">")[0]);
-                tmp[0][i] = ruledskills.get(i).split(">")[0];
-                catnumber++;
-            }
-            if (!ruledskills.get(i).split(">")[0].equals(wheretabl.get(catnumber - 1))) {
-                wheretabl.add(ruledskills.get(i).split(">")[0]);
-                tmp[0][i] = ruledskills.get(i).split(">")[0];
-                catnumber++;
-            }
+    @FXML
+    private void deleteProgressActionPerformed() {
+        if (!speciesList.getSelectionModel().isEmpty() && !culturesList.getSelectionModel().isEmpty() && !cultureProgressList.getItems().isEmpty()) {
+            progresActions("DeleteProgress", cultureProgressList.getSelectionModel().isEmpty() ? "" : cultureProgressList.getSelectionModel().getSelectedItem().toString());
         }
+    }
 
-        int[][][] increasestable = new int[catnumber][2][15];
-        for (int i = 0; i < catnumber; i++) {
-            for (int j = 0; j < 2; j++) {
-                for (int k = 0; k < 15; k++) {
-                    increasestable[i][j][k] = 0;
-                }
-            }
+    @FXML
+    private void addBattleActionPerformed() {
+        if (!speciesList.getSelectionModel().isEmpty() && !culturesList.getSelectionModel().isEmpty()) {
+            progresActions("AddBattle", cultureProgressList.getSelectionModel().isEmpty() ? "" : cultureProgressList.getSelectionModel().getSelectedItem().toString());
         }
+    }
 
-        for (int i = 0; i < ruledskills.size(); i++) {
-            tmp[0][i] = ruledskills.get(i).split(">")[0];
-            tmp[1][i] = ruledskills.get(i).split(">")[1];
-            if (tmp[1][i].contains("Increase") || tmp[1][i].contains("Decrease") || tmp[1][i].contains("Model Size")) {
-                int a = 2;
-                if (tmp[1][i].contains("Increase")) {
-                    a = 0;
-                }
-                if (tmp[1][i].contains("Decrease") || tmp[1][i].contains("Model Size") || tmp[1][i].contains("Increase Size")) {
-                    a = 1;
-                }
-                for (int u = 0; u < wheretabl.size(); u++) {
-                    if (tmp[0][i].equals(wheretabl.get(u))) {
-                        where = u;
-                    }
-                }
-
-                String stat = tmp[1][i].split(" ")[1].split("_")[0];
-                switch (stat) {
-                    case "Wounds":
-                        increasestable[where][a][0] += Integer.parseInt(tmp[1][i].split(" ")[1].split("_")[1]);
-                        break;
-                    case "Attacks":
-                        increasestable[where][a][1] += Integer.parseInt(tmp[1][i].split(" ")[1].split("_")[1]);
-                        break;
-                    case "Size":
-                        increasestable[where][a][2] += Integer.parseInt(tmp[1][i].split(" ")[1].split("_")[1]);
-                        break;
-                    case "Strength":
-                        increasestable[where][a][3] += Integer.parseInt(tmp[1][i].split(" ")[1].split("_")[1]);
-                        break;
-                    case "Toughness":
-                        increasestable[where][a][4] += Integer.parseInt(tmp[1][i].split(" ")[1].split("_")[1]);
-                        break;
-                    case "Movement":
-                        increasestable[where][a][5] += Integer.parseInt(tmp[1][i].split(" ")[1].split("_")[1]);
-                        break;
-                    case "Martial":
-                        increasestable[where][a][6] += Integer.parseInt(tmp[1][i].split(" ")[1].split("_")[1]);
-                        break;
-                    case "Ramged":
-                        increasestable[where][a][7] += Integer.parseInt(tmp[1][i].split(" ")[1].split("_")[1]);
-                        break;
-                    case "Defense":
-                        increasestable[where][a][8] += Integer.parseInt(tmp[1][i].split(" ")[1].split("_")[1]);
-                        break;
-                    case "Discipline":
-                        increasestable[where][a][9] += Integer.parseInt(tmp[1][i].split(" ")[1].split("_")[1]);
-                        break;
-                    case "Willpower":
-                        increasestable[where][a][10] += Integer.parseInt(tmp[1][i].split(" ")[1].split("_")[1]);
-                        break;
-                    case "Command":
-                        increasestable[where][a][11] += Integer.parseInt(tmp[1][i].split(" ")[1].split("_")[1]);
-                        break;
-                    case "MT":
-                        increasestable[where][a][12] += Integer.parseInt(tmp[1][i].split(" ")[1].split("_")[1]);
-                        break;
-                    case "RT":
-                        increasestable[where][a][13] += Integer.parseInt(tmp[1][i].split(" ")[1].split("_")[1]);
-                        break;
-                    case "Morale":
-                        increasestable[where][a][14] += Integer.parseInt(tmp[1][i].split(" ")[1].split("_")[1]);
-                        break;
-                    default:
-                        break;
-                }
-            }
+    @FXML
+    private void editBattleActionPerformed() {
+        if (!speciesList.getSelectionModel().isEmpty() && !culturesList.getSelectionModel().isEmpty() && !cultureProgressList.getItems().isEmpty()) {
+            progresActions("EditBattle", cultureProgressList.getSelectionModel().isEmpty() ? "" : cultureProgressList.getSelectionModel().getSelectedItem().toString());
         }
+    }
 
-        for (int s = 0; s < 15; s++) {
-            int maxinc = 0;
-            int totdec = 0;
-            for (int i = 0; i < catnumber; i++) {
-                if (increasestable[i][0][s] > maxinc) {
-                    maxinc = increasestable[i][0][s];
-                }
-                totdec += increasestable[i][1][s];
-            }
-            switch (s) {
-                case 0:
-                    HOLD_MODIFIERS.setWoundsModifier(maxinc - totdec);
-                    break;
-                case 1:
-                    HOLD_MODIFIERS.setAttacksModifier(maxinc - totdec);
-                    break;
-                case 2:
-                    HOLD_MODIFIERS.setSizeModifier(totdec);
-                    break;
-                case 3:
-                    HOLD_MODIFIERS.setStrengthModifier(maxinc - totdec);
-                    break;
-                case 4:
-                    HOLD_MODIFIERS.setToughnessModifier(maxinc - totdec);
-                    break;
-                case 5:
-                    HOLD_MODIFIERS.setMovementModifier(maxinc - totdec);
-                    break;
-                case 6:
-                    HOLD_MODIFIERS.setMartialModifier(maxinc - totdec);
-                    break;
-                case 7:
-                    HOLD_MODIFIERS.setRangedModifier(maxinc - totdec);
-                    break;
-                case 8:
-                    HOLD_MODIFIERS.setDefenseModifier(maxinc - totdec);
-                    break;
-                case 9:
-                    HOLD_MODIFIERS.setDisciplineModifier(maxinc - totdec);
-                    break;
-                case 10:
-                    HOLD_MODIFIERS.setWillpowerModifier(maxinc - totdec);
-                    break;
-                case 11:
-                    HOLD_MODIFIERS.setCommandModifier(maxinc - totdec);
-                    break;
-                case 12:
-                    HOLD_MODIFIERS.setMTModifier(maxinc - totdec);
-                    break;
-                case 13:
-                    HOLD_MODIFIERS.setRTModifier(maxinc - totdec);
-                    break;
-                case 14:
-                    HOLD_MODIFIERS.setMoraleModifier(maxinc - totdec);
-                    break;
-                default:
-                    break;
-            }
+    @FXML
+    private void deleteBattleActionPerformed() {
+        if (!speciesList.getSelectionModel().isEmpty() && !culturesList.getSelectionModel().isEmpty() && !cultureProgressList.getItems().isEmpty()) {
+            progresActions("DeleteBattle", cultureProgressList.getSelectionModel().isEmpty() ? "" : cultureProgressList.getSelectionModel().getSelectedItem().toString());
         }
     }
 
@@ -731,7 +545,7 @@ public class BuilderFXMLController implements Initializable {
      * clearLists
      */
     public void clearLists() {
-        for (Label valuesLabel : valuesLabels) {
+        for (TextField valuesLabel : valuesLabels) {
             valuesLabel.setText("");
         }
         culturesList.getItems().clear();
@@ -746,6 +560,9 @@ public class BuilderFXMLController implements Initializable {
         skillFullText.setText("");
         classTypeValue.setText("");
         basedOnValue.setText("");
+        ageValue.setText("");
+        totalProgressPointsValue.setText("");
+        remainingProgressPointsValue.setText("");
     }
 
     /**
@@ -783,7 +600,15 @@ public class BuilderFXMLController implements Initializable {
     private void cultureProgressListMousePressed() {
         if (!cultureProgressList.getSelectionModel().isEmpty() && !speciesList.getSelectionModel().isEmpty() && !culturesList.getSelectionModel().isEmpty()) {
             rostersList.getSelectionModel().clearSelection();
-            ObservableList lst = FXCollections.observableArrayList(DatabaseReader.getProgressData(speciesList.getSelectionModel().getSelectedItem().toString(), culturesList.getSelectionModel().getSelectedItem().toString(), cultureProgressList.getSelectionModel().getSelectedItem().toString()).get(0).toString().split(";"));
+            ObservableList lst = FXCollections.observableArrayList();
+            if (cultureProgressList.getSelectionModel().getSelectedItem().toString().startsWith("Progress: ")) {
+                String progressName = cultureProgressList.getSelectionModel().getSelectedItem().toString().replaceFirst("Progress: ", "");
+                lst = FXCollections.observableArrayList(DatabaseReader.getProgressData(speciesList.getSelectionModel().getSelectedItem().toString(), culturesList.getSelectionModel().getSelectedItem().toString(), progressName).get(0).toString().split("\\|")[0].split(";"));
+            }
+            if (cultureProgressList.getSelectionModel().getSelectedItem().toString().startsWith("Battle: ")) {
+                String battleName = cultureProgressList.getSelectionModel().getSelectedItem().toString().replaceFirst("Battle: ", "");
+                lst = FXCollections.observableArrayList(BuilderCORE.beautifyBattleData(DatabaseReader.getBattleData(speciesList.getSelectionModel().getSelectedItem().toString(), culturesList.getSelectionModel().getSelectedItem().toString(), battleName).get(0).toString()));
+            }
             fullroster.getItems().setAll(lst);
         }
     }
@@ -801,7 +626,7 @@ public class BuilderFXMLController implements Initializable {
             }
         }
         if (!fullroster.getSelectionModel().isEmpty() && !cultureProgressList.getSelectionModel().isEmpty() && !speciesList.getSelectionModel().isEmpty() && !culturesList.getSelectionModel().isEmpty()) {
-
+            //show details of progress/battle
         }
     }
 
@@ -833,68 +658,6 @@ public class BuilderFXMLController implements Initializable {
         if (-1 != i) {
             subSkillsList.getSelectionModel().select(i);
         }
-    }
-
-    /**
-     * Initializes the controller class.
-     *
-     * @param url
-     * @param rb
-     */
-    @Override
-    public void initialize(URL url, ResourceBundle rb) {
-        simplifyToCoreSkills = false;
-        this.valuesLabels = new Label[]{strengthValue, toughnessValue, movementValue, martialValue, rangedValue, defenseValue, disciplineValue, willpowerValue, commandValue, woundsValue, attacksValue, sizeValue, mTValue, rTValue, moraleValue};
-        speciesList.setItems(DatabaseReader.getSpeciesList());
-        speciesList.setCellFactory(new Callback<ListView<String>, ListCell<String>>() {
-            @Override
-            public ListCell<String> call(ListView<String> param) {
-                return new ListCell<String>() {
-                    @Override
-                    protected void updateItem(String item, boolean empty) {
-                        super.updateItem(item, empty);
-                        if (" ".equals(item)
-                                || "--Humanoid--".equals(item)
-                                || "--Fey--".equals(item)
-                                || "--Reptilia--".equals(item)
-                                || "--Biest--".equals(item)
-                                || "--Insecta--".equals(item)) {
-                            setDisable(true);
-                        } else {
-                            setDisable(false);
-                        }
-                        setText(item);
-                    }
-                };
-            }
-        });
-        speciesList.getSelectionModel().selectedItemProperty().addListener((ObservableValue observable, Object oldValue, Object newValue) -> {
-            if (speciesList.getSelectionModel().getSelectedItem() == null) {
-                clearSelectionEvent();
-            } else {
-                speciesListMousePressed();
-            }
-        });
-
-        EventHandler rightMouseListClick = new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-                if (event.isSecondaryButtonDown()) {
-                    rightClickContextMenu.show((Node) event.getTarget(), event.getScreenX(), event.getScreenY());
-                }
-            }
-        };
-
-        speciesList.setOnMousePressed(rightMouseListClick);
-        culturesList.setOnMousePressed(rightMouseListClick);
-        rostersList.setOnMousePressed(rightMouseListClick);
-
-        rightClickContextMenu.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                checkListAndMenuItemThenDecide(((MenuItem) event.getTarget()).getText());
-            }
-        });
     }
 
     private void checkListAndMenuItemThenDecide(String menuItem) {
@@ -948,4 +711,68 @@ public class BuilderFXMLController implements Initializable {
         }
     }
 
+    /**
+     * Initializes the controller class.
+     *
+     * @param url
+     * @param rb
+     */
+    @Override
+    public void initialize(URL url, ResourceBundle rb) {
+        simplifyToCoreSkills = false;
+        this.valuesLabels = new TextField[]{strengthValue, toughnessValue, movementValue, martialValue, rangedValue, defenseValue, disciplineValue, willpowerValue, commandValue, woundsValue, attacksValue, sizeValue, mTValue, rTValue, moraleValue};
+        speciesList.setItems(DatabaseReader.getSpeciesList());
+        speciesList.setCellFactory(new Callback<ListView<String>, ListCell<String>>() {
+            @Override
+            public ListCell<String> call(ListView<String> param) {
+                return new ListCell<String>() {
+                    @Override
+                    protected void updateItem(String item, boolean empty) {
+                        super.updateItem(item, empty);
+                        if (" ".equals(item)
+                                || "--Humanoid--".equals(item)
+                                || "--Fey--".equals(item)
+                                || "--Reptilia--".equals(item)
+                                || "--Biest--".equals(item)
+                                || "--Insecta--".equals(item)) {
+                            setDisable(true);
+                        } else {
+                            setDisable(false);
+                        }
+                        setText(item);
+                    }
+                };
+            }
+        });
+        speciesList.getSelectionModel().selectedItemProperty().addListener((ObservableValue observable, Object oldValue, Object newValue) -> {
+            if (speciesList.getSelectionModel().getSelectedItem() == null) {
+                clearSelectionEvent();
+            } else {
+                speciesListMousePressed();
+            }
+        });
+
+        EventHandler rightMouseListClick = new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                if (event.isSecondaryButtonDown()) {
+                    rightClickContextMenu.show((Node) event.getTarget(), event.getScreenX(), event.getScreenY());
+                }
+            }
+        };
+
+        speciesList.setOnMousePressed(rightMouseListClick);
+        culturesList.setOnMousePressed(rightMouseListClick);
+        rostersList.setOnMousePressed(rightMouseListClick);
+
+        rightClickContextMenu.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                checkListAndMenuItemThenDecide(((MenuItem) event.getTarget()).getText());
+            }
+        });
+
+        progressMenu.setDisable(true);
+        battlesMenu.setDisable(true);
+    }
 }

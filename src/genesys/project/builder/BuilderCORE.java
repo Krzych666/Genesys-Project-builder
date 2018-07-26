@@ -12,6 +12,7 @@ import static genesys.project.builder.Enums.Enmuerations.LifedomainValue.Humanoi
 import static genesys.project.builder.Enums.Enmuerations.LifedomainValue.Insecta;
 import static genesys.project.builder.Enums.Enmuerations.LifedomainValue.Reptilia;
 import genesys.project.builder.Enums.Enmuerations.UseCases;
+import genesys.project.fxml.BuilderFXMLController;
 import genesys.project.fxml.ErrorController;
 import static java.lang.Integer.max;
 import java.sql.Connection;
@@ -19,12 +20,17 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.scene.control.ListView;
+import javafx.scene.control.SelectionModel;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyEvent;
 
@@ -145,6 +151,16 @@ public class BuilderCORE {
      * EQUIPMENT_TYPES
      */
     public static final String[] EQUIPMENT_TYPES = {"Weapon", "Armor", "Heavy Military Weapon", "Vehicle", "Companion"};
+
+    /**
+     * category number
+     */
+    private static int catnumber;
+
+    /**
+     * where
+     */
+    private static int where;
 
     /**
      * main
@@ -561,7 +577,7 @@ public class BuilderCORE {
         if (DatabaseHolder.fullSkillList1 == null) {
             DatabaseHolder.fullSkillList1 = "";
         }
-        if (name.equals(BuilderCORE.BASE)) {
+        if (name.equals(BASE)) {
             DatabaseHolder.fullSkillList1 += DatabaseHolder.holdSpecies.getSkills();
         } else {
             for (DatabaseHolder.AClass holdClas : DatabaseHolder.holdClass) {
@@ -606,8 +622,8 @@ public class BuilderCORE {
                 default:
                     break;
             }
-            if (!"".equals(classname[bb].getType()) && !"null".equals(classname[bb].getType()) && !(BuilderCORE.BASE.equals(DatabaseHolder.classList1Holder))) {
-                if (classname[bb].getBasedOn() != null && !classname[bb].getBasedOn().equals(BuilderCORE.BASE) && !BuilderCORE.BASE.equals(DatabaseHolder.classList1Holder)) {
+            if (!"".equals(classname[bb].getType()) && !"null".equals(classname[bb].getType()) && !(BASE.equals(DatabaseHolder.classList1Holder))) {
+                if (classname[bb].getBasedOn() != null && !classname[bb].getBasedOn().equals(BASE) && !BASE.equals(DatabaseHolder.classList1Holder)) {
                     for (int s = 0; s < classname.length; s++) {
                         if (classname[bb].getBasedOn().equals(classname[s].getClassName())) {
                             source = s;
@@ -616,11 +632,11 @@ public class BuilderCORE {
                     points += a * baseAddedCost(lifeDomain, species, classname, source, points);
                     String[] lst = DatabaseHolder.skillsSeparatorRepalcer(classname[bb].getSkills()).split(",");
                     points += pointGetter(lst);
-                } else if (classname[bb].getBasedOn() != null && classname[bb].getBasedOn().equals(BuilderCORE.BASE) && !BuilderCORE.BASE.equals(DatabaseHolder.classList1Holder) && !"".equals(classname[bb].getSkills()) && !",".equals(classname[bb].getSkills())) {
+                } else if (classname[bb].getBasedOn() != null && classname[bb].getBasedOn().equals(BASE) && !BASE.equals(DatabaseHolder.classList1Holder) && !"".equals(classname[bb].getSkills()) && !",".equals(classname[bb].getSkills())) {
                     String[] lst = DatabaseHolder.skillsSeparatorRepalcer(classname[bb].getSkills()).split(",");
                     points += pointGetter(lst);
                 }
-                if (!"".equals(species.getSkills()) && classname[bb].getBasedOn().equals(BuilderCORE.BASE)) {
+                if (!"".equals(species.getSkills()) && classname[bb].getBasedOn().equals(BASE)) {
                     String[] lst = DatabaseHolder.skillsSeparatorRepalcer(species.getSkills()).split(",");
                     points += pointGetter(lst);
                 }
@@ -712,67 +728,67 @@ public class BuilderCORE {
         String SkillType3 = LdTrees[1];
         switch (SkillType1) {
             case "Genetic Mutation":
-                DatabaseHolder.holdSpecies.setGeneticMutation(BuilderCORE.addRemove(DatabaseHolder.holdSpecies.getGeneticMutation(), Add));
+                DatabaseHolder.holdSpecies.setGeneticMutation(addRemove(DatabaseHolder.holdSpecies.getGeneticMutation(), Add));
                 break;
             case "Environmental Adaptation":
-                DatabaseHolder.holdSpecies.setEnvironmentalAdaptation(BuilderCORE.addRemove(DatabaseHolder.holdSpecies.getEnvironmentalAdaptation(), Add));
+                DatabaseHolder.holdSpecies.setEnvironmentalAdaptation(addRemove(DatabaseHolder.holdSpecies.getEnvironmentalAdaptation(), Add));
                 break;
             case "Knowledge and Science":
-                DatabaseHolder.holdSpecies.setKnowledgeAndScience(BuilderCORE.addRemove(DatabaseHolder.holdSpecies.getKnowledgeAndScience(), Add));
+                DatabaseHolder.holdSpecies.setKnowledgeAndScience(addRemove(DatabaseHolder.holdSpecies.getKnowledgeAndScience(), Add));
                 break;
-            case BuilderCORE.LIGHT:
+            case LIGHT:
                 if ("Lesser Traits".equals(SkillType3)) {
-                    DatabaseHolder.holdSpecies.setLesserTraitsAndPowersOfLight(BuilderCORE.addRemove(DatabaseHolder.holdSpecies.getLesserTraitsAndPowersOfLight(), Add));
+                    DatabaseHolder.holdSpecies.setLesserTraitsAndPowersOfLight(addRemove(DatabaseHolder.holdSpecies.getLesserTraitsAndPowersOfLight(), Add));
                 }
                 if ("Greater Traits".equals(SkillType3)) {
-                    DatabaseHolder.holdSpecies.setGreaterTraitsAndPowersOfLight(BuilderCORE.addRemove(DatabaseHolder.holdSpecies.getGreaterTraitsAndPowersOfLight(), Add));
+                    DatabaseHolder.holdSpecies.setGreaterTraitsAndPowersOfLight(addRemove(DatabaseHolder.holdSpecies.getGreaterTraitsAndPowersOfLight(), Add));
                 }
                 break;
-            case BuilderCORE.DARKNESS:
+            case DARKNESS:
                 if ("Lesser Traits".equals(SkillType3)) {
-                    DatabaseHolder.holdSpecies.setLesserTraitsAndPowersOfDarkness(BuilderCORE.addRemove(DatabaseHolder.holdSpecies.getLesserTraitsAndPowersOfDarkness(), Add));
+                    DatabaseHolder.holdSpecies.setLesserTraitsAndPowersOfDarkness(addRemove(DatabaseHolder.holdSpecies.getLesserTraitsAndPowersOfDarkness(), Add));
                 }
                 if ("Greater Traits".equals(SkillType3)) {
-                    DatabaseHolder.holdSpecies.setGreaterTraitsAndPowersOfDarkness(BuilderCORE.addRemove(DatabaseHolder.holdSpecies.getGreaterTraitsAndPowersOfDarkness(), Add));
+                    DatabaseHolder.holdSpecies.setGreaterTraitsAndPowersOfDarkness(addRemove(DatabaseHolder.holdSpecies.getGreaterTraitsAndPowersOfDarkness(), Add));
                 }
                 break;
-            case BuilderCORE.TWILIGHT:
+            case TWILIGHT:
                 if ("Lesser Traits".equals(SkillType3)) {
-                    DatabaseHolder.holdSpecies.setLesserTraitsAndPowersOfTwilight(BuilderCORE.addRemove(DatabaseHolder.holdSpecies.getLesserTraitsAndPowersOfTwilight(), Add));
+                    DatabaseHolder.holdSpecies.setLesserTraitsAndPowersOfTwilight(addRemove(DatabaseHolder.holdSpecies.getLesserTraitsAndPowersOfTwilight(), Add));
                 }
                 if ("Greater Traits".equals(SkillType3)) {
-                    DatabaseHolder.holdSpecies.setGreaterTraitsAndPowersOfTwilight(BuilderCORE.addRemove(DatabaseHolder.holdSpecies.getGreaterTraitsAndPowersOfTwilight(), Add));
+                    DatabaseHolder.holdSpecies.setGreaterTraitsAndPowersOfTwilight(addRemove(DatabaseHolder.holdSpecies.getGreaterTraitsAndPowersOfTwilight(), Add));
                 }
                 break;
             case "Reptilia Lineages":
-                DatabaseHolder.holdSpecies.setReptiliaLineage(BuilderCORE.addRemove(DatabaseHolder.holdSpecies.getReptiliaLineage(), Add));
+                DatabaseHolder.holdSpecies.setReptiliaLineage(addRemove(DatabaseHolder.holdSpecies.getReptiliaLineage(), Add));
                 break;
             case "EnvironmentalAdaptability":
-                DatabaseHolder.holdSpecies.setEnvironmentalAdaptability(BuilderCORE.addRemove(DatabaseHolder.holdSpecies.getEnvironmentalAdaptability(), Add));
+                DatabaseHolder.holdSpecies.setEnvironmentalAdaptability(addRemove(DatabaseHolder.holdSpecies.getEnvironmentalAdaptability(), Add));
                 break;
             case "ExtremisAffinity":
-                DatabaseHolder.holdSpecies.setExtremisAffinity(BuilderCORE.addRemove(DatabaseHolder.holdSpecies.getExtremisAffinity(), Add));
+                DatabaseHolder.holdSpecies.setExtremisAffinity(addRemove(DatabaseHolder.holdSpecies.getExtremisAffinity(), Add));
                 break;
             case "BiestialKingdoms":
-                DatabaseHolder.holdSpecies.setBiestialKingdoms(BuilderCORE.addRemove(DatabaseHolder.holdSpecies.getBiestialKingdoms(), Add));
+                DatabaseHolder.holdSpecies.setBiestialKingdoms(addRemove(DatabaseHolder.holdSpecies.getBiestialKingdoms(), Add));
                 break;
             case "RegionalTraits":
-                DatabaseHolder.holdSpecies.setRegionalTraits(BuilderCORE.addRemove(DatabaseHolder.holdSpecies.getRegionalTraits(), Add));
+                DatabaseHolder.holdSpecies.setRegionalTraits(addRemove(DatabaseHolder.holdSpecies.getRegionalTraits(), Add));
                 break;
             case "SpiritualAndScientificKnowledge":
-                DatabaseHolder.holdSpecies.setSpiritualAndScientificKnowledge(BuilderCORE.addRemove(DatabaseHolder.holdSpecies.getSpiritualAndScientificKnowledge(), Add));
+                DatabaseHolder.holdSpecies.setSpiritualAndScientificKnowledge(addRemove(DatabaseHolder.holdSpecies.getSpiritualAndScientificKnowledge(), Add));
                 break;
             case "Clasification":
-                DatabaseHolder.holdSpecies.setClasification(BuilderCORE.addRemove(DatabaseHolder.holdSpecies.getClasification(), Add));
+                DatabaseHolder.holdSpecies.setClasification(addRemove(DatabaseHolder.holdSpecies.getClasification(), Add));
                 break;
             case "Order":
-                DatabaseHolder.holdSpecies.setOrder(BuilderCORE.addRemove(DatabaseHolder.holdSpecies.getOrder(), Add));
+                DatabaseHolder.holdSpecies.setOrder(addRemove(DatabaseHolder.holdSpecies.getOrder(), Add));
                 break;
             case "GeneticMorphology":
-                DatabaseHolder.holdSpecies.setGeneticMorphology(BuilderCORE.addRemove(DatabaseHolder.holdSpecies.getGeneticMorphology(), Add));
+                DatabaseHolder.holdSpecies.setGeneticMorphology(addRemove(DatabaseHolder.holdSpecies.getGeneticMorphology(), Add));
                 break;
             case "Knowledge":
-                DatabaseHolder.holdSpecies.setKnowledge(BuilderCORE.addRemove(DatabaseHolder.holdSpecies.getKnowledge(), Add));
+                DatabaseHolder.holdSpecies.setKnowledge(addRemove(DatabaseHolder.holdSpecies.getKnowledge(), Add));
                 break;
             default:
                 break;
@@ -814,6 +830,335 @@ public class BuilderCORE {
                 return DatabaseHolder.holdSpecies.getOrder() + "\n" + DatabaseHolder.holdSpecies.getGeneticMorphology() + "\n" + DatabaseHolder.holdSpecies.getEnvironmentalAdaptation() + "\n" + DatabaseHolder.holdSpecies.getKnowledge() + "\n";
         }
         return "";
+    }
+
+    public static String generateIdFromDate(String Date) {
+        String out = Date.replaceAll("\\.", "").replaceAll(":", "").replaceAll(" ", "");
+        return out;
+    }
+
+    public static ObservableList beautifyBattleData(String data) {
+        ObservableList out = FXCollections.observableArrayList();
+        out.add(data.split("\\|")[0] + " - " + data.split("\\|")[1] + ", using roster: " + data.split("\\|")[2]
+                + " VS "
+                + data.split("\\|")[3] + " - " + data.split("\\|")[4] + ", using roster: " + data.split("\\|")[5]);
+        out.add("Points: " + data.split("\\|")[6]);
+        out.add("Outcome:");
+        out.add(data.split("\\|")[7].split(";")[0]);
+        out.add(data.split("\\|")[7].split(";")[1]);
+        out.add(data.split("\\|")[7].split(";")[2]);
+        return out;
+    }
+
+    /**
+     *
+     * @param ruledskills
+     */
+    public static void getSkillModifiers(List<String> ruledskills) {
+        String[][] tmp = new String[2][ruledskills.size()];
+        catnumber = 0;
+        List<String> wheretabl = new ArrayList<>();
+        for (int i = 0; i < ruledskills.size(); i++) {
+            if (i == 0) {
+                wheretabl.add(ruledskills.get(i).split(">")[0]);
+                tmp[0][i] = ruledskills.get(i).split(">")[0];
+                catnumber++;
+            }
+            if (!ruledskills.get(i).split(">")[0].equals(wheretabl.get(catnumber - 1))) {
+                wheretabl.add(ruledskills.get(i).split(">")[0]);
+                tmp[0][i] = ruledskills.get(i).split(">")[0];
+                catnumber++;
+            }
+        }
+        int[][][] increasestable = new int[catnumber][2][15];
+        for (int i = 0; i < catnumber; i++) {
+            for (int j = 0; j < 2; j++) {
+                for (int k = 0; k < 15; k++) {
+                    increasestable[i][j][k] = 0;
+                }
+            }
+        }
+        for (int i = 0; i < ruledskills.size(); i++) {
+            tmp[0][i] = ruledskills.get(i).split(">")[0];
+            tmp[1][i] = ruledskills.get(i).split(">")[1];
+            if (tmp[1][i].contains("Increase") || tmp[1][i].contains("Decrease") || tmp[1][i].contains("Model Size")) {
+                int a = 2;
+                if (tmp[1][i].contains("Increase")) {
+                    a = 0;
+                }
+                if (tmp[1][i].contains("Decrease") || tmp[1][i].contains("Model Size") || tmp[1][i].contains("Increase Size")) {
+                    a = 1;
+                }
+                for (int u = 0; u < wheretabl.size(); u++) {
+                    if (tmp[0][i].equals(wheretabl.get(u))) {
+                        where = u;
+                    }
+                }
+                String stat = tmp[1][i].split(" ")[1].split("_")[0];
+                switch (stat) {
+                    case "Wounds":
+                        increasestable[where][a][0] += Integer.parseInt(tmp[1][i].split(" ")[1].split("_")[1]);
+                        break;
+                    case "Attacks":
+                        increasestable[where][a][1] += Integer.parseInt(tmp[1][i].split(" ")[1].split("_")[1]);
+                        break;
+                    case "Size":
+                        increasestable[where][a][2] += Integer.parseInt(tmp[1][i].split(" ")[1].split("_")[1]);
+                        break;
+                    case "Strength":
+                        increasestable[where][a][3] += Integer.parseInt(tmp[1][i].split(" ")[1].split("_")[1]);
+                        break;
+                    case "Toughness":
+                        increasestable[where][a][4] += Integer.parseInt(tmp[1][i].split(" ")[1].split("_")[1]);
+                        break;
+                    case "Movement":
+                        increasestable[where][a][5] += Integer.parseInt(tmp[1][i].split(" ")[1].split("_")[1]);
+                        break;
+                    case "Martial":
+                        increasestable[where][a][6] += Integer.parseInt(tmp[1][i].split(" ")[1].split("_")[1]);
+                        break;
+                    case "Ramged":
+                        increasestable[where][a][7] += Integer.parseInt(tmp[1][i].split(" ")[1].split("_")[1]);
+                        break;
+                    case "Defense":
+                        increasestable[where][a][8] += Integer.parseInt(tmp[1][i].split(" ")[1].split("_")[1]);
+                        break;
+                    case "Discipline":
+                        increasestable[where][a][9] += Integer.parseInt(tmp[1][i].split(" ")[1].split("_")[1]);
+                        break;
+                    case "Willpower":
+                        increasestable[where][a][10] += Integer.parseInt(tmp[1][i].split(" ")[1].split("_")[1]);
+                        break;
+                    case "Command":
+                        increasestable[where][a][11] += Integer.parseInt(tmp[1][i].split(" ")[1].split("_")[1]);
+                        break;
+                    case "MT":
+                        increasestable[where][a][12] += Integer.parseInt(tmp[1][i].split(" ")[1].split("_")[1]);
+                        break;
+                    case "RT":
+                        increasestable[where][a][13] += Integer.parseInt(tmp[1][i].split(" ")[1].split("_")[1]);
+                        break;
+                    case "Morale":
+                        increasestable[where][a][14] += Integer.parseInt(tmp[1][i].split(" ")[1].split("_")[1]);
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+        for (int s = 0; s < 15; s++) {
+            int maxinc = 0;
+            int totdec = 0;
+            for (int i = 0; i < catnumber; i++) {
+                if (increasestable[i][0][s] > maxinc) {
+                    maxinc = increasestable[i][0][s];
+                }
+                totdec += increasestable[i][1][s];
+            }
+            switch (s) {
+                case 0:
+                    BuilderFXMLController.HOLD_MODIFIERS.setWoundsModifier(maxinc - totdec);
+                    break;
+                case 1:
+                    BuilderFXMLController.HOLD_MODIFIERS.setAttacksModifier(maxinc - totdec);
+                    break;
+                case 2:
+                    BuilderFXMLController.HOLD_MODIFIERS.setSizeModifier(totdec);
+                    break;
+                case 3:
+                    BuilderFXMLController.HOLD_MODIFIERS.setStrengthModifier(maxinc - totdec);
+                    break;
+                case 4:
+                    BuilderFXMLController.HOLD_MODIFIERS.setToughnessModifier(maxinc - totdec);
+                    break;
+                case 5:
+                    BuilderFXMLController.HOLD_MODIFIERS.setMovementModifier(maxinc - totdec);
+                    break;
+                case 6:
+                    BuilderFXMLController.HOLD_MODIFIERS.setMartialModifier(maxinc - totdec);
+                    break;
+                case 7:
+                    BuilderFXMLController.HOLD_MODIFIERS.setRangedModifier(maxinc - totdec);
+                    break;
+                case 8:
+                    BuilderFXMLController.HOLD_MODIFIERS.setDefenseModifier(maxinc - totdec);
+                    break;
+                case 9:
+                    BuilderFXMLController.HOLD_MODIFIERS.setDisciplineModifier(maxinc - totdec);
+                    break;
+                case 10:
+                    BuilderFXMLController.HOLD_MODIFIERS.setWillpowerModifier(maxinc - totdec);
+                    break;
+                case 11:
+                    BuilderFXMLController.HOLD_MODIFIERS.setCommandModifier(maxinc - totdec);
+                    break;
+                case 12:
+                    BuilderFXMLController.HOLD_MODIFIERS.setMTModifier(maxinc - totdec);
+                    break;
+                case 13:
+                    BuilderFXMLController.HOLD_MODIFIERS.setRTModifier(maxinc - totdec);
+                    break;
+                case 14:
+                    BuilderFXMLController.HOLD_MODIFIERS.setMoraleModifier(maxinc - totdec);
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+
+    public static ObservableList generateAndAppyProgress(String species, String culture, String witch) {
+
+        Map<String, String> sorterMap = new TreeMap<>();
+        if (witch.equals("both") || witch.equals("Progress")) {
+            ObservableList listFromProgress = DatabaseReader.getAllProgressAndDateForCulture(species, culture);
+            for (int i = 0; i < listFromProgress.size(); i++) {
+                sorterMap.put(generateIdFromDate(listFromProgress.get(i).toString().split("\\|")[1]), "Progress: " + listFromProgress.get(i).toString().split("\\|")[0]);
+                //appyProgress(); //somwere else, this class is used
+            }
+        }
+        if (witch.equals("both") || witch.equals("Battle")) {
+            ObservableList listFromBattles = DatabaseReader.getAllBattlesAndDateForCulture(species, culture);
+            for (int i = 0; i < listFromBattles.size(); i++) {
+                sorterMap.put(generateIdFromDate(listFromBattles.get(i).toString().split("\\|")[1]), "Battle: " + listFromBattles.get(i).toString().split("\\|")[0]);
+            }
+        }
+
+        return FXCollections.observableArrayList(sorterMap.values());
+    }
+
+    /**
+     *
+     * @param rawSkills
+     * @return
+     */
+    public static ObservableList<String> getFullSkillsDescription(String rawSkills) {
+        ObservableList<String> tmp = FXCollections.observableArrayList();
+        tmp.addAll(DatabaseHolder.skillsSeparatorRepalcer(rawSkills).split(","));
+        List<String> ruledskills = new ArrayList<>();
+        String[] lst = new String[tmp.size()];
+        ObservableList allSkills = DatabaseReader.loadAllSkillsFromDB();
+        for (int i = 0; i < tmp.size(); i++) {
+            int index = getSkillIndex(allSkills, tmp.get(i));
+            lst[i] = tmp.get(i);
+            String[] skl = (allSkills.get(index).toString().split("\\|")[2]).split(";");
+            lst[i] += " (pts : " + (allSkills.get(index).toString().split("\\|")[1]) + ") : ";
+            for (int j = 0; j < skl.length; j++) {
+                lst[i] += ((skl[j].split("_"))[0]);
+                if ((skl[j].split("_")).length >= 2) {
+                    lst[i] += (" " + ((skl[j].split("_"))[1]));
+                }
+                if ((skl[j].split("_")).length >= 3) {
+                    lst[i] += (" " + ((skl[j].split("_"))[2]));
+                }
+                if (j < skl.length - 1) {
+                    lst[i] += ", ";
+                }
+                ruledskills.add((allSkills.get(index).toString().split("\\|")[6]) + ">" + skl[j]);
+            }
+        }
+        tmp.setAll(lst);
+        if (!ruledskills.get(0).equals(">")) {
+            getSkillModifiers(ruledskills);
+        }
+        return tmp;
+    }
+
+    public static String getSourceBaseSkills(ObservableList dataSpecies, ObservableList dataClass, String baseSpecies, String BaseCulture) {
+        String skillsThis = "";
+        String basedOn = "";
+        String skillsBefore = "";
+        if (dataClass != null && !dataClass.isEmpty() && dataClass.get(0) != null && dataClass.get(0).toString().split("\\|").length != 0) {
+            skillsThis = dataClass.get(0).toString().split("\\|")[0];
+            basedOn = dataClass.get(0).toString().split("\\|")[3];
+        }
+        if (!basedOn.equals("") && !basedOn.equals("null")) {
+            if (basedOn.equals("<base species>")) {
+                skillsBefore = dataSpecies.get(0).toString().split("\\|")[3];
+            } else {
+                ObservableList dataBaseClass = DatabaseReader.getClassData(baseSpecies, BaseCulture, basedOn);
+                skillsBefore = getSourceBaseSkills(dataSpecies, dataBaseClass, baseSpecies, BaseCulture);
+            }
+        }
+        String fullSkillList = !skillsThis.equals("") && !skillsThis.equals("null") && !skillsBefore.equals("") ? (skillsThis + "," + skillsBefore) : skillsBefore;
+        return fullSkillList;
+    }
+
+    /**
+     *
+     * @param species
+     * @param culture
+     * @param classname
+     * @param points
+     * @param selHeroModel
+     * @return
+     */
+    public static int baseCost(String species, String culture, String classname, int points, SelectionModel selHeroModel) {
+        int a = 1;
+        ObservableList dataSpecies = DatabaseReader.getSpeciesData(species);
+        ObservableList allSkills = DatabaseReader.loadAllSkillsFromDB();
+        if (classname != null && !classname.equals(BASE) && !classname.equals(LESSER) && !classname.equals(GREATER)) {
+            ObservableList dataClass = DatabaseReader.getClassData(species, culture, classname);
+            switch (dataClass.get(0).toString().split("\\|")[2]) {
+                case "Standard Class":
+                    a = 1;
+                    break;
+                case "Elite Class":
+                    a = 2;
+                    break;
+                case "Leader Class":
+                    a = 3;
+                    break;
+                case "Unique Class":
+                    a = 2;
+                    break;
+                default:
+                    break;
+            }
+            String[] lst = DatabaseHolder.skillsSeparatorRepalcer(dataClass.get(0).toString().split("\\|")[0]).split(",");
+            String basedOn = dataClass.get(0).toString().split("\\|")[3];
+            if (basedOn != null && !basedOn.equals("null") && !basedOn.equals("")) {
+                points += a * baseCost(species, culture, basedOn, points, selHeroModel);
+            }
+            for (String lst1 : lst) {
+                int index = getSkillIndex(allSkills, lst1);
+                String pointCost = index < 0 ? "" : allSkills.get(index).toString().split("\\|")[1];
+                if (pointCost.equals("")) {
+                    pointCost = "0";
+                }
+                if (pointCost.contains("/")) {
+                    pointCost = pointCost.split("/")[0];
+                }
+                if (basedOn != null && !basedOn.equals("") && !basedOn.equals("null")) {
+                    if (!"".equals(pointCost)) {
+                        points += Integer.parseInt(pointCost);
+                    }
+                }
+            }
+            points += Integer.parseInt(dataClass.get(0).toString().split("\\|")[4]);
+        } else {
+            String[] lst = DatabaseHolder.skillsSeparatorRepalcer(dataSpecies.get(0).toString().split("\\|")[3]).split(",");
+            for (String lst1 : lst) {
+                int index = getSkillIndex(allSkills, lst1);
+                String pointCost = allSkills.get(index).toString().split("\\|")[1];
+                if (pointCost.equals("")) {
+                    pointCost = "0";
+                }
+                if (pointCost.contains("/")) {
+                    pointCost = pointCost.split("/")[0];
+                }
+                points += Integer.parseInt(pointCost);
+            }
+        }
+        if (!selHeroModel.isEmpty()) {
+            String selHero = selHeroModel.getSelectedItem().toString();
+            ObservableList dataHero = DatabaseReader.getHeroData(species, culture, selHero);
+            String basedOn = dataHero.get(0).toString().split("\\|")[1];
+            if (basedOn != null && !basedOn.equals("null") && !basedOn.equals("") && basedOn.equals(classname)) {
+                points += Integer.parseInt(dataHero.get(0).toString().split("\\|")[2]);
+            }
+        }
+        return points;
     }
 
 }

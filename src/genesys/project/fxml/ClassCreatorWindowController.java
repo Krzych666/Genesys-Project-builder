@@ -286,7 +286,7 @@ public class ClassCreatorWindowController implements Initializable {
         showBase();
         /*skillList 2 or 4 set?*/
         AvailableSkillsLister.getAddedSkills(DatabaseHolder.holdClass[DatabaseHolder.b].getSkills() + DatabaseHolder.holdSpecies.getSkills());
-        BuilderFXMLController.getSkillModifiers(DatabaseHolder.ruledskills);
+        BuilderCORE.getSkillModifiers(DatabaseHolder.ruledskills);
         int cost = BuilderCORE.baseAddedCost(DatabaseHolder.holdSpecies.getLifedomain(), DatabaseHolder.holdSpecies, DatabaseHolder.holdClass, DatabaseHolder.b, 0);
         String tex = Integer.toString(cost);
         pointsPerModelValue2.setText(tex);
@@ -308,7 +308,7 @@ public class ClassCreatorWindowController implements Initializable {
 
         if (!("".equals(DatabaseHolder.holdClass[DatabaseHolder.b].getSkills()) || DatabaseHolder.holdClass[DatabaseHolder.b].getSkills() == null)) {
             skillsList2.setItems(AvailableSkillsLister.getAddedSkills(DatabaseHolder.holdClass[DatabaseHolder.b].getSkills()));
-            BuilderFXMLController.getSkillModifiers(DatabaseHolder.ruledskills);
+            BuilderCORE.getSkillModifiers(DatabaseHolder.ruledskills);
         } else {
             skillsList2.getItems().clear();
             BuilderFXMLController.HOLD_MODIFIERS.clearModifiers();
@@ -345,11 +345,11 @@ public class ClassCreatorWindowController implements Initializable {
     public void showBase()  {
         if ("<base species>".equals(basedOnChooser.getSelectionModel().getSelectedItem().toString())) {
             skillsList4.setItems(AvailableSkillsLister.getAddedSkills(DatabaseHolder.holdSpecies.getSkills()));
-            BuilderFXMLController.getSkillModifiers(DatabaseHolder.ruledskills);
+            BuilderCORE.getSkillModifiers(DatabaseHolder.ruledskills);
         } else {
             DatabaseHolder.fullSkillList1 = "";
             skillsList4.setItems(AvailableSkillsLister.getAddedSkills(BuilderCORE.getBaseAddedSkills(basedOnChooser.getSelectionModel().getSelectedItem().toString())));
-            BuilderFXMLController.getSkillModifiers(DatabaseHolder.ruledskills);
+            BuilderCORE.getSkillModifiers(DatabaseHolder.ruledskills);
         }
         int cost = BuilderCORE.baseAddedCost(DatabaseHolder.holdSpecies.getLifedomain(), DatabaseHolder.holdSpecies, DatabaseHolder.holdClass, DatabaseHolder.b, 0);
         String tex = Integer.toString(cost);
