@@ -5,6 +5,7 @@
  */
 package genesys.project.fxml;
 
+import genesys.project.builder.BuilderCORE;
 import genesys.project.builder.DatabaseHolder;
 import genesys.project.builder.DatabaseReader;
 import genesys.project.builder.DatabaseWriter;
@@ -13,6 +14,7 @@ import java.net.URL;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -53,7 +55,7 @@ public class DeleteWindowController implements Initializable {
     @FXML
     private Label heroDeleteLabel;
     @FXML
-    private Label rrogressDeleteLabel;
+    private Label progressDeleteLabel;
     @FXML
     private Label rosterDeleteLabel;
     @FXML
@@ -70,6 +72,7 @@ public class DeleteWindowController implements Initializable {
     private ListView speciesList;
     private ListView cultureList;
     private ListView rosterList;
+    private ListView cultureProgressList;
     private Label toDelete;
 
     /**
@@ -91,13 +94,31 @@ public class DeleteWindowController implements Initializable {
         if (cultureDeleteDropdown.getSelectionModel().isEmpty()) {
             cultureDeleteDropdown.getSelectionModel().select(0);
         }
-        classDeleteDropdown.setItems(DatabaseReader.populateDropdownsClasses(speciesDeleteDropdown.getSelectionModel().getSelectedItem().toString(), cultureDeleteDropdown.getSelectionModel().getSelectedItem().toString()));
+        classDeleteDropdown.setItems(
+                DatabaseReader.populateDropdownsClasses(
+                        speciesDeleteDropdown.getSelectionModel().getSelectedItem().toString(),
+                        cultureDeleteDropdown.getSelectionModel().getSelectedItem().toString()));
         classDeleteDropdown.getSelectionModel().select(0);
-        heroDeleteDropdown.setItems(DatabaseReader.populateDropdownsHeroes(speciesDeleteDropdown.getSelectionModel().getSelectedItem().toString(), cultureDeleteDropdown.getSelectionModel().getSelectedItem().toString(), classDeleteDropdown.getSelectionModel().getSelectedItem().toString()));
+
+        heroDeleteDropdown.setItems(
+                DatabaseReader.populateDropdownsHeroes(
+                        speciesDeleteDropdown.getSelectionModel().getSelectedItem().toString(),
+                        cultureDeleteDropdown.getSelectionModel().getSelectedItem().toString(),
+                        classDeleteDropdown.getSelectionModel().getSelectedItem().toString()));
         heroDeleteDropdown.getSelectionModel().select(0);
-        progressDeleteDropdown.setItems(DatabaseReader.populateDropdownsProgress(speciesDeleteDropdown.getSelectionModel().getSelectedItem().toString(), cultureDeleteDropdown.getSelectionModel().getSelectedItem().toString()));
+
+        progressDeleteDropdown.setItems(FXCollections.observableArrayList(DatabaseHolder.TOPDROP));
+        progressDeleteDropdown.getItems().addAll(
+                BuilderCORE.generateProgressAndBattlesSortedList(
+                        speciesDeleteDropdown.getSelectionModel().getSelectedItem().toString(),
+                        cultureDeleteDropdown.getSelectionModel().getSelectedItem().toString(),
+                        "both"));
         progressDeleteDropdown.getSelectionModel().select(0);
-        rosterDeleteDropdown.setItems(DatabaseReader.populateDropdownsRosters(speciesDeleteDropdown.getSelectionModel().getSelectedItem().toString(), cultureDeleteDropdown.getSelectionModel().getSelectedItem().toString()));
+
+        rosterDeleteDropdown.setItems(
+                DatabaseReader.populateDropdownsRosters(
+                        speciesDeleteDropdown.getSelectionModel().getSelectedItem().toString(),
+                        cultureDeleteDropdown.getSelectionModel().getSelectedItem().toString()));
         rosterDeleteDropdown.getSelectionModel().select(0);
     }
 
@@ -111,8 +132,14 @@ public class DeleteWindowController implements Initializable {
             classDeleteDropdown.getSelectionModel().select(0);
         }
         Object sel = classDeleteDropdown.getSelectionModel().getSelectedItem();
-        heroDeleteDropdown.setItems(DatabaseReader.populateDropdownsHeroes(speciesDeleteDropdown.getSelectionModel().getSelectedItem().toString(), cultureDeleteDropdown.getSelectionModel().getSelectedItem().toString(), classDeleteDropdown.getSelectionModel().getSelectedItem().toString()));
+
+        heroDeleteDropdown.setItems(
+                DatabaseReader.populateDropdownsHeroes(
+                        speciesDeleteDropdown.getSelectionModel().getSelectedItem().toString(),
+                        cultureDeleteDropdown.getSelectionModel().getSelectedItem().toString(),
+                        classDeleteDropdown.getSelectionModel().getSelectedItem().toString()));
         heroDeleteDropdown.getSelectionModel().select(0);
+
         progressDeleteDropdown.getSelectionModel().select(0);
         rosterDeleteDropdown.getSelectionModel().select(0);
         classDeleteDropdown.getSelectionModel().select(sel);
@@ -167,7 +194,7 @@ public class DeleteWindowController implements Initializable {
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("/genesys/project/fxml/DeleteAreYouSureFXML.fxml"));
                 Parent root = loader.load();
                 deleteAreYouSureController = loader.getController();
-                deleteAreYouSureController.setSpeciesList(speciesList);                
+                deleteAreYouSureController.setSpeciesList(speciesList);
                 deleteAreYouSureController.setDeleteWindow(deleteFinishButton.getScene().getWindow());
                 Scene scene = new Scene(root);
                 deleteAreYouSureStage.setScene(scene);
@@ -175,10 +202,10 @@ public class DeleteWindowController implements Initializable {
                 deleteAreYouSureStage.show();
                 toDelete = deleteAreYouSureController.getToDelete();
             } catch (IOException ex) {
-                ErrorController.ErrorController(ex);
+                ErrorController.ErrorControllerMethod(ex);
                 Logger.getLogger(DeleteWindowController.class.getName()).log(Level.SEVERE, null, ex);
             }
-        }        
+        }
         showWhatToDelete();
     }
 
@@ -195,74 +222,171 @@ public class DeleteWindowController implements Initializable {
      * prepareDeleteScript
      */
     public void prepareDeleteScript() {
-        String temp = "";
-        String w = " WHERE (";
-        String a = "') AND (";
-        String[] sql1 = {"DELETE FROM CreatedSpecies", "DELETE FROM CreatedCultures", "DELETE FROM CreatedClasses", "DELETE FROM CreatedHeroes", "DELETE FROM CreatedProgress", "DELETE FROM CreatedRosters"};
-        String[] sql2 = {"SpeciesName = '", "CultureName = '", "ClassName = '", "HeroName = '", "ProgressName = '", "RosterName = '"};
+        StringBuilder temp = new StringBuilder();
         if (speciesDeleteDropdown.getSelectionModel().getSelectedItem().toString().equals(DatabaseHolder.TOPDROP)) {
-            temp = sql1[0] + ";" + sql1[1] + ";" + sql1[2] + ";" + sql1[3] + ";" + sql1[4] + ";" + sql1[5] + ";";
+            temp.append(DatabaseWriter.DELETEFROMSTRING[0]).append(";")
+                    .append(DatabaseWriter.DELETEFROMSTRING[1]).append(";")
+                    .append(DatabaseWriter.DELETEFROMSTRING[2]).append(";")
+                    .append(DatabaseWriter.DELETEFROMSTRING[3]).append(";")
+                    .append(DatabaseWriter.DELETEFROMSTRING[4]).append(";")
+                    .append(DatabaseWriter.DELETEFROMSTRING[5]).append(";");
         }
         if (!speciesDeleteDropdown.getSelectionModel().getSelectedItem().toString().equals(DatabaseHolder.TOPDROP)) {
-            temp = sql1[0] + w + sql2[0] + speciesDeleteDropdown.getSelectionModel().getSelectedItem().toString() + "');"
-                    + sql1[1] + w + sql2[0] + speciesDeleteDropdown.getSelectionModel().getSelectedItem().toString() + "');"
-                    + sql1[2] + w + sql2[0] + speciesDeleteDropdown.getSelectionModel().getSelectedItem().toString() + "');"
-                    + sql1[3] + w + sql2[0] + speciesDeleteDropdown.getSelectionModel().getSelectedItem().toString() + "');"
-                    + sql1[4] + w + sql2[0] + speciesDeleteDropdown.getSelectionModel().getSelectedItem().toString() + "');"
-                    + sql1[5] + w + sql2[0] + speciesDeleteDropdown.getSelectionModel().getSelectedItem().toString() + "');";
+            temp.delete(0, temp.length());
+
+            temp.append(DatabaseWriter.DELETEFROMSTRING[0]).append(DatabaseWriter.WHERESTRING1).append(DatabaseWriter.NAMESTRING[0]).append(speciesDeleteDropdown.getSelectionModel().getSelectedItem().toString()).append("');")
+                    .append(DatabaseWriter.DELETEFROMSTRING[1]).append(DatabaseWriter.WHERESTRING1).append(DatabaseWriter.NAMESTRING[0]).append(speciesDeleteDropdown.getSelectionModel().getSelectedItem().toString()).append("');")
+                    .append(DatabaseWriter.DELETEFROMSTRING[2]).append(DatabaseWriter.WHERESTRING1).append(DatabaseWriter.NAMESTRING[0]).append(speciesDeleteDropdown.getSelectionModel().getSelectedItem().toString()).append("');")
+                    .append(DatabaseWriter.DELETEFROMSTRING[3]).append(DatabaseWriter.WHERESTRING1).append(DatabaseWriter.NAMESTRING[0]).append(speciesDeleteDropdown.getSelectionModel().getSelectedItem().toString()).append("');")
+                    .append(DatabaseWriter.DELETEFROMSTRING[4]).append(DatabaseWriter.WHERESTRING1).append(DatabaseWriter.NAMESTRING[0]).append(speciesDeleteDropdown.getSelectionModel().getSelectedItem().toString()).append("');")
+                    .append(DatabaseWriter.DELETEFROMSTRING[5]).append(DatabaseWriter.WHERESTRING1).append(DatabaseWriter.NAMESTRING[0]).append(speciesDeleteDropdown.getSelectionModel().getSelectedItem().toString()).append("');");
         }
         if (!cultureDeleteDropdown.getSelectionModel().getSelectedItem().toString().equals(DatabaseHolder.TOPDROP)) {
-            temp = sql1[1] + w + sql2[0] + speciesDeleteDropdown.getSelectionModel().getSelectedItem().toString() + a + sql2[1] + cultureDeleteDropdown.getSelectionModel().getSelectedItem().toString() + "');"
-                    + sql1[2] + w + sql2[0] + speciesDeleteDropdown.getSelectionModel().getSelectedItem().toString() + a + sql2[1] + cultureDeleteDropdown.getSelectionModel().getSelectedItem().toString() + "');"
-                    + sql1[3] + w + sql2[0] + speciesDeleteDropdown.getSelectionModel().getSelectedItem().toString() + a + sql2[1] + cultureDeleteDropdown.getSelectionModel().getSelectedItem().toString() + "');"
-                    + sql1[4] + w + sql2[0] + speciesDeleteDropdown.getSelectionModel().getSelectedItem().toString() + a + sql2[1] + cultureDeleteDropdown.getSelectionModel().getSelectedItem().toString() + "');"
-                    + sql1[5] + w + sql2[0] + speciesDeleteDropdown.getSelectionModel().getSelectedItem().toString() + a + sql2[1] + cultureDeleteDropdown.getSelectionModel().getSelectedItem().toString() + "');";
+            temp.delete(0, temp.length());
+
+            temp.append(DatabaseWriter.DELETEFROMSTRING[1]).append(DatabaseWriter.WHERESTRING1)
+                    .append(DatabaseWriter.NAMESTRING[0]).append(speciesDeleteDropdown.getSelectionModel().getSelectedItem().toString())
+                    .append(DatabaseWriter.ANDSTRING1)
+                    .append(DatabaseWriter.NAMESTRING[1]).append(cultureDeleteDropdown.getSelectionModel().getSelectedItem().toString()).append("');");
+
+            temp.append(DatabaseWriter.DELETEFROMSTRING[2]).append(DatabaseWriter.WHERESTRING1)
+                    .append(DatabaseWriter.NAMESTRING[0]).append(speciesDeleteDropdown.getSelectionModel().getSelectedItem().toString())
+                    .append(DatabaseWriter.ANDSTRING1)
+                    .append(DatabaseWriter.NAMESTRING[1]).append(cultureDeleteDropdown.getSelectionModel().getSelectedItem().toString()).append("');");
+
+            temp.append(DatabaseWriter.DELETEFROMSTRING[3]).append(DatabaseWriter.WHERESTRING1)
+                    .append(DatabaseWriter.NAMESTRING[0]).append(speciesDeleteDropdown.getSelectionModel().getSelectedItem().toString())
+                    .append(DatabaseWriter.ANDSTRING1)
+                    .append(DatabaseWriter.NAMESTRING[1]).append(cultureDeleteDropdown.getSelectionModel().getSelectedItem().toString()).append("');");
+
+            temp.append(DatabaseWriter.DELETEFROMSTRING[4]).append(DatabaseWriter.WHERESTRING1)
+                    .append(DatabaseWriter.NAMESTRING[0]).append(speciesDeleteDropdown.getSelectionModel().getSelectedItem().toString())
+                    .append(DatabaseWriter.ANDSTRING1)
+                    .append(DatabaseWriter.NAMESTRING[1]).append(cultureDeleteDropdown.getSelectionModel().getSelectedItem().toString()).append("');");
+
+            temp.append(DatabaseWriter.DELETEFROMSTRING[5]).append(DatabaseWriter.WHERESTRING1)
+                    .append(DatabaseWriter.NAMESTRING[0]).append(speciesDeleteDropdown.getSelectionModel().getSelectedItem().toString())
+                    .append(DatabaseWriter.ANDSTRING1)
+                    .append(DatabaseWriter.NAMESTRING[1]).append(cultureDeleteDropdown.getSelectionModel().getSelectedItem().toString()).append("');");
         }
         if (!classDeleteDropdown.getSelectionModel().getSelectedItem().toString().equals(DatabaseHolder.TOPDROP)) {
-            temp = sql1[2] + w + sql2[0] + speciesDeleteDropdown.getSelectionModel().getSelectedItem().toString() + a + sql2[1] + cultureDeleteDropdown.getSelectionModel().getSelectedItem().toString() + a + sql2[2] + classDeleteDropdown.getSelectionModel().getSelectedItem().toString() + "');"
-                    + sql1[3] + w + sql2[0] + speciesDeleteDropdown.getSelectionModel().getSelectedItem().toString() + a + sql2[1] + cultureDeleteDropdown.getSelectionModel().getSelectedItem().toString() + a + sql2[2] + classDeleteDropdown.getSelectionModel().getSelectedItem().toString() + "');"
-                    + sql1[4] + w + sql2[0] + speciesDeleteDropdown.getSelectionModel().getSelectedItem().toString() + a + sql2[1] + cultureDeleteDropdown.getSelectionModel().getSelectedItem().toString() + "');"
-                    + sql1[5] + w + sql2[0] + speciesDeleteDropdown.getSelectionModel().getSelectedItem().toString() + a + sql2[1] + cultureDeleteDropdown.getSelectionModel().getSelectedItem().toString() + "');";
+            temp.delete(0, temp.length());
+
+            temp.append(DatabaseWriter.DELETEFROMSTRING[2]).append(DatabaseWriter.WHERESTRING1)
+                    .append(DatabaseWriter.NAMESTRING[0]).append(speciesDeleteDropdown.getSelectionModel().getSelectedItem().toString())
+                    .append(DatabaseWriter.ANDSTRING1)
+                    .append(DatabaseWriter.NAMESTRING[1]).append(cultureDeleteDropdown.getSelectionModel().getSelectedItem().toString())
+                    .append(DatabaseWriter.ANDSTRING1)
+                    .append(DatabaseWriter.NAMESTRING[2]).append(classDeleteDropdown.getSelectionModel().getSelectedItem().toString()).append("');");
+
+            temp.append(DatabaseWriter.DELETEFROMSTRING[3]).append(DatabaseWriter.WHERESTRING1)
+                    .append(DatabaseWriter.NAMESTRING[0]).append(speciesDeleteDropdown.getSelectionModel().getSelectedItem().toString())
+                    .append(DatabaseWriter.ANDSTRING1)
+                    .append(DatabaseWriter.NAMESTRING[1]).append(cultureDeleteDropdown.getSelectionModel().getSelectedItem().toString())
+                    .append(DatabaseWriter.ANDSTRING1)
+                    .append(DatabaseWriter.NAMESTRING[2]).append(classDeleteDropdown.getSelectionModel().getSelectedItem().toString()).append("');");
+
+            temp.append(DatabaseWriter.DELETEFROMSTRING[4]).append(DatabaseWriter.WHERESTRING1)
+                    .append(DatabaseWriter.NAMESTRING[0]).append(speciesDeleteDropdown.getSelectionModel().getSelectedItem().toString())
+                    .append(DatabaseWriter.ANDSTRING1)
+                    .append(DatabaseWriter.NAMESTRING[1]).append(cultureDeleteDropdown.getSelectionModel().getSelectedItem().toString()).append("');");
+
+            temp.append(DatabaseWriter.DELETEFROMSTRING[5]).append(DatabaseWriter.WHERESTRING1)
+                    .append(DatabaseWriter.NAMESTRING[0]).append(speciesDeleteDropdown.getSelectionModel().getSelectedItem().toString())
+                    .append(DatabaseWriter.ANDSTRING1)
+                    .append(DatabaseWriter.NAMESTRING[1]).append(cultureDeleteDropdown.getSelectionModel().getSelectedItem().toString()).append("');");
         }
         if (!heroDeleteDropdown.getSelectionModel().getSelectedItem().toString().equals(DatabaseHolder.TOPDROP)) {
-            temp = sql1[3] + w + sql2[0] + speciesDeleteDropdown.getSelectionModel().getSelectedItem().toString() + a + sql2[1] + cultureDeleteDropdown.getSelectionModel().getSelectedItem().toString() + a + sql2[3] + heroDeleteDropdown.getSelectionModel().getSelectedItem().toString() + "');";
+            temp.delete(0, temp.length());
+            temp.append(DatabaseWriter.DELETEFROMSTRING[3]).append(DatabaseWriter.WHERESTRING1)
+                    .append(DatabaseWriter.NAMESTRING[0]).append(speciesDeleteDropdown.getSelectionModel().getSelectedItem().toString())
+                    .append(DatabaseWriter.ANDSTRING1)
+                    .append(DatabaseWriter.NAMESTRING[1]).append(cultureDeleteDropdown.getSelectionModel().getSelectedItem().toString())
+                    .append(DatabaseWriter.ANDSTRING1)
+                    .append(DatabaseWriter.NAMESTRING[3]).append(heroDeleteDropdown.getSelectionModel().getSelectedItem().toString()).append("');");
         }
         if (!progressDeleteDropdown.getSelectionModel().getSelectedItem().toString().equals(DatabaseHolder.TOPDROP)) {
-            temp = sql1[4] + w + sql2[0] + speciesDeleteDropdown.getSelectionModel().getSelectedItem().toString() + a + sql2[1] + cultureDeleteDropdown.getSelectionModel().getSelectedItem().toString() + a + sql2[4] + progressDeleteDropdown.getSelectionModel().getSelectedItem().toString() + "');";
+            temp.delete(0, temp.length());
+            if (progressDeleteDropdown.getSelectionModel().getSelectedItem().toString().startsWith("Progress: ")) {
+                temp.append(DatabaseWriter.DELETEFROMSTRING[4]).append(DatabaseWriter.WHERESTRING1)
+                        .append(DatabaseWriter.NAMESTRING[0]).append(speciesDeleteDropdown.getSelectionModel().getSelectedItem().toString())
+                        .append(DatabaseWriter.ANDSTRING1)
+                        .append(DatabaseWriter.NAMESTRING[1]).append(cultureDeleteDropdown.getSelectionModel().getSelectedItem().toString())
+                        .append(DatabaseWriter.ANDSTRING1)
+                        .append(DatabaseWriter.NAMESTRING[4]).append(progressDeleteDropdown.getSelectionModel().getSelectedItem().toString().replaceFirst("Progress: ", "")).append("');");
+            }
+            if (progressDeleteDropdown.getSelectionModel().getSelectedItem().toString().startsWith("Battle: ")) {
+                temp.append(DatabaseWriter.DELETEFROMSTRING[6]).append(DatabaseWriter.WHERESTRING1)
+                        .append(DatabaseWriter.NAMESTRING[6]).append(speciesDeleteDropdown.getSelectionModel().getSelectedItem().toString())
+                        .append(DatabaseWriter.ANDSTRING2)
+                        .append(DatabaseWriter.NAMESTRING[7]).append(cultureDeleteDropdown.getSelectionModel().getSelectedItem().toString())
+                        .append(DatabaseWriter.ORSTRING1)
+                        .append(DatabaseWriter.NAMESTRING[8]).append(speciesDeleteDropdown.getSelectionModel().getSelectedItem().toString())
+                        .append(DatabaseWriter.ANDSTRING2)
+                        .append(DatabaseWriter.NAMESTRING[9]).append(cultureDeleteDropdown.getSelectionModel().getSelectedItem().toString())
+                        .append(DatabaseWriter.ANDSTRING3)
+                        .append(DatabaseWriter.NAMESTRING[10]).append(progressDeleteDropdown.getSelectionModel().getSelectedItem().toString().replaceFirst("Battle: ", "")).append("';");
+            }
         }
         if (!rosterDeleteDropdown.getSelectionModel().getSelectedItem().toString().equals(DatabaseHolder.TOPDROP)) {
-            temp = sql1[5] + w + sql2[0] + speciesDeleteDropdown.getSelectionModel().getSelectedItem().toString() + a + sql2[1] + cultureDeleteDropdown.getSelectionModel().getSelectedItem().toString() + a + sql2[5] + rosterDeleteDropdown.getSelectionModel().getSelectedItem().toString() + "');";
+            temp.delete(0, temp.length());
+            temp.append(DatabaseWriter.DELETEFROMSTRING[5]).append(DatabaseWriter.WHERESTRING1)
+                    .append(DatabaseWriter.NAMESTRING[0]).append(speciesDeleteDropdown.getSelectionModel().getSelectedItem().toString())
+                    .append(DatabaseWriter.ANDSTRING1)
+                    .append(DatabaseWriter.NAMESTRING[1]).append(cultureDeleteDropdown.getSelectionModel().getSelectedItem().toString())
+                    .append(DatabaseWriter.ANDSTRING1)
+                    .append(DatabaseWriter.NAMESTRING[5]).append(rosterDeleteDropdown.getSelectionModel().getSelectedItem().toString()).append("');");
         }
-        DatabaseWriter.tempDeletescript = temp;
+        DatabaseWriter.tempDeletescript = temp.toString();
     }
 
     /**
      * showWhatToDelete
      */
     public void showWhatToDelete() {
-        String temp = "";
+        StringBuilder temp = new StringBuilder();
         if (speciesDeleteDropdown.getSelectionModel().getSelectedItem().toString().equals(DatabaseHolder.TOPDROP)) {
-            temp = "  All Species";
+            temp.append("  All Species");
         }
         if (!speciesDeleteDropdown.getSelectionModel().getSelectedItem().toString().equals(DatabaseHolder.TOPDROP)) {
-            temp = "  Species: " + speciesDeleteDropdown.getSelectionModel().getSelectedItem().toString();
+            temp.delete(0, temp.length());
+            temp.append("  Species: ").append(speciesDeleteDropdown.getSelectionModel().getSelectedItem().toString());
         }
         if (!cultureDeleteDropdown.getSelectionModel().getSelectedItem().toString().equals(DatabaseHolder.TOPDROP)) {
-            temp = "  Culture: " + cultureDeleteDropdown.getSelectionModel().getSelectedItem().toString() + " (in species: " + speciesDeleteDropdown.getSelectionModel().getSelectedItem().toString() + ")";
+            temp.delete(0, temp.length());
+            temp.append("  Culture: ").append(cultureDeleteDropdown.getSelectionModel().getSelectedItem().toString())
+                    .append(" (in species: ").append(speciesDeleteDropdown.getSelectionModel().getSelectedItem().toString()).append(")");
         }
         if (!classDeleteDropdown.getSelectionModel().getSelectedItem().toString().equals(DatabaseHolder.TOPDROP)) {
-            temp = "  Class: " + classDeleteDropdown.getSelectionModel().getSelectedItem().toString() + " (in culture: " + cultureDeleteDropdown.getSelectionModel().getSelectedItem().toString() + ", in species: " + speciesDeleteDropdown.getSelectionModel().getSelectedItem().toString() + ")";
+            temp.delete(0, temp.length());
+            temp.append("  Class: ").append(classDeleteDropdown.getSelectionModel().getSelectedItem().toString())
+                    .append(" (in culture: ").append(cultureDeleteDropdown.getSelectionModel().getSelectedItem().toString())
+                    .append(", in species: ").append(speciesDeleteDropdown.getSelectionModel().getSelectedItem().toString()).append(")");
         }
         if (!heroDeleteDropdown.getSelectionModel().getSelectedItem().toString().equals(DatabaseHolder.TOPDROP)) {
-            temp = "  Hero: " + heroDeleteDropdown.getSelectionModel().getSelectedItem().toString() + " (in culture: " + cultureDeleteDropdown.getSelectionModel().getSelectedItem().toString() + ", in species: " + speciesDeleteDropdown.getSelectionModel().getSelectedItem().toString() + ")";
+            temp.delete(0, temp.length());
+            temp.append("  Hero: ").append(heroDeleteDropdown.getSelectionModel().getSelectedItem().toString())
+                    .append(" (in culture: ").append(cultureDeleteDropdown.getSelectionModel().getSelectedItem().toString())
+                    .append(", in species: ").append(speciesDeleteDropdown.getSelectionModel().getSelectedItem().toString()).append(")");
         }
         if (!progressDeleteDropdown.getSelectionModel().getSelectedItem().toString().equals(DatabaseHolder.TOPDROP)) {
-            temp = "  Progress: " + progressDeleteDropdown.getSelectionModel().getSelectedItem().toString() + " (in culture: " + cultureDeleteDropdown.getSelectionModel().getSelectedItem().toString() + ", in species: " + speciesDeleteDropdown.getSelectionModel().getSelectedItem().toString() + ")";
+            temp.delete(0, temp.length());
+            if (progressDeleteDropdown.getSelectionModel().getSelectedItem().toString().startsWith("Progress: ")) {
+                temp.append("  Progress: ").append(progressDeleteDropdown.getSelectionModel().getSelectedItem().toString().replaceFirst("Progress: ", ""));
+            }
+            if (progressDeleteDropdown.getSelectionModel().getSelectedItem().toString().startsWith("Battle: ")) {
+                temp.append("  Battle History: ").append(progressDeleteDropdown.getSelectionModel().getSelectedItem().toString().replaceFirst("Battle: ", ""));
+            }
+            temp.append(" (in culture: ").append(cultureDeleteDropdown.getSelectionModel().getSelectedItem().toString())
+                    .append(", in species: ").append(speciesDeleteDropdown.getSelectionModel().getSelectedItem().toString()).append(")");
         }
         if (!rosterDeleteDropdown.getSelectionModel().getSelectedItem().toString().equals(DatabaseHolder.TOPDROP)) {
-            temp = "  Roster: " + rosterDeleteDropdown.getSelectionModel().getSelectedItem().toString() + " (in culture: " + cultureDeleteDropdown.getSelectionModel().getSelectedItem().toString() + ", in species: " + speciesDeleteDropdown.getSelectionModel().getSelectedItem().toString() + ")";
+            temp.delete(0, temp.length());
+            temp.append("  Roster: ").append(rosterDeleteDropdown.getSelectionModel().getSelectedItem().toString())
+                    .append(" (in culture: ").append(cultureDeleteDropdown.getSelectionModel().getSelectedItem().toString())
+                    .append(", in species: ").append(speciesDeleteDropdown.getSelectionModel().getSelectedItem().toString()).append(")");
         }
-        toDelete.setText(temp);
+        toDelete.setText(temp.toString());
     }
 
     /**
@@ -279,10 +403,11 @@ public class DeleteWindowController implements Initializable {
         cultureDeleteDropdownItemStateChangedActions();
     }
 
-    void setSpeciesAndCultureAndRosterList(ListView speciesList, ListView cultureList, ListView rosterList) {
+    void setDataLists(ListView speciesList, ListView cultureList, ListView rosterList, ListView cultureProgressList) {
         this.speciesList = speciesList;
         this.cultureList = cultureList;
         this.rosterList = rosterList;
+        this.cultureProgressList = cultureProgressList;
     }
 
     void setSelected() {

@@ -8,9 +8,9 @@ package genesys.project.fxml;
 import genesys.project.builder.BuilderCORE;
 import genesys.project.builder.DatabaseReader;
 import genesys.project.builder.DatabaseHolder;
+import genesys.project.builder.DatabaseHolder.TheModifiers;
 import genesys.project.builder.Enums.Enmuerations.LifedomainValue;
 import genesys.project.builder.Enums.Enmuerations.CharacteristicGroup;
-import genesys.project.builder.Enums.TheModifiers;
 import genesys.project.builder.GenesysProjectBuilder;
 import java.io.IOException;
 import java.net.URL;
@@ -178,16 +178,6 @@ public class BuilderFXMLController implements Initializable {
      */
     public DeleteWindowController deleteWindowController;
 
-    /**
-     * progressSelectorStage
-     */
-    public Stage progressSelectorStage = new Stage();
-
-    /**
-     * progressSelectorController
-     */
-    public ProgressSelectorController progressSelectorController;
-
     private TextField[] valuesLabels;
     private Boolean simplifyToCoreSkills;
 
@@ -203,7 +193,7 @@ public class BuilderFXMLController implements Initializable {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/genesys/project/fxml/EditWindowFXML.fxml"));
             Parent root = loader.load();
             editWindowController = loader.getController();
-            editWindowController.setSpeciesAndCultureAndRosterList(speciesList, culturesList, rostersList);
+            editWindowController.setDataLists(speciesList, culturesList, rostersList, cultureProgressList);
             Scene scene = new Scene(root);
             editWindowStage.setScene(scene);
             editWindowStage.setTitle("Edit");
@@ -213,7 +203,7 @@ public class BuilderFXMLController implements Initializable {
                 editWindowController.editWhat();
             }
         } catch (IOException ex) {
-            ErrorController.ErrorController(ex);
+            ErrorController.ErrorControllerMethod(ex);
             Logger.getLogger(BuilderFXMLController.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
@@ -239,7 +229,7 @@ public class BuilderFXMLController implements Initializable {
                 createWindowWhatController.newWhat(What, Selection);
             }
         } catch (IOException ex) {
-            ErrorController.ErrorController(ex);
+            ErrorController.ErrorControllerMethod(ex);
             Logger.getLogger(BuilderFXMLController.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
@@ -295,7 +285,7 @@ public class BuilderFXMLController implements Initializable {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/genesys/project/fxml/DuplicateWindowFXML.fxml"));
             Parent root = loader.load();
             duplicateWindowController = loader.getController();
-            duplicateWindowController.setSpeciesAndCultureAndRosterList(speciesList, culturesList, rostersList);
+            duplicateWindowController.setDataLists(speciesList, culturesList, rostersList, cultureProgressList);
             duplicateWindowController.setDuplicateWindowController(duplicateWindowController);
             Scene scene = new Scene(root);
             duplicateWindowStage.setScene(scene);
@@ -305,7 +295,7 @@ public class BuilderFXMLController implements Initializable {
             }
             duplicateWindowStage.show();
         } catch (IOException ex) {
-            ErrorController.ErrorController(ex);
+            ErrorController.ErrorControllerMethod(ex);
             Logger.getLogger(BuilderFXMLController.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
@@ -321,7 +311,7 @@ public class BuilderFXMLController implements Initializable {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/genesys/project/fxml/DeleteWindowFXML.fxml"));
             Parent root = loader.load();
             deleteWindowController = loader.getController();
-            deleteWindowController.setSpeciesAndCultureAndRosterList(speciesList, culturesList, rostersList);
+            deleteWindowController.setDataLists(speciesList, culturesList, rostersList, cultureProgressList);
             Scene scene = new Scene(root);
             deleteWindowStage.setScene(scene);
             deleteWindowStage.setTitle("Delete");
@@ -330,7 +320,7 @@ public class BuilderFXMLController implements Initializable {
             }
             deleteWindowStage.show();
         } catch (IOException ex) {
-            ErrorController.ErrorController(ex);
+            ErrorController.ErrorControllerMethod(ex);
             Logger.getLogger(BuilderFXMLController.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
@@ -377,18 +367,27 @@ public class BuilderFXMLController implements Initializable {
                 tmp.add(BuilderCORE.GREATER);
             }
             ObservableList dataCulture = DatabaseReader.getCultureData(speciesList.getSelectionModel().getSelectedItem().toString(), culturesList.getSelectionModel().getSelectedItem().toString());
+
             classList.setItems(DatabaseReader.populateDropdownsClasses(speciesList.getSelectionModel().getSelectedItem().toString(), culturesList.getSelectionModel().getSelectedItem().toString()));
             classList.getItems().remove(DatabaseHolder.TOPDROP);
+
             heroesList.setItems(DatabaseReader.populateDropdownsHeroes(speciesList.getSelectionModel().getSelectedItem().toString(), culturesList.getSelectionModel().getSelectedItem().toString(), DatabaseHolder.TOPDROP));
             heroesList.getItems().remove(DatabaseHolder.TOPDROP);
+
             rostersList.setItems(DatabaseReader.populateDropdownsRosters(speciesList.getSelectionModel().getSelectedItem().toString(), culturesList.getSelectionModel().getSelectedItem().toString()));
             rostersList.getItems().remove(DatabaseHolder.TOPDROP);
+
             populateLabels();
             ageValue.setText(dataCulture.get(0).toString().split("\\|")[0]);
             totalProgressPointsValue.setText(dataCulture.get(0).toString().split("\\|")[1]);
             remainingProgressPointsValue.setText(dataCulture.get(0).toString().split("\\|")[2]);
-            cultureProgressList.setItems(BuilderCORE.generateAndAppyProgress(speciesList.getSelectionModel().getSelectedItem().toString(), culturesList.getSelectionModel().getSelectedItem().toString(), "both"));
-            cultureProgressList.getItems().remove(DatabaseHolder.TOPDROP);
+
+            cultureProgressList.setItems(
+                    BuilderCORE.generateProgressAndBattlesSortedList(
+                            speciesList.getSelectionModel().getSelectedItem().toString(),
+                            culturesList.getSelectionModel().getSelectedItem().toString(),
+                            "both"));
+
             progressMenu.setDisable(false);
             battlesMenu.setDisable(false);
             if (cultureProgressList.getItems().isEmpty()) {
@@ -463,28 +462,29 @@ public class BuilderFXMLController implements Initializable {
     private void progresActions(String what, String selectedProgress) {
         switch (what) {
             case "AddProgress":
+                createActionPerformed("Progress", culturesList.getSelectionModel().getSelectedItem().toString());
                 break;
             case "AddBattle":
+                createActionPerformed("Battle", culturesList.getSelectionModel().getSelectedItem().toString());
                 break;
             case "EditProgress":
-            case "DeleteProgress":
+                editActionPerformed("Progress");
+                break;
             case "EditBattle":
+                editActionPerformed("Battle");
+                break;
+            case "DuplicateProgress":
+                duplicateActionPerformed("Progress");
+                break;
+            case "DuplicateBattle":
+                duplicateActionPerformed("Battle");
+                break;
+            case "DeleteProgress":
+                deleteActionPerformed("Progress");
+                break;
             case "DeleteBattle":
-                try {
-                    GenesysProjectBuilder.hideOtherThanMainStage();
-                    FXMLLoader loader = new FXMLLoader(getClass().getResource("/genesys/project/fxml/ProgressSelectorFXML.fxml"));
-                    Parent root = loader.load();
-                    progressSelectorController = loader.getController();
-                    progressSelectorController.setProgressAndRosters(BuilderCORE.generateAndAppyProgress(speciesList.getSelectionModel().getSelectedItem().toString(), culturesList.getSelectionModel().getSelectedItem().toString(), what.replaceFirst("Edit", "").replaceFirst("Delete", "")), rostersList);
-                    Scene scene = new Scene(root);
-                    progressSelectorStage.setScene(scene);
-                    progressSelectorStage.setTitle(what.contains("Edit") ? what.replaceFirst("Edit", "Edit ") : (what.contains("Delete") ? what.replaceFirst("Delete", "Delete ") : ""));
-                    progressSelectorController.setProgresFieldTo(selectedProgress);
-                    progressSelectorStage.show();
-                } catch (IOException ex) {
-                    ErrorController.ErrorController(ex);
-                    Logger.getLogger(BuilderFXMLController.class.getName()).log(Level.SEVERE, null, ex);
-                }
+                deleteActionPerformed("Battle");
+                break;
             default:
                 break;
         }
@@ -764,6 +764,7 @@ public class BuilderFXMLController implements Initializable {
         speciesList.setOnMousePressed(rightMouseListClick);
         culturesList.setOnMousePressed(rightMouseListClick);
         rostersList.setOnMousePressed(rightMouseListClick);
+        cultureProgressList.setOnMousePressed(rightMouseListClick);
 
         rightClickContextMenu.setOnAction(new EventHandler<ActionEvent>() {
             @Override

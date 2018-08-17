@@ -108,7 +108,7 @@ public class CreateRosterController implements Initializable {
                     rosterCreatorWindowStage.setTitle("Create Roster " + DatabaseHolder.holdRoster.getRosterName() + " for " + DatabaseHolder.holdRoster.getSpeciesName() + " - " + DatabaseHolder.holdRoster.getCultureName());
                     rosterCreatorWindowStage.show();
                 } catch (IOException ex) {
-                    ErrorController.ErrorController(ex);
+                    ErrorController.ErrorControllerMethod(ex);
                     Logger.getLogger(CreateRosterController.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }

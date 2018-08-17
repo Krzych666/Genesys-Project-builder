@@ -15,6 +15,7 @@ import static genesys.project.builder.BuilderCORE.chooseConnection;
 import genesys.project.fxml.ErrorController;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.collections.FXCollections;
 
 /**
  *
@@ -26,6 +27,33 @@ public class DatabaseWriter {
      * tempDeletescript
      */
     public static String tempDeletescript = null;
+
+    public static final String WHERESTRING1 = " WHERE (";
+    public static final String WHERESTRING2 = " WHERE ";
+    public static final String ANDSTRING1 = "') AND (";
+    public static final String ANDSTRING2 = "' AND ";
+    public static final String ANDSTRING3 = "') AND ";
+    public static final String ORSTRING1 = "') OR ";
+    public static final String[] DELETEFROMSTRING = {
+        "DELETE FROM CreatedSpecies",
+        "DELETE FROM CreatedCultures",
+        "DELETE FROM CreatedClasses",
+        "DELETE FROM CreatedHeroes",
+        "DELETE FROM CreatedProgress",
+        "DELETE FROM CreatedRosters",
+        "DELETE FROM BattleHistory"};
+    public static final String[] NAMESTRING = {
+        "SpeciesName = '",
+        "CultureName = '",
+        "ClassName = '",
+        "HeroName = '",
+        "ProgressName = '",
+        "RosterName = '",
+        "(UserSpecies = '",
+        "UserCulture = '",
+        "(OponentSpecies = '",
+        "OponentCulture = '",
+        "BattleName = '"};
 
     /**
      *
@@ -39,21 +67,21 @@ public class DatabaseWriter {
             stmt = conn.createStatement();
             stmt.executeUpdate(sql);
         } catch (SQLException e) {
-            ErrorController.ErrorController(e);
+            ErrorController.ErrorControllerMethod(e);
             System.out.println(e.getMessage());
         } finally {
             if (stmt != null) {
                 try {
                     stmt.close();
                 } catch (SQLException e) {
-                    ErrorController.ErrorController(e);
+                    ErrorController.ErrorControllerMethod(e);
                 }
             }
             if (conn != null) {
                 try {
                     conn.close();
                 } catch (SQLException e) {
-                    ErrorController.ErrorController(e);
+                    ErrorController.ErrorControllerMethod(e);
                 }
             }
         }
@@ -71,28 +99,55 @@ public class DatabaseWriter {
                 SpecialModificators = DatabaseHolder.holdSpecies.getSpeciesModifiers();
                 break;
             case Fey:
-                SpecialModificators = "MainDomain=" + ((DatabaseHolder.AFey) DatabaseHolder.holdSpecies).getMainDomain().getText() + "," + DatabaseHolder.holdSpecies.getSpeciesModifiers();
+                SpecialModificators = "MainDomain=" + ((DatabaseHolder.AFey) DatabaseHolder.holdSpecies).getMainDomain().getText() + ","
+                        + DatabaseHolder.holdSpecies.getSpeciesModifiers();
                 break;
             case Reptilia:
-                SpecialModificators = "MainLineage=" + ((DatabaseHolder.AReptilia) DatabaseHolder.holdSpecies).getMainLineage().getText() + "," + DatabaseHolder.holdSpecies.getSpeciesModifiers();
+                SpecialModificators = "MainLineage=" + ((DatabaseHolder.AReptilia) DatabaseHolder.holdSpecies).getMainLineage().getText() + ","
+                        + DatabaseHolder.holdSpecies.getSpeciesModifiers();
                 break;
             case Biest:
-                SpecialModificators = "MainKingdom=" + ((DatabaseHolder.ABiest) DatabaseHolder.holdSpecies).getMainKingdom().getText() + "," + "MainRegion=" + ((DatabaseHolder.ABiest) DatabaseHolder.holdSpecies).getMainRegion().getText() + "," + DatabaseHolder.holdSpecies.getSpeciesModifiers();
+                SpecialModificators = "MainKingdom=" + ((DatabaseHolder.ABiest) DatabaseHolder.holdSpecies).getMainKingdom().getText() + ","
+                        + "MainRegion=" + ((DatabaseHolder.ABiest) DatabaseHolder.holdSpecies).getMainRegion().getText() + ","
+                        + DatabaseHolder.holdSpecies.getSpeciesModifiers();
                 break;
             case Insecta:
-                SpecialModificators = "MainClasification=" + ((DatabaseHolder.AInsecta) DatabaseHolder.holdSpecies).getMainClasification().getText() + "," + "MainOrder=" + ((DatabaseHolder.AInsecta) DatabaseHolder.holdSpecies).getMainOrder().getText() + "," + DatabaseHolder.holdSpecies.getSpeciesModifiers();
+                SpecialModificators = "MainClasification=" + ((DatabaseHolder.AInsecta) DatabaseHolder.holdSpecies).getMainClasification().getText() + ","
+                        + "MainOrder=" + ((DatabaseHolder.AInsecta) DatabaseHolder.holdSpecies).getMainOrder().getText() + ","
+                        + DatabaseHolder.holdSpecies.getSpeciesModifiers();
                 break;
         }
         if (DatabaseHolder.holdCulture.getCultureName().equals(DatabaseHolder.holdSpecies.getSpeciesName())) {
-            executeSQL("INSERT INTO `CreatedSpecies`(LifeDomain,CharacteristicGroup,SpeciesName,Skills,SpeciesModifiers) VALUES ('" + DatabaseHolder.holdSpecies.getLifedomain().toString() + "','" + DatabaseHolder.holdSpecies.getCharacteristicGroup().toString() + "','" + DatabaseHolder.holdSpecies.getSpeciesName() + "','" + DatabaseHolder.holdSpecies.getSkills() + "','" + SpecialModificators + "');");
+            executeSQL("INSERT INTO `CreatedSpecies`"
+                    + "(LifeDomain,CharacteristicGroup,SpeciesName,Skills,SpeciesModifiers) "
+                    + "VALUES ('"
+                    + DatabaseHolder.holdSpecies.getLifedomain().toString() + "','"
+                    + DatabaseHolder.holdSpecies.getCharacteristicGroup().toString() + "','"
+                    + DatabaseHolder.holdSpecies.getSpeciesName() + "','"
+                    + DatabaseHolder.holdSpecies.getSkills() + "','"
+                    + SpecialModificators + "');");
         }
-        executeSQL("INSERT INTO `CreatedCultures`(CultureName,SpeciesName) VALUES ('" + DatabaseHolder.holdCulture.getCultureName() + "','" + DatabaseHolder.holdCulture.getSpeciesName() + "');");
+        executeSQL("INSERT INTO `CreatedCultures`"
+                + "(CultureName,SpeciesName) "
+                + "VALUES ('"
+                + DatabaseHolder.holdCulture.getCultureName() + "','"
+                + DatabaseHolder.holdCulture.getSpeciesName() + "');");
         for (DatabaseHolder.AClass holdClas : DatabaseHolder.holdClass) {
             if (holdClas.getClassName() != null && !holdClas.getClassName().equals("")) {
                 if (holdClas.getSkills().length() > 2) {
                     holdClas.setSkills(holdClas.getSkills().substring(0, holdClas.getSkills().length() - 1));
                 }
-                executeSQL("INSERT INTO `CreatedClasses`(ClassName,Skills,SpeciesName,CultureName,Advancements,Type,BasedOn,AdditionalCost) VALUES ('" + holdClas.getClassName() + "','" + holdClas.getSkills() + "','" + DatabaseHolder.holdSpecies.getSpeciesName() + "','" + DatabaseHolder.holdCulture.getCultureName() + "'," + null + ",'" + holdClas.getType() + "','" + holdClas.getBasedOn() + "','" + holdClas.getAdditionalCost() + "');");
+                executeSQL("INSERT INTO `CreatedClasses`"
+                        + "(ClassName,Skills,SpeciesName,CultureName,Advancements,Type,BasedOn,AdditionalCost)"
+                        + " VALUES ('"
+                        + holdClas.getClassName() + "','"
+                        + holdClas.getSkills() + "','"
+                        + DatabaseHolder.holdSpecies.getSpeciesName() + "','"
+                        + DatabaseHolder.holdCulture.getCultureName() + "',"
+                        + null + ",'"
+                        + holdClas.getType() + "','"
+                        + holdClas.getBasedOn() + "','"
+                        + holdClas.getAdditionalCost() + "');");
             }
         }
         DatabaseHolder.holdSpecies = null;
@@ -102,7 +157,34 @@ public class DatabaseWriter {
      * writeRosterToDB
      */
     public static void writeRosterToDB() {
-        executeSQL("INSERT INTO `CreatedRosters`(RosterName,CultureName,SpeciesName,Roster,MaxPoints) VALUES ('" + DatabaseHolder.holdRoster.getRosterName() + "','" + DatabaseHolder.holdRoster.getCultureName() + "','" + DatabaseHolder.holdRoster.getSpeciesName() + "','" + DatabaseHolder.holdRoster.getRoster() + "','" + DatabaseHolder.holdRoster.getMaxPoints() + "');");
+        executeSQL("INSERT INTO `CreatedRosters`"
+                + "(RosterName,CultureName,SpeciesName,Roster,MaxPoints) "
+                + "VALUES ('"
+                + DatabaseHolder.holdRoster.getRosterName() + "','"
+                + DatabaseHolder.holdRoster.getCultureName() + "','"
+                + DatabaseHolder.holdRoster.getSpeciesName() + "','"
+                + DatabaseHolder.holdRoster.getRoster() + "','"
+                + DatabaseHolder.holdRoster.getMaxPoints() + "');");
+    }
+
+    /**
+     * writeBattleToDB
+     */
+    public static void writeBattleToDB() {
+        executeSQL("INSERT INTO `BattleHistory`"
+                + "(BattleName,UserSpecies,UserCulture,UserRoster,OponentSpecies,OponentCulture,OponentRoster,Points,Outcome,Date,ReplayID) "
+                + "VALUES ('"
+                + DatabaseHolder.holdBattle.getBattleName() + "','"
+                + DatabaseHolder.holdBattle.getUserSpecies() + "','"
+                + DatabaseHolder.holdBattle.getUserCulture() + "','"
+                + DatabaseHolder.holdBattle.getUserRoster() + "','"
+                + DatabaseHolder.holdBattle.getOponentSpecies() + "','"
+                + DatabaseHolder.holdBattle.getOponentCulture() + "','"
+                + DatabaseHolder.holdBattle.getOponentRoster() + "','"
+                + DatabaseHolder.holdBattle.getPoints() + "','"
+                + DatabaseHolder.holdBattle.getOutcome() + "','"
+                + DatabaseHolder.holdBattle.getDate() + "','"
+                + DatabaseHolder.holdBattle.getReplayID() + "');");
     }
 
     /**
@@ -125,6 +207,8 @@ public class DatabaseWriter {
         executeSQL("UPDATE CreatedHeroes SET SpeciesName='" + newSpecies + "' WHERE SpeciesName='" + DatabaseHolder.holdSpecies.getSpeciesName() + "'");
         executeSQL("UPDATE CreatedProgress SET SpeciesName='" + newSpecies + "' WHERE SpeciesName='" + DatabaseHolder.holdSpecies.getSpeciesName() + "'");
         executeSQL("UPDATE CreatedRosters SET SpeciesName='" + newSpecies + "' WHERE SpeciesName='" + DatabaseHolder.holdSpecies.getSpeciesName() + "'");
+        executeSQL("UPDATE BattleHistory SET UserSpecies='" + newSpecies + "' WHERE UserSpecies='" + DatabaseHolder.holdSpecies.getSpeciesName() + "'");
+        executeSQL("UPDATE BattleHistory SET OponentSpecies='" + newSpecies + "' WHERE OponentSpecies='" + DatabaseHolder.holdSpecies.getSpeciesName() + "'");
     }
 
     /**
@@ -132,12 +216,56 @@ public class DatabaseWriter {
      *
      */
     public static void modifySpecies() {
-        executeSQL("UPDATE CreatedSpecies SET Lifedomain='" + DatabaseHolder.holdSpecies.getLifedomain() + "', CharacteristicGroup='" + DatabaseHolder.holdSpecies.getCharacteristicGroup() + "', SpeciesName='" + DatabaseHolder.holdSpecies.getSpeciesName() + "', Age='" + DatabaseHolder.holdSpecies.getAge() + "', Skills='" + DatabaseHolder.holdSpecies.getSkills() + "', SpeciesModifiers='" + DatabaseHolder.holdSpecies.getSpeciesModifiers() + "' WHERE SpeciesName='" + DatabaseHolder.modifiedHoldSpecies.getSpeciesName() + "'");
-        executeSQL("UPDATE CreatedCultures SET SpeciesName='" + DatabaseHolder.holdSpecies.getSpeciesName() + "' WHERE SpeciesName='" + DatabaseHolder.modifiedHoldSpecies.getSpeciesName() + "'");
-        executeSQL("UPDATE CreatedClasses SET SpeciesName='" + DatabaseHolder.holdSpecies.getSpeciesName() + "' WHERE SpeciesName='" + DatabaseHolder.modifiedHoldSpecies.getSpeciesName() + "'");
-        executeSQL("UPDATE CreatedHeroes SET SpeciesName='" + DatabaseHolder.holdSpecies.getSpeciesName() + "' WHERE SpeciesName='" + DatabaseHolder.modifiedHoldSpecies.getSpeciesName() + "'");
-        executeSQL("UPDATE CreatedProgress SET SpeciesName='" + DatabaseHolder.holdSpecies.getSpeciesName() + "' WHERE SpeciesName='" + DatabaseHolder.modifiedHoldSpecies.getSpeciesName() + "'");
-        executeSQL("UPDATE CreatedRosters SET SpeciesName='" + DatabaseHolder.holdSpecies.getSpeciesName() + "' WHERE SpeciesName='" + DatabaseHolder.modifiedHoldSpecies.getSpeciesName() + "'");
+        executeSQL("UPDATE CreatedSpecies "
+                + "SET "
+                + "Lifedomain='" + DatabaseHolder.holdSpecies.getLifedomain()
+                + "', CharacteristicGroup='" + DatabaseHolder.holdSpecies.getCharacteristicGroup()
+                + "', SpeciesName='" + DatabaseHolder.holdSpecies.getSpeciesName()
+                + "', Age='" + DatabaseHolder.holdSpecies.getAge()
+                + "', Skills='" + DatabaseHolder.holdSpecies.getSkills()
+                + "', SpeciesModifiers='" + DatabaseHolder.holdSpecies.getSpeciesModifiers()
+                + "' WHERE "
+                + "SpeciesName='" + DatabaseHolder.modifiedHoldSpecies.getSpeciesName() + "'");
+
+        executeSQL("UPDATE CreatedCultures "
+                + "SET "
+                + "SpeciesName='" + DatabaseHolder.holdSpecies.getSpeciesName()
+                + "' WHERE "
+                + "SpeciesName='" + DatabaseHolder.modifiedHoldSpecies.getSpeciesName() + "'");
+
+        executeSQL("UPDATE CreatedClasses "
+                + "SET "
+                + "SpeciesName='" + DatabaseHolder.holdSpecies.getSpeciesName()
+                + "' WHERE "
+                + "SpeciesName='" + DatabaseHolder.modifiedHoldSpecies.getSpeciesName() + "'");
+
+        executeSQL("UPDATE CreatedHeroes "
+                + "SET "
+                + "SpeciesName='" + DatabaseHolder.holdSpecies.getSpeciesName()
+                + "' WHERE "
+                + "SpeciesName='" + DatabaseHolder.modifiedHoldSpecies.getSpeciesName() + "'");
+
+        executeSQL("UPDATE CreatedProgress "
+                + "SET "
+                + "SpeciesName='" + DatabaseHolder.holdSpecies.getSpeciesName()
+                + "' WHERE "
+                + "SpeciesName='" + DatabaseHolder.modifiedHoldSpecies.getSpeciesName() + "'");
+
+        executeSQL("UPDATE CreatedRosters "
+                + "SET "
+                + "SpeciesName='" + DatabaseHolder.holdSpecies.getSpeciesName()
+                + "' WHERE "
+                + "SpeciesName='" + DatabaseHolder.modifiedHoldSpecies.getSpeciesName() + "'");
+        executeSQL("UPDATE BattleHistory "
+                + "SET "
+                + "UserSpecies='" + DatabaseHolder.holdSpecies.getSpeciesName()
+                + "' WHERE "
+                + "UserSpecies='" + DatabaseHolder.modifiedHoldSpecies.getSpeciesName() + "'");
+        executeSQL("UPDATE BattleHistory "
+                + "SET "
+                + "OponentSpecies='" + DatabaseHolder.holdSpecies.getSpeciesName()
+                + "' WHERE "
+                + "OponentSpecies='" + DatabaseHolder.modifiedHoldSpecies.getSpeciesName() + "'");
         checkClassSkillsSpecies();
     }
 
@@ -184,12 +312,20 @@ public class DatabaseWriter {
                     }
                     tmpSkillRep = DatabaseHolder.skillsSeparatorRepalcer(tmpSkillRep);
                     if (!tmpSkill.equals(tmpSkillRep)) {
-                        executeSQL("UPDATE CreatedClasses SET Skills='" + tmpSkillRep + "' WHERE SpeciesName='" + DatabaseHolder.holdSpecies.getSpeciesName() + "' AND CultureName='" + tmpCult.get(i).toString() + "' AND ClassName='" + tmpClass.get(ii).toString() + "'");
+                        executeSQL("UPDATE CreatedClasses "
+                                + "SET "
+                                + "Skills='" + tmpSkillRep
+                                + "' WHERE "
+                                + "SpeciesName='" + DatabaseHolder.holdSpecies.getSpeciesName()
+                                + "' AND "
+                                + "CultureName='" + tmpCult.get(i).toString()
+                                + "' AND "
+                                + "ClassName='" + tmpClass.get(ii).toString() + "'");
                     }
                 }
             }
         } catch (SQLException ex) {
-            ErrorController.ErrorController(ex);
+            ErrorController.ErrorControllerMethod(ex);
             Logger.getLogger(DatabaseWriter.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
@@ -199,18 +335,73 @@ public class DatabaseWriter {
      * @param newCulture
      */
     public static void modifyCultureName(String newCulture) {
-        executeSQL("UPDATE CreatedCultures SET CultureName='" + newCulture + "' WHERE SpeciesName='" + DatabaseHolder.holdCulture.getSpeciesName() + "' AND CultureName='" + DatabaseHolder.holdCulture.getCultureName() + "'");
-        executeSQL("UPDATE CreatedClasses SET CultureName='" + newCulture + "' WHERE SpeciesName='" + DatabaseHolder.holdCulture.getSpeciesName() + "' AND CultureName='" + DatabaseHolder.holdCulture.getCultureName() + "'");
-        executeSQL("UPDATE CreatedHeroes SET CultureName='" + newCulture + "' WHERE SpeciesName='" + DatabaseHolder.holdCulture.getSpeciesName() + "' AND CultureName='" + DatabaseHolder.holdCulture.getCultureName() + "'");
-        executeSQL("UPDATE CreatedProgress SET CultureName='" + newCulture + "' WHERE SpeciesName='" + DatabaseHolder.holdCulture.getSpeciesName() + "' AND CultureName='" + DatabaseHolder.holdCulture.getCultureName() + "'");
-        executeSQL("UPDATE CreatedRosters SET CultureName='" + newCulture + "' WHERE SpeciesName='" + DatabaseHolder.holdCulture.getSpeciesName() + "' AND CultureName='" + DatabaseHolder.holdCulture.getCultureName() + "'");
+        executeSQL("UPDATE CreatedCultures "
+                + "SET "
+                + "CultureName='" + newCulture
+                + "' WHERE "
+                + "SpeciesName='" + DatabaseHolder.holdCulture.getSpeciesName()
+                + "' AND "
+                + "CultureName='" + DatabaseHolder.holdCulture.getCultureName() + "'");
+
+        executeSQL("UPDATE CreatedClasses "
+                + "SET CultureName='" + newCulture
+                + "' WHERE "
+                + "SpeciesName='" + DatabaseHolder.holdCulture.getSpeciesName()
+                + "' AND "
+                + "CultureName='" + DatabaseHolder.holdCulture.getCultureName() + "'");
+
+        executeSQL("UPDATE CreatedHeroes "
+                + "SET "
+                + "CultureName='" + newCulture
+                + "' WHERE "
+                + "SpeciesName='" + DatabaseHolder.holdCulture.getSpeciesName()
+                + "' AND "
+                + "CultureName='" + DatabaseHolder.holdCulture.getCultureName() + "'");
+
+        executeSQL("UPDATE CreatedProgress "
+                + "SET "
+                + "CultureName='" + newCulture
+                + "' WHERE "
+                + "SpeciesName='" + DatabaseHolder.holdCulture.getSpeciesName()
+                + "' AND "
+                + "CultureName='" + DatabaseHolder.holdCulture.getCultureName() + "'");
+
+        executeSQL("UPDATE CreatedRosters "
+                + "SET "
+                + "CultureName='" + newCulture
+                + "' WHERE "
+                + "SpeciesName='" + DatabaseHolder.holdCulture.getSpeciesName()
+                + "' AND "
+                + "CultureName='" + DatabaseHolder.holdCulture.getCultureName() + "'");
+        executeSQL("UPDATE BattleHistory "
+                + "SET "
+                + "UserCulture='" + newCulture
+                + "' WHERE "
+                + "UserSpecies='" + DatabaseHolder.holdCulture.getSpeciesName()
+                + "' AND "
+                + "UserCulture='" + DatabaseHolder.holdCulture.getCultureName() + "'");
+        executeSQL("UPDATE BattleHistory "
+                + "SET "
+                + "OponentCulture='" + newCulture
+                + "' WHERE "
+                + "OponentSpecies='" + DatabaseHolder.holdCulture.getSpeciesName()
+                + "' AND "
+                + "OponentCulture='" + DatabaseHolder.holdCulture.getCultureName() + "'");
     }
 
     /**
      * modifyCulture
      */
     public static void modifyCulture() {
-        executeSQL("UPDATE CreatedCultures SET Age='" + DatabaseHolder.holdCulture.getAge() + "', TotalProgressionPoints='" + DatabaseHolder.holdCulture.getTotalProgressionPoints() + "', LeftProgressionPoints='" + DatabaseHolder.holdCulture.getLeftProgressionPoints() + "' WHERE SpeciesName='" + DatabaseHolder.holdCulture.getSpeciesName() + "' AND CultureName='" + DatabaseHolder.holdCulture.getCultureName() + "'");
+        executeSQL("UPDATE CreatedCultures "
+                + "SET "
+                + "Age='" + DatabaseHolder.holdCulture.getAge()
+                + "', TotalProgressionPoints='" + DatabaseHolder.holdCulture.getTotalProgressionPoints()
+                + "', LeftProgressionPoints='" + DatabaseHolder.holdCulture.getLeftProgressionPoints()
+                + "' WHERE "
+                + "SpeciesName='" + DatabaseHolder.holdCulture.getSpeciesName()
+                + "' AND "
+                + "CultureName='" + DatabaseHolder.holdCulture.getCultureName() + "'");
     }
 
     /**
@@ -219,9 +410,40 @@ public class DatabaseWriter {
      * @param a
      */
     public static void modifyClassName(String newClass, int a) {
-        executeSQL("UPDATE CreatedClasses SET BasedOn='" + newClass + "' WHERE SpeciesName='" + DatabaseHolder.holdClass[a].getSpeciesName() + "' AND CultureName='" + DatabaseHolder.holdClass[a].getCultureName() + "' AND BasedOn='" + DatabaseHolder.holdClass[a].getClassName() + "'");
-        executeSQL("UPDATE CreatedHeroes SET BasedOn='" + newClass + "' WHERE SpeciesName='" + DatabaseHolder.holdClass[a].getSpeciesName() + "' AND CultureName='" + DatabaseHolder.holdClass[a].getCultureName() + "' AND BasedOn='" + DatabaseHolder.holdClass[a].getClassName() + "'");
-        executeSQL("UPDATE CreatedClasses SET ClassName='" + newClass + "' WHERE SpeciesName='" + DatabaseHolder.holdClass[a].getSpeciesName() + "' AND CultureName='" + DatabaseHolder.holdClass[a].getCultureName() + "' AND ClassName='" + DatabaseHolder.holdClass[a].getClassName() + "'");
+        executeSQL("UPDATE CreatedClasses "
+                + "SET "
+                + "BasedOn='" + newClass
+                + "' WHERE "
+                + "SpeciesName='" + DatabaseHolder.holdClass[a].getSpeciesName()
+                + "' AND "
+                + "CultureName='" + DatabaseHolder.holdClass[a].getCultureName()
+                + "' AND "
+                + "BasedOn='" + DatabaseHolder.holdClass[a].getClassName() + "'");
+
+        executeSQL("UPDATE CreatedHeroes "
+                + "SET "
+                + "BasedOn='" + newClass
+                + "' WHERE "
+                + "SpeciesName='" + DatabaseHolder.holdClass[a].getSpeciesName()
+                + "' AND "
+                + "CultureName='" + DatabaseHolder.holdClass[a].getCultureName()
+                + "' AND "
+                + "BasedOn='" + DatabaseHolder.holdClass[a].getClassName() + "'");
+
+        executeSQL("UPDATE CreatedClasses "
+                + "SET "
+                + "ClassName='" + newClass
+                + "' WHERE "
+                + "SpeciesName='" + DatabaseHolder.holdClass[a].getSpeciesName()
+                + "' AND "
+                + "CultureName='" + DatabaseHolder.holdClass[a].getCultureName()
+                + "' AND "
+                + "ClassName='" + DatabaseHolder.holdClass[a].getClassName() + "'");
+        rosterUpdater(
+                DatabaseHolder.holdClass[a].getClassName(),
+                newClass,
+                DatabaseHolder.holdClass[a].getSpeciesName(),
+                DatabaseHolder.holdClass[a].getCultureName());
     }
 
     /**
@@ -233,12 +455,51 @@ public class DatabaseWriter {
             if (DatabaseHolder.holdClass[a].getSkills().endsWith(",")) {
                 DatabaseHolder.holdClass[a].setSkills(DatabaseHolder.holdClass[a].getSkills().substring(0, DatabaseHolder.holdClass[a].getSkills().length() - 1));
             }
-            executeSQL("UPDATE CreatedClasses SET ClassName='" + DatabaseHolder.holdClass[a].getClassName() + "', Skills='" + DatabaseHolder.holdClass[a].getSkills() + "', SpeciesName='" + DatabaseHolder.holdClass[a].getSpeciesName() + "', CultureName='" + DatabaseHolder.holdClass[a].getCultureName() + "', Advancements='" + DatabaseHolder.holdClass[a].getAdvancements() + "', Type='" + DatabaseHolder.holdClass[a].getType() + "', BasedOn='" + DatabaseHolder.holdClass[a].getBasedOn() + "', AdditionalCost='" + DatabaseHolder.holdClass[a].getAdditionalCost() + "' WHERE SpeciesName='" + DatabaseHolder.modifiedHoldClass[a].getSpeciesName() + "' AND CultureName='" + DatabaseHolder.modifiedHoldClass[a].getCultureName() + "' AND ClassName='" + DatabaseHolder.modifiedHoldClass[a].getClassName() + "'");
-            executeSQL("UPDATE CreatedHeroes SET BasedOn='" + DatabaseHolder.holdClass[a].getClassName() + "' WHERE SpeciesName='" + DatabaseHolder.modifiedHoldClass[a].getSpeciesName() + "' AND CultureName='" + DatabaseHolder.modifiedHoldClass[a].getCultureName() + "' AND BasedOn='" + DatabaseHolder.modifiedHoldClass[a].getClassName() + "'");
+            executeSQL("UPDATE CreatedClasses "
+                    + "SET "
+                    + "ClassName='" + DatabaseHolder.holdClass[a].getClassName()
+                    + "', Skills='" + DatabaseHolder.holdClass[a].getSkills()
+                    + "', SpeciesName='" + DatabaseHolder.holdClass[a].getSpeciesName()
+                    + "', CultureName='" + DatabaseHolder.holdClass[a].getCultureName()
+                    + "', Advancements='" + DatabaseHolder.holdClass[a].getAdvancements()
+                    + "', Type='" + DatabaseHolder.holdClass[a].getType()
+                    + "', BasedOn='" + DatabaseHolder.holdClass[a].getBasedOn()
+                    + "', AdditionalCost='" + DatabaseHolder.holdClass[a].getAdditionalCost()
+                    + "' WHERE "
+                    + "SpeciesName='" + DatabaseHolder.modifiedHoldClass[a].getSpeciesName()
+                    + "' AND "
+                    + "CultureName='" + DatabaseHolder.modifiedHoldClass[a].getCultureName()
+                    + "' AND "
+                    + "ClassName='" + DatabaseHolder.modifiedHoldClass[a].getClassName() + "'");
+
+            executeSQL("UPDATE CreatedHeroes "
+                    + "SET "
+                    + "BasedOn='" + DatabaseHolder.holdClass[a].getClassName()
+                    + "' WHERE "
+                    + "SpeciesName='" + DatabaseHolder.modifiedHoldClass[a].getSpeciesName()
+                    + "' AND "
+                    + "CultureName='" + DatabaseHolder.modifiedHoldClass[a].getCultureName()
+                    + "' AND "
+                    + "BasedOn='" + DatabaseHolder.modifiedHoldClass[a].getClassName() + "'");
             checkClassSkillsBasedon(a);
         } else {
-            executeSQL("INSERT INTO `CreatedClasses`(ClassName,Skills,SpeciesName,CultureName,Advancements,Type,BasedOn,AdditionalCost) VALUES ('" + DatabaseHolder.holdClass[a].getClassName() + "','" + DatabaseHolder.holdClass[a].getSkills() + "','" + DatabaseHolder.holdSpecies.getSpeciesName() + "','" + DatabaseHolder.holdCulture.getCultureName() + "'," + null + ",'" + DatabaseHolder.holdClass[a].getType() + "','" + DatabaseHolder.holdClass[a].getBasedOn() + "','" + DatabaseHolder.holdClass[a].getAdditionalCost() + "');");
+            executeSQL("INSERT INTO `CreatedClasses`"
+                    + "(ClassName,Skills,SpeciesName,CultureName,Advancements,Type,BasedOn,AdditionalCost) "
+                    + "VALUES ('"
+                    + DatabaseHolder.holdClass[a].getClassName() + "','"
+                    + DatabaseHolder.holdClass[a].getSkills() + "','"
+                    + DatabaseHolder.holdSpecies.getSpeciesName() + "','"
+                    + DatabaseHolder.holdCulture.getCultureName() + "',"
+                    + null + ",'"
+                    + DatabaseHolder.holdClass[a].getType() + "','"
+                    + DatabaseHolder.holdClass[a].getBasedOn() + "','"
+                    + DatabaseHolder.holdClass[a].getAdditionalCost() + "');");
         }
+        rosterUpdater(
+                DatabaseHolder.modifiedHoldClass[a].getClassName(),
+                DatabaseHolder.holdClass[a].getClassName(),
+                DatabaseHolder.modifiedHoldClass[a].getSpeciesName(),
+                DatabaseHolder.modifiedHoldClass[a].getCultureName());
     }
 
     private static void checkClassSkillsBasedon(int a) {
@@ -276,11 +537,19 @@ public class DatabaseWriter {
                 }
                 tmpSkillRep = DatabaseHolder.skillsSeparatorRepalcer(tmpSkillRep);
                 if (!tmpSkill.equals(tmpSkillRep)) {
-                    executeSQL("UPDATE CreatedClasses SET Skills='" + tmpSkillRep + "' WHERE SpeciesName='" + DatabaseHolder.holdClass[a].getSpeciesName() + "' AND CultureName='" + DatabaseHolder.holdClass[a].getCultureName() + "' AND ClassName='" + tmpBased.get(i).toString() + "'");
+                    executeSQL("UPDATE CreatedClasses "
+                            + "SET "
+                            + "Skills='" + tmpSkillRep
+                            + "' WHERE "
+                            + "SpeciesName='" + DatabaseHolder.holdClass[a].getSpeciesName()
+                            + "' AND "
+                            + "CultureName='" + DatabaseHolder.holdClass[a].getCultureName()
+                            + "' AND "
+                            + "ClassName='" + tmpBased.get(i).toString() + "'");
                 }
             }
         } catch (SQLException ex) {
-            ErrorController.ErrorController(ex);
+            ErrorController.ErrorControllerMethod(ex);
             Logger.getLogger(DatabaseWriter.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
@@ -290,14 +559,45 @@ public class DatabaseWriter {
      * @param newHero
      */
     public static void modifyHeroName(String newHero) {
-        executeSQL("UPDATE CreatedHeroes SET HeroName='" + newHero + "' WHERE SpeciesName='" + DatabaseHolder.holdHero.getSpeciesName() + "' AND CultureName='" + DatabaseHolder.holdHero.getCultureName() + "' AND HeroName='" + DatabaseHolder.holdHero.getHeroName() + "'");
+        executeSQL("UPDATE CreatedHeroes "
+                + "SET "
+                + "HeroName='" + newHero
+                + "' WHERE "
+                + "SpeciesName='" + DatabaseHolder.holdHero.getSpeciesName()
+                + "' AND "
+                + "CultureName='" + DatabaseHolder.holdHero.getCultureName()
+                + "' AND "
+                + "HeroName='" + DatabaseHolder.holdHero.getHeroName() + "'");
+        rosterUpdater(
+                DatabaseHolder.holdHero.getHeroName(),
+                newHero,
+                DatabaseHolder.holdHero.getSpeciesName(),
+                DatabaseHolder.holdHero.getCultureName());
     }
 
     /**
      * modifyHero
      */
     public static void modifyHero() {
-        executeSQL("UPDATE CreatedHeroes SET HeroName='" + DatabaseHolder.holdHero.getHeroName() + "', SpeciesName='" + DatabaseHolder.holdHero.getSpeciesName() + "', CultureName='" + DatabaseHolder.holdHero.getCultureName() + "', Advancements='" + DatabaseHolder.holdHero.getAdvancements() + "', BasedOn='" + DatabaseHolder.holdHero.getBasedOn() + "', AdditionalCost='" + DatabaseHolder.holdHero.getAdditionalCost() + "', WHERE SpeciesName='" + DatabaseHolder.modifiedHoldHero.getSpeciesName() + "' AND CultureName='" + DatabaseHolder.modifiedHoldHero.getCultureName() + "' AND HeroName='" + DatabaseHolder.modifiedHoldHero.getHeroName() + "'");
+        executeSQL("UPDATE CreatedHeroes "
+                + "SET "
+                + "HeroName='" + DatabaseHolder.holdHero.getHeroName()
+                + "', SpeciesName='" + DatabaseHolder.holdHero.getSpeciesName()
+                + "', CultureName='" + DatabaseHolder.holdHero.getCultureName()
+                + "', Advancements='" + DatabaseHolder.holdHero.getAdvancements()
+                + "', BasedOn='" + DatabaseHolder.holdHero.getBasedOn()
+                + "', AdditionalCost='" + DatabaseHolder.holdHero.getAdditionalCost()
+                + "', WHERE "
+                + "SpeciesName='" + DatabaseHolder.modifiedHoldHero.getSpeciesName()
+                + "' AND "
+                + "CultureName='" + DatabaseHolder.modifiedHoldHero.getCultureName()
+                + "' AND "
+                + "HeroName='" + DatabaseHolder.modifiedHoldHero.getHeroName() + "'");
+        rosterUpdater(
+                DatabaseHolder.modifiedHoldHero.getHeroName(),
+                DatabaseHolder.holdHero.getHeroName(),
+                DatabaseHolder.modifiedHoldHero.getSpeciesName(),
+                DatabaseHolder.modifiedHoldHero.getCultureName());
     }
 
     /**
@@ -305,14 +605,34 @@ public class DatabaseWriter {
      * @param newProgress
      */
     public static void modifyProgressName(String newProgress) {
-        executeSQL("UPDATE CreatedProgress SET ProgressName='" + newProgress + "' WHERE SpeciesName='" + DatabaseHolder.holdProgress.getSpeciesName() + "' AND CultureName='" + DatabaseHolder.holdProgress.getCultureName() + "' AND ProgressName='" + DatabaseHolder.holdProgress.getProgressName() + "'");
+        executeSQL("UPDATE CreatedProgress "
+                + "SET "
+                + "ProgressName='" + newProgress
+                + "' WHERE "
+                + "SpeciesName='" + DatabaseHolder.holdProgress.getSpeciesName()
+                + "' AND "
+                + "CultureName='" + DatabaseHolder.holdProgress.getCultureName()
+                + "' AND "
+                + "ProgressName='" + DatabaseHolder.holdProgress.getProgressName() + "'");
     }
 
     /**
      * modifyProgress
      */
     public static void modifyProgress() {
-        executeSQL("UPDATE CreatedProgress SET ProgressName='" + DatabaseHolder.holdProgress.getProgressName() + "', SpeciesName='" + DatabaseHolder.holdProgress.getSpeciesName() + "', CultureName='" + DatabaseHolder.holdProgress.getCultureName() + "', Progress='" + DatabaseHolder.holdProgress.getProgress() + "', Date='" + DatabaseHolder.holdProgress.getDate() + "' WHERE SpeciesName='" + DatabaseHolder.modifiedHoldProgress.getSpeciesName() + "' AND CultureName='" + DatabaseHolder.modifiedHoldProgress.getCultureName() + "' AND ProgressName='" + DatabaseHolder.modifiedHoldProgress.getProgressName() + "'");
+        executeSQL("UPDATE CreatedProgress "
+                + "SET "
+                + "ProgressName='" + DatabaseHolder.holdProgress.getProgressName()
+                + "', SpeciesName='" + DatabaseHolder.holdProgress.getSpeciesName()
+                + "', CultureName='" + DatabaseHolder.holdProgress.getCultureName()
+                + "', Progress='" + DatabaseHolder.holdProgress.getProgress()
+                + "', Date='" + DatabaseHolder.holdProgress.getDate()
+                + "' WHERE "
+                + "SpeciesName='" + DatabaseHolder.modifiedHoldProgress.getSpeciesName()
+                + "' AND "
+                + "CultureName='" + DatabaseHolder.modifiedHoldProgress.getCultureName()
+                + "' AND "
+                + "ProgressName='" + DatabaseHolder.modifiedHoldProgress.getProgressName() + "'");
     }
 
     /**
@@ -320,14 +640,175 @@ public class DatabaseWriter {
      * @param newRoster
      */
     public static void modifyRosterName(String newRoster) {
-        executeSQL("UPDATE CreatedRosters SET RosterName='" + newRoster + "' WHERE SpeciesName='" + DatabaseHolder.holdRoster.getSpeciesName() + "' AND CultureName='" + DatabaseHolder.holdRoster.getCultureName() + "' AND RosterName='" + DatabaseHolder.holdRoster.getRosterName() + "'");
+        executeSQL("UPDATE CreatedRosters "
+                + "SET "
+                + "RosterName='" + newRoster
+                + "' WHERE "
+                + "SpeciesName='" + DatabaseHolder.holdRoster.getSpeciesName()
+                + "' AND "
+                + "CultureName='" + DatabaseHolder.holdRoster.getCultureName()
+                + "' AND "
+                + "RosterName='" + DatabaseHolder.holdRoster.getRosterName() + "'");
+
+        executeSQL("UPDATE BattleHistory "
+                + "SET "
+                + "UserRoster='" + newRoster
+                + "' WHERE "
+                + "UserSpecies='" + DatabaseHolder.holdRoster.getSpeciesName()
+                + "' AND "
+                + "UserCulture='" + DatabaseHolder.holdRoster.getCultureName()
+                + "' AND "
+                + "UserRoster='" + DatabaseHolder.holdRoster.getRosterName() + "'");
+
+        executeSQL("UPDATE BattleHistory "
+                + "SET "
+                + "OponentRoster='" + newRoster
+                + "' WHERE "
+                + "OponentSpecies='" + DatabaseHolder.holdRoster.getSpeciesName()
+                + "' AND "
+                + "OponentCulture='" + DatabaseHolder.holdRoster.getCultureName()
+                + "' AND "
+                + "OponentRoster='" + DatabaseHolder.holdRoster.getRosterName() + "'");
     }
 
     /**
      * modifyRoster
      */
     public static void modifyRoster() {
-        executeSQL("UPDATE CreatedRosters SET RosterName='" + DatabaseHolder.holdRoster.getRosterName() + "', SpeciesName='" + DatabaseHolder.holdRoster.getSpeciesName() + "', CultureName='" + DatabaseHolder.holdRoster.getCultureName() + "', Roster='" + DatabaseHolder.holdRoster.getRoster() + "', MaxPoints='" + DatabaseHolder.holdRoster.getMaxPoints() + "' WHERE SpeciesName='" + DatabaseHolder.modifiedHoldRoster.getSpeciesName() + "' AND CultureName='" + DatabaseHolder.modifiedHoldRoster.getCultureName() + "' AND RosterName='" + DatabaseHolder.modifiedHoldRoster.getRosterName() + "'");
+        executeSQL("UPDATE CreatedRosters "
+                + "SET "
+                + "RosterName='" + DatabaseHolder.holdRoster.getRosterName()
+                + "', SpeciesName='" + DatabaseHolder.holdRoster.getSpeciesName()
+                + "', CultureName='" + DatabaseHolder.holdRoster.getCultureName()
+                + "', Roster='" + DatabaseHolder.holdRoster.getRoster()
+                + "', MaxPoints='" + DatabaseHolder.holdRoster.getMaxPoints()
+                + "' WHERE "
+                + "SpeciesName='" + DatabaseHolder.modifiedHoldRoster.getSpeciesName()
+                + "' AND "
+                + "CultureName='" + DatabaseHolder.modifiedHoldRoster.getCultureName()
+                + "' AND "
+                + "RosterName='" + DatabaseHolder.modifiedHoldRoster.getRosterName() + "'");
+
+        executeSQL("UPDATE BattleHistory "
+                + "SET "
+                + "UserRoster='" + DatabaseHolder.holdRoster.getRosterName()
+                + "' WHERE "
+                + "UserSpecies='" + DatabaseHolder.modifiedHoldRoster.getSpeciesName()
+                + "' AND "
+                + "UserCulture='" + DatabaseHolder.modifiedHoldRoster.getCultureName()
+                + "' AND "
+                + "UserRoster='" + DatabaseHolder.modifiedHoldRoster.getRosterName() + "'");
+
+        executeSQL("UPDATE BattleHistory "
+                + "SET "
+                + "OponentRoster='" + DatabaseHolder.holdRoster.getRosterName()
+                + "' WHERE "
+                + "OponentSpecies='" + DatabaseHolder.modifiedHoldRoster.getSpeciesName()
+                + "' AND "
+                + "OponentCulture='" + DatabaseHolder.modifiedHoldRoster.getCultureName()
+                + "' AND "
+                + "OponentRoster='" + DatabaseHolder.modifiedHoldRoster.getRosterName() + "'");
+    }
+
+    /**
+     *
+     * @param what
+     * @param newWhat
+     * @param selSpecies
+     * @param selCulture
+     */
+    public static void rosterUpdater(String what, String newWhat, String selSpecies, String selCulture) {
+        try {
+            chooseConnection(UseCases.Userdb);
+            PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT * FROM CreatedRosters WHERE SpeciesName =? AND CultureName=?");
+            stmt.setString(1, selSpecies);
+            stmt.setString(2, selCulture);
+            String[] columns = {"RosterName", "Roster"};
+            ObservableList data = BuilderCORE.getData(stmt, columns, null, 0);
+            for (int i = 0; i < data.size(); i++) {
+                Boolean modified = false;
+                StringBuilder correctedRoster = new StringBuilder();
+                ObservableList rosterEntrys = FXCollections.observableArrayList();
+                rosterEntrys.addAll(
+                        data.get(i).toString().split("\\|")[1].contains(";")
+                        ? data.get(i).toString().split("\\|")[1].split(";")
+                        : data.get(i).toString().split("\\|")[1]);
+                for (int j = 0; j < rosterEntrys.size(); j++) {
+                    if (rosterEntrys.get(j).toString().split(" x")[0].equals(what)) {
+                        modified = true;
+                        correctedRoster.append(rosterEntrys.get(j).toString().replaceFirst(what, newWhat));
+                    } else {
+                        correctedRoster.append(rosterEntrys.get(j).toString());
+                    }
+                    if (j < rosterEntrys.size() - 1) {
+                        correctedRoster.append(";");
+                    }
+                }
+                if (modified) {
+                    executeSQL("UPDATE CreatedRosters "
+                            + "SET "
+                            + "Roster='" + correctedRoster.toString()
+                            + "' WHERE "
+                            + "SpeciesName='" + selSpecies
+                            + "' AND "
+                            + "CultureName='" + selCulture
+                            + "' AND "
+                            + "RosterName='" + data.get(i).toString().split("\\|")[0] + "'");
+                }
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(DatabaseWriter.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+    }
+
+    /**
+     *
+     * @param newBattle
+     */
+    public static void modifyBattleName(String newBattle) {
+        executeSQL("UPDATE BattleHistory "
+                + "SET "
+                + "BattleName='" + newBattle
+                + "' WHERE "
+                + "BattleName = '" + DatabaseHolder.holdBattle.getBattleName()
+                + "' AND "
+                + "UserSpecies = '" + DatabaseHolder.holdBattle.getUserSpecies()
+                + "' AND "
+                + "UserCulture = '" + DatabaseHolder.holdBattle.getUserCulture()
+                + "' AND "
+                + "OponentSpecies = '" + DatabaseHolder.holdBattle.getOponentSpecies()
+                + "' AND "
+                + "OponentCulture = '" + DatabaseHolder.holdBattle.getOponentCulture() + "'");
+    }
+
+    /**
+     * modifyRoster
+     */
+    public static void modifyBattle() {
+        executeSQL("UPDATE BattleHistory "
+                + "SET "
+                + "BattleName='" + DatabaseHolder.holdBattle.getBattleName()
+                + "', UserSpecies ='" + DatabaseHolder.holdBattle.getUserSpecies()
+                + "', UserCulture='" + DatabaseHolder.holdBattle.getUserCulture()
+                + "', UserRoster='" + DatabaseHolder.holdBattle.getUserRoster()
+                + "', OponentSpecies='" + DatabaseHolder.holdBattle.getOponentSpecies()
+                + "', OponentCulture='" + DatabaseHolder.holdBattle.getOponentCulture()
+                + "', OponentRoster='" + DatabaseHolder.holdBattle.getOponentRoster()
+                + "', Points='" + DatabaseHolder.holdBattle.getPoints()
+                + "', Outcome='" + DatabaseHolder.holdBattle.getOutcome()
+                + "', Date='" + DatabaseHolder.holdBattle.getDate()
+                + "', ReplayID='" + DatabaseHolder.holdBattle.getReplayID()
+                + "' WHERE "
+                + "BattleName = '" + DatabaseHolder.holdBattle.getBattleName()
+                + "' AND "
+                + "UserSpecies = '" + DatabaseHolder.holdBattle.getUserSpecies()
+                + "' AND "
+                + "UserCulture = '" + DatabaseHolder.holdBattle.getUserCulture()
+                + "' AND "
+                + "OponentSpecies = '" + DatabaseHolder.holdBattle.getOponentSpecies()
+                + "' AND "
+                + "OponentCulture = '" + DatabaseHolder.holdBattle.getOponentCulture() + "'");
     }
 
     /**
@@ -343,9 +824,17 @@ public class DatabaseWriter {
             stmt.setString(1, selSpecies);
             String[] columns = {"LifeDomain", "CharacteristicGroup", "Age", "Skills", "SpeciesModifiers"};
             ObservableList data = BuilderCORE.getData(stmt, columns, null, 0);
-            executeSQL("INSERT INTO `CreatedSpecies`(LifeDomain, CharacteristicGroup,SpeciesName,Age,Skills,SpeciesModifiers) VALUES ('" + data.get(0).toString().split("\\|")[0] + "','" + data.get(0).toString().split("\\|")[1] + "','" + duplicateNewNameValue + "','" + data.get(0).toString().split("\\|")[2] + "''" + data.get(0).toString().split("\\|")[3] + "''" + data.get(0).toString().split("\\|")[4] + "');");
+            executeSQL("INSERT INTO `CreatedSpecies`"
+                    + "(LifeDomain, CharacteristicGroup,SpeciesName,Age,Skills,SpeciesModifiers) "
+                    + "VALUES ('"
+                    + data.get(0).toString().split("\\|")[0] + "','"
+                    + data.get(0).toString().split("\\|")[1] + "','"
+                    + duplicateNewNameValue + "','"
+                    + data.get(0).toString().split("\\|")[2] + "''"
+                    + data.get(0).toString().split("\\|")[3] + "''"
+                    + data.get(0).toString().split("\\|")[4] + "');");
         } catch (SQLException ex) {
-            ErrorController.ErrorController(ex);
+            ErrorController.ErrorControllerMethod(ex);
             Logger.getLogger(DatabaseWriter.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
@@ -360,7 +849,10 @@ public class DatabaseWriter {
     public static void duplicateCulture(String selSpecies, String selCulture, String duplicateNewNameValue) {
         try {
             chooseConnection(UseCases.Userdb);
-            PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("--all--".equals(selCulture) ? "SELECT * FROM CreatedCultures WHERE SpeciesName =?" : "SELECT * FROM CreatedCultures WHERE SpeciesName =? AND CultureName =");
+            PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement(
+                    "--all--".equals(selCulture)
+                    ? "SELECT * FROM CreatedCultures WHERE SpeciesName =?"
+                    : "SELECT * FROM CreatedCultures WHERE SpeciesName =? AND CultureName =");
             stmt.setString(1, selSpecies);
             if (!"--all--".equals(selCulture)) {
                 stmt.setString(2, selCulture);
@@ -369,13 +861,27 @@ public class DatabaseWriter {
             ObservableList data = BuilderCORE.getData(stmt, columns, null, 0);
             if ("--all--".equals(selCulture)) {
                 for (int i = 0; i < data.size(); i++) {
-                    executeSQL("INSERT INTO `CreatedCultures`(CultureName,SpeciesName,Age,TotalProgressionPoints,LeftProgressionPoints) VALUES ('" + data.get(i).toString().split("\\|")[0] + "','" + duplicateNewNameValue + "','" + data.get(i).toString().split("\\|")[1] + "','" + data.get(i).toString().split("\\|")[2] + "','" + data.get(i).toString().split("\\|")[3] + "');");
+                    executeSQL("INSERT INTO `CreatedCultures`"
+                            + "(CultureName,SpeciesName,Age,TotalProgressionPoints,LeftProgressionPoints) "
+                            + "VALUES ('"
+                            + data.get(i).toString().split("\\|")[0] + "','"
+                            + duplicateNewNameValue + "','"
+                            + data.get(i).toString().split("\\|")[1] + "','"
+                            + data.get(i).toString().split("\\|")[2] + "','"
+                            + data.get(i).toString().split("\\|")[3] + "');");
                 }
             } else {
-                executeSQL("INSERT INTO `CreatedCultures`(CultureName,SpeciesName,Age,TotalProgressionPoints,LeftProgressionPoints) VALUES ('" + duplicateNewNameValue + "','" + selSpecies + "','" + data.get(0).toString().split("\\|")[1] + "','" + data.get(0).toString().split("\\|")[2] + "','" + data.get(0).toString().split("\\|")[3] + "');");
+                executeSQL("INSERT INTO `CreatedCultures`"
+                        + "(CultureName,SpeciesName,Age,TotalProgressionPoints,LeftProgressionPoints) "
+                        + "VALUES ('"
+                        + duplicateNewNameValue + "','"
+                        + selSpecies + "','"
+                        + data.get(0).toString().split("\\|")[1] + "','"
+                        + data.get(0).toString().split("\\|")[2] + "','"
+                        + data.get(0).toString().split("\\|")[3] + "');");
             }
         } catch (SQLException ex) {
-            ErrorController.ErrorController(ex);
+            ErrorController.ErrorControllerMethod(ex);
             Logger.getLogger(DatabaseWriter.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
@@ -396,16 +902,55 @@ public class DatabaseWriter {
             String[] columns = {"ClassName", "Skills", "CultureName", "Advancements", "Type", "BasedOn", "AdditionalCost"};
             ObservableList data = BuilderCORE.getData(stmt, columns, null, 0);
             for (int i = 0; i < data.size(); i++) {
-                if ("--all--".equals(selClass) && "--all--".equals(selCulture)) {
-                    executeSQL("INSERT INTO `CreatedClasses`(ClassName,Skills,SpeciesName,CultureName,Advancements,Type,BasedOn,AdditionalCost) VALUES ('" + data.get(i).toString().split("\\|")[0] + "','" + data.get(i).toString().split("\\|")[1] + "','" + duplicateNewNameValue + "','" + data.get(i).toString().split("\\|")[2] + "','" + data.get(i).toString().split("\\|")[3] + "','" + data.get(i).toString().split("\\|")[4] + "','" + data.get(i).toString().split("\\|")[5] + "','" + data.get(i).toString().split("\\|")[6] + "');");
-                } else if ("--all--".equals(selClass) && !"--all--".equals(selCulture) && data.get(i).toString().split("\\|")[2].equals(selCulture)) {
-                    executeSQL("INSERT INTO `CreatedClasses`(ClassName,Skills,SpeciesName,CultureName,Advancements,Type,BasedOn,AdditionalCost) VALUES ('" + data.get(i).toString().split("\\|")[0] + "','" + data.get(i).toString().split("\\|")[1] + "','" + selSpecies + "','" + duplicateNewNameValue + "','" + data.get(i).toString().split("\\|")[3] + "','" + data.get(i).toString().split("\\|")[4] + "','" + data.get(i).toString().split("\\|")[5] + "','" + data.get(i).toString().split("\\|")[6] + "');");
-                } else if (!"--all--".equals(selClass) && !"--all--".equals(selCulture) && data.get(i).toString().split("\\|")[2].equals(selCulture) && data.get(i).toString().split("\\|")[2].equals(selClass)) {
-                    executeSQL("INSERT INTO `CreatedClasses`(ClassName,Skills,SpeciesName,CultureName,Advancements,Type,BasedOn,AdditionalCost) VALUES ('" + duplicateNewNameValue + "','" + data.get(i).toString().split("\\|")[1] + "','" + selSpecies + "','" + selCulture + "','" + data.get(i).toString().split("\\|")[3] + "','" + data.get(i).toString().split("\\|")[4] + "','" + data.get(i).toString().split("\\|")[5] + "','" + data.get(i).toString().split("\\|")[6] + "');");
+
+                if ("--all--".equals(selClass)
+                        && "--all--".equals(selCulture)) {
+                    executeSQL("INSERT INTO `CreatedClasses`"
+                            + "(ClassName,Skills,SpeciesName,CultureName,Advancements,Type,BasedOn,AdditionalCost) "
+                            + "VALUES ('"
+                            + data.get(i).toString().split("\\|")[0] + "','"
+                            + data.get(i).toString().split("\\|")[1] + "','"
+                            + duplicateNewNameValue + "','"
+                            + data.get(i).toString().split("\\|")[2] + "','"
+                            + data.get(i).toString().split("\\|")[3] + "','"
+                            + data.get(i).toString().split("\\|")[4] + "','"
+                            + data.get(i).toString().split("\\|")[5] + "','"
+                            + data.get(i).toString().split("\\|")[6] + "');");
+
+                } else if ("--all--".equals(selClass)
+                        && !"--all--".equals(selCulture)
+                        && data.get(i).toString().split("\\|")[2].equals(selCulture)) {
+                    executeSQL("INSERT INTO `CreatedClasses`"
+                            + "(ClassName,Skills,SpeciesName,CultureName,Advancements,Type,BasedOn,AdditionalCost) "
+                            + "VALUES ('"
+                            + data.get(i).toString().split("\\|")[0] + "','"
+                            + data.get(i).toString().split("\\|")[1] + "','"
+                            + selSpecies + "','"
+                            + duplicateNewNameValue + "','"
+                            + data.get(i).toString().split("\\|")[3] + "','"
+                            + data.get(i).toString().split("\\|")[4] + "','"
+                            + data.get(i).toString().split("\\|")[5] + "','"
+                            + data.get(i).toString().split("\\|")[6] + "');");
+
+                } else if (!"--all--".equals(selClass)
+                        && !"--all--".equals(selCulture)
+                        && data.get(i).toString().split("\\|")[2].equals(selCulture)
+                        && data.get(i).toString().split("\\|")[2].equals(selClass)) {
+                    executeSQL("INSERT INTO `CreatedClasses`"
+                            + "(ClassName,Skills,SpeciesName,CultureName,Advancements,Type,BasedOn,AdditionalCost) "
+                            + "VALUES ('"
+                            + duplicateNewNameValue + "','"
+                            + data.get(i).toString().split("\\|")[1] + "','"
+                            + selSpecies + "','"
+                            + selCulture + "','"
+                            + data.get(i).toString().split("\\|")[3] + "','"
+                            + data.get(i).toString().split("\\|")[4] + "','"
+                            + data.get(i).toString().split("\\|")[5] + "','"
+                            + data.get(i).toString().split("\\|")[6] + "');");
                 }
             }
         } catch (SQLException ex) {
-            ErrorController.ErrorController(ex);
+            ErrorController.ErrorControllerMethod(ex);
             Logger.getLogger(DatabaseWriter.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
@@ -426,16 +971,49 @@ public class DatabaseWriter {
             String[] columns = {"HeroName", "CultureName", "Advancements", "BasedOn", "AdditionalCost"};
             ObservableList data = BuilderCORE.getData(stmt, columns, null, 0);
             for (int i = 0; i < data.size(); i++) {
-                if ("--all--".equals(selHero) && "--all--".equals(selCulture)) {
-                    executeSQL("INSERT INTO `CreatedHeroes`(HeroName,SpeciesName,CultureName,Advancements,BasedOn,AdditionalCost) VALUES ('" + data.get(i).toString().split("\\|")[0] + "','" + duplicateNewNameValue + "','" + data.get(i).toString().split("\\|")[1] + "','" + data.get(i).toString().split("\\|")[2] + "','" + data.get(i).toString().split("\\|")[3] + "','" + data.get(i).toString().split("\\|")[4] + "');");
-                } else if ("--all--".equals(selHero) && !"--all--".equals(selCulture) && data.get(i).toString().split("\\|")[2].equals(selCulture)) {
-                    executeSQL("INSERT INTO `CreatedHeroes`(HeroName,SpeciesName,CultureName,Advancements,BasedOn,AdditionalCost) VALUES ('" + data.get(i).toString().split("\\|")[0] + "','" + selSpecies + "','" + duplicateNewNameValue + "','" + data.get(i).toString().split("\\|")[2] + "','" + data.get(i).toString().split("\\|")[3] + "','" + data.get(i).toString().split("\\|")[4] + "');");
-                } else if (!"--all--".equals(selHero) && !"--all--".equals(selCulture) && data.get(i).toString().split("\\|")[2].equals(selCulture) && data.get(i).toString().split("\\|")[2].equals(selHero)) {
-                    executeSQL("INSERT INTO `CreatedHeroes`(HeroName,SpeciesName,CultureName,Advancements,BasedOn,AdditionalCost) VALUES ('" + duplicateNewNameValue + "','" + selSpecies + "','" + selCulture + "','" + data.get(i).toString().split("\\|")[2] + "','" + data.get(i).toString().split("\\|")[3] + "','" + data.get(i).toString().split("\\|")[4] + "');");
+
+                if ("--all--".equals(selHero)
+                        && "--all--".equals(selCulture)) {
+                    executeSQL("INSERT INTO `CreatedHeroes`"
+                            + "(HeroName,SpeciesName,CultureName,Advancements,BasedOn,AdditionalCost) "
+                            + "VALUES ('"
+                            + data.get(i).toString().split("\\|")[0] + "','"
+                            + duplicateNewNameValue + "','"
+                            + data.get(i).toString().split("\\|")[1] + "','"
+                            + data.get(i).toString().split("\\|")[2] + "','"
+                            + data.get(i).toString().split("\\|")[3] + "','"
+                            + data.get(i).toString().split("\\|")[4] + "');");
+
+                } else if ("--all--".equals(selHero)
+                        && !"--all--".equals(selCulture)
+                        && data.get(i).toString().split("\\|")[2].equals(selCulture)) {
+                    executeSQL("INSERT INTO `CreatedHeroes`"
+                            + "(HeroName,SpeciesName,CultureName,Advancements,BasedOn,AdditionalCost) "
+                            + "VALUES ('"
+                            + data.get(i).toString().split("\\|")[0] + "','"
+                            + selSpecies + "','"
+                            + duplicateNewNameValue + "','"
+                            + data.get(i).toString().split("\\|")[2] + "','"
+                            + data.get(i).toString().split("\\|")[3] + "','"
+                            + data.get(i).toString().split("\\|")[4] + "');");
+
+                } else if (!"--all--".equals(selHero)
+                        && !"--all--".equals(selCulture)
+                        && data.get(i).toString().split("\\|")[2].equals(selCulture)
+                        && data.get(i).toString().split("\\|")[2].equals(selHero)) {
+                    executeSQL("INSERT INTO `CreatedHeroes`"
+                            + "(HeroName,SpeciesName,CultureName,Advancements,BasedOn,AdditionalCost) "
+                            + "VALUES ('"
+                            + duplicateNewNameValue + "','"
+                            + selSpecies + "','"
+                            + selCulture + "','"
+                            + data.get(i).toString().split("\\|")[2] + "','"
+                            + data.get(i).toString().split("\\|")[3] + "','"
+                            + data.get(i).toString().split("\\|")[4] + "');");
                 }
             }
         } catch (SQLException ex) {
-            ErrorController.ErrorController(ex);
+            ErrorController.ErrorControllerMethod(ex);
             Logger.getLogger(DatabaseWriter.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
@@ -456,16 +1034,46 @@ public class DatabaseWriter {
             String[] columns = {"CultureName", "ProgressName", "Progress", "Date"};
             ObservableList data = BuilderCORE.getData(stmt, columns, null, 0);
             for (int i = 0; i < data.size(); i++) {
-                if ("--all--".equals(selProgress) && "--all--".equals(selCulture)) {
-                    executeSQL("INSERT INTO `CreatedProgress`(SpeciesName,CultureName,ProgressName,Progress,Date) VALUES ('" + duplicateNewNameValue + "','" + data.get(i).toString().split("\\|")[0] + "','" + data.get(i).toString().split("\\|")[1] + "','" + data.get(i).toString().split("\\|")[2] + "','" + data.get(i).toString().split("\\|")[3] + "');");
-                } else if ("--all--".equals(selProgress) && !"--all--".equals(selCulture) && data.get(i).toString().split("\\|")[2].equals(selCulture)) {
-                    executeSQL("INSERT INTO `CreatedProgress`(SpeciesName,CultureName,ProgressName,Progress,Date) VALUES ('" + selSpecies + "','" + duplicateNewNameValue + "','" + data.get(i).toString().split("\\|")[1] + "','" + data.get(i).toString().split("\\|")[2] + "','" + data.get(i).toString().split("\\|")[3] + "');");
-                } else if (!"--all--".equals(selProgress) && !"--all--".equals(selCulture) && data.get(i).toString().split("\\|")[2].equals(selCulture) && data.get(i).toString().split("\\|")[2].equals(selProgress)) {
-                    executeSQL("INSERT INTO `CreatedProgress`(SpeciesName,CultureName,ProgressName,Progress,Date) VALUES ('" + selSpecies + "','" + selCulture + "','" + duplicateNewNameValue + "','" + data.get(i).toString().split("\\|")[2] + "','" + data.get(i).toString().split("\\|")[3] + "');");
+
+                if ("--all--".equals(selProgress)
+                        && "--all--".equals(selCulture)) {
+                    executeSQL("INSERT INTO `CreatedProgress`"
+                            + "(SpeciesName,CultureName,ProgressName,Progress,Date) "
+                            + "VALUES ('"
+                            + duplicateNewNameValue + "','"
+                            + data.get(i).toString().split("\\|")[0] + "','"
+                            + data.get(i).toString().split("\\|")[1] + "','"
+                            + data.get(i).toString().split("\\|")[2] + "','"
+                            + data.get(i).toString().split("\\|")[3] + "');");
+
+                } else if ("--all--".equals(selProgress)
+                        && !"--all--".equals(selCulture)
+                        && data.get(i).toString().split("\\|")[2].equals(selCulture)) {
+                    executeSQL("INSERT INTO `CreatedProgress`"
+                            + "(SpeciesName,CultureName,ProgressName,Progress,Date) "
+                            + "VALUES ('"
+                            + selSpecies + "','"
+                            + duplicateNewNameValue + "','"
+                            + data.get(i).toString().split("\\|")[1] + "','"
+                            + data.get(i).toString().split("\\|")[2] + "','"
+                            + data.get(i).toString().split("\\|")[3] + "');");
+
+                } else if (!"--all--".equals(selProgress)
+                        && !"--all--".equals(selCulture)
+                        && data.get(i).toString().split("\\|")[2].equals(selCulture)
+                        && data.get(i).toString().split("\\|")[2].equals(selProgress)) {
+                    executeSQL("INSERT INTO `CreatedProgress`"
+                            + "(SpeciesName,CultureName,ProgressName,Progress,Date) "
+                            + "VALUES ('"
+                            + selSpecies + "','"
+                            + selCulture + "','"
+                            + duplicateNewNameValue + "','"
+                            + data.get(i).toString().split("\\|")[2] + "','"
+                            + data.get(i).toString().split("\\|")[3] + "');");
                 }
             }
         } catch (SQLException ex) {
-            ErrorController.ErrorController(ex);
+            ErrorController.ErrorControllerMethod(ex);
             Logger.getLogger(DatabaseWriter.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
@@ -486,16 +1094,125 @@ public class DatabaseWriter {
             String[] columns = {"RosterName", "CultureName", "Roster", "MaxPoints"};
             ObservableList data = BuilderCORE.getData(stmt, columns, null, 0);
             for (int i = 0; i < data.size(); i++) {
-                if ("--all--".equals(selRoster) && "--all--".equals(selCulture)) {
-                    executeSQL("INSERT INTO `CreatedRosters`(RosterName,SpeciesName,CultureName,Roster,MaxPoints) VALUES ('" + data.get(i).toString().split("\\|")[0] + "','" + duplicateNewNameValue + "','" + data.get(i).toString().split("\\|")[1] + "','" + data.get(i).toString().split("\\|")[2] + "','" + data.get(i).toString().split("\\|")[3] + "');");
-                } else if ("--all--".equals(selRoster) && !"--all--".equals(selCulture) && data.get(i).toString().split("\\|")[2].equals(selCulture)) {
-                    executeSQL("INSERT INTO `CreatedRosters`(RosterName,SpeciesName,CultureName,Roster,MaxPoints) VALUES ('" + data.get(i).toString().split("\\|")[0] + "','" + selSpecies + "','" + duplicateNewNameValue + "','" + data.get(i).toString().split("\\|")[2] + "','" + data.get(i).toString().split("\\|")[3] + "');");
-                } else if (!"--all--".equals(selRoster) && !"--all--".equals(selCulture) && data.get(i).toString().split("\\|")[2].equals(selCulture) && data.get(i).toString().split("\\|")[2].equals(selRoster)) {
-                    executeSQL("INSERT INTO `CreatedRosters`(RosterName,SpeciesName,CultureName,Roster,MaxPoints) VALUES ('" + duplicateNewNameValue + "','" + selSpecies + "','" + selCulture + "','" + data.get(i).toString().split("\\|")[2] + "','" + data.get(i).toString().split("\\|")[3] + "');");
+
+                if ("--all--".equals(selRoster)
+                        && "--all--".equals(selCulture)) {
+                    executeSQL("INSERT INTO `CreatedRosters`"
+                            + "(RosterName,SpeciesName,CultureName,Roster,MaxPoints) "
+                            + "VALUES ('"
+                            + data.get(i).toString().split("\\|")[0] + "','"
+                            + duplicateNewNameValue + "','"
+                            + data.get(i).toString().split("\\|")[1] + "','"
+                            + data.get(i).toString().split("\\|")[2] + "','"
+                            + data.get(i).toString().split("\\|")[3] + "');");
+
+                } else if ("--all--".equals(selRoster)
+                        && !"--all--".equals(selCulture)
+                        && data.get(i).toString().split("\\|")[2].equals(selCulture)) {
+                    executeSQL("INSERT INTO `CreatedRosters`"
+                            + "(RosterName,SpeciesName,CultureName,Roster,MaxPoints) "
+                            + "VALUES ('"
+                            + data.get(i).toString().split("\\|")[0] + "','"
+                            + selSpecies + "','"
+                            + duplicateNewNameValue + "','"
+                            + data.get(i).toString().split("\\|")[2] + "','"
+                            + data.get(i).toString().split("\\|")[3] + "');");
+
+                } else if (!"--all--".equals(selRoster)
+                        && !"--all--".equals(selCulture)
+                        && data.get(i).toString().split("\\|")[2].equals(selCulture)
+                        && data.get(i).toString().split("\\|")[2].equals(selRoster)) {
+                    executeSQL("INSERT INTO `CreatedRosters`"
+                            + "(RosterName,SpeciesName,CultureName,Roster,MaxPoints) "
+                            + "VALUES ('"
+                            + duplicateNewNameValue + "','"
+                            + selSpecies + "','"
+                            + selCulture + "','"
+                            + data.get(i).toString().split("\\|")[2] + "','"
+                            + data.get(i).toString().split("\\|")[3] + "');");
                 }
             }
         } catch (SQLException ex) {
-            ErrorController.ErrorController(ex);
+            ErrorController.ErrorControllerMethod(ex);
+            Logger.getLogger(DatabaseWriter.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    /**
+     *
+     * @param selSpecies
+     * @param selCulture
+     * @param selBattle
+     * @param duplicateNewNameValue
+     *
+     */
+    public static void duplicateBattle(String selSpecies, String selCulture, String selBattle, String duplicateNewNameValue) {
+        try {
+            chooseConnection(UseCases.Userdb);
+            PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT * FROM BattleHistory WHERE UserSpecies =? or OponentSpecies=?");
+            stmt.setString(1, selSpecies);
+            stmt.setString(2, selSpecies);
+            String[] columns = {"BattleName", "UserSpecies", "UserCulture", "UserRoster", "OponentSpecies", "OponentCulture", "OponentRoster", "Points", "Outcome", "Date", "ReplayID"};
+            ObservableList data = BuilderCORE.getData(stmt, columns, null, 0);
+            for (int i = 0; i < data.size(); i++) {
+
+                if ("--all--".equals(selBattle)
+                        && "--all--".equals(selCulture)) {
+                    executeSQL("INSERT INTO `BattleHistory`"
+                            + "(BattleName,UserSpecies,UserCulture,UserRoster,OponentSpecies,OponentCulture,OponentRoster,Points,Outcome,Date,ReplayID) "
+                            + "VALUES ('"
+                            + data.get(i).toString().split("\\|")[0] + "','"
+                            + (data.get(i).toString().split("\\|")[1].equals(selSpecies) ? duplicateNewNameValue : data.get(i).toString().split("\\|")[1]) + "','"
+                            + data.get(i).toString().split("\\|")[2] + "','"
+                            + data.get(i).toString().split("\\|")[3] + "','"
+                            + (data.get(i).toString().split("\\|")[4].equals(selSpecies) ? duplicateNewNameValue : data.get(i).toString().split("\\|")[4]) + "','"
+                            + data.get(i).toString().split("\\|")[5] + "','"
+                            + data.get(i).toString().split("\\|")[6] + "','"
+                            + data.get(i).toString().split("\\|")[7] + "','"
+                            + data.get(i).toString().split("\\|")[8] + "','"
+                            + data.get(i).toString().split("\\|")[9] + "','"
+                            + data.get(i).toString().split("\\|")[10] + "');");
+
+                } else if ("--all--".equals(selBattle)
+                        && !"--all--".equals(selCulture)
+                        && data.get(i).toString().split("\\|")[2].equals(selCulture)) {
+                    executeSQL("INSERT INTO `BattleHistory`"
+                            + "(BattleName,UserSpecies,UserCulture,UserRoster,OponentSpecies,OponentCulture,OponentRoster,Points,Outcome,Date,ReplayID) "
+                            + "VALUES ('"
+                            + data.get(i).toString().split("\\|")[0] + "','"
+                            + data.get(i).toString().split("\\|")[1] + "','"
+                            + (data.get(i).toString().split("\\|")[2].equals(selCulture) ? duplicateNewNameValue : data.get(i).toString().split("\\|")[2]) + "','"
+                            + data.get(i).toString().split("\\|")[3] + "','"
+                            + data.get(i).toString().split("\\|")[4] + "','"
+                            + (data.get(i).toString().split("\\|")[5].equals(selCulture) ? duplicateNewNameValue : data.get(i).toString().split("\\|")[5]) + "','"
+                            + data.get(i).toString().split("\\|")[6] + "','"
+                            + data.get(i).toString().split("\\|")[7] + "','"
+                            + data.get(i).toString().split("\\|")[8] + "','"
+                            + data.get(i).toString().split("\\|")[9] + "','"
+                            + data.get(i).toString().split("\\|")[10] + "');");
+
+                } else if (!"--all--".equals(selBattle)
+                        && !"--all--".equals(selCulture)
+                        && data.get(i).toString().split("\\|")[2].equals(selCulture)
+                        && data.get(i).toString().split("\\|")[2].equals(selBattle)) {
+                    executeSQL("INSERT INTO `BattleHistory`"
+                            + "(BattleName,UserSpecies,UserCulture,UserRoster,OponentSpecies,OponentCulture,OponentRoster,Points,Outcome,Date,ReplayID) "
+                            + "VALUES ('"
+                            + duplicateNewNameValue + "','"
+                            + data.get(i).toString().split("\\|")[1] + "','"
+                            + data.get(i).toString().split("\\|")[2] + "','"
+                            + data.get(i).toString().split("\\|")[3] + "','"
+                            + data.get(i).toString().split("\\|")[4] + "','"
+                            + data.get(i).toString().split("\\|")[5] + "','"
+                            + data.get(i).toString().split("\\|")[6] + "','"
+                            + data.get(i).toString().split("\\|")[7] + "','"
+                            + data.get(i).toString().split("\\|")[8] + "','"
+                            + data.get(i).toString().split("\\|")[9] + "','"
+                            + data.get(i).toString().split("\\|")[10] + "');");
+                }
+            }
+        } catch (SQLException ex) {
+            ErrorController.ErrorControllerMethod(ex);
             Logger.getLogger(DatabaseWriter.class.getName()).log(Level.SEVERE, null, ex);
         }
     }

@@ -73,7 +73,7 @@ public class CreateWindowWhatController implements Initializable {
                 createSpeciesController.newWhat(What);
             }
         } catch (IOException ex) {
-            ErrorController.ErrorController(ex);
+            ErrorController.ErrorControllerMethod(ex);
             Logger.getLogger(CreateWindowWhatController.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
@@ -98,7 +98,7 @@ public class CreateWindowWhatController implements Initializable {
             }
             createCultureStage.show();
         } catch (IOException ex) {
-            ErrorController.ErrorController(ex);
+            ErrorController.ErrorControllerMethod(ex);
             Logger.getLogger(CreateWindowWhatController.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
@@ -108,7 +108,7 @@ public class CreateWindowWhatController implements Initializable {
         newCultureActions("Choose");
     }
 
-    private void newRosterAcrions(String Selection) {
+    private void newRosterActions(String Selection) {
         try {
             GenesysProjectBuilder.hideOtherThanMainStage();
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/genesys/project/fxml/CreateRosterFXML.fxml"));
@@ -123,14 +123,14 @@ public class CreateWindowWhatController implements Initializable {
             }
             createRosterStage.show();
         } catch (IOException ex) {
-            ErrorController.ErrorController(ex);
+            ErrorController.ErrorControllerMethod(ex);
             Logger.getLogger(CreateWindowWhatController.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
     @FXML
     private void createRosterChooseActionPerformed() {
-        newRosterAcrions("Choose");
+        newRosterActions("Choose");
     }
 
     /**
@@ -157,7 +157,7 @@ public class CreateWindowWhatController implements Initializable {
                 newCultureActions(Selection);
                 break;
             case "Roster":
-                newRosterAcrions(Selection);
+                newRosterActions(Selection);
                 break;
             case "Humanoid":
             case "Fey":

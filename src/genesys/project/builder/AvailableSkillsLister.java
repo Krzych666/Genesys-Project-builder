@@ -41,13 +41,23 @@ public class AvailableSkillsLister {
         lifeDomainTree2Value = LifeDomainTree2Values.getEnum(skillSubSet);
         if (!IgnoreSkillsList.isEmpty()) {
             for (int i = 0; i < IgnoreSkillsList.size(); i++) {
-                data = DatabaseReader.getLifeDomainTree3OnLifeDomainTree2OrLifeDomainTree3AndSkillNameAndAgeITERATED(columns1, skillSubSet, reptiliaSpecific, IgnoreSkillsList, maxAge, i);
+                data = DatabaseReader.getLifeDomainTree3OnLifeDomainTree2OrLifeDomainTree3AndSkillNameAndAgeITERATED(
+                        columns1,
+                        skillSubSet,
+                        reptiliaSpecific,
+                        IgnoreSkillsList,
+                        maxAge, i);
                 lifeDomainTree3.addAll(data);
             }
         }
         switch (lifeDomain) {
             case Humanoid:
-                data = DatabaseReader.getSkillNameOnLifeDomainTree2AndLifeDomainTree3AndAge(columns, skillSubSet, basic[0], maxAge, IgnoreSkillsList);
+                data = DatabaseReader.getSkillNameOnLifeDomainTree2AndLifeDomainTree3AndAge(
+                        columns,
+                        skillSubSet,
+                        basic[0],
+                        maxAge,
+                        IgnoreSkillsList);
                 if (!data.isEmpty()) {
                     tmp.add("--" + basic[0] + "--");
                     tmp.addAll(data);
@@ -55,7 +65,12 @@ public class AvailableSkillsLister {
                 }
                 break;
             case Fey:
-                data = DatabaseReader.getSkillNameOnLifeDomainTree2AndLifeDomainTree3AndAge(columns, skillSubSet, basic[1], maxAge, IgnoreSkillsList);
+                data = DatabaseReader.getSkillNameOnLifeDomainTree2AndLifeDomainTree3AndAge(
+                        columns,
+                        skillSubSet,
+                        basic[1],
+                        maxAge,
+                        IgnoreSkillsList);
                 ;
                 if (!data.isEmpty()) {
                     tmp.add("--" + basic[1] + "--");
@@ -65,24 +80,44 @@ public class AvailableSkillsLister {
                 break;
             case Reptilia:
                 if (IgnoreSkillsList.isEmpty()) {
-                    data = DatabaseReader.getSkillNameOnLifeDomainTree2AndLifeDomainTree3AndAge(columns, skillSubSet, reptiliaSpecific[1], maxAge, IgnoreSkillsList);
+                    data = DatabaseReader.getSkillNameOnLifeDomainTree2AndLifeDomainTree3AndAge(
+                            columns,
+                            skillSubSet,
+                            reptiliaSpecific[1],
+                            maxAge,
+                            IgnoreSkillsList);
                     if (!data.isEmpty()) {
                         tmp.add("--" + reptiliaSpecific[1] + "--");
                         tmp.addAll(data);
                         tmp.add(" ");
                     }
                 } else if ((!lifeDomainTree3.contains(reptiliaSpecific[1])) || (IgnoreSkillsList.stream().anyMatch(skill -> {
-                    ObservableList<String> tmp3 = DatabaseReader.getSkillNameOnLifeDomainTree2AndLifeDomainTree3AndAge(columns, skillSubSet, reptiliaSpecific[1], maxAge, null);
+                    ObservableList<String> tmp3 = DatabaseReader.getSkillNameOnLifeDomainTree2AndLifeDomainTree3AndAge(
+                            columns,
+                            skillSubSet,
+                            reptiliaSpecific[1],
+                            maxAge,
+                            null);
                     return (skill.toString().split(" \\(p")[0]).equals(tmp3.get(0));
                 })) || (IgnoreSkillsList.contains("Ophidian"/*To implement for rare and ancient blodline swap*/))) {
-                    data = DatabaseReader.getSkillNameOnLifeDomainTree2AndLifeDomainTree3AndAge(columns, skillSubSet, reptiliaSpecific[1], maxAge, IgnoreSkillsList);
+                    data = DatabaseReader.getSkillNameOnLifeDomainTree2AndLifeDomainTree3AndAge(
+                            columns,
+                            skillSubSet,
+                            reptiliaSpecific[1],
+                            maxAge,
+                            IgnoreSkillsList);
                     if (!data.isEmpty()) {
                         tmp.add("--" + reptiliaSpecific[1] + "--");
                         tmp.addAll(data);
                         tmp.add(" ");
                     }
                 }
-                data = DatabaseReader.getSkillNameOnLifeDomainTree2AndLifeDomainTree3AndAge(columns, skillSubSet, basic[1], maxAge, IgnoreSkillsList);
+                data = DatabaseReader.getSkillNameOnLifeDomainTree2AndLifeDomainTree3AndAge(
+                        columns,
+                        skillSubSet,
+                        basic[1],
+                        maxAge,
+                        IgnoreSkillsList);
                 if (!data.isEmpty()) {
                     tmp.add("--" + basic[1] + "--");
                     tmp.addAll(data);
@@ -90,7 +125,13 @@ public class AvailableSkillsLister {
                 }
                 break;
             case Biest:
-                data = DatabaseReader.getSkillNameOnLifeDomainTree2AndLifeDomainTree3OrLifeDomainTree3AndAge(columns, skillSubSet, basic[0], basic[1], maxAge, IgnoreSkillsList);
+                data = DatabaseReader.getSkillNameOnLifeDomainTree2AndLifeDomainTree3OrLifeDomainTree3AndAge(
+                        columns,
+                        skillSubSet,
+                        basic[0],
+                        basic[1],
+                        maxAge,
+                        IgnoreSkillsList);
                 if (!data.isEmpty()) {
                     switch (lifeDomainTree1Value) {
                         case BiestialKingdoms:
@@ -110,7 +151,13 @@ public class AvailableSkillsLister {
                 }
                 break;
             case Insecta:
-                data = DatabaseReader.getSkillNameOnLifeDomainTree2AndLifeDomainTree3OrLifeDomainTree3AndAge(columns, skillSubSet, basic[0], basic[1], maxAge, IgnoreSkillsList);
+                data = DatabaseReader.getSkillNameOnLifeDomainTree2AndLifeDomainTree3OrLifeDomainTree3AndAge(
+                        columns,
+                        skillSubSet,
+                        basic[0],
+                        basic[1],
+                        maxAge,
+                        IgnoreSkillsList);
                 if (!data.isEmpty()) {
                     switch (lifeDomainTree1Value) {
                         case Arachnea:
@@ -151,7 +198,12 @@ public class AvailableSkillsLister {
             switch (lifeDomain) {
                 case Humanoid:
                     if (lifeDomainTree3.contains(basic[0])) {
-                        data = DatabaseReader.getSkillNameOnLifeDomainTree2AndLifeDomainTree3AndAge(columns, skillSubSet, basic[3], maxAge, IgnoreSkillsList);
+                        data = DatabaseReader.getSkillNameOnLifeDomainTree2AndLifeDomainTree3AndAge(
+                                columns,
+                                skillSubSet,
+                                basic[3],
+                                maxAge,
+                                IgnoreSkillsList);
                         if (!data.isEmpty()) {
                             tmp.add("--" + basic[3] + "--");
                             tmp.addAll(data);
@@ -160,7 +212,15 @@ public class AvailableSkillsLister {
                     break;
                 case Fey:
                     if (lifeDomainTree3.contains(basic[1])) {
-                        data = DatabaseReader.getSkillNameOnLifeDomainTree2AndLifeDomainTree3OrLifeDomainTree3OrLifeDomainTree3AndAge(columns, skillSubSet, basic[2], basic[4], basic[5], maxAge, IgnoreSkillsList, lifeDomainTree3);
+                        data = DatabaseReader.getSkillNameOnLifeDomainTree2AndLifeDomainTree3OrLifeDomainTree3OrLifeDomainTree3AndAge(
+                                columns,
+                                skillSubSet,
+                                basic[2],
+                                basic[4],
+                                basic[5],
+                                maxAge,
+                                IgnoreSkillsList,
+                                lifeDomainTree3);
                         if (!data.isEmpty()) {
                             tmp.addAll(data);
                         }
@@ -174,15 +234,20 @@ public class AvailableSkillsLister {
                         }
                         if (traitLevel.equals(basic[3]) || traitLevel.equals(basic[4])) {
                             traitNumbers[1] += 1;
-                            
+
                         }
                         if (traitLevel.equals(reptiliaSpecific[0])) {
                             traitNumbers[2] += 1;
                         }
                     });
-                    
+
                     if (traitNumbers[0] / 2 >= traitNumbers[1] + 1) {
-                        data = DatabaseReader.getSkillNameOnLifeDomainTree2AndLifeDomainTree3AndAge(columns, skillSubSet, basic[4], maxAge, IgnoreSkillsList);
+                        data = DatabaseReader.getSkillNameOnLifeDomainTree2AndLifeDomainTree3AndAge(
+                                columns,
+                                skillSubSet,
+                                basic[4],
+                                maxAge,
+                                IgnoreSkillsList);
                         if (!data.isEmpty()) {
                             tmp.add("--" + basic[4] + "--");
                             tmp.addAll(data);
@@ -190,7 +255,12 @@ public class AvailableSkillsLister {
                         }
                     }
                     if (traitNumbers[1] / 2 >= traitNumbers[2] + 1) {
-                        data = DatabaseReader.getSkillNameOnLifeDomainTree2AndLifeDomainTree3AndAge(columns, skillSubSet, reptiliaSpecific[0], maxAge, IgnoreSkillsList);
+                        data = DatabaseReader.getSkillNameOnLifeDomainTree2AndLifeDomainTree3AndAge(
+                                columns,
+                                skillSubSet,
+                                reptiliaSpecific[0],
+                                maxAge,
+                                IgnoreSkillsList);
                         if (!data.isEmpty()) {
                             tmp.add("--" + reptiliaSpecific[0] + "--");
                             tmp.addAll(data);
@@ -199,7 +269,14 @@ public class AvailableSkillsLister {
                     break;
                 case Biest:
                     if (lifeDomainTree3.contains(basic[0]) || lifeDomainTree3.contains(basic[1])) {
-                        data = DatabaseReader.getSkillNameOnLifeDomainTree2AndLifeDomainTree3AndAgeV2(columns, skillSubSet, basic[3], basic[4], maxAge, IgnoreSkillsList, lifeDomainTree1Value);
+                        data = DatabaseReader.getSkillNameOnLifeDomainTree2AndLifeDomainTree3AndAgeV2(
+                                columns,
+                                skillSubSet,
+                                basic[3],
+                                basic[4],
+                                maxAge,
+                                IgnoreSkillsList,
+                                lifeDomainTree1Value);
                         if (!data.isEmpty()) {
                             switch (lifeDomainTree1Value) {
                                 case BiestialKingdoms:
@@ -218,7 +295,15 @@ public class AvailableSkillsLister {
                     break;
                 case Insecta:
                     if (lifeDomainTree3.contains(basic[0]) || lifeDomainTree3.contains(basic[1])) {
-                        data = DatabaseReader.getSkillNameOnLifeDomainTree2AndLifeDomainTree3AndAgeV3(columns, skillSubSet, basic[3], basic[4], maxAge, IgnoreSkillsList, lifeDomainTree1Value, lifeDomainTree2Value);
+                        data = DatabaseReader.getSkillNameOnLifeDomainTree2AndLifeDomainTree3AndAgeV3(
+                                columns,
+                                skillSubSet,
+                                basic[3],
+                                basic[4],
+                                maxAge,
+                                IgnoreSkillsList,
+                                lifeDomainTree1Value,
+                                lifeDomainTree2Value);
                         if (!data.isEmpty()) {
                             switch (lifeDomainTree1Value) {
                                 case Arachnea:

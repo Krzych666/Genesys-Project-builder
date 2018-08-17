@@ -24,7 +24,7 @@ public class ErrorController extends Throwable {
      *
      * @param ex
      */
-    public static void ErrorController(Exception ex) {
+    public static void ErrorControllerMethod(Exception ex) {
         Alert alert = new Alert(AlertType.ERROR);
         alert.setTitle("Error");
         alert.setHeaderText("Exception Details");

@@ -193,7 +193,7 @@ public class BuilderCORE {
             }
             conn.setAutoCommit(false);
         } catch (SQLException ex) {
-            ErrorController.ErrorController(ex);
+            ErrorController.ErrorControllerMethod(ex);
             Logger.getLogger(BuilderCORE.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
@@ -208,7 +208,7 @@ public class BuilderCORE {
             Class.forName("org.sqlite.JDBC");
             cCORE = DriverManager.getConnection("jdbc:sqlite:src\\genesys\\project\\database\\GenPr_CORE.db");
         } catch (ClassNotFoundException | SQLException e) {
-            ErrorController.ErrorController(e);
+            ErrorController.ErrorControllerMethod(e);
             System.err.println(e.getClass().getName() + ": " + e.getMessage());
         }
         return cCORE;
@@ -224,7 +224,7 @@ public class BuilderCORE {
             Class.forName("org.sqlite.JDBC");
             cUserData = DriverManager.getConnection("jdbc:sqlite:src\\genesys\\project\\database\\GenPr_UserData.db");
         } catch (ClassNotFoundException | SQLException e) {
-            ErrorController.ErrorController(e);
+            ErrorController.ErrorControllerMethod(e);
             System.err.println(e.getClass().getName() + ": " + e.getMessage());
         }
         return cUserData;
@@ -268,28 +268,28 @@ public class BuilderCORE {
                     //if (j != columns.length - 1) {temp.add("");} //Why?
                 }
             } catch (SQLException e) {
-                ErrorController.ErrorController(e);
+                ErrorController.ErrorControllerMethod(e);
                 System.out.println(e.getMessage());
             } finally {
                 try {
                     rs.close();
                 } catch (SQLException e) {
-                    ErrorController.ErrorController(e);
+                    ErrorController.ErrorControllerMethod(e);
                 }
                 try {
                     stmt.close();
                 } catch (SQLException e) {
-                    ErrorController.ErrorController(e);
+                    ErrorController.ErrorControllerMethod(e);
                 }
                 try {
                     conn.close();
                 } catch (SQLException e) {
-                    ErrorController.ErrorController(e);
+                    ErrorController.ErrorControllerMethod(e);
                 }
             }
             return temp;
         } catch (SQLException ex) {
-            ErrorController.ErrorController(ex);
+            ErrorController.ErrorControllerMethod(ex);
             Logger.getLogger(BuilderCORE.class.getName()).log(Level.SEVERE, null, ex);
         }
         return temp;
@@ -313,22 +313,22 @@ public class BuilderCORE {
                 try {
                     rs.close();
                 } catch (SQLException e) {
-                    ErrorController.ErrorController(e);
+                    ErrorController.ErrorControllerMethod(e);
                 }
                 try {
                     stmt.close();
                 } catch (SQLException e) {
-                    ErrorController.ErrorController(e);
+                    ErrorController.ErrorControllerMethod(e);
                 }
                 try {
                     conn.close();
                 } catch (SQLException e) {
-                    ErrorController.ErrorController(e);
+                    ErrorController.ErrorControllerMethod(e);
                 }
             }
             return Tmp;
         } catch (SQLException ex) {
-            ErrorController.ErrorController(ex);
+            ErrorController.ErrorControllerMethod(ex);
             Logger.getLogger(BuilderCORE.class.getName()).log(Level.SEVERE, null, ex);
         }
         return Tmp;
@@ -386,8 +386,19 @@ public class BuilderCORE {
         if (subSkill.contains("(")) {
             subSkill = subSkill.split(" \\(")[0];
         }
-        if (subSkill.contains("Increase") || subSkill.contains("Decrease") || subSkill.contains("Enhancement") || subSkill.contains("Reduction") || subSkill.contains("Restriction") || subSkill.contains("Resistance") || subSkill.contains("Weakness")) {
-            if (subSkill.split(" ")[0].equals("Increase") || subSkill.split(" ")[0].equals("Decrease") || subSkill.split(" ")[0].equals("Enhancement") || subSkill.split(" ")[0].equals("Reduction") || subSkill.split(" ")[0].equals("Resistance") || subSkill.split(" ")[0].equals("Weakness")) {
+        if (subSkill.contains("Increase")
+                || subSkill.contains("Decrease")
+                || subSkill.contains("Enhancement")
+                || subSkill.contains("Reduction")
+                || subSkill.contains("Restriction")
+                || subSkill.contains("Resistance")
+                || subSkill.contains("Weakness")) {
+            if (subSkill.split(" ")[0].equals("Increase")
+                    || subSkill.split(" ")[0].equals("Decrease")
+                    || subSkill.split(" ")[0].equals("Enhancement")
+                    || subSkill.split(" ")[0].equals("Reduction")
+                    || subSkill.split(" ")[0].equals("Resistance")
+                    || subSkill.split(" ")[0].equals("Weakness")) {
                 subSkill = subSkill.split(" ")[0] + " X";
             }
             if (subSkill.split(" ")[0].equals("Restriction")) {
@@ -582,7 +593,10 @@ public class BuilderCORE {
         } else {
             for (DatabaseHolder.AClass holdClas : DatabaseHolder.holdClass) {
                 if (holdClas.getClassName().equals(name)) {
-                    if (holdClas.getSkills() != null && !holdClas.getSkills().equals("null,") && !holdClas.getSkills().equals("") && !holdClas.getSkills().equals(";")) {
+                    if (holdClas.getSkills() != null
+                            && !holdClas.getSkills().equals("null,")
+                            && !holdClas.getSkills().equals("")
+                            && !holdClas.getSkills().equals(";")) {
                         DatabaseHolder.fullSkillList1 += holdClas.getSkills() + getBaseAddedSkills(holdClas.getBasedOn());
                     } else {
                         DatabaseHolder.fullSkillList1 += getBaseAddedSkills(holdClas.getBasedOn());
@@ -632,7 +646,11 @@ public class BuilderCORE {
                     points += a * baseAddedCost(lifeDomain, species, classname, source, points);
                     String[] lst = DatabaseHolder.skillsSeparatorRepalcer(classname[bb].getSkills()).split(",");
                     points += pointGetter(lst);
-                } else if (classname[bb].getBasedOn() != null && classname[bb].getBasedOn().equals(BASE) && !BASE.equals(DatabaseHolder.classList1Holder) && !"".equals(classname[bb].getSkills()) && !",".equals(classname[bb].getSkills())) {
+                } else if (classname[bb].getBasedOn() != null
+                        && classname[bb].getBasedOn().equals(BASE)
+                        && !BASE.equals(DatabaseHolder.classList1Holder)
+                        && !"".equals(classname[bb].getSkills())
+                        && !",".equals(classname[bb].getSkills())) {
                     String[] lst = DatabaseHolder.skillsSeparatorRepalcer(classname[bb].getSkills()).split(",");
                     points += pointGetter(lst);
                 }
@@ -796,47 +814,85 @@ public class BuilderCORE {
         switch (DatabaseHolder.holdSpecies.getLifedomain()) {
             case Humanoid:
                 if (!DatabaseHolder.arcana) {
-                    return DatabaseHolder.holdSpecies.getGeneticMutation() + "\n" + DatabaseHolder.holdSpecies.getEnvironmentalAdaptation() + "\n" + DatabaseHolder.holdSpecies.getKnowledgeAndScience() + "\n";
+                    return DatabaseHolder.holdSpecies.getGeneticMutation() + "\n"
+                            + DatabaseHolder.holdSpecies.getEnvironmentalAdaptation() + "\n"
+                            + DatabaseHolder.holdSpecies.getKnowledgeAndScience() + "\n";
                 } else {
-                    return DatabaseHolder.holdSpecies.getGeneticMutation() + "\n" + DatabaseHolder.holdSpecies.getEnvironmentalAdaptation() + "\n" + DatabaseHolder.holdSpecies.getKnowledgeAndScience() + "\n"; //TODO add fey skills
+                    return DatabaseHolder.holdSpecies.getGeneticMutation() + "\n"
+                            + DatabaseHolder.holdSpecies.getEnvironmentalAdaptation() + "\n"
+                            + DatabaseHolder.holdSpecies.getKnowledgeAndScience() + "\n"; //TODO add fey skills
                 }
             case Fey:
                 switch (((DatabaseHolder.AFey) DatabaseHolder.holdSpecies).getMainDomain()) {
                     case Light:
                         if (!DatabaseHolder.outcasts) {
-                            return DatabaseHolder.holdSpecies.getLesserTraitsAndPowersOfLight() + "\n" + DatabaseHolder.holdSpecies.getGreaterTraitsAndPowersOfLight() + "\n" + DatabaseHolder.holdSpecies.getLesserTraitsAndPowersOfTwilight() + "\n";
+                            return DatabaseHolder.holdSpecies.getLesserTraitsAndPowersOfLight() + "\n"
+                                    + DatabaseHolder.holdSpecies.getGreaterTraitsAndPowersOfLight() + "\n"
+                                    + DatabaseHolder.holdSpecies.getLesserTraitsAndPowersOfTwilight() + "\n";
                         } else {
-                            return DatabaseHolder.holdSpecies.getLesserTraitsAndPowersOfLight() + "\n" + DatabaseHolder.holdSpecies.getGreaterTraitsAndPowersOfLight() + "\n" + DatabaseHolder.holdSpecies.getKnowledgeAndScience() + "\n" + DatabaseHolder.holdSpecies.getEnvironmentalAdaptation() + "\n";
+                            return DatabaseHolder.holdSpecies.getLesserTraitsAndPowersOfLight() + "\n"
+                                    + DatabaseHolder.holdSpecies.getGreaterTraitsAndPowersOfLight() + "\n"
+                                    + DatabaseHolder.holdSpecies.getKnowledgeAndScience() + "\n"
+                                    + DatabaseHolder.holdSpecies.getEnvironmentalAdaptation() + "\n";
                         }
                     case Darkness:
                         if (!DatabaseHolder.outcasts) {
-                            return DatabaseHolder.holdSpecies.getLesserTraitsAndPowersOfDarkness() + "\n" + DatabaseHolder.holdSpecies.getGreaterTraitsAndPowersOfDarkness() + "\n" + DatabaseHolder.holdSpecies.getLesserTraitsAndPowersOfTwilight() + "\n";
+                            return DatabaseHolder.holdSpecies.getLesserTraitsAndPowersOfDarkness() + "\n"
+                                    + DatabaseHolder.holdSpecies.getGreaterTraitsAndPowersOfDarkness() + "\n"
+                                    + DatabaseHolder.holdSpecies.getLesserTraitsAndPowersOfTwilight() + "\n";
                         } else {
-                            return DatabaseHolder.holdSpecies.getLesserTraitsAndPowersOfDarkness() + "\n" + DatabaseHolder.holdSpecies.getGreaterTraitsAndPowersOfDarkness() + "\n" + DatabaseHolder.holdSpecies.getKnowledgeAndScience() + "\n" + DatabaseHolder.holdSpecies.getEnvironmentalAdaptation() + "\n";
+                            return DatabaseHolder.holdSpecies.getLesserTraitsAndPowersOfDarkness() + "\n"
+                                    + DatabaseHolder.holdSpecies.getGreaterTraitsAndPowersOfDarkness() + "\n"
+                                    + DatabaseHolder.holdSpecies.getKnowledgeAndScience() + "\n"
+                                    + DatabaseHolder.holdSpecies.getEnvironmentalAdaptation() + "\n";
                         }
                     case Twilight:
                         if (!DatabaseHolder.outcasts) {
-                            return DatabaseHolder.holdSpecies.getLesserTraitsAndPowersOfTwilight() + "\n" + DatabaseHolder.holdSpecies.getGreaterTraitsAndPowersOfTwilight() + "\n" + max(DatabaseHolder.holdSpecies.getLesserTraitsAndPowersOfLight(), DatabaseHolder.holdSpecies.getLesserTraitsAndPowersOfDarkness()) + "\n";
+                            return DatabaseHolder.holdSpecies.getLesserTraitsAndPowersOfTwilight() + "\n"
+                                    + DatabaseHolder.holdSpecies.getGreaterTraitsAndPowersOfTwilight() + "\n"
+                                    + max(DatabaseHolder.holdSpecies.getLesserTraitsAndPowersOfLight(), DatabaseHolder.holdSpecies.getLesserTraitsAndPowersOfDarkness()) + "\n";
                         } else {
-                            return DatabaseHolder.holdSpecies.getLesserTraitsAndPowersOfTwilight() + "\n" + DatabaseHolder.holdSpecies.getGreaterTraitsAndPowersOfTwilight() + "\n" + DatabaseHolder.holdSpecies.getKnowledgeAndScience() + "\n" + DatabaseHolder.holdSpecies.getEnvironmentalAdaptation() + "\n";
+                            return DatabaseHolder.holdSpecies.getLesserTraitsAndPowersOfTwilight() + "\n"
+                                    + DatabaseHolder.holdSpecies.getGreaterTraitsAndPowersOfTwilight() + "\n"
+                                    + DatabaseHolder.holdSpecies.getKnowledgeAndScience() + "\n"
+                                    + DatabaseHolder.holdSpecies.getEnvironmentalAdaptation() + "\n";
                         }
                 }
                 break;
             case Reptilia:
-                return DatabaseHolder.holdSpecies.getReptiliaLineage() + "\n" + DatabaseHolder.holdSpecies.getEnvironmentalAdaptability() + "\n" + DatabaseHolder.holdSpecies.getExtremisAffinity() + "\n";
+                return DatabaseHolder.holdSpecies.getReptiliaLineage() + "\n"
+                        + DatabaseHolder.holdSpecies.getEnvironmentalAdaptability() + "\n"
+                        + DatabaseHolder.holdSpecies.getExtremisAffinity() + "\n";
             case Biest:
-                return DatabaseHolder.holdSpecies.getBiestialKingdoms() + "\n" + DatabaseHolder.holdSpecies.getRegionalTraits() + "\n" + DatabaseHolder.holdSpecies.getGeneticMutation() + "\n" + DatabaseHolder.holdSpecies.getEnvironmentalAdaptation() + "\n" + DatabaseHolder.holdSpecies.getSpiritualAndScientificKnowledge() + "\n";
+                return DatabaseHolder.holdSpecies.getBiestialKingdoms() + "\n"
+                        + DatabaseHolder.holdSpecies.getRegionalTraits() + "\n"
+                        + DatabaseHolder.holdSpecies.getGeneticMutation() + "\n"
+                        + DatabaseHolder.holdSpecies.getEnvironmentalAdaptation() + "\n"
+                        + DatabaseHolder.holdSpecies.getSpiritualAndScientificKnowledge() + "\n";
             case Insecta:
-                return DatabaseHolder.holdSpecies.getOrder() + "\n" + DatabaseHolder.holdSpecies.getGeneticMorphology() + "\n" + DatabaseHolder.holdSpecies.getEnvironmentalAdaptation() + "\n" + DatabaseHolder.holdSpecies.getKnowledge() + "\n";
+                return DatabaseHolder.holdSpecies.getOrder() + "\n"
+                        + DatabaseHolder.holdSpecies.getGeneticMorphology() + "\n"
+                        + DatabaseHolder.holdSpecies.getEnvironmentalAdaptation() + "\n"
+                        + DatabaseHolder.holdSpecies.getKnowledge() + "\n";
         }
         return "";
     }
 
+    /**
+     *
+     * @param Date
+     * @return
+     */
     public static String generateIdFromDate(String Date) {
         String out = Date.replaceAll("\\.", "").replaceAll(":", "").replaceAll(" ", "");
         return out;
     }
 
+    /**
+     *
+     * @param data
+     * @return
+     */
     public static ObservableList beautifyBattleData(String data) {
         ObservableList out = FXCollections.observableArrayList();
         out.add(data.split("\\|")[0] + " - " + data.split("\\|")[1] + ", using roster: " + data.split("\\|")[2]
@@ -881,12 +937,16 @@ public class BuilderCORE {
         for (int i = 0; i < ruledskills.size(); i++) {
             tmp[0][i] = ruledskills.get(i).split(">")[0];
             tmp[1][i] = ruledskills.get(i).split(">")[1];
-            if (tmp[1][i].contains("Increase") || tmp[1][i].contains("Decrease") || tmp[1][i].contains("Model Size")) {
+            if (tmp[1][i].contains("Increase")
+                    || tmp[1][i].contains("Decrease")
+                    || tmp[1][i].contains("Model Size")) {
                 int a = 2;
                 if (tmp[1][i].contains("Increase")) {
                     a = 0;
                 }
-                if (tmp[1][i].contains("Decrease") || tmp[1][i].contains("Model Size") || tmp[1][i].contains("Increase Size")) {
+                if (tmp[1][i].contains("Decrease")
+                        || tmp[1][i].contains("Model Size")
+                        || tmp[1][i].contains("Increase Size")) {
                     a = 1;
                 }
                 for (int u = 0; u < wheretabl.size(); u++) {
@@ -1007,23 +1067,32 @@ public class BuilderCORE {
         }
     }
 
-    public static ObservableList generateAndAppyProgress(String species, String culture, String witch) {
+    /**
+     *
+     * @param species
+     * @param culture
+     * @param witch
+     * @return
+     */
+    public static ObservableList generateProgressAndBattlesSortedList(String species, String culture, String witch) {
 
         Map<String, String> sorterMap = new TreeMap<>();
         if (witch.equals("both") || witch.equals("Progress")) {
             ObservableList listFromProgress = DatabaseReader.getAllProgressAndDateForCulture(species, culture);
             for (int i = 0; i < listFromProgress.size(); i++) {
-                sorterMap.put(generateIdFromDate(listFromProgress.get(i).toString().split("\\|")[1]), "Progress: " + listFromProgress.get(i).toString().split("\\|")[0]);
-                //appyProgress(); //somwere else, this class is used
+                sorterMap.put(generateIdFromDate(
+                        listFromProgress.get(i).toString().split("\\|")[1]),
+                        "Progress: " + listFromProgress.get(i).toString().split("\\|")[0]);
             }
         }
         if (witch.equals("both") || witch.equals("Battle")) {
             ObservableList listFromBattles = DatabaseReader.getAllBattlesAndDateForCulture(species, culture);
             for (int i = 0; i < listFromBattles.size(); i++) {
-                sorterMap.put(generateIdFromDate(listFromBattles.get(i).toString().split("\\|")[1]), "Battle: " + listFromBattles.get(i).toString().split("\\|")[0]);
+                sorterMap.put(generateIdFromDate(
+                        listFromBattles.get(i).toString().split("\\|")[1]),
+                        "Battle: " + listFromBattles.get(i).toString().split("\\|")[0]);
             }
         }
-
         return FXCollections.observableArrayList(sorterMap.values());
     }
 
@@ -1064,11 +1133,22 @@ public class BuilderCORE {
         return tmp;
     }
 
+    /**
+     *
+     * @param dataSpecies
+     * @param dataClass
+     * @param baseSpecies
+     * @param BaseCulture
+     * @return
+     */
     public static String getSourceBaseSkills(ObservableList dataSpecies, ObservableList dataClass, String baseSpecies, String BaseCulture) {
         String skillsThis = "";
         String basedOn = "";
         String skillsBefore = "";
-        if (dataClass != null && !dataClass.isEmpty() && dataClass.get(0) != null && dataClass.get(0).toString().split("\\|").length != 0) {
+        if (dataClass != null
+                && !dataClass.isEmpty()
+                && dataClass.get(0) != null
+                && dataClass.get(0).toString().split("\\|").length != 0) {
             skillsThis = dataClass.get(0).toString().split("\\|")[0];
             basedOn = dataClass.get(0).toString().split("\\|")[3];
         }

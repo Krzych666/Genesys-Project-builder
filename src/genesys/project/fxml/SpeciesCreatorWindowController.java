@@ -344,7 +344,7 @@ public class SpeciesCreatorWindowController implements Initializable {
                     createHoldWindowStage.setTitle("Create Classes for " + DatabaseHolder.holdCulture.getSpeciesName() + " - " + DatabaseHolder.holdCulture.getCultureName());
                     createHoldWindowStage.show();
                 } catch (IOException ex) {
-                    ErrorController.ErrorController(ex);
+                    ErrorController.ErrorControllerMethod(ex);
                     Logger.getLogger(SpeciesCreatorWindowController.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }

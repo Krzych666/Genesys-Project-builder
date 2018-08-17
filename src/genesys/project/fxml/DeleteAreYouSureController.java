@@ -44,9 +44,10 @@ public class DeleteAreYouSureController implements Initializable {
     @FXML
     public void deleteYesButtonActions() {
         DatabaseWriter.commenceDeleting();
-        speciesList.setItems(DatabaseReader.getSpeciesList());
-        speciesList.getSelectionModel().clearSelection();
-
+        if (speciesList != null) {
+            speciesList.setItems(DatabaseReader.getSpeciesList());
+            speciesList.getSelectionModel().clearSelection();
+        }
         Stage stage = (Stage) deleteYesButton.getScene().getWindow();
         stage.hide();
         deleteWindow.hide();

@@ -17,8 +17,8 @@ import genesys.project.builder.Enums.Enmuerations.MainRegionValue;
 import genesys.project.fxml.BuilderFXMLController;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  *
@@ -55,6 +55,11 @@ public class DatabaseHolder {
      * holdRoster
      */
     public static ARoster holdRoster = new ARoster();
+
+    /**
+     * holdBattle
+     */
+    public static ABattle holdBattle = new ABattle();
 
     /**
      * fullSkillList1
@@ -131,6 +136,11 @@ public class DatabaseHolder {
     public static ARoster modifiedHoldRoster;
 
     /**
+     * modifiedHoldBattle
+     */
+    public static ABattle modifiedHoldBattle;
+
+    /**
      * classList1Holder
      */
     public static String classList1Holder;
@@ -181,19 +191,33 @@ public class DatabaseHolder {
         String fintex = "";
         switch (holdSpecies.Lifedomain) {
             case Humanoid:
-                fintex += ((AHumanoid) holdSpecies).getStandardClass() + "\n" + ((AHumanoid) holdSpecies).getEliteClass() + "\n" + ((AHumanoid) holdSpecies).getLeaderClass() + "\n" + ((AHumanoid) holdSpecies).getUniqueClass();
+                fintex += ((AHumanoid) holdSpecies).getStandardClass() + "\n"
+                        + ((AHumanoid) holdSpecies).getEliteClass() + "\n"
+                        + ((AHumanoid) holdSpecies).getLeaderClass() + "\n"
+                        + ((AHumanoid) holdSpecies).getUniqueClass();
                 break;
             case Fey:
-                fintex += ((AFey) holdSpecies).getDiscipleClass() + "\n" + ((AFey) holdSpecies).getArchlordClass() + "\n" + ((AFey) holdSpecies).getParagonClass();
+                fintex += ((AFey) holdSpecies).getDiscipleClass() + "\n"
+                        + ((AFey) holdSpecies).getArchlordClass() + "\n"
+                        + ((AFey) holdSpecies).getParagonClass();
                 break;
             case Reptilia:
-                fintex += ((AReptilia) holdSpecies).getLesserClass() + "\n" + ((AReptilia) holdSpecies).getCommonClass() + "\n" + ((AReptilia) holdSpecies).getRareClass() + "\n" + ((AReptilia) holdSpecies).getAncientClass();
+                fintex += ((AReptilia) holdSpecies).getLesserClass() + "\n"
+                        + ((AReptilia) holdSpecies).getCommonClass() + "\n"
+                        + ((AReptilia) holdSpecies).getRareClass() + "\n"
+                        + ((AReptilia) holdSpecies).getAncientClass();
                 break;
             case Biest:
-                fintex += ((ABiest) holdSpecies).getCommonClass() + "\n" + ((ABiest) holdSpecies).getGreaterClass() + "\n" + ((ABiest) holdSpecies).getLeaderClass() + "\n" + ((ABiest) holdSpecies).getLegendaryClass();
+                fintex += ((ABiest) holdSpecies).getCommonClass() + "\n"
+                        + ((ABiest) holdSpecies).getGreaterClass() + "\n"
+                        + ((ABiest) holdSpecies).getLeaderClass() + "\n"
+                        + ((ABiest) holdSpecies).getLegendaryClass();
                 break;
             case Insecta:
-                fintex += ((AInsecta) holdSpecies).getLesserClass() + "\n" + ((AInsecta) holdSpecies).getCommonClass() + "\n" + ((AInsecta) holdSpecies).getAdvancedClass() + "\n" + ((AInsecta) holdSpecies).getApexClass();
+                fintex += ((AInsecta) holdSpecies).getLesserClass() + "\n"
+                        + ((AInsecta) holdSpecies).getCommonClass() + "\n"
+                        + ((AInsecta) holdSpecies).getAdvancedClass() + "\n"
+                        + ((AInsecta) holdSpecies).getApexClass();
                 break;
         }
         return fintex;
@@ -301,11 +325,14 @@ public class DatabaseHolder {
     public static void searchFreeClassSpot() {
         b = 0;
         for (int i = 0; i < holdClass.length; i++) {
-            if (holdClass[i].ClassName == null || "".equals(holdClass[i].ClassName)) {
+            if (holdClass[i].ClassName == null
+                    || "".equals(holdClass[i].ClassName)) {
                 b = i;
                 i = numberOfClases;
             }
-            if (i == numberOfClases - 1 && !(holdClass[i].ClassName == null || "".equals(holdClass[i].ClassName))) {
+            if (i == numberOfClases - 1
+                    && !(holdClass[i].ClassName == null
+                    || "".equals(holdClass[i].ClassName))) {
                 b = numberOfClases;
             }
         }
@@ -428,28 +455,38 @@ public class DatabaseHolder {
     }
 
     /**
+     *
+     * @param selSpecies
+     * @param selCulture
+     * @param selBattle
+     */
+    public static void loadBattleToHold(String selSpecies, String selCulture, String selBattle) {
+        ObservableList data = DatabaseReader.getBattleData(selSpecies, selCulture, selBattle);
+        holdBattle.setBattleName(selBattle);
+        holdBattle.setUserSpecies(data.get(0).toString().split("\\|")[0]);
+        holdBattle.setUserCulture(data.get(0).toString().split("\\|")[1]);
+        holdBattle.setUserRoster(data.get(0).toString().split("\\|")[2]);
+        holdBattle.setOponentSpecies(data.get(0).toString().split("\\|")[3]);
+        holdBattle.setOponentCulture(data.get(0).toString().split("\\|")[4]);
+        holdBattle.setOponentRoster(data.get(0).toString().split("\\|")[5]);
+        holdBattle.setPoints(data.get(0).toString().split("\\|")[6]);
+        holdBattle.setOutcome(data.get(0).toString().split("\\|")[7]);
+        holdBattle.setDate(data.get(0).toString().split("\\|")[8]);
+        holdBattle.setReplayID(data.get(0).toString().split("\\|")[9]);
+        modifiedHoldBattle = holdBattle.getClone();
+    }
+
+    /**
      * ASpecies
      */
+    @Data
+    @NoArgsConstructor
     public static abstract class ASpecies {
 
-        @Getter
-        @Setter
         private LifedomainValue Lifedomain;
-
-        @Getter
-        @Setter
         private CharacteristicGroup CharacteristicGroup;
-
-        @Getter
-        @Setter
         private String SpeciesName, Skills, SpeciesModifiers;
-
-        @Getter
-        @Setter
         private int Age;
-
-        @Getter
-        @Setter
         private int GeneticMutation, EnvironmentalAdaptation, KnowledgeAndScience,
                 LesserTraitsAndPowersOfLight, GreaterTraitsAndPowersOfLight,
                 LesserTraitsAndPowersOfDarkness, GreaterTraitsAndPowersOfDarkness,
@@ -457,16 +494,7 @@ public class DatabaseHolder {
                 ReptiliaLineage, EnvironmentalAdaptability, ExtremisAffinity,
                 BiestialKingdoms, RegionalTraits, SpiritualAndScientificKnowledge,
                 Clasification, Order, GeneticMorphology, Knowledge;
-
-        @Getter
-        @Setter
         private int NumberOfSkills, MaxNumberOfLowClases, MaxNumberOfMidClases, MaxNumberOfHigClases;
-
-        /**
-         * ASpecies
-         */
-        public ASpecies() {
-        }
 
         /**
          *
@@ -508,7 +536,13 @@ public class DatabaseHolder {
          * @param LesserTraitsAndPowersOfTwilight
          * @param GreaterTraitsAndPowersOfTwilight
          */
-        public void setAllTraitsAndPowers(int LesserTraitsAndPowersOfLight, int GreaterTraitsAndPowersOfLight, int LesserTraitsAndPowersOfDarkness, int GreaterTraitsAndPowersOfDarkness, int LesserTraitsAndPowersOfTwilight, int GreaterTraitsAndPowersOfTwilight) {
+        public void setAllTraitsAndPowers(
+                int LesserTraitsAndPowersOfLight,
+                int GreaterTraitsAndPowersOfLight,
+                int LesserTraitsAndPowersOfDarkness,
+                int GreaterTraitsAndPowersOfDarkness,
+                int LesserTraitsAndPowersOfTwilight,
+                int GreaterTraitsAndPowersOfTwilight) {
             this.LesserTraitsAndPowersOfLight = LesserTraitsAndPowersOfLight;
             this.GreaterTraitsAndPowersOfLight = GreaterTraitsAndPowersOfLight;
             this.LesserTraitsAndPowersOfDarkness = LesserTraitsAndPowersOfDarkness;
@@ -523,11 +557,60 @@ public class DatabaseHolder {
          */
         public ASpecies getClone() {
             ASpecies aClone = createASpecies(this.Lifedomain);
-            aClone.setAll(this.SpeciesName, this.Skills, this.SpeciesModifiers, this.GeneticMutation, this.EnvironmentalAdaptation, this.KnowledgeAndScience, this.LesserTraitsAndPowersOfLight, this.GreaterTraitsAndPowersOfLight, this.LesserTraitsAndPowersOfDarkness, this.GreaterTraitsAndPowersOfDarkness, this.LesserTraitsAndPowersOfTwilight, this.GreaterTraitsAndPowersOfTwilight, this.ReptiliaLineage, this.EnvironmentalAdaptability, this.ExtremisAffinity, this.BiestialKingdoms, this.RegionalTraits, this.SpiritualAndScientificKnowledge, this.Clasification, this.Order, this.GeneticMorphology, this.Knowledge, this.NumberOfSkills, this.MaxNumberOfLowClases, this.MaxNumberOfMidClases, this.MaxNumberOfHigClases);
+            aClone.setAll(this.SpeciesName,
+                    this.Skills,
+                    this.SpeciesModifiers,
+                    this.GeneticMutation,
+                    this.EnvironmentalAdaptation,
+                    this.KnowledgeAndScience,
+                    this.LesserTraitsAndPowersOfLight,
+                    this.GreaterTraitsAndPowersOfLight,
+                    this.LesserTraitsAndPowersOfDarkness,
+                    this.GreaterTraitsAndPowersOfDarkness,
+                    this.LesserTraitsAndPowersOfTwilight,
+                    this.GreaterTraitsAndPowersOfTwilight,
+                    this.ReptiliaLineage,
+                    this.EnvironmentalAdaptability,
+                    this.ExtremisAffinity,
+                    this.BiestialKingdoms,
+                    this.RegionalTraits,
+                    this.SpiritualAndScientificKnowledge,
+                    this.Clasification,
+                    this.Order,
+                    this.GeneticMorphology,
+                    this.Knowledge,
+                    this.NumberOfSkills,
+                    this.MaxNumberOfLowClases,
+                    this.MaxNumberOfMidClases,
+                    this.MaxNumberOfHigClases);
             return aClone;
         }
 
-        private void setAll(String SpeciesName, String Skills, String SpeciesModifiers, int GeneticMutation, int EnvironmentalAdaptation, int KnowledgeAndScience, int LesserTraitsAndPowersOfLight, int GreaterTraitsAndPowersOfLight, int LesserTraitsAndPowersOfDarkness, int GreaterTraitsAndPowersOfDarkness, int LesserTraitsAndPowersOfTwilight, int GreaterTraitsAndPowersOfTwilight, int ReptiliaLineage, int EnvironmentalAdaptability, int ExtremisAffinity, int BiestialKingdoms, int RegionalTraits, int SpiritualAndScientificKnowledge, int Clasification, int Order, int GeneticMorphology, int Knowledge, int NumberOfSkills, int MaxNumberOfLowClases, int MaxNumberOfMidClases, int MaxNumberOfHigClases) {
+        private void setAll(String SpeciesName,
+                String Skills, String SpeciesModifiers,
+                int GeneticMutation,
+                int EnvironmentalAdaptation,
+                int KnowledgeAndScience,
+                int LesserTraitsAndPowersOfLight,
+                int GreaterTraitsAndPowersOfLight,
+                int LesserTraitsAndPowersOfDarkness,
+                int GreaterTraitsAndPowersOfDarkness,
+                int LesserTraitsAndPowersOfTwilight,
+                int GreaterTraitsAndPowersOfTwilight,
+                int ReptiliaLineage,
+                int EnvironmentalAdaptability,
+                int ExtremisAffinity,
+                int BiestialKingdoms,
+                int RegionalTraits,
+                int SpiritualAndScientificKnowledge,
+                int Clasification,
+                int Order,
+                int GeneticMorphology,
+                int Knowledge,
+                int NumberOfSkills,
+                int MaxNumberOfLowClases,
+                int MaxNumberOfMidClases,
+                int MaxNumberOfHigClases) {
             this.SpeciesName = SpeciesName;
             this.Skills = Skills;
             this.SpeciesModifiers = SpeciesModifiers;
@@ -560,130 +643,68 @@ public class DatabaseHolder {
     /**
      * AHumanoid
      */
+    @Data
+    @NoArgsConstructor
     public static class AHumanoid extends ASpecies {
 
-        @Getter
-        @Setter
         private int StandardClass, EliteClass, LeaderClass, UniqueClass;
-
-        /**
-         * AHumanoid
-         */
-        public AHumanoid() {
-        }
-
     }
 
     /**
      * AFey
      */
+    @Data
+    @NoArgsConstructor
     public static class AFey extends ASpecies {
 
-        @Getter
-        @Setter
         private MainDomainValue MainDomain, SecondaryDomain;
-
-        @Getter
-        @Setter
         private int DiscipleClass, ArchlordClass, ParagonClass;
-
-        /**
-         * AFey
-         */
-        public AFey() {
-        }
-
     }
 
     /**
      * AReptilia
      */
+    @Data
+    @NoArgsConstructor
     public static class AReptilia extends ASpecies {
 
-        @Getter
-        @Setter
         private MainLineageValue MainLineage;
-
-        @Getter
-        @Setter
         private int LesserClass, CommonClass, RareClass, AncientClass;
-
-        /**
-         * AReptilia
-         */
-        public AReptilia() {
-        }
-
     }
 
     /**
      * ABiest
      */
+    @Data
+    @NoArgsConstructor
     public static class ABiest extends ASpecies {
 
-        @Getter
-        @Setter
         private MainKingdomValue MainKingdom;
-
-        @Getter
-        @Setter
         private MainRegionValue MainRegion;
-
-        @Getter
-        @Setter
         private int CommonClass, GreaterClass, LeaderClass, LegendaryClass;
-
-        /**
-         * ABiest
-         */
-        public ABiest() {
-        }
-
     }
 
     /**
      * AInsecta
      */
+    @Data
+    @NoArgsConstructor
     public static class AInsecta extends ASpecies {
 
-        @Getter
-        @Setter
         private MainClasificationValue MainClasification;
-
-        @Getter
-        @Setter
         private MainOrderValue MainOrder;
-
-        @Getter
-        @Setter
         private int LesserClass, CommonClass, AdvancedClass, ApexClass;
-
-        /**
-         * AInsecta
-         */
-        public AInsecta() {
-        }
-
     }
 
     /**
      * ACulture
      */
+    @Data
+    @NoArgsConstructor
     public static class ACulture {
 
-        @Getter
-        @Setter
         private String SpeciesName, CultureName;
-
-        @Getter
-        @Setter
         private int Age, TotalProgressionPoints, LeftProgressionPoints;
-
-        /**
-         * aCulture
-         */
-        public ACulture() {
-        }
 
         /**
          *
@@ -714,10 +735,10 @@ public class DatabaseHolder {
     /**
      * AClass
      */
+    @Data
+    @NoArgsConstructor
     public static class AClass {
 
-        @Getter
-        @Setter
         private String ClassName, Skills, SpeciesName, CultureName, Advancements, Type, BasedOn, AdditionalCost;
 
         /**
@@ -758,10 +779,10 @@ public class DatabaseHolder {
     /**
      * AHero
      */
+    @Data
+    @NoArgsConstructor
     public static class AHero {
 
-        @Getter
-        @Setter
         private String HeroName, SpeciesName, CultureName, Advancements, BasedOn, AdditionalCost;
 
         /**
@@ -783,10 +804,10 @@ public class DatabaseHolder {
     /**
      * AProgress
      */
+    @Data
+    @NoArgsConstructor
     public static class AProgress {
 
-        @Getter
-        @Setter
         private String SpeciesName, CultureName, ProgressName, Progress, Date;
 
         /**
@@ -807,10 +828,10 @@ public class DatabaseHolder {
     /**
      * ARoster
      */
+    @Data
+    @NoArgsConstructor
     public static class ARoster {
 
-        @Getter
-        @Setter
         private String RosterName, SpeciesName, CultureName, Roster, MaxPoints;
 
         /**
@@ -825,6 +846,124 @@ public class DatabaseHolder {
             aClone.Roster = this.Roster;
             aClone.MaxPoints = this.MaxPoints;
             return aClone;
+        }
+    }
+
+    /**
+     * ABattle
+     */
+    @Data
+    @NoArgsConstructor
+    public static class ABattle {
+
+        private String BattleName, UserSpecies, UserCulture, UserRoster, OponentSpecies, OponentCulture, OponentRoster, Points, Outcome, Date, ReplayID;
+
+        /**
+         *
+         * @return
+         */
+        public ABattle getClone() {
+            ABattle aClone = new ABattle();
+            aClone.BattleName = this.BattleName;
+            aClone.UserSpecies = this.UserSpecies;
+            aClone.UserCulture = this.UserCulture;
+            aClone.UserRoster = this.UserRoster;
+            aClone.OponentSpecies = this.OponentSpecies;
+            aClone.OponentCulture = this.OponentCulture;
+            aClone.OponentRoster = this.OponentRoster;
+            aClone.Points = this.Points;
+            aClone.Outcome = this.Outcome;
+            aClone.Date = this.Date;
+            aClone.ReplayID = this.ReplayID;
+            return aClone;
+        }
+    }
+
+    /**
+     * The Modifiers
+     */
+    @Data
+    @NoArgsConstructor
+    public static class TheModifiers implements Cloneable {
+
+        private int WoundsModifier;
+        private int AttacksModifier;
+        private int SizeModifier;
+        private int StrengthModifier;
+        private int ToughnessModifier;
+        private int MovementModifier;
+        private int MartialModifier;
+        private int RangedModifier;
+        private int DefenseModifier;
+        private int DisciplineModifier;
+        private int WillpowerModifier;
+        private int CommandModifier;
+        private int MTModifier;
+        private int RTModifier;
+        private int MoraleModifier;
+
+        /**
+         *
+         * @param WoundsModifier
+         * @param AttacksModifier
+         * @param SizeModifier
+         * @param StrengthModifier
+         * @param ToughnessModifier
+         * @param MovementModifier
+         * @param MartialModifier
+         * @param RangedModifier
+         * @param DefenseModifier
+         * @param DisciplineModifier
+         * @param WillpowerModifier
+         * @param CommandModifier
+         * @param MTModifier
+         * @param RTModifier
+         * @param MoraleModifier
+         */
+        public TheModifiers(int WoundsModifier, int AttacksModifier, int SizeModifier, int StrengthModifier, int ToughnessModifier, int MovementModifier, int MartialModifier, int RangedModifier, int DefenseModifier, int DisciplineModifier, int WillpowerModifier, int CommandModifier, int MTModifier, int RTModifier, int MoraleModifier) {
+            this.WoundsModifier = WoundsModifier;
+            this.AttacksModifier = AttacksModifier;
+            this.SizeModifier = SizeModifier;
+            this.StrengthModifier = StrengthModifier;
+            this.ToughnessModifier = ToughnessModifier;
+            this.MovementModifier = MovementModifier;
+            this.MartialModifier = MartialModifier;
+            this.RangedModifier = RangedModifier;
+            this.DefenseModifier = DefenseModifier;
+            this.DisciplineModifier = DisciplineModifier;
+            this.WillpowerModifier = WillpowerModifier;
+            this.CommandModifier = CommandModifier;
+            this.MTModifier = MTModifier;
+            this.RTModifier = RTModifier;
+            this.MoraleModifier = MoraleModifier;
+        }
+
+        /**
+         * clearModifiers
+         */
+        public void clearModifiers() {
+            this.setWoundsModifier(0);
+            this.setAttacksModifier(0);
+            this.setSizeModifier(0);
+            this.setStrengthModifier(0);
+            this.setToughnessModifier(0);
+            this.setMovementModifier(0);
+            this.setMartialModifier(0);
+            this.setRangedModifier(0);
+            this.setDefenseModifier(0);
+            this.setDisciplineModifier(0);
+            this.setWillpowerModifier(0);
+            this.setCommandModifier(0);
+            this.setMTModifier(0);
+            this.setRTModifier(0);
+            this.setMoraleModifier(0);
+        }
+
+        @Override
+        public TheModifiers clone() throws CloneNotSupportedException {
+            //TheModifiers aClone = new TheModifiers(this.WoundsModifier, this.AttacksModifier, this.SizeModifier, this.StrengthModifier, this.ToughnessModifier, this.MovementModifier, this.MartialModifier, this.RangedModifier, this.DefenseModifier, this.DisciplineModifier, this.WillpowerModifier, this.CommandModifier, this.MTModifier, this.RTModifier, this.MoraleModifier);
+            //return aClone;
+            return (TheModifiers) super.clone();
         }
     }
 

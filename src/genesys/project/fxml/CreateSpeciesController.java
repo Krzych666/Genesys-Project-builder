@@ -124,7 +124,7 @@ public class CreateSpeciesController implements Initializable {
             speciesCreatorWindowStage.setTitle("Create Species");
             speciesCreatorWindowStage.show();
         } catch (IOException ex) {
-            ErrorController.ErrorController(ex);
+            ErrorController.ErrorControllerMethod(ex);
             Logger.getLogger(CreateSpeciesController.class.getName()).log(Level.SEVERE, null, ex);
         }
     }

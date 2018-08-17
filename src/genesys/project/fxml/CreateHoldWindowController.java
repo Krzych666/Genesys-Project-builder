@@ -196,7 +196,7 @@ public class CreateHoldWindowController implements Initializable {
                 classCreatorWindowStage.setTitle("Create Class for " + DatabaseHolder.holdCulture.getSpeciesName() + " - " + DatabaseHolder.holdCulture.getCultureName());
                 classCreatorWindowStage.show();
             } catch (IOException ex) {
-                ErrorController.ErrorController(ex);
+                ErrorController.ErrorControllerMethod(ex);
                 Logger.getLogger(CreateHoldWindowController.class.getName()).log(Level.SEVERE, null, ex);
             }
         }

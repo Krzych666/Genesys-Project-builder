@@ -77,8 +77,10 @@ public class EditWindowNameOnlyController implements Initializable {
      *
      */
     public void editCloseAfterSaveActions() {
-        speciesList.setItems(DatabaseReader.getSpeciesList());
-        speciesList.getSelectionModel().clearSelection();
+        if (speciesList != null) {
+            speciesList.setItems(DatabaseReader.getSpeciesList());
+            speciesList.getSelectionModel().clearSelection();
+        }
     }
 
     /**

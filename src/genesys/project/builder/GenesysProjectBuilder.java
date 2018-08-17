@@ -28,6 +28,7 @@ public final class GenesysProjectBuilder extends Application {
     @Override
     public void start(Stage primaryStage) {
         try {
+            DatabaseSwiper.databaseSwiper();
             Parent root = FXMLLoader.load(getClass().getResource("/genesys/project/fxml/BuilderFXML.fxml"));
             Scene scene = new Scene(root);
             primaryStage.setScene(scene);
@@ -36,7 +37,7 @@ public final class GenesysProjectBuilder extends Application {
             primaryStage.setOnCloseRequest(e -> Platform.exit());
             primaryStageWindow = Window.getWindows().get(0);
         } catch (IOException ex) {
-            ErrorController.ErrorController(ex);
+            ErrorController.ErrorControllerMethod(ex);
             Logger.getLogger(GenesysProjectBuilder.class.getName()).log(Level.SEVERE, null, ex);
         }
     }

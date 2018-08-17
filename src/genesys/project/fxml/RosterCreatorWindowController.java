@@ -209,7 +209,7 @@ public class RosterCreatorWindowController implements Initializable {
                     rosterAddUnitStage.setTitle("Add Unit to " + DatabaseHolder.holdRoster.getRosterName() + " for " + DatabaseHolder.holdRoster.getSpeciesName() + " - " + DatabaseHolder.holdRoster.getCultureName());
                     rosterAddUnitStage.show();
                 } catch (IOException ex) {
-                    ErrorController.ErrorController(ex);
+                    ErrorController.ErrorControllerMethod(ex);
                     Logger.getLogger(RosterCreatorWindowController.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }

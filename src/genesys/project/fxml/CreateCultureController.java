@@ -211,7 +211,7 @@ public class CreateCultureController implements Initializable {
                 createHoldWindowStage.setTitle("Create Classes for " + DatabaseHolder.holdCulture.getSpeciesName() + " - " + DatabaseHolder.holdCulture.getCultureName());
                 createHoldWindowStage.show();
             } catch (IOException ex) {
-                ErrorController.ErrorController(ex);
+                ErrorController.ErrorControllerMethod(ex);
                 Logger.getLogger(CreateCultureController.class.getName()).log(Level.SEVERE, null, ex);
             }
         }

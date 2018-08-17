@@ -36,7 +36,7 @@ public class DatabaseReader {
             String[] columns = {"SkillName", "PointCost", "SkillRules", "Age", "LifeDomain", "LifeDomainTree1", "LifeDomainTree2", "LifeDomainTree3"};
             out = BuilderCORE.getData(stmt, columns, null, 0);
         } catch (SQLException ex) {
-            ErrorController.ErrorController(ex);
+            ErrorController.ErrorControllerMethod(ex);
             Logger.getLogger(DatabaseReader.class.getName()).log(Level.SEVERE, null, ex);
         }
         return out;
@@ -57,7 +57,7 @@ public class DatabaseReader {
             String[] columns = {"SkillName", "PointCost", "SkillRules", "Age", "LifeDomain", "LifeDomainTree1", "LifeDomainTree2", "LifeDomainTree3"};
             out = BuilderCORE.getData(stmt, columns, null, 0);
         } catch (SQLException ex) {
-            ErrorController.ErrorController(ex);
+            ErrorController.ErrorControllerMethod(ex);
             Logger.getLogger(DatabaseReader.class.getName()).log(Level.SEVERE, null, ex);
         }
         return out;
@@ -77,7 +77,7 @@ public class DatabaseReader {
             stmt.setString(1, SkillRuleName);
             out = BuilderCORE.getValue(stmt, "SkillRuleExplanation");
         } catch (SQLException ex) {
-            ErrorController.ErrorController(ex);
+            ErrorController.ErrorControllerMethod(ex);
             Logger.getLogger(DatabaseReader.class.getName()).log(Level.SEVERE, null, ex);
         }
         return out;
@@ -95,14 +95,18 @@ public class DatabaseReader {
             stmt.setString(1, DatabaseHolder.holdSpecies.getLifedomain().toString());
             String ClassList = BuilderCORE.getValue(stmt, "ClassTypes");
             String CL[] = ClassList.split(",");
-            int[] mx = {DatabaseHolder.holdSpecies.getMaxNumberOfLowClases(), DatabaseHolder.holdSpecies.getMaxNumberOfMidClases(), DatabaseHolder.holdSpecies.getMaxNumberOfHigClases(), 1};
+            int[] mx = {
+                DatabaseHolder.holdSpecies.getMaxNumberOfLowClases(),
+                DatabaseHolder.holdSpecies.getMaxNumberOfMidClases(),
+                DatabaseHolder.holdSpecies.getMaxNumberOfHigClases(),
+                1};
             StringBuilder fintex = new StringBuilder();
             for (int i = 0; i < CL.length; i++) {
                 fintex.append(CL[i]).append(": max ").append(mx[i]).append(", current count\n");
             }
             out = fintex.toString();
         } catch (SQLException ex) {
-            ErrorController.ErrorController(ex);
+            ErrorController.ErrorControllerMethod(ex);
             Logger.getLogger(DatabaseReader.class.getName()).log(Level.SEVERE, null, ex);
         }
         return out;
@@ -128,7 +132,7 @@ public class DatabaseReader {
                 tmp.add(" ");
             }
         } catch (SQLException ex) {
-            ErrorController.ErrorController(ex);
+            ErrorController.ErrorControllerMethod(ex);
             Logger.getLogger(DatabaseReader.class.getName()).log(Level.SEVERE, null, ex);
         }
         return tmp;
@@ -147,7 +151,7 @@ public class DatabaseReader {
             String[] columns = {"SpeciesName"};
             tmp.addAll(BuilderCORE.getData(stmt, columns, null, 0));
         } catch (SQLException ex) {
-            ErrorController.ErrorController(ex);
+            ErrorController.ErrorControllerMethod(ex);
             Logger.getLogger(DatabaseReader.class.getName()).log(Level.SEVERE, null, ex);
         }
         return tmp;
@@ -161,7 +165,6 @@ public class DatabaseReader {
     public static ObservableList populateDropdownsCultures(String fromwhat) {
         ObservableList tmp = FXCollections.observableArrayList();
         try {
-
             tmp.setAll(DatabaseHolder.TOPDROP);
             chooseConnection(UseCases.Userdb);
             PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT * FROM CreatedCultures WHERE SpeciesName = ?");
@@ -169,7 +172,7 @@ public class DatabaseReader {
             String[] columns = {"CultureName"};
             tmp.addAll(BuilderCORE.getData(stmt, columns, null, 0));
         } catch (SQLException ex) {
-            ErrorController.ErrorController(ex);
+            ErrorController.ErrorControllerMethod(ex);
             Logger.getLogger(DatabaseReader.class.getName()).log(Level.SEVERE, null, ex);
         }
         return tmp;
@@ -192,7 +195,7 @@ public class DatabaseReader {
             String[] columns = {"ClassName"};
             tmp.addAll(BuilderCORE.getData(stmt, columns, null, 0));
         } catch (SQLException ex) {
-            ErrorController.ErrorController(ex);
+            ErrorController.ErrorControllerMethod(ex);
             Logger.getLogger(DatabaseReader.class.getName()).log(Level.SEVERE, null, ex);
         }
         return tmp;
@@ -224,30 +227,7 @@ public class DatabaseReader {
                 tmp.addAll(BuilderCORE.getData(stmt, columns, null, 0));
             }
         } catch (SQLException ex) {
-            ErrorController.ErrorController(ex);
-            Logger.getLogger(DatabaseReader.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        return tmp;
-    }
-
-    /**
-     *
-     * @param fromwhats
-     * @param fromwhatc
-     * @return
-     */
-    public static ObservableList populateDropdownsProgress(String fromwhats, String fromwhatc) {
-        ObservableList tmp = FXCollections.observableArrayList();
-        try {
-            tmp.setAll(DatabaseHolder.TOPDROP);
-            chooseConnection(UseCases.Userdb);
-            PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT * FROM CreatedProgress WHERE SpeciesName =? AND CultureName =?");
-            stmt.setString(1, fromwhats);
-            stmt.setString(2, fromwhatc);
-            String[] columns = {"ProgressName"};
-            tmp.addAll(BuilderCORE.getData(stmt, columns, null, 0));
-        } catch (SQLException ex) {
-            ErrorController.ErrorController(ex);
+            ErrorController.ErrorControllerMethod(ex);
             Logger.getLogger(DatabaseReader.class.getName()).log(Level.SEVERE, null, ex);
         }
         return tmp;
@@ -270,7 +250,7 @@ public class DatabaseReader {
             String[] columns = {"RosterName"};
             tmp.addAll(BuilderCORE.getData(stmt, columns, null, 0));
         } catch (SQLException ex) {
-            ErrorController.ErrorController(ex);
+            ErrorController.ErrorControllerMethod(ex);
             Logger.getLogger(DatabaseReader.class.getName()).log(Level.SEVERE, null, ex);
         }
         return tmp;
@@ -369,7 +349,7 @@ public class DatabaseReader {
             }
             return null;
         } catch (SQLException ex) {
-            ErrorController.ErrorController(ex);
+            ErrorController.ErrorControllerMethod(ex);
             Logger.getLogger(DatabaseReader.class.getName()).log(Level.SEVERE, null, ex);
         }
         return outList;
@@ -391,14 +371,20 @@ public class DatabaseReader {
             stmt.setString(2, SkillBranch);
             String[] columns = {"LifeDomainTree2"};
             tmp = BuilderCORE.getData(stmt, columns, null, 0);
-            if (onlyPrimaryChooser != null && !onlyPrimaryChooser.equals("") && !onlyPrimaryChooser.equals("standard") && tmp.contains(onlyPrimaryChooser)) {
+            if (onlyPrimaryChooser != null
+                    && !onlyPrimaryChooser.equals("")
+                    && !onlyPrimaryChooser.equals("standard")
+                    && tmp.contains(onlyPrimaryChooser)) {
                 return FXCollections.observableArrayList(onlyPrimaryChooser);
             }
-            if (onlySecondaryChooser != null && !onlySecondaryChooser.equals("") && !onlySecondaryChooser.equals("standard") && tmp.contains(onlySecondaryChooser)) {
+            if (onlySecondaryChooser != null
+                    && !onlySecondaryChooser.equals("")
+                    && !onlySecondaryChooser.equals("standard")
+                    && tmp.contains(onlySecondaryChooser)) {
                 return FXCollections.observableArrayList(onlySecondaryChooser);
             }
         } catch (SQLException ex) {
-            ErrorController.ErrorController(ex);
+            ErrorController.ErrorControllerMethod(ex);
             Logger.getLogger(DatabaseReader.class.getName()).log(Level.SEVERE, null, ex);
         }
         return tmp;
@@ -421,7 +407,7 @@ public class DatabaseReader {
             tmp.addAll(BuilderCORE.getData(stmt, columns, null, 0));
             tmp.addAll(getAvailableSpecialItemNames(itemType));
         } catch (SQLException ex) {
-            ErrorController.ErrorController(ex);
+            ErrorController.ErrorControllerMethod(ex);
             Logger.getLogger(DatabaseReader.class.getName()).log(Level.SEVERE, null, ex);
         }
         return tmp;
@@ -438,14 +424,17 @@ public class DatabaseReader {
             String[] columns = {"count(*)"};
             for (String EQUIPMENT_TYPES : BuilderCORE.EQUIPMENT_TYPES) {
                 chooseConnection(UseCases.COREdb);
-                PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT count(*) FROM Equipment" + EQUIPMENT_TYPES.replaceAll(" ", "") + " WHERE " + EQUIPMENT_TYPES.replaceAll(" ", "") + "Name= ?");
+                PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement(
+                        "SELECT count(*) "
+                        + "FROM Equipment" + EQUIPMENT_TYPES.replaceAll(" ", "")
+                        + " WHERE " + EQUIPMENT_TYPES.replaceAll(" ", "") + "Name= ?");
                 stmt.setString(1, itemName);
                 if (BuilderCORE.getData(stmt, columns, null, 0).get(0).toString().equals("1")) {
                     return EQUIPMENT_TYPES;
                 }
             }
         } catch (SQLException ex) {
-            ErrorController.ErrorController(ex);
+            ErrorController.ErrorControllerMethod(ex);
             Logger.getLogger(DatabaseReader.class.getName()).log(Level.SEVERE, null, ex);
         }
         return out;
@@ -507,7 +496,7 @@ public class DatabaseReader {
                 }
             }
         } catch (SQLException ex) {
-            ErrorController.ErrorController(ex);
+            ErrorController.ErrorControllerMethod(ex);
             Logger.getLogger(DatabaseReader.class.getName()).log(Level.SEVERE, null, ex);
         }
         return tmp;
@@ -525,7 +514,10 @@ public class DatabaseReader {
             String itemType = getItemTypreFromItemName(itemNameSplit);
             String itemTypeOneWord = itemType.replaceAll(" ", "");
             chooseConnection(UseCases.COREdb);
-            PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT * FROM Equipment" + itemTypeOneWord + " WHERE " + itemTypeOneWord + "Name = ?");
+            PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement(
+                    "SELECT * "
+                    + "FROM Equipment" + itemTypeOneWord + " "
+                    + "WHERE " + itemTypeOneWord + "Name = ?");
             stmt.setString(1, itemNameSplit);
             String[] columns = {"Cost"};
             ObservableList loadedData = BuilderCORE.getData(stmt, columns, null, 0);
@@ -538,7 +530,7 @@ public class DatabaseReader {
             }
             cost = Integer.parseInt(data) + getImprovementsCosts(ItemName, itemType);
         } catch (SQLException ex) {
-            ErrorController.ErrorController(ex);
+            ErrorController.ErrorControllerMethod(ex);
             Logger.getLogger(DatabaseReader.class.getName()).log(Level.SEVERE, null, ex);
         }
         return cost;
@@ -562,7 +554,14 @@ public class DatabaseReader {
                     StringBuilder improvementHelper = new StringBuilder();
                     improvementHelper.append(improvementsList1.contains("X") ? improvementsList1.split("X")[0] + "X" : improvementsList1);
                     chooseConnection(UseCases.COREdb);
-                    PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT * FROM EquipmentImprovements WHERE ImprovementName = ? AND (Type = ? OR Type = ? OR Type = ?)");
+                    PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement(
+                            "SELECT * "
+                            + "FROM EquipmentImprovements "
+                            + "WHERE ImprovementName = ? "
+                            + "AND ("
+                            + "Type = ? "
+                            + "OR Type = ? "
+                            + "OR Type = ?)");
                     stmt.setString(1, improvementHelper.toString());
                     stmt.setString(2, BuilderCORE.getImprovementTypeBasedOnItemSubtype(getItemSubType(itemType, itemWithImprovements.contains("{") ? itemWithImprovements.split(" \\{")[0] : itemWithImprovements)));
                     stmt.setString(3, "Flintlock");
@@ -573,7 +572,7 @@ public class DatabaseReader {
                     }
                     cost += Integer.parseInt(stringCost);
                 } catch (SQLException ex) {
-                    ErrorController.ErrorController(ex);
+                    ErrorController.ErrorControllerMethod(ex);
                     Logger.getLogger(DatabaseReader.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
@@ -593,7 +592,14 @@ public class DatabaseReader {
         try {
             String[] columns = {"SpecialRules"};
             chooseConnection(UseCases.COREdb);
-            PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT * FROM EquipmentImprovements WHERE ImprovementName = ? AND (Type = ? OR Type = ? OR Type = ?)");
+            PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement(
+                    "SELECT * "
+                    + "FROM EquipmentImprovements "
+                    + "WHERE ImprovementName = ? "
+                    + "AND ("
+                    + "Type = ? "
+                    + "OR Type = ? "
+                    + "OR Type = ?)");
             stmt.setString(1, improvementName);
             stmt.setString(2, BuilderCORE.getImprovementTypeBasedOnItemSubtype(getItemSubType(itemType, itemName)));
             stmt.setString(3, "Flintlock");
@@ -602,7 +608,7 @@ public class DatabaseReader {
             String lst[] = data.split(";");
             tmp.addAll(lst);
         } catch (SQLException ex) {
-            ErrorController.ErrorController(ex);
+            ErrorController.ErrorControllerMethod(ex);
             Logger.getLogger(DatabaseReader.class.getName()).log(Level.SEVERE, null, ex);
         }
         return tmp;
@@ -620,11 +626,14 @@ public class DatabaseReader {
             String mergeType = type.replaceAll(" ", "");
             String[] columns = {"SubType"};
             chooseConnection(UseCases.COREdb);
-            PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT * FROM Equipment" + mergeType + " WHERE " + mergeType + "Name = ?");
+            PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement(
+                    "SELECT * "
+                    + "FROM Equipment" + mergeType + " "
+                    + "WHERE " + mergeType + "Name = ?");
             stmt.setString(1, itemName);
             tmp = BuilderCORE.getData(stmt, columns, null, 0).get(0).toString();
         } catch (SQLException ex) {
-            ErrorController.ErrorController(ex);
+            ErrorController.ErrorControllerMethod(ex);
             Logger.getLogger(DatabaseReader.class.getName()).log(Level.SEVERE, null, ex);
         }
         return tmp;
@@ -646,42 +655,63 @@ public class DatabaseReader {
             PreparedStatement stmt = null;
             switch (type) {
                 case "Armor":
-                    stmt = BuilderCORE.getConnection().prepareStatement("SELECT * FROM EquipmentImprovements WHERE Type = 'Armor' OR Type = 'Resistance'");
+                    stmt = BuilderCORE.getConnection().prepareStatement(
+                            "SELECT * "
+                            + "FROM EquipmentImprovements "
+                            + "WHERE Type = 'Armor' OR Type = 'Resistance'");
                     break;
                 case "Weapon":
                     switch (subType) {
                         case "Melee":
                         case "Spear":
-                            stmt = BuilderCORE.getConnection().prepareStatement("SELECT * FROM EquipmentImprovements WHERE Type = 'Melee Weapon' OR Type = 'Extreme Weapons'");
+                            stmt = BuilderCORE.getConnection().prepareStatement(
+                                    "SELECT * "
+                                    + "FROM EquipmentImprovements "
+                                    + "WHERE Type = 'Melee Weapon' OR Type = 'Extreme Weapons'");
                             break;
                         case "Throwing":
                         case "Bow":
                         case "Crossbow":
                         case "Alchemy":
-                            stmt = BuilderCORE.getConnection().prepareStatement("SELECT * FROM EquipmentImprovements WHERE Type = 'Ranged Weapon' OR Type = 'Extreme Weapons'");
+                            stmt = BuilderCORE.getConnection().prepareStatement(
+                                    "SELECT * "
+                                    + "FROM EquipmentImprovements "
+                                    + "WHERE Type = 'Ranged Weapon' OR Type = 'Extreme Weapons'");
                             break;
                         case "Flintlock":
-                            stmt = BuilderCORE.getConnection().prepareStatement("SELECT * FROM EquipmentImprovements WHERE Type = 'Ranged Weapon' OR Type = 'Flintlock' OR Type = 'Extreme Weapons'");
+                            stmt = BuilderCORE.getConnection().prepareStatement(
+                                    "SELECT * "
+                                    + "FROM EquipmentImprovements "
+                                    + "WHERE Type = 'Ranged Weapon' OR Type = 'Flintlock' OR Type = 'Extreme Weapons'");
                             break;
                         default:
                             break;
                     }
                     break;
                 case "Companion":
-                    stmt = BuilderCORE.getConnection().prepareStatement("SELECT * FROM EquipmentImprovements WHERE Type = 'Exotic Animal Attributes'");
+                    stmt = BuilderCORE.getConnection().prepareStatement(
+                            "SELECT * "
+                            + "FROM EquipmentImprovements "
+                            + "WHERE Type = 'Exotic Animal Attributes'");
                     break;
                 case "Vehicle":
-                    stmt = BuilderCORE.getConnection().prepareStatement("SELECT * FROM EquipmentImprovements WHERE Type = 'Chariot and Wagon Upgrades'");
+                    stmt = BuilderCORE.getConnection().prepareStatement(
+                            "SELECT * "
+                            + "FROM EquipmentImprovements "
+                            + "WHERE Type = 'Chariot and Wagon Upgrades'");
                     break;
                 case "Heavy Military Weapon":
-                    stmt = BuilderCORE.getConnection().prepareStatement("SELECT * FROM EquipmentImprovements WHERE Type = 'Military Weapon' OR Type = 'Extreme Weapons'");
+                    stmt = BuilderCORE.getConnection().prepareStatement(
+                            "SELECT * "
+                            + "FROM EquipmentImprovements "
+                            + "WHERE Type = 'Military Weapon' OR Type = 'Extreme Weapons'");
                     break;
                 default:
                     break;
             }
             tmp.addAll(BuilderCORE.getData(stmt, columns, null, 0));
         } catch (SQLException ex) {
-            ErrorController.ErrorController(ex);
+            ErrorController.ErrorControllerMethod(ex);
             Logger.getLogger(DatabaseReader.class.getName()).log(Level.SEVERE, null, ex);
         }
         return tmp;
@@ -703,7 +733,7 @@ public class DatabaseReader {
             String[] columns = {"LifeDomain", "CharacteristicGroup", "Age", "Skills", "SpeciesModifiers"};
             data = BuilderCORE.getData(stmt, columns, null, 0);
         } catch (SQLException ex) {
-            ErrorController.ErrorController(ex);
+            ErrorController.ErrorControllerMethod(ex);
             Logger.getLogger(DatabaseReader.class.getName()).log(Level.SEVERE, null, ex);
         }
         return data;
@@ -726,7 +756,7 @@ public class DatabaseReader {
             String[] columns = {"Age", "TotalProgressionPoints", "LeftProgressionPoints"};
             data = BuilderCORE.getData(stmt, columns, null, 0);
         } catch (SQLException ex) {
-            ErrorController.ErrorController(ex);
+            ErrorController.ErrorControllerMethod(ex);
             Logger.getLogger(DatabaseReader.class.getName()).log(Level.SEVERE, null, ex);
         }
         return data;
@@ -751,7 +781,7 @@ public class DatabaseReader {
             String[] columns = {"Skills", "Advancements", "Type", "BasedOn", "AdditionalCost"};
             data = BuilderCORE.getData(stmt, columns, null, 0);
         } catch (SQLException ex) {
-            ErrorController.ErrorController(ex);
+            ErrorController.ErrorControllerMethod(ex);
             Logger.getLogger(DatabaseReader.class.getName()).log(Level.SEVERE, null, ex);
         }
         return data;
@@ -777,7 +807,7 @@ public class DatabaseReader {
             data = BuilderCORE.getData(stmt, columns, null, 0);
 
         } catch (SQLException ex) {
-            ErrorController.ErrorController(ex);
+            ErrorController.ErrorControllerMethod(ex);
             Logger.getLogger(DatabaseReader.class.getName()).log(Level.SEVERE, null, ex);
         }
         return data;
@@ -803,7 +833,7 @@ public class DatabaseReader {
             data = BuilderCORE.getData(stmt, columns, null, 0);
 
         } catch (SQLException ex) {
-            ErrorController.ErrorController(ex);
+            ErrorController.ErrorControllerMethod(ex);
             Logger.getLogger(DatabaseReader.class.getName()).log(Level.SEVERE, null, ex);
         }
         return data;
@@ -828,7 +858,7 @@ public class DatabaseReader {
             String[] columns = {"Roster", "MaxPoints"};
             data = BuilderCORE.getData(stmt, columns, null, 0);
         } catch (SQLException ex) {
-            ErrorController.ErrorController(ex);
+            ErrorController.ErrorControllerMethod(ex);
             Logger.getLogger(DatabaseReader.class.getName()).log(Level.SEVERE, null, ex);
         }
         return data;
@@ -856,7 +886,7 @@ public class DatabaseReader {
             data = BuilderCORE.getData(stmt, columns, null, 0);
 
         } catch (SQLException ex) {
-            ErrorController.ErrorController(ex);
+            ErrorController.ErrorControllerMethod(ex);
             Logger.getLogger(DatabaseReader.class.getName()).log(Level.SEVERE, null, ex);
         }
         return data;
@@ -882,7 +912,7 @@ public class DatabaseReader {
             ObservableList<String> tmpget = BuilderCORE.getData(stmt, columns, null, 0);
             out = Integer.parseInt(tmpget.get(0));
         } catch (SQLException ex) {
-            ErrorController.ErrorController(ex);
+            ErrorController.ErrorControllerMethod(ex);
             Logger.getLogger(DatabaseReader.class.getName()).log(Level.SEVERE, null, ex);
         }
         return out;
@@ -923,7 +953,7 @@ public class DatabaseReader {
                 }
             }
         } catch (SQLException ex) {
-            ErrorController.ErrorController(ex);
+            ErrorController.ErrorControllerMethod(ex);
             Logger.getLogger(DatabaseReader.class.getName()).log(Level.SEVERE, null, ex);
         }
         return outputValues;
@@ -942,7 +972,7 @@ public class DatabaseReader {
             stmt.setString(1, LifeDomain);
             out = BuilderCORE.getValue(stmt, "StartingNumberOfSkills");
         } catch (SQLException ex) {
-            ErrorController.ErrorController(ex);
+            ErrorController.ErrorControllerMethod(ex);
             Logger.getLogger(DatabaseReader.class.getName()).log(Level.SEVERE, null, ex);
         }
         return out;
@@ -965,7 +995,7 @@ public class DatabaseReader {
             stmt1.setString(1, Skill);
             out[1] = BuilderCORE.getValue(stmt1, "LifeDomainTree3");
         } catch (SQLException ex) {
-            ErrorController.ErrorController(ex);
+            ErrorController.ErrorControllerMethod(ex);
             Logger.getLogger(DatabaseReader.class.getName()).log(Level.SEVERE, null, ex);
         }
         return out;
@@ -983,13 +1013,16 @@ public class DatabaseReader {
         ObservableList out = FXCollections.observableArrayList();
         try {
             chooseConnection(Enums.Enmuerations.UseCases.COREdb);
-            PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT DISTINCT LifeDomainTree1 FROM Skills WHERE LifeDomain = ? AND LifeDomainTree2 = ? AND Age <= ?");
+            PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement(
+                    "SELECT DISTINCT LifeDomainTree1 "
+                    + "FROM Skills "
+                    + "WHERE LifeDomain = ? AND LifeDomainTree2 = ? AND Age <= ?");
             stmt.setString(1, lifeDomain.toString());
             stmt.setString(2, skillSubSet);
             stmt.setInt(3, maxAge);
             out = BuilderCORE.getData(stmt, columns2, null, 0);
         } catch (SQLException ex) {
-            ErrorController.ErrorController(ex);
+            ErrorController.ErrorControllerMethod(ex);
             Logger.getLogger(DatabaseReader.class.getName()).log(Level.SEVERE, null, ex);
         }
         return out;
@@ -1009,14 +1042,17 @@ public class DatabaseReader {
         ObservableList out = FXCollections.observableArrayList();
         try {
             chooseConnection(Enums.Enmuerations.UseCases.COREdb);
-            PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT DISTINCT LifeDomainTree3 FROM Skills WHERE (LifeDomainTree2 = ? OR LifeDomainTree3 = ?) AND SkillName = ? AND Age <= ?");
+            PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement(
+                    "SELECT DISTINCT LifeDomainTree3 "
+                    + "FROM Skills "
+                    + "WHERE (LifeDomainTree2 = ? OR LifeDomainTree3 = ?) AND SkillName = ? AND Age <= ?");
             stmt.setString(1, skillSubSet);
             stmt.setString(2, reptiliaSpecific[1]);
             stmt.setString(3, IgnoreSkillsList.get(i).toString().split(" \\(p")[0]);
             stmt.setInt(4, maxAge);
             out = BuilderCORE.getData(stmt, columns1, null, 0);
         } catch (SQLException ex) {
-            ErrorController.ErrorController(ex);
+            ErrorController.ErrorControllerMethod(ex);
             Logger.getLogger(DatabaseReader.class.getName()).log(Level.SEVERE, null, ex);
         }
         return out;
@@ -1035,13 +1071,16 @@ public class DatabaseReader {
         ObservableList out = FXCollections.observableArrayList();
         try {
             chooseConnection(Enums.Enmuerations.UseCases.COREdb);
-            PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT DISTINCT SkillName FROM Skills WHERE LifeDomainTree2 = ? AND LifeDomainTree3 = ? AND Age <= ?");
+            PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement(
+                    "SELECT DISTINCT SkillName "
+                    + "FROM Skills "
+                    + "WHERE LifeDomainTree2 = ? AND LifeDomainTree3 = ? AND Age <= ?");
             stmt.setString(1, skillSubSet);
             stmt.setString(2, basic);
             stmt.setInt(3, maxAge);
             out = BuilderCORE.getData(stmt, columns, IgnoreSkillsList, 1);
         } catch (SQLException ex) {
-            ErrorController.ErrorController(ex);
+            ErrorController.ErrorControllerMethod(ex);
             Logger.getLogger(DatabaseReader.class.getName()).log(Level.SEVERE, null, ex);
         }
         return out;
@@ -1061,14 +1100,17 @@ public class DatabaseReader {
         ObservableList out = FXCollections.observableArrayList();
         try {
             chooseConnection(Enums.Enmuerations.UseCases.COREdb);
-            PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT DISTINCT SkillName FROM Skills WHERE LifeDomainTree2 = ? AND (LifeDomainTree3 = ? OR LifeDomainTree3 = ?) AND Age <= ?");
+            PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement(
+                    "SELECT DISTINCT SkillName "
+                    + "FROM Skills "
+                    + "WHERE LifeDomainTree2 = ? AND (LifeDomainTree3 = ? OR LifeDomainTree3 = ?) AND Age <= ?");
             stmt.setString(1, skillSubSet);
             stmt.setString(2, basic0);
             stmt.setString(3, basic1);
             stmt.setInt(4, maxAge);
             out = BuilderCORE.getData(stmt, columns, IgnoreSkillsList, 1);
         } catch (SQLException ex) {
-            ErrorController.ErrorController(ex);
+            ErrorController.ErrorControllerMethod(ex);
             Logger.getLogger(DatabaseReader.class.getName()).log(Level.SEVERE, null, ex);
         }
         return out;
@@ -1090,7 +1132,10 @@ public class DatabaseReader {
         ObservableList out = FXCollections.observableArrayList();
         try {
             chooseConnection(Enums.Enmuerations.UseCases.COREdb);
-            PreparedStatement stmt2 = BuilderCORE.getConnection().prepareStatement("SELECT DISTINCT SkillName FROM Skills WHERE LifeDomainTree2 = ? AND (LifeDomainTree3 = ? OR LifeDomainTree3 = ? OR LifeDomainTree3 = ?) AND Age <= ?");
+            PreparedStatement stmt2 = BuilderCORE.getConnection().prepareStatement(
+                    "SELECT DISTINCT SkillName "
+                    + "FROM Skills "
+                    + "WHERE LifeDomainTree2 = ? AND (LifeDomainTree3 = ? OR LifeDomainTree3 = ? OR LifeDomainTree3 = ?) AND Age <= ?");
             stmt2.setString(1, skillSubSet);
             stmt2.setString(2, basic2);
             stmt2.setString(3, basic4);
@@ -1101,7 +1146,7 @@ public class DatabaseReader {
             }
             out = BuilderCORE.getData(stmt2, columns, IgnoreSkillsList, 1);
         } catch (SQLException ex) {
-            ErrorController.ErrorController(ex);
+            ErrorController.ErrorControllerMethod(ex);
             Logger.getLogger(DatabaseReader.class.getName()).log(Level.SEVERE, null, ex);
         }
         return out;
@@ -1122,7 +1167,10 @@ public class DatabaseReader {
         ObservableList out = FXCollections.observableArrayList();
         try {
             chooseConnection(Enums.Enmuerations.UseCases.COREdb);
-            PreparedStatement stmt2 = BuilderCORE.getConnection().prepareStatement("SELECT DISTINCT SkillName FROM Skills WHERE LifeDomainTree2 = ? AND LifeDomainTree3 = ? AND Age <= ?");
+            PreparedStatement stmt2 = BuilderCORE.getConnection().prepareStatement(
+                    "SELECT DISTINCT SkillName "
+                    + "FROM Skills "
+                    + "WHERE LifeDomainTree2 = ? AND LifeDomainTree3 = ? AND Age <= ?");
             stmt2.setString(1, skillSubSet);
             stmt2.setInt(3, maxAge);
             switch (lifeDomainTree1Value) {
@@ -1140,7 +1188,7 @@ public class DatabaseReader {
             }
             out = BuilderCORE.getData(stmt2, columns, IgnoreSkillsList, 1);
         } catch (SQLException ex) {
-            ErrorController.ErrorController(ex);
+            ErrorController.ErrorControllerMethod(ex);
             Logger.getLogger(DatabaseReader.class.getName()).log(Level.SEVERE, null, ex);
         }
         return out;
@@ -1162,7 +1210,10 @@ public class DatabaseReader {
         ObservableList out = FXCollections.observableArrayList();
         try {
             chooseConnection(Enums.Enmuerations.UseCases.COREdb);
-            PreparedStatement stmt2 = BuilderCORE.getConnection().prepareStatement("SELECT DISTINCT SkillName FROM Skills WHERE LifeDomainTree2 = ? AND LifeDomainTree3 = ? AND Age <= ?");
+            PreparedStatement stmt2 = BuilderCORE.getConnection().prepareStatement(
+                    "SELECT DISTINCT SkillName "
+                    + "FROM Skills "
+                    + "WHERE LifeDomainTree2 = ? AND LifeDomainTree3 = ? AND Age <= ?");
             stmt2.setString(1, skillSubSet);
             stmt2.setInt(3, maxAge);
             switch (lifeDomainTree1Value) {
@@ -1195,7 +1246,7 @@ public class DatabaseReader {
             }
             out = BuilderCORE.getData(stmt2, columns, IgnoreSkillsList, 1);
         } catch (SQLException ex) {
-            ErrorController.ErrorController(ex);
+            ErrorController.ErrorControllerMethod(ex);
             Logger.getLogger(DatabaseReader.class.getName()).log(Level.SEVERE, null, ex);
         }
         return out;
@@ -1214,7 +1265,7 @@ public class DatabaseReader {
             stmt.setString(1, Lifedomain);
             out = BuilderCORE.getValue(stmt, "ClassTypes").split(",");
         } catch (SQLException ex) {
-            ErrorController.ErrorController(ex);
+            ErrorController.ErrorControllerMethod(ex);
             Logger.getLogger(DatabaseReader.class.getName()).log(Level.SEVERE, null, ex);
         }
         return out;
@@ -1235,7 +1286,7 @@ public class DatabaseReader {
             stmt.setString(2, culture);
             out = Integer.parseInt(BuilderCORE.getValue(stmt, "COUNT (*)"));
         } catch (SQLException ex) {
-            ErrorController.ErrorController(ex);
+            ErrorController.ErrorControllerMethod(ex);
             Logger.getLogger(DatabaseReader.class.getName()).log(Level.SEVERE, null, ex);
         }
         return out;
@@ -1259,7 +1310,7 @@ public class DatabaseReader {
             data = BuilderCORE.getData(stmt, columns, null, 0);
 
         } catch (SQLException ex) {
-            ErrorController.ErrorController(ex);
+            ErrorController.ErrorControllerMethod(ex);
             Logger.getLogger(DatabaseReader.class.getName()).log(Level.SEVERE, null, ex);
         }
         return data;
@@ -1276,7 +1327,10 @@ public class DatabaseReader {
         ObservableList data = FXCollections.observableArrayList();
         try {
             chooseConnection(UseCases.Userdb);
-            PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT * FROM BattlesHistory WHERE (UserSpecies = ? AND UserCulture = ?) OR (OponentSpecies = ? AND OponentCulture = ?)");
+            PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement(
+                    "SELECT * "
+                    + "FROM BattlesHistory "
+                    + "WHERE (UserSpecies = ? AND UserCulture = ?) OR (OponentSpecies = ? AND OponentCulture = ?)");
             stmt.setString(1, selSpecies);
             stmt.setString(2, selCulture);
             stmt.setString(3, selSpecies);
@@ -1285,9 +1339,10 @@ public class DatabaseReader {
             data = BuilderCORE.getData(stmt, columns, null, 0);
 
         } catch (SQLException ex) {
-            ErrorController.ErrorController(ex);
+            ErrorController.ErrorControllerMethod(ex);
             Logger.getLogger(DatabaseReader.class.getName()).log(Level.SEVERE, null, ex);
         }
         return data;
     }
+
 }
