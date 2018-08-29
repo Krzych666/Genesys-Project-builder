@@ -8,6 +8,7 @@ package genesys.project.builder;
 import static genesys.project.builder.BuilderCORE.chooseConnection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.collections.ObservableList;
@@ -19,11 +20,16 @@ import javafx.collections.ObservableList;
 public class DatabaseSwiper {
 
     /**
+     * speciesList - swiper Helper Species-Id Map
+     */
+    private static Map swiperHelperSpeciesIdMap;
+
+    /**
      * databaseSwiper
      */
     public static void databaseSwiper() {
         try {
-            ObservableList speciesList = DatabaseReader.getSpeciesList();
+            ObservableList speciesList = DatabaseReader.getSpeciesList(swiperHelperSpeciesIdMap);
             speciesList.removeAll(" ");
             for (Enums.Enmuerations.LifedomainValue domain : BuilderCORE.DOMAINS) {
                 speciesList.remove("--" + domain.toString() + "--");

@@ -17,36 +17,36 @@ import static org.junit.Assert.*;
  * @author krzysztof.g
  */
 public class DatabaseHolderTest {
-    
+
     /**
-     *DatabaseHolderTest
+     * DatabaseHolderTest
      */
     public DatabaseHolderTest() {
     }
-    
+
     /**
-     *setUpClass
+     * setUpClass
      */
     @BeforeClass
     public static void setUpClass() {
     }
-    
+
     /**
-     *tearDownClass
+     * tearDownClass
      */
     @AfterClass
     public static void tearDownClass() {
     }
-    
+
     /**
-     *setUp
+     * setUp
      */
     @Before
     public void setUp() {
     }
-    
+
     /**
-     *tearDown
+     * tearDown
      */
     @After
     public void tearDown() {
@@ -123,7 +123,7 @@ public class DatabaseHolderTest {
     @Test
     public void testLoadSpeciesToHold() {
         System.out.println("loadSpeciesToHold");
-        String selSpecies = "";
+        int selSpecies = 0;
         DatabaseHolder.loadSpeciesToHold(selSpecies);
         // TODO review the generated test code and remove the default call to fail.
         fail("The test case is a prototype.");
@@ -135,9 +135,8 @@ public class DatabaseHolderTest {
     @Test
     public void testLoadCultureToHold() {
         System.out.println("loadCultureToHold");
-        String selSpecies = "";
-        String selCulture = "";
-        DatabaseHolder.loadCultureToHold(selSpecies, selCulture);
+        int selCulture = 0;
+        DatabaseHolder.loadCultureToHold(selCulture);
         // TODO review the generated test code and remove the default call to fail.
         fail("The test case is a prototype.");
     }
@@ -148,11 +147,9 @@ public class DatabaseHolderTest {
     @Test
     public void testLoadClassToHold() {
         System.out.println("loadClassToHold");
-        String selSpecies = "";
-        String selCulture = "";
-        String selClass = "";
+        int selClass = 0;
         int a = 0;
-        DatabaseHolder.loadClassToHold(selSpecies, selCulture, selClass, a);
+        DatabaseHolder.loadClassToHold(selClass, a);
         // TODO review the generated test code and remove the default call to fail.
         fail("The test case is a prototype.");
     }
@@ -163,10 +160,8 @@ public class DatabaseHolderTest {
     @Test
     public void testLoadHeroToHold() {
         System.out.println("loadHeroToHold");
-        String selSpecies = "";
-        String selCulture = "";
-        String selHero = "";
-        DatabaseHolder.loadHeroToHold(selSpecies, selCulture, selHero);
+        int selHero = 0;
+        DatabaseHolder.loadHeroToHold(selHero);
         // TODO review the generated test code and remove the default call to fail.
         fail("The test case is a prototype.");
     }
@@ -177,10 +172,8 @@ public class DatabaseHolderTest {
     @Test
     public void testLoadProgressToHold() {
         System.out.println("loadProgressToHold");
-        String selSpecies = "";
-        String selCulture = "";
-        String selProgress = "";
-        DatabaseHolder.loadProgressToHold(selSpecies, selCulture, selProgress);
+        int selProgress = 0;
+        DatabaseHolder.loadProgressToHold(selProgress);
         // TODO review the generated test code and remove the default call to fail.
         fail("The test case is a prototype.");
     }
@@ -191,10 +184,8 @@ public class DatabaseHolderTest {
     @Test
     public void testLoadRosterToHold() {
         System.out.println("loadRosterToHold");
-        String selSpecies = "";
-        String selCulture = "";
-        String selRoster = "";
-        DatabaseHolder.loadRosterToHold(selSpecies, selCulture, selRoster);
+        int selRoster = 0;
+        DatabaseHolder.loadRosterToHold(selRoster);
         // TODO review the generated test code and remove the default call to fail.
         fail("The test case is a prototype.");
     }
@@ -205,12 +196,10 @@ public class DatabaseHolderTest {
     @Test
     public void testLoadBattleToHold() {
         System.out.println("loadBattleToHold");
-        String selSpecies = "";
-        String selCulture = "";
-        String selBattle = "";
-        DatabaseHolder.loadBattleToHold(selSpecies, selCulture, selBattle);
+        int selBattle = 0;
+        DatabaseHolder.loadBattleToHold(selBattle);
         // TODO review the generated test code and remove the default call to fail.
         fail("The test case is a prototype.");
     }
-    
+
 }

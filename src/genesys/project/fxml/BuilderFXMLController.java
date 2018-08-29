@@ -14,6 +14,7 @@ import genesys.project.builder.Enums.Enmuerations.CharacteristicGroup;
 import genesys.project.builder.GenesysProjectBuilder;
 import java.io.IOException;
 import java.net.URL;
+import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -64,16 +65,51 @@ public class BuilderFXMLController implements Initializable {
 
     @FXML
     private ListView speciesList;
+    /**
+     * speciesList - speciesId Map
+     */
+    public static Map speciesIdMap;
+    public static int speciesID;
     @FXML
     private ListView classList;
+    /**
+     * classList - classesId Map
+     */
+    public static Map classesIdMap;
+    public static int classID;
+
     @FXML
     private ListView rostersList;
+    /**
+     * rostersList - rosterId Map
+     */
+    public static Map rosterIdMap;
+    public static int rosterID;
+
     @FXML
     private ListView culturesList;
+    /**
+     * culturesList - culturesId Map
+     */
+    public static Map culturesIdMap;
+    public static int cultureID;
+
     @FXML
     private ListView cultureProgressList;
+    /**
+     * cultureProgressList - progressId Map
+     */
+    public static Map progressIdMap;
+    public static int progressID;
+
     @FXML
     private ListView heroesList;
+    /**
+     * heroesList - heroesId Map
+     */
+    public static Map heroesIdMap;
+    public static int heroID;
+
     @FXML
     private ListView skillsList;
     @FXML
@@ -333,16 +369,17 @@ public class BuilderFXMLController implements Initializable {
     @FXML
     private void speciesListMousePressed() {
         if (!speciesList.getSelectionModel().isEmpty()) {
+            speciesID = Integer.parseInt(speciesIdMap.get(speciesList.getSelectionModel().getSelectedIndex()).toString());
             HOLD_MODIFIERS.clearModifiers();
-            ObservableList dataSpecies = DatabaseReader.getSpeciesData(speciesList.getSelectionModel().getSelectedItem().toString());
+            ObservableList dataSpecies = DatabaseReader.getSpeciesData(speciesID);
             currentLifeDomain = LifedomainValue.valueOf(dataSpecies.get(0).toString().split("\\|")[0]);
-            culturesList.setItems(DatabaseReader.populateDropdownsCultures(speciesList.getSelectionModel().getSelectedItem().toString()));
+            culturesList.setItems(DatabaseReader.populateDropdownsCultures(speciesID));
             culturesList.getItems().remove(DatabaseHolder.TOPDROP);
             clearListsOnCultureClick();
             currentCharacteristicGroup = (CharacteristicGroup.valueOf(dataSpecies.get(0).toString().split("\\|")[1]));
             String simpleSkillList = dataSpecies.get(0).toString().split("\\|")[3];
             skillsList.setItems(BuilderCORE.getFullSkillsDescription(simpleSkillList));
-            int cost = BuilderCORE.baseCost(speciesList.getSelectionModel().getSelectedItem().toString(), null, null, 0, heroesList.getSelectionModel());
+            int cost = BuilderCORE.baseCost(speciesID, 0, 0, 0, heroesList.getSelectionModel());
             pointsPerModelValue.setText(Integer.toString(cost));
             populateLabels();
             subSkillsList.getItems().clear();
@@ -358,7 +395,7 @@ public class BuilderFXMLController implements Initializable {
     @FXML
     private void culturesListMousePressed() {
         if (!culturesList.getSelectionModel().isEmpty() && !speciesList.getSelectionModel().isEmpty()) {
-            ObservableList dataSpecies = DatabaseReader.getSpeciesData(speciesList.getSelectionModel().getSelectedItem().toString());
+            ObservableList dataSpecies = DatabaseReader.getSpeciesData(speciesID);
             skillsList.setItems(BuilderCORE.getFullSkillsDescription(dataSpecies.get(0).toString().split("\\|")[3]));
             ObservableList tmp = FXCollections.observableArrayList();
             tmp.add(BuilderCORE.BASE);
@@ -366,15 +403,16 @@ public class BuilderFXMLController implements Initializable {
                 tmp.add(BuilderCORE.LESSER);
                 tmp.add(BuilderCORE.GREATER);
             }
-            ObservableList dataCulture = DatabaseReader.getCultureData(speciesList.getSelectionModel().getSelectedItem().toString(), culturesList.getSelectionModel().getSelectedItem().toString());
+            cultureID = Integer.parseInt(culturesIdMap.get(culturesList.getSelectionModel().getSelectedIndex()).toString());
+            ObservableList dataCulture = DatabaseReader.getCultureData(cultureID);
 
-            classList.setItems(DatabaseReader.populateDropdownsClasses(speciesList.getSelectionModel().getSelectedItem().toString(), culturesList.getSelectionModel().getSelectedItem().toString()));
+            classList.setItems(DatabaseReader.populateDropdownsClasses(cultureID));
             classList.getItems().remove(DatabaseHolder.TOPDROP);
 
-            heroesList.setItems(DatabaseReader.populateDropdownsHeroes(speciesList.getSelectionModel().getSelectedItem().toString(), culturesList.getSelectionModel().getSelectedItem().toString(), DatabaseHolder.TOPDROP));
+            heroesList.setItems(DatabaseReader.populateDropdownsHeroes(cultureID, 0));
             heroesList.getItems().remove(DatabaseHolder.TOPDROP);
 
-            rostersList.setItems(DatabaseReader.populateDropdownsRosters(speciesList.getSelectionModel().getSelectedItem().toString(), culturesList.getSelectionModel().getSelectedItem().toString()));
+            rostersList.setItems(DatabaseReader.populateDropdownsRosters(cultureID));
             rostersList.getItems().remove(DatabaseHolder.TOPDROP);
 
             populateLabels();
@@ -411,25 +449,26 @@ public class BuilderFXMLController implements Initializable {
     private void classListMousePressed() {
         if (!classList.getSelectionModel().isEmpty() && !speciesList.getSelectionModel().isEmpty() && !culturesList.getSelectionModel().isEmpty()) {
             heroesList.getSelectionModel().clearSelection();
-            loadClassDataIntoFront(classList.getSelectionModel().getSelectedItem().toString());
+            classID = Integer.parseInt(classesIdMap.get(classList.getSelectionModel().getSelectedIndex()).toString());
+            loadClassDataIntoFront(classID);
         }
     }
 
-    private void loadClassDataIntoFront(String className) {
+    private void loadClassDataIntoFront(int classID) {
         String simpleSkillList;
-        ObservableList dataSpecies = DatabaseReader.getSpeciesData(speciesList.getSelectionModel().getSelectedItem().toString());
-        if (BuilderCORE.BASE.equals(className)) {
+        ObservableList dataSpecies = DatabaseReader.getSpeciesData(speciesID);
+        if (classID == 0) {
             simpleSkillList = dataSpecies.get(0).toString().split("\\|")[3];
             classTypeValue.setText("");
             basedOnValue.setText("");
         } else {
-            ObservableList dataClass = DatabaseReader.getClassData(speciesList.getSelectionModel().getSelectedItem().toString(), culturesList.getSelectionModel().getSelectedItem().toString(), className);
+            ObservableList dataClass = DatabaseReader.getClassData(classID);
             simpleSkillList = BuilderCORE.getSourceBaseSkills(dataSpecies, dataClass, speciesList.getSelectionModel().getSelectedItem().toString(), culturesList.getSelectionModel().getSelectedItem().toString());
-            classTypeValue.setText(dataClass.get(0).toString().split("\\|")[2]);
-            basedOnValue.setText(dataClass.get(0).toString().split("\\|")[3]);
+            classTypeValue.setText(dataClass.get(0).toString().split("\\|")[4]);
+            basedOnValue.setText(dataClass.get(0).toString().split("\\|")[5]);
         }
         skillsList.setItems(BuilderCORE.getFullSkillsDescription(simpleSkillList));
-        int cost = BuilderCORE.baseCost(speciesList.getSelectionModel().getSelectedItem().toString(), culturesList.getSelectionModel().getSelectedItem().toString(), className, 0, heroesList.getSelectionModel());
+        int cost = BuilderCORE.baseCost(speciesID, cultureID, classID, 0, heroesList.getSelectionModel());
         pointsPerModelValue.setText(Integer.toString(cost));
         populateLabels();
         subSkillsList.getItems().clear();
@@ -440,19 +479,20 @@ public class BuilderFXMLController implements Initializable {
     private void heroesListMousePressed() {
         if (!heroesList.getSelectionModel().isEmpty() && !speciesList.getSelectionModel().isEmpty() && !culturesList.getSelectionModel().isEmpty()) {
             classList.getSelectionModel().clearSelection();
-            loadHeroDataIntoFront(heroesList.getSelectionModel().getSelectedItem().toString());
+            heroID = Integer.parseInt(heroesIdMap.get(heroesList.getSelectionModel().getSelectedIndex()).toString());
+            loadHeroDataIntoFront(heroID);
         }
     }
 
-    private void loadHeroDataIntoFront(String HeroName) {
-        ObservableList dataSpecies = DatabaseReader.getSpeciesData(speciesList.getSelectionModel().getSelectedItem().toString());
-        ObservableList dataHero = DatabaseReader.getHeroData(speciesList.getSelectionModel().getSelectedItem().toString(), culturesList.getSelectionModel().getSelectedItem().toString(), HeroName);
-        ObservableList dataClass = DatabaseReader.getClassData(speciesList.getSelectionModel().getSelectedItem().toString(), culturesList.getSelectionModel().getSelectedItem().toString(), dataHero.get(0).toString().split("\\|")[1]);
+    private void loadHeroDataIntoFront(int HeroName) {
+        ObservableList dataSpecies = DatabaseReader.getSpeciesData(speciesID);
+        ObservableList dataHero = DatabaseReader.getHeroData(HeroName);
+        ObservableList dataClass = DatabaseReader.getClassData(Integer.parseInt(classesIdMap.get(dataHero.get(0).toString().split("\\|")[3]).toString()));
         String simpleSkillList = BuilderCORE.getSourceBaseSkills(dataSpecies, dataClass, speciesList.getSelectionModel().getSelectedItem().toString(), culturesList.getSelectionModel().getSelectedItem().toString());
         skillsList.setItems(BuilderCORE.getFullSkillsDescription(simpleSkillList));
         basedOnValue.setText(dataHero.get(0).toString().split("\\|")[1]);
-        classTypeValue.setText(dataClass.get(0).toString().split("\\|")[2]);
-        int cost = BuilderCORE.baseCost(speciesList.getSelectionModel().getSelectedItem().toString(), culturesList.getSelectionModel().getSelectedItem().toString(), dataHero.get(0).toString().split("\\|")[1], 0, heroesList.getSelectionModel());
+        classTypeValue.setText(dataClass.get(0).toString().split("\\|")[4]);
+        int cost = BuilderCORE.baseCost(speciesID, cultureID, Integer.parseInt(dataHero.get(0).toString().split("\\|")[3]), 0, heroesList.getSelectionModel());
         pointsPerModelValue.setText(Integer.toString(cost));
         populateLabels();
         subSkillsList.getItems().clear();
@@ -570,7 +610,7 @@ public class BuilderFXMLController implements Initializable {
      */
     public void clearSelectionEvent() {
         clearLists();
-        speciesList.setItems(DatabaseReader.getSpeciesList());
+        speciesList.setItems(DatabaseReader.getSpeciesList(speciesIdMap));
     }
 
     /**
@@ -592,7 +632,8 @@ public class BuilderFXMLController implements Initializable {
     private void rosterListMousePressed() {
         if (!rostersList.getSelectionModel().isEmpty() && !speciesList.getSelectionModel().isEmpty() && !culturesList.getSelectionModel().isEmpty()) {
             cultureProgressList.getSelectionModel().clearSelection();
-            fullroster.getItems().setAll(FXCollections.observableArrayList(DatabaseReader.getRosterData(speciesList.getSelectionModel().getSelectedItem().toString(), culturesList.getSelectionModel().getSelectedItem().toString(), rostersList.getSelectionModel().getSelectedItem().toString()).get(0).toString().split("\\|")[0].split(";")));
+            rosterID = Integer.parseInt(rosterIdMap.get(rostersList.getSelectionModel().getSelectedIndex()).toString());
+            fullroster.getItems().setAll(FXCollections.observableArrayList(DatabaseReader.getRosterData(rosterID).get(0).toString().split("\\|")[2].split(";")));
         }
     }
 
@@ -600,14 +641,15 @@ public class BuilderFXMLController implements Initializable {
     private void cultureProgressListMousePressed() {
         if (!cultureProgressList.getSelectionModel().isEmpty() && !speciesList.getSelectionModel().isEmpty() && !culturesList.getSelectionModel().isEmpty()) {
             rostersList.getSelectionModel().clearSelection();
+            progressID = Integer.parseInt(progressIdMap.get(cultureProgressList.getSelectionModel().getSelectedIndex()).toString());
             ObservableList lst = FXCollections.observableArrayList();
             if (cultureProgressList.getSelectionModel().getSelectedItem().toString().startsWith("Progress: ")) {
-                String progressName = cultureProgressList.getSelectionModel().getSelectedItem().toString().replaceFirst("Progress: ", "");
-                lst = FXCollections.observableArrayList(DatabaseReader.getProgressData(speciesList.getSelectionModel().getSelectedItem().toString(), culturesList.getSelectionModel().getSelectedItem().toString(), progressName).get(0).toString().split("\\|")[0].split(";"));
+                //String progressName = cultureProgressList.getSelectionModel().getSelectedItem().toString().replaceFirst("Progress: ", "");
+                lst = FXCollections.observableArrayList(DatabaseReader.getProgressData(progressID).get(0).toString().split("\\|")[2].split(";"));
             }
             if (cultureProgressList.getSelectionModel().getSelectedItem().toString().startsWith("Battle: ")) {
-                String battleName = cultureProgressList.getSelectionModel().getSelectedItem().toString().replaceFirst("Battle: ", "");
-                lst = FXCollections.observableArrayList(BuilderCORE.beautifyBattleData(DatabaseReader.getBattleData(speciesList.getSelectionModel().getSelectedItem().toString(), culturesList.getSelectionModel().getSelectedItem().toString(), battleName).get(0).toString()));
+                //String battleName = cultureProgressList.getSelectionModel().getSelectedItem().toString().replaceFirst("Battle: ", "");
+                lst = FXCollections.observableArrayList(BuilderCORE.beautifyBattleData(DatabaseReader.getBattleData(progressID).get(0).toString()));
             }
             fullroster.getItems().setAll(lst);
         }
@@ -618,9 +660,9 @@ public class BuilderFXMLController implements Initializable {
         if (!fullroster.getSelectionModel().isEmpty() && !rostersList.getSelectionModel().isEmpty() && !speciesList.getSelectionModel().isEmpty() && !culturesList.getSelectionModel().isEmpty()) {
             String selected = fullroster.getSelectionModel().getSelectedItem().toString().split(" x")[0];
             if (classList.getItems().contains(selected)) {
-                loadClassDataIntoFront(selected);
+                loadClassDataIntoFront(Integer.parseInt(classesIdMap.get(selected).toString()));
             } else if (heroesList.getItems().contains(selected)) {
-                loadHeroDataIntoFront(selected);
+                loadHeroDataIntoFront(Integer.parseInt(heroesIdMap.get(selected).toString()));
             } else {
                 System.out.println("wrong class/hero");
             }
@@ -721,7 +763,7 @@ public class BuilderFXMLController implements Initializable {
     public void initialize(URL url, ResourceBundle rb) {
         simplifyToCoreSkills = false;
         this.valuesLabels = new TextField[]{strengthValue, toughnessValue, movementValue, martialValue, rangedValue, defenseValue, disciplineValue, willpowerValue, commandValue, woundsValue, attacksValue, sizeValue, mTValue, rTValue, moraleValue};
-        speciesList.setItems(DatabaseReader.getSpeciesList());
+        speciesList.setItems(DatabaseReader.getSpeciesList(speciesIdMap));
         speciesList.setCellFactory(new Callback<ListView<String>, ListCell<String>>() {
             @Override
             public ListCell<String> call(ListView<String> param) {

@@ -14,6 +14,7 @@ import javafx.collections.ObservableList;
 import static genesys.project.builder.BuilderCORE.chooseConnection;
 import genesys.project.fxml.BuilderFXMLController;
 import genesys.project.fxml.ErrorController;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.scene.control.ListView;
@@ -114,22 +115,27 @@ public class DatabaseReader {
 
     /**
      *
+     * @param speciesMap
      * @return
      */
-    public static ObservableList<String> getSpeciesList() {
+    public static ObservableList<String> getSpeciesList(Map speciesMap) {
         ObservableList<String> tmp = FXCollections.observableArrayList();
+        speciesMap.clear();
         try {
             for (LifedomainValue domain : BuilderCORE.DOMAINS) {
                 tmp.add("--" + domain.toString() + "--");
+                speciesMap.put(tmp.size(), 0);
                 chooseConnection(UseCases.Userdb);
                 PreparedStatement stmt = BuilderCORE.conn.prepareStatement("SELECT * FROM CreatedSpecies WHERE LifeDomain = ?");
                 stmt.setString(1, domain.toString());
-                String[] columns = {"SpeciesName"};
-                ObservableList<String> tmpget = BuilderCORE.getData(stmt, columns, null, 0);
+                String[] columns = {"CreatedSpeciesID", "SpeciesName"};
+                ObservableList tmpget = BuilderCORE.getData(stmt, columns, null, 0);
                 for (int i = 0; i < tmpget.size(); i++) {
-                    tmp.add(tmpget.get(i));
+                    tmp.add(tmpget.get(i).toString().split("\\|")[1]);
+                    speciesMap.put(tmp.size(), tmpget.get(i).toString().split("\\|")[0]);
                 }
                 tmp.add(" ");
+                speciesMap.put(tmp.size(), 0);
             }
         } catch (SQLException ex) {
             ErrorController.ErrorControllerMethod(ex);
@@ -147,7 +153,7 @@ public class DatabaseReader {
         try {
             tmp.setAll(DatabaseHolder.TOPDROP);
             chooseConnection(UseCases.Userdb);
-            PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT DISTINCT SpeciesName FROM CreatedSpecies");
+            PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT SpeciesName FROM CreatedSpecies");
             String[] columns = {"SpeciesName"};
             tmp.addAll(BuilderCORE.getData(stmt, columns, null, 0));
         } catch (SQLException ex) {
@@ -162,13 +168,13 @@ public class DatabaseReader {
      * @param fromwhat
      * @return
      */
-    public static ObservableList populateDropdownsCultures(String fromwhat) {
+    public static ObservableList populateDropdownsCultures(int fromwhat) {
         ObservableList tmp = FXCollections.observableArrayList();
         try {
             tmp.setAll(DatabaseHolder.TOPDROP);
             chooseConnection(UseCases.Userdb);
-            PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT * FROM CreatedCultures WHERE SpeciesName = ?");
-            stmt.setString(1, fromwhat);
+            PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT * FROM CreatedCultures WHERE ParentSpeciesId = ?");
+            stmt.setInt(1, fromwhat);
             String[] columns = {"CultureName"};
             tmp.addAll(BuilderCORE.getData(stmt, columns, null, 0));
         } catch (SQLException ex) {
@@ -180,18 +186,16 @@ public class DatabaseReader {
 
     /**
      *
-     * @param fromwhats
      * @param fromwhatc
      * @return
      */
-    public static ObservableList populateDropdownsClasses(String fromwhats, String fromwhatc) {
+    public static ObservableList populateDropdownsClasses(int fromwhatc) {
         ObservableList tmp = FXCollections.observableArrayList();
         try {
             tmp.setAll(DatabaseHolder.TOPDROP);
             chooseConnection(UseCases.Userdb);
-            PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT * FROM CreatedClasses WHERE SpeciesName =? AND CultureName =?");
-            stmt.setString(1, fromwhats);
-            stmt.setString(2, fromwhatc);
+            PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT * FROM CreatedClasses WHERE ParentCultureId =? ");
+            stmt.setInt(1, fromwhatc);
             String[] columns = {"ClassName"};
             tmp.addAll(BuilderCORE.getData(stmt, columns, null, 0));
         } catch (SQLException ex) {
@@ -203,27 +207,24 @@ public class DatabaseReader {
 
     /**
      *
-     * @param fromwhats
      * @param fromwhatc
      * @param fromwhatcl
      * @return
      */
-    public static ObservableList populateDropdownsHeroes(String fromwhats, String fromwhatc, String fromwhatcl) {
+    public static ObservableList populateDropdownsHeroes(int fromwhatc, int fromwhatcl) {
         ObservableList tmp = FXCollections.observableArrayList();
         try {
             tmp.setAll(DatabaseHolder.TOPDROP);
             chooseConnection(UseCases.Userdb);
             String[] columns = {"HeroName"};
-            if (DatabaseHolder.TOPDROP.equals(fromwhatcl) && !(DatabaseHolder.TOPDROP.equals(fromwhats) && DatabaseHolder.TOPDROP.equals(fromwhatc))) {
-                PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT * FROM CreatedHeroes WHERE SpeciesName =? AND CultureName =?");
-                stmt.setString(1, fromwhats);
-                stmt.setString(2, fromwhatc);
+            if (fromwhatcl == 0 && fromwhatc != 0) {
+                PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT * FROM CreatedHeroes WHERE ParentCultureId =?");
+                stmt.setInt(1, fromwhatc);
                 tmp.addAll(BuilderCORE.getData(stmt, columns, null, 0));
             } else {
-                PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT * FROM CreatedHeroes WHERE SpeciesName =? AND CultureName =? AND BasedOn =?");
-                stmt.setString(1, fromwhats);
-                stmt.setString(2, fromwhatc);
-                stmt.setString(3, fromwhatcl);
+                PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT * FROM CreatedHeroes WHERE ParentCultureId =? AND BasedOn =?");
+                stmt.setInt(1, fromwhatc);
+                stmt.setInt(2, fromwhatcl);
                 tmp.addAll(BuilderCORE.getData(stmt, columns, null, 0));
             }
         } catch (SQLException ex) {
@@ -235,18 +236,16 @@ public class DatabaseReader {
 
     /**
      *
-     * @param fromwhats
      * @param fromwhatc
      * @return
      */
-    public static ObservableList populateDropdownsRosters(String fromwhats, String fromwhatc) {
+    public static ObservableList populateDropdownsRosters(int fromwhatc) {
         ObservableList tmp = FXCollections.observableArrayList();
         try {
             tmp.setAll(DatabaseHolder.TOPDROP);
             chooseConnection(UseCases.Userdb);
-            PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT * FROM CreatedRosters WHERE (SpeciesName =?) AND (CultureName =?)");
-            stmt.setString(1, fromwhats);
-            stmt.setString(2, fromwhatc);
+            PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT * FROM CreatedRosters WHERE ParentCultureId =?");
+            stmt.setInt(1, fromwhatc);
             String[] columns = {"RosterName"};
             tmp.addAll(BuilderCORE.getData(stmt, columns, null, 0));
         } catch (SQLException ex) {
@@ -724,13 +723,13 @@ public class DatabaseReader {
      * @return
      *
      */
-    public static ObservableList getSpeciesData(String selSpecies) {
+    public static ObservableList getSpeciesData(int selSpecies) {
         ObservableList data = FXCollections.observableArrayList();
         try {
             chooseConnection(UseCases.Userdb);
-            PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT * FROM CreatedSpecies WHERE SpeciesName =?");
-            stmt.setString(1, selSpecies);
-            String[] columns = {"LifeDomain", "CharacteristicGroup", "Age", "Skills", "SpeciesModifiers"};
+            PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT * FROM CreatedSpecies WHERE CreatedSpeciesID =?");
+            stmt.setInt(1, selSpecies);
+            String[] columns = {"LifeDomain", "CharacteristicGroup", "SpeciesName", "Age", "Skills", "SpeciesModifiers"};
             data = BuilderCORE.getData(stmt, columns, null, 0);
         } catch (SQLException ex) {
             ErrorController.ErrorControllerMethod(ex);
@@ -741,19 +740,17 @@ public class DatabaseReader {
 
     /**
      *
-     * @param selSpecies
      * @param selCulture
      * @return
      *
      */
-    public static ObservableList getCultureData(String selSpecies, String selCulture) {
+    public static ObservableList getCultureData(int selCulture) {
         ObservableList data = FXCollections.observableArrayList();
         try {
             chooseConnection(UseCases.Userdb);
-            PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT * FROM CreatedCultures WHERE SpeciesName = ? AND CultureName = ?");
-            stmt.setString(1, selSpecies);
-            stmt.setString(2, selCulture);
-            String[] columns = {"Age", "TotalProgressionPoints", "LeftProgressionPoints"};
+            PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT * FROM CreatedCultures WHERE CreatedCulturesID = ?");
+            stmt.setInt(1, selCulture);
+            String[] columns = {"CultureName", "ParentSpeciesID", "Age", "TotalProgressionPoints", "LeftProgressionPoints"};
             data = BuilderCORE.getData(stmt, columns, null, 0);
         } catch (SQLException ex) {
             ErrorController.ErrorControllerMethod(ex);
@@ -764,21 +761,17 @@ public class DatabaseReader {
 
     /**
      *
-     * @param selSpecies
-     * @param selCulture
      * @param selClass
      * @return
      *
      */
-    public static ObservableList getClassData(String selSpecies, String selCulture, String selClass) {
+    public static ObservableList getClassData(int selClass) {
         ObservableList data = FXCollections.observableArrayList();
         try {
             chooseConnection(UseCases.Userdb);
-            PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT * FROM CreatedClasses WHERE SpeciesName=? AND CultureName =? AND ClassName =?");
-            stmt.setString(1, selSpecies);
-            stmt.setString(2, selCulture);
-            stmt.setString(3, selClass);
-            String[] columns = {"Skills", "Advancements", "Type", "BasedOn", "AdditionalCost"};
+            PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT * FROM CreatedClasses WHERE CreatedClassesID =?");
+            stmt.setInt(1, selClass);
+            String[] columns = {"ClassName", "Skills", "ParentCultureId", "Advancements", "Type", "BasedOn", "AdditionalCost"};
             data = BuilderCORE.getData(stmt, columns, null, 0);
         } catch (SQLException ex) {
             ErrorController.ErrorControllerMethod(ex);
@@ -788,22 +781,17 @@ public class DatabaseReader {
     }
 
     /**
-     *
-     * @param selSpecies
-     * @param selCulture
      * @param selHero
      * @return
      *
      */
-    public static ObservableList getHeroData(String selSpecies, String selCulture, String selHero) {
+    public static ObservableList getHeroData(int selHero) {
         ObservableList data = FXCollections.observableArrayList();
         try {
             chooseConnection(UseCases.Userdb);
-            PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT * FROM CreatedHeroes WHERE SpeciesName =? AND CultureName =? AND HeroName =?");
-            stmt.setString(1, selSpecies);
-            stmt.setString(2, selCulture);
-            stmt.setString(3, selHero);
-            String[] columns = {"Advancements", "BasedOn", "AdditionalCost"};
+            PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT * FROM CreatedHeroes WHERE CreatedHeroesID =?");
+            stmt.setInt(1, selHero);
+            String[] columns = {"HeroName", "ParentCultureId", "Advancements", "BasedOn", "AdditionalCost"};
             data = BuilderCORE.getData(stmt, columns, null, 0);
 
         } catch (SQLException ex) {
@@ -815,21 +803,17 @@ public class DatabaseReader {
 
     /**
      *
-     * @param selSpecies
-     * @param selCulture
      * @param selProgress
      * @return
      *
      */
-    public static ObservableList getProgressData(String selSpecies, String selCulture, String selProgress) {
+    public static ObservableList getProgressData(int selProgress) {
         ObservableList data = FXCollections.observableArrayList();
         try {
             chooseConnection(UseCases.Userdb);
-            PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT * FROM CreatedProgress WHERE SpeciesName =? AND CultureName =? AND ProgressName =?");
-            stmt.setString(1, selSpecies);
-            stmt.setString(2, selCulture);
-            stmt.setString(3, selProgress);
-            String[] columns = {"Progress", "Date"};
+            PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT * FROM CreatedProgress WHERE CreatedProgressID =?");
+            stmt.setInt(1, selProgress);
+            String[] columns = {"ParentCultureId", "ProgressName", "Progress", "Date"};
             data = BuilderCORE.getData(stmt, columns, null, 0);
 
         } catch (SQLException ex) {
@@ -841,21 +825,17 @@ public class DatabaseReader {
 
     /**
      *
-     * @param selSpecies
-     * @param selCulture
      * @param selRoster
      * @return
      *
      */
-    public static ObservableList getRosterData(String selSpecies, String selCulture, String selRoster) {
+    public static ObservableList getRosterData(int selRoster) {
         ObservableList data = FXCollections.observableArrayList();
         try {
             chooseConnection(UseCases.Userdb);
-            PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT * FROM CreatedRosters WHERE SpeciesName =? AND CultureName =? AND RosterName =?");
-            stmt.setString(1, selSpecies);
-            stmt.setString(2, selCulture);
-            stmt.setString(3, selRoster);
-            String[] columns = {"Roster", "MaxPoints"};
+            PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT * FROM CreatedRosters WHERE CreatedRostersID =?");
+            stmt.setInt(1, selRoster);
+            String[] columns = {"ParentCultureId", "RosterName", "Roster", "MaxPoints"};
             data = BuilderCORE.getData(stmt, columns, null, 0);
         } catch (SQLException ex) {
             ErrorController.ErrorControllerMethod(ex);
@@ -866,23 +846,17 @@ public class DatabaseReader {
 
     /**
      *
-     * @param selSpecies
-     * @param selCulture
      * @param selBattle
      * @return
      *
      */
-    public static ObservableList getBattleData(String selSpecies, String selCulture, String selBattle) {
+    public static ObservableList getBattleData(int selBattle) {
         ObservableList data = FXCollections.observableArrayList();
         try {
             chooseConnection(UseCases.Userdb);
-            PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT * FROM BattlesHistory WHERE BattleName = ? AND ((UserSpecies = ? AND UserCulture = ?) OR (OponentSpecies = ? AND OponentCulture = ?))");
-            stmt.setString(1, selBattle);
-            stmt.setString(2, selSpecies);
-            stmt.setString(3, selCulture);
-            stmt.setString(4, selSpecies);
-            stmt.setString(5, selCulture);
-            String[] columns = {"UserSpecies", "UserCulture", "UserRoster", "OponentSpecies", "OponentCulture", "OponentRoster", "Points", "Outcome", "Date", "ReplayID"};
+            PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT * FROM BattlesHistory WHERE BattlesHistoryID = ? ");
+            stmt.setInt(1, selBattle);
+            String[] columns = {"BattleName", "UserSpeciesID", "UserCultureID", "UserRosterID", "OponentSpeciesID", "OponentCultureID", "OponentRosterID", "Points", "Outcome", "Date", "ReplayID", "CustomData"};
             data = BuilderCORE.getData(stmt, columns, null, 0);
 
         } catch (SQLException ex) {
@@ -890,6 +864,38 @@ public class DatabaseReader {
             Logger.getLogger(DatabaseReader.class.getName()).log(Level.SEVERE, null, ex);
         }
         return data;
+    }
+
+    public static int getCultureID(int parentSpeciesID, String cultureName) {
+        ObservableList data = FXCollections.observableArrayList();
+        try {
+            chooseConnection(UseCases.Userdb);
+            PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT * FROM CreatedCultures WHERE parentSpeciesID = ? AND CultureName = ?");
+            stmt.setInt(1, parentSpeciesID);
+            stmt.setString(2, cultureName);
+            String[] columns = {"CreatedCulturesID"};
+            data = BuilderCORE.getData(stmt, columns, null, 0);
+        } catch (SQLException ex) {
+            ErrorController.ErrorControllerMethod(ex);
+            Logger.getLogger(DatabaseReader.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return Integer.parseInt(data.get(0).toString());
+    }
+
+    public static int getHeroID(int parentCultureID, String heroName) {
+        ObservableList data = FXCollections.observableArrayList();
+        try {
+            chooseConnection(UseCases.Userdb);
+            PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT * FROM CreatedHeroes WHERE parentCultureId = ? AND HeroName = ?");
+            stmt.setInt(1, parentCultureID);
+            stmt.setString(2, heroName);
+            String[] columns = {"CreatedHeroesID"};
+            data = BuilderCORE.getData(stmt, columns, null, 0);
+        } catch (SQLException ex) {
+            ErrorController.ErrorControllerMethod(ex);
+            Logger.getLogger(DatabaseReader.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return Integer.parseInt(data.get(0).toString());
     }
 
     /**
@@ -909,8 +915,8 @@ public class DatabaseReader {
             chooseConnection(UseCases.COREdb);
             PreparedStatement stmt = BuilderCORE.conn.prepareStatement("SELECT max(Age) FROM Skills WHERE SkillName IN (" + skills + ")");
             String[] columns = {"max(Age)"};
-            ObservableList<String> tmpget = BuilderCORE.getData(stmt, columns, null, 0);
-            out = Integer.parseInt(tmpget.get(0));
+            ObservableList tmpget = BuilderCORE.getData(stmt, columns, null, 0);
+            out = Integer.parseInt(tmpget.get(0).toString());
         } catch (SQLException ex) {
             ErrorController.ErrorControllerMethod(ex);
             Logger.getLogger(DatabaseReader.class.getName()).log(Level.SEVERE, null, ex);
@@ -1281,7 +1287,7 @@ public class DatabaseReader {
         int out = 0;
         try {
             chooseConnection(UseCases.Userdb);
-            PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT COUNT (*) FROM CreatedClasses WHERE SpeciesName = ? AND CultureName = ?");
+            PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT COUNT (*) FROM CreatedClasses WHERE ParentSpeciesId = ? AND CultureName = ?");
             stmt.setString(1, species);
             stmt.setString(2, culture);
             out = Integer.parseInt(BuilderCORE.getValue(stmt, "COUNT (*)"));
@@ -1303,7 +1309,7 @@ public class DatabaseReader {
         ObservableList data = FXCollections.observableArrayList();
         try {
             chooseConnection(UseCases.Userdb);
-            PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT * FROM CreatedProgress WHERE SpeciesName = ? AND CultureName = ?");
+            PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT * FROM CreatedProgress WHERE ParentSpeciesId = ? AND CultureName = ?");
             stmt.setString(1, selSpecies);
             stmt.setString(2, selCulture);
             String[] columns = {"ProgressName", "Date"};

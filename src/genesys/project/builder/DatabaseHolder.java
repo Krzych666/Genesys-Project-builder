@@ -358,121 +358,107 @@ public class DatabaseHolder {
      *
      * @param selSpecies
      */
-    public static void loadSpeciesToHold(String selSpecies) {
+    public static void loadSpeciesToHold(int selSpecies) {
         ObservableList data = DatabaseReader.getSpeciesData(selSpecies);
         holdSpecies = ASpecies.createASpecies(LifedomainValue.valueOf(data.get(0).toString().split("\\|")[0]));
         holdSpecies.setLifedomain(LifedomainValue.valueOf(data.get(0).toString().split("\\|")[0]));
         holdSpecies.setCharacteristicGroup(CharacteristicGroup.valueOf(data.get(0).toString().split("\\|")[1]));
-        holdSpecies.setSpeciesName(selSpecies);
-        holdSpecies.setAge(Integer.parseInt(data.get(0).toString().split("\\|")[2]));
-        holdSpecies.setSkills(data.get(0).toString().split("\\|")[3]);
-        holdSpecies.setSpeciesModifiers(data.get(0).toString().split("\\|")[4]);
+        holdSpecies.setSpeciesName(data.get(0).toString().split("\\|")[2]);
+        holdSpecies.setAge(Integer.parseInt(data.get(0).toString().split("\\|")[3]));
+        holdSpecies.setSkills(data.get(0).toString().split("\\|")[4]);
+        holdSpecies.setSpeciesModifiers(data.get(0).toString().split("\\|")[5]);
         modifiedHoldSpecies = holdSpecies.getClone();
     }
 
     /**
      *
-     * @param selSpecies
      * @param selCulture
      */
-    public static void loadCultureToHold(String selSpecies, String selCulture) {
-        ObservableList data = DatabaseReader.getCultureData(selSpecies, selCulture);
-        holdCulture.setSpeciesName(selSpecies);
-        holdCulture.setCultureName(selCulture);
-        holdCulture.setAge(Integer.parseInt(data.get(0).toString().split("\\|")[0]));
-        holdCulture.setTotalProgressionPoints(Integer.parseInt(data.get(0).toString().split("\\|")[1]));
-        holdCulture.setLeftProgressionPoints(Integer.parseInt(data.get(0).toString().split("\\|")[2]));
+    public static void loadCultureToHold(int selCulture) {
+        ObservableList data = DatabaseReader.getCultureData(selCulture);
+        holdCulture.setCultureName(data.get(0).toString().split("\\|")[0]);
+        holdCulture.setParentSpeciesID(Integer.parseInt(data.get(0).toString().split("\\|")[1]));
+        holdCulture.setAge(Integer.parseInt(data.get(0).toString().split("\\|")[2]));
+        holdCulture.setTotalProgressionPoints(Integer.parseInt(data.get(0).toString().split("\\|")[3]));
+        holdCulture.setLeftProgressionPoints(Integer.parseInt(data.get(0).toString().split("\\|")[4]));
         modifiedHoldCulture = holdCulture.getClone();
     }
 
     /**
      *
-     * @param selSpecies
-     * @param selCulture
      * @param selClass
      * @param a
      */
-    public static void loadClassToHold(String selSpecies, String selCulture, String selClass, int a) {
-        ObservableList data = DatabaseReader.getClassData(selSpecies, selCulture, selClass);
-        holdClass[a].setClassName(selClass);
-        holdClass[a].setSkills(data.get(0).toString().split("\\|")[0] + ",");
-        holdClass[a].setSpeciesName(selSpecies);
-        holdClass[a].setCultureName(selCulture);
-        holdClass[a].setAdvancements(data.get(0).toString().split("\\|")[1]);
-        holdClass[a].setType(data.get(0).toString().split("\\|")[2]);
-        holdClass[a].setBasedOn(data.get(0).toString().split("\\|")[3]);
-        holdClass[a].setAdditionalCost(data.get(0).toString().split("\\|")[4]);
+    public static void loadClassToHold(int selClass, int a) {
+        ObservableList data = DatabaseReader.getClassData(selClass);
+        holdClass[a].setClassName(data.get(0).toString().split("\\|")[0]);
+        holdClass[a].setSkills(data.get(0).toString().split("\\|")[1] + ",");
+        holdClass[a].setParentCultureId(Integer.parseInt(data.get(0).toString().split("\\|")[2]));
+        holdClass[a].setAdvancements(data.get(0).toString().split("\\|")[3]);
+        holdClass[a].setType(data.get(0).toString().split("\\|")[4]);
+        holdClass[a].setBasedOn(data.get(0).toString().split("\\|")[5]);
+        holdClass[a].setAdditionalCost(data.get(0).toString().split("\\|")[6]);
         modifiedHoldClass[a] = holdClass[a].getClone();
     }
 
     /**
      *
-     * @param selSpecies
-     * @param selCulture
      * @param selHero
      */
-    public static void loadHeroToHold(String selSpecies, String selCulture, String selHero) {
-        ObservableList data = DatabaseReader.getHeroData(selSpecies, selCulture, selHero);
-        holdHero.setHeroName(selHero);
-        holdHero.setSpeciesName(selSpecies);
-        holdHero.setCultureName(selCulture);
-        holdHero.setAdvancements(data.get(0).toString().split("\\|")[0]);
-        holdHero.setBasedOn(data.get(0).toString().split("\\|")[1]);
-        holdHero.setAdditionalCost(data.get(0).toString().split("\\|")[2]);
+    public static void loadHeroToHold(int selHero) {
+        ObservableList data = DatabaseReader.getHeroData(selHero);
+        holdHero.setHeroName(data.get(0).toString().split("\\|")[0]);
+        holdHero.setParentCultureId(Integer.parseInt(data.get(0).toString().split("\\|")[1]));
+        holdHero.setAdvancements(data.get(0).toString().split("\\|")[2]);
+        holdHero.setBasedOn(data.get(0).toString().split("\\|")[3]);
+        holdHero.setAdditionalCost(data.get(0).toString().split("\\|")[4]);
         modifiedHoldHero = holdHero.getClone();
     }
 
     /**
      *
-     * @param selSpecies
-     * @param selCulture
      * @param selProgress
      */
-    public static void loadProgressToHold(String selSpecies, String selCulture, String selProgress) {
-        ObservableList data = DatabaseReader.getProgressData(selSpecies, selCulture, selProgress);
-        holdProgress.setSpeciesName(selSpecies);
-        holdProgress.setCultureName(selCulture);
-        holdProgress.setProgressName(selProgress);
-        holdProgress.setProgress(data.get(0).toString().split("\\|")[0]);
-        holdProgress.setDate(data.get(0).toString().split("\\|")[1]);
+    public static void loadProgressToHold(int selProgress) {
+        ObservableList data = DatabaseReader.getProgressData(selProgress);
+        holdProgress.setParentCultureId(Integer.parseInt(data.get(0).toString().split("\\|")[0]));
+        holdProgress.setProgressName(data.get(0).toString().split("\\|")[1]);
+        holdProgress.setProgress(data.get(0).toString().split("\\|")[2]);
+        holdProgress.setDate(data.get(0).toString().split("\\|")[3]);
         modifiedHoldProgress = holdProgress.getClone();
     }
 
     /**
      *
-     * @param selSpecies
-     * @param selCulture
      * @param selRoster
      */
-    public static void loadRosterToHold(String selSpecies, String selCulture, String selRoster) {
-        ObservableList data = DatabaseReader.getRosterData(selSpecies, selCulture, selRoster);
-        holdRoster.setSpeciesName(selSpecies);
-        holdRoster.setCultureName(selCulture);
-        holdRoster.setRosterName(selRoster);
-        holdRoster.setRoster(data.get(0).toString().split("\\|")[0]);
-        holdRoster.setMaxPoints(data.get(0).toString().split("\\|")[1]);
+    public static void loadRosterToHold(int selRoster) {
+        ObservableList data = DatabaseReader.getRosterData(selRoster);
+        holdRoster.setParentCultureId(Integer.parseInt(data.get(0).toString().split("\\|")[0]));
+        holdRoster.setRosterName(data.get(0).toString().split("\\|")[1]);
+        holdRoster.setRoster(data.get(0).toString().split("\\|")[2]);
+        holdRoster.setMaxPoints(data.get(0).toString().split("\\|")[3]);
         modifiedHoldRoster = holdRoster.getClone();
     }
 
     /**
      *
-     * @param selSpecies
-     * @param selCulture
      * @param selBattle
      */
-    public static void loadBattleToHold(String selSpecies, String selCulture, String selBattle) {
-        ObservableList data = DatabaseReader.getBattleData(selSpecies, selCulture, selBattle);
-        holdBattle.setBattleName(selBattle);
-        holdBattle.setUserSpecies(data.get(0).toString().split("\\|")[0]);
-        holdBattle.setUserCulture(data.get(0).toString().split("\\|")[1]);
-        holdBattle.setUserRoster(data.get(0).toString().split("\\|")[2]);
-        holdBattle.setOponentSpecies(data.get(0).toString().split("\\|")[3]);
-        holdBattle.setOponentCulture(data.get(0).toString().split("\\|")[4]);
-        holdBattle.setOponentRoster(data.get(0).toString().split("\\|")[5]);
-        holdBattle.setPoints(data.get(0).toString().split("\\|")[6]);
-        holdBattle.setOutcome(data.get(0).toString().split("\\|")[7]);
-        holdBattle.setDate(data.get(0).toString().split("\\|")[8]);
-        holdBattle.setReplayID(data.get(0).toString().split("\\|")[9]);
+    public static void loadBattleToHold(int selBattle) {
+        ObservableList data = DatabaseReader.getBattleData(selBattle);
+        holdBattle.setBattleName(data.get(0).toString().split("\\|")[0]);
+        holdBattle.setUserSpeciesID(Integer.parseInt(data.get(0).toString().split("\\|")[1]));
+        holdBattle.setUserCultureID(Integer.parseInt(data.get(0).toString().split("\\|")[2]));
+        holdBattle.setUserRosterID(Integer.parseInt(data.get(0).toString().split("\\|")[3]));
+        holdBattle.setOponentSpeciesID(Integer.parseInt(data.get(0).toString().split("\\|")[4]));
+        holdBattle.setOponentCultureID(Integer.parseInt(data.get(0).toString().split("\\|")[5]));
+        holdBattle.setOponentRosterID(Integer.parseInt(data.get(0).toString().split("\\|")[6]));
+        holdBattle.setPoints(Integer.parseInt(data.get(0).toString().split("\\|")[7]));
+        holdBattle.setOutcome(data.get(0).toString().split("\\|")[8]);
+        holdBattle.setDate(data.get(0).toString().split("\\|")[9]);
+        holdBattle.setReplayID(Integer.parseInt(data.get(0).toString().split("\\|")[10]));
+        holdBattle.setCustomData(data.get(0).toString().split("\\|")[11]);
         modifiedHoldBattle = holdBattle.getClone();
     }
 
@@ -483,6 +469,7 @@ public class DatabaseHolder {
     @NoArgsConstructor
     public static abstract class ASpecies {
 
+        private int CreatedSpeciesID;
         private LifedomainValue Lifedomain;
         private CharacteristicGroup CharacteristicGroup;
         private String SpeciesName, Skills, SpeciesModifiers;
@@ -703,19 +690,20 @@ public class DatabaseHolder {
     @NoArgsConstructor
     public static class ACulture {
 
-        private String SpeciesName, CultureName;
+        private int CreatedCulturesID, ParentSpeciesID;
+        private String CultureName;
         private int Age, TotalProgressionPoints, LeftProgressionPoints;
 
         /**
          *
-         * @param SpeciesName
+         * @param ParentSpeciesID
          * @param CultureName
          * @param Age
          * @param TotalProgressionPoints
          * @param LeftProgressionPoints
          */
-        public ACulture(String SpeciesName, String CultureName, int Age, int TotalProgressionPoints, int LeftProgressionPoints) {
-            this.SpeciesName = SpeciesName;
+        public ACulture(int ParentSpeciesID, String CultureName, int Age, int TotalProgressionPoints, int LeftProgressionPoints) {
+            this.ParentSpeciesID = ParentSpeciesID;
             this.CultureName = CultureName;
             this.Age = Age;
             this.TotalProgressionPoints = TotalProgressionPoints;
@@ -727,7 +715,7 @@ public class DatabaseHolder {
          * @return
          */
         public ACulture getClone() {
-            ACulture aClone = new ACulture(this.SpeciesName, this.CultureName, this.Age, this.TotalProgressionPoints, this.LeftProgressionPoints);
+            ACulture aClone = new ACulture(this.ParentSpeciesID, this.CultureName, this.Age, this.TotalProgressionPoints, this.LeftProgressionPoints);
             return aClone;
         }
     }
@@ -739,13 +727,15 @@ public class DatabaseHolder {
     @NoArgsConstructor
     public static class AClass {
 
-        private String ClassName, Skills, SpeciesName, CultureName, Advancements, Type, BasedOn, AdditionalCost;
+        private int CreatedClassesID, ParentCultureId;
+        private String ClassName, Skills, Advancements, Type, BasedOn, AdditionalCost;
 
         /**
          * clearAClass
          */
         public void clearAClass() {
-            this.ClassName = this.Skills = this.SpeciesName = this.CultureName = this.Advancements = this.Type = this.BasedOn = this.AdditionalCost = "";
+            this.ClassName = this.Skills = this.Advancements = this.Type = this.BasedOn = this.AdditionalCost = "";
+            this.CreatedClassesID = this.ParentCultureId = 0;
         }
 
         /**
@@ -766,8 +756,7 @@ public class DatabaseHolder {
             AClass aClone = new AClass();
             aClone.ClassName = this.ClassName;
             aClone.Skills = this.Skills;
-            aClone.SpeciesName = this.SpeciesName;
-            aClone.CultureName = this.CultureName;
+            aClone.ParentCultureId = this.ParentCultureId;
             aClone.Advancements = this.Advancements;
             aClone.Type = this.Type;
             aClone.BasedOn = this.BasedOn;
@@ -783,7 +772,8 @@ public class DatabaseHolder {
     @NoArgsConstructor
     public static class AHero {
 
-        private String HeroName, SpeciesName, CultureName, Advancements, BasedOn, AdditionalCost;
+        private int CreatedHeroesID, ParentCultureId;
+        private String HeroName, Advancements, BasedOn, AdditionalCost;
 
         /**
          *
@@ -792,8 +782,7 @@ public class DatabaseHolder {
         public AHero getClone() {
             AHero aClone = new AHero();
             aClone.HeroName = this.HeroName;
-            aClone.SpeciesName = this.SpeciesName;
-            aClone.CultureName = this.CultureName;
+            aClone.ParentCultureId = this.ParentCultureId;
             aClone.Advancements = this.Advancements;
             aClone.BasedOn = this.BasedOn;
             aClone.AdditionalCost = this.AdditionalCost;
@@ -808,7 +797,8 @@ public class DatabaseHolder {
     @NoArgsConstructor
     public static class AProgress {
 
-        private String SpeciesName, CultureName, ProgressName, Progress, Date;
+        private int CreatedProgressID, ParentCultureId;
+        private String ProgressName, Progress, Date;
 
         /**
          *
@@ -817,8 +807,7 @@ public class DatabaseHolder {
         public AProgress getClone() {
             AProgress aClone = new AProgress();
             aClone.ProgressName = this.ProgressName;
-            aClone.SpeciesName = this.SpeciesName;
-            aClone.CultureName = this.CultureName;
+            aClone.ParentCultureId = this.ParentCultureId;
             aClone.Progress = this.Progress;
             aClone.Date = this.Date;
             return aClone;
@@ -832,7 +821,8 @@ public class DatabaseHolder {
     @NoArgsConstructor
     public static class ARoster {
 
-        private String RosterName, SpeciesName, CultureName, Roster, MaxPoints;
+        private int CreatedRosterID, ParentCultureId;
+        private String RosterName, Roster, MaxPoints;
 
         /**
          *
@@ -841,8 +831,7 @@ public class DatabaseHolder {
         public ARoster getClone() {
             ARoster aClone = new ARoster();
             aClone.RosterName = this.RosterName;
-            aClone.SpeciesName = this.SpeciesName;
-            aClone.CultureName = this.CultureName;
+            aClone.ParentCultureId = this.ParentCultureId;
             aClone.Roster = this.Roster;
             aClone.MaxPoints = this.MaxPoints;
             return aClone;
@@ -856,7 +845,8 @@ public class DatabaseHolder {
     @NoArgsConstructor
     public static class ABattle {
 
-        private String BattleName, UserSpecies, UserCulture, UserRoster, OponentSpecies, OponentCulture, OponentRoster, Points, Outcome, Date, ReplayID;
+        private int BattlesHistoryID, UserSpeciesID, UserCultureID, UserRosterID, OponentSpeciesID, OponentCultureID, OponentRosterID, Points, ReplayID;
+        private String BattleName, Outcome, Date, CustomData;
 
         /**
          *
@@ -865,16 +855,17 @@ public class DatabaseHolder {
         public ABattle getClone() {
             ABattle aClone = new ABattle();
             aClone.BattleName = this.BattleName;
-            aClone.UserSpecies = this.UserSpecies;
-            aClone.UserCulture = this.UserCulture;
-            aClone.UserRoster = this.UserRoster;
-            aClone.OponentSpecies = this.OponentSpecies;
-            aClone.OponentCulture = this.OponentCulture;
-            aClone.OponentRoster = this.OponentRoster;
+            aClone.UserSpeciesID = this.UserSpeciesID;
+            aClone.UserCultureID = this.UserCultureID;
+            aClone.UserRosterID = this.UserRosterID;
+            aClone.OponentSpeciesID = this.OponentSpeciesID;
+            aClone.OponentCultureID = this.OponentCultureID;
+            aClone.OponentRosterID = this.OponentRosterID;
             aClone.Points = this.Points;
             aClone.Outcome = this.Outcome;
             aClone.Date = this.Date;
             aClone.ReplayID = this.ReplayID;
+            aClone.CustomData = this.CustomData;
             return aClone;
         }
     }

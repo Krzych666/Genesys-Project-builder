@@ -895,14 +895,14 @@ public class BuilderCORE {
      */
     public static ObservableList beautifyBattleData(String data) {
         ObservableList out = FXCollections.observableArrayList();
-        out.add(data.split("\\|")[0] + " - " + data.split("\\|")[1] + ", using roster: " + data.split("\\|")[2]
+        out.add(data.split("\\|")[1] + " - " + data.split("\\|")[2] + ", using roster: " + data.split("\\|")[3]
                 + " VS "
-                + data.split("\\|")[3] + " - " + data.split("\\|")[4] + ", using roster: " + data.split("\\|")[5]);
-        out.add("Points: " + data.split("\\|")[6]);
+                + data.split("\\|")[4] + " - " + data.split("\\|")[5] + ", using roster: " + data.split("\\|")[6]);
+        out.add("Points: " + data.split("\\|")[7]);
         out.add("Outcome:");
-        out.add(data.split("\\|")[7].split(";")[0]);
-        out.add(data.split("\\|")[7].split(";")[1]);
-        out.add(data.split("\\|")[7].split(";")[2]);
+        out.add(data.split("\\|")[8].split(";")[0]);
+        out.add(data.split("\\|")[8].split(";")[1]);
+        out.add(data.split("\\|")[8].split(";")[2]);
         return out;
     }
 
@@ -1143,43 +1143,42 @@ public class BuilderCORE {
      */
     public static String getSourceBaseSkills(ObservableList dataSpecies, ObservableList dataClass, String baseSpecies, String BaseCulture) {
         String skillsThis = "";
-        String basedOn = "";
+        int basedOn = 0;
         String skillsBefore = "";
         if (dataClass != null
                 && !dataClass.isEmpty()
                 && dataClass.get(0) != null
                 && dataClass.get(0).toString().split("\\|").length != 0) {
-            skillsThis = dataClass.get(0).toString().split("\\|")[0];
-            basedOn = dataClass.get(0).toString().split("\\|")[3];
+            skillsThis = dataClass.get(0).toString().split("\\|")[1];
+            basedOn = Integer.parseInt(dataClass.get(0).toString().split("\\|")[5]);
         }
-        if (!basedOn.equals("") && !basedOn.equals("null")) {
-            if (basedOn.equals("<base species>")) {
-                skillsBefore = dataSpecies.get(0).toString().split("\\|")[3];
-            } else {
-                ObservableList dataBaseClass = DatabaseReader.getClassData(baseSpecies, BaseCulture, basedOn);
-                skillsBefore = getSourceBaseSkills(dataSpecies, dataBaseClass, baseSpecies, BaseCulture);
-            }
+        if (basedOn == 0) {
+            skillsBefore = dataSpecies.get(0).toString().split("\\|")[3];
+        } else {
+            ObservableList dataBaseClass = DatabaseReader.getClassData(basedOn);
+            skillsBefore = getSourceBaseSkills(dataSpecies, dataBaseClass, baseSpecies, BaseCulture);
         }
+
         String fullSkillList = !skillsThis.equals("") && !skillsThis.equals("null") && !skillsBefore.equals("") ? (skillsThis + "," + skillsBefore) : skillsBefore;
         return fullSkillList;
     }
 
     /**
      *
-     * @param species
-     * @param culture
-     * @param classname
+     * @param speciesID
+     * @param cultureID
+     * @param classID
      * @param points
      * @param selHeroModel
      * @return
      */
-    public static int baseCost(String species, String culture, String classname, int points, SelectionModel selHeroModel) {
+    public static int baseCost(int speciesID, int cultureID, int classID, int points, SelectionModel selHeroModel) {
         int a = 1;
-        ObservableList dataSpecies = DatabaseReader.getSpeciesData(species);
+        ObservableList dataSpecies = DatabaseReader.getSpeciesData(speciesID);
         ObservableList allSkills = DatabaseReader.loadAllSkillsFromDB();
-        if (classname != null && !classname.equals(BASE) && !classname.equals(LESSER) && !classname.equals(GREATER)) {
-            ObservableList dataClass = DatabaseReader.getClassData(species, culture, classname);
-            switch (dataClass.get(0).toString().split("\\|")[2]) {
+        if (classID != 0) {
+            ObservableList dataClass = DatabaseReader.getClassData(classID);
+            switch (dataClass.get(0).toString().split("\\|")[4]) {
                 case "Standard Class":
                     a = 1;
                     break;
@@ -1195,10 +1194,10 @@ public class BuilderCORE {
                 default:
                     break;
             }
-            String[] lst = DatabaseHolder.skillsSeparatorRepalcer(dataClass.get(0).toString().split("\\|")[0]).split(",");
-            String basedOn = dataClass.get(0).toString().split("\\|")[3];
-            if (basedOn != null && !basedOn.equals("null") && !basedOn.equals("")) {
-                points += a * baseCost(species, culture, basedOn, points, selHeroModel);
+            String[] lst = DatabaseHolder.skillsSeparatorRepalcer(dataClass.get(0).toString().split("\\|")[1]).split(",");
+            int basedOn = Integer.parseInt(dataClass.get(0).toString().split("\\|")[5]);
+            if (basedOn != 0) {
+                points += a * baseCost(speciesID, cultureID, basedOn, points, selHeroModel);
             }
             for (String lst1 : lst) {
                 int index = getSkillIndex(allSkills, lst1);
@@ -1209,13 +1208,13 @@ public class BuilderCORE {
                 if (pointCost.contains("/")) {
                     pointCost = pointCost.split("/")[0];
                 }
-                if (basedOn != null && !basedOn.equals("") && !basedOn.equals("null")) {
+                if (basedOn != 0) {
                     if (!"".equals(pointCost)) {
                         points += Integer.parseInt(pointCost);
                     }
                 }
             }
-            points += Integer.parseInt(dataClass.get(0).toString().split("\\|")[4]);
+            points += Integer.parseInt(dataClass.get(0).toString().split("\\|")[6]);
         } else {
             String[] lst = DatabaseHolder.skillsSeparatorRepalcer(dataSpecies.get(0).toString().split("\\|")[3]).split(",");
             for (String lst1 : lst) {
@@ -1231,11 +1230,11 @@ public class BuilderCORE {
             }
         }
         if (!selHeroModel.isEmpty()) {
-            String selHero = selHeroModel.getSelectedItem().toString();
-            ObservableList dataHero = DatabaseReader.getHeroData(species, culture, selHero);
-            String basedOn = dataHero.get(0).toString().split("\\|")[1];
-            if (basedOn != null && !basedOn.equals("null") && !basedOn.equals("") && basedOn.equals(classname)) {
-                points += Integer.parseInt(dataHero.get(0).toString().split("\\|")[2]);
+            int selHero = DatabaseReader.getHeroID(cultureID, selHeroModel.getSelectedItem().toString());
+            ObservableList dataHero = DatabaseReader.getHeroData(selHero);
+            String basedOn = dataHero.get(0).toString().split("\\|")[3];
+            if (basedOn != null && !basedOn.equals("null") && !basedOn.equals("") && basedOn.equals(classID)) {
+                points += Integer.parseInt(dataHero.get(0).toString().split("\\|")[4]);
             }
         }
         return points;
