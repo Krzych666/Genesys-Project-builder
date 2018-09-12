@@ -134,16 +134,17 @@ public class CreateCultureController implements Initializable {
     public Stage createHoldWindowStage = new Stage();
     private CreateHoldWindowController createHoldWindowController;
 
-    private ListView speciesList;
+    private DatabaseHolder.mainWindowData mainWindowDataPropagator;
     private Label[] valuesLabels4;
 
     /**
      * createCulture
      */
     public void createCulture() {
-        ObservableList data = DatabaseReader.getSpeciesData(speciesChooseDropdown4.getSelectionModel().getSelectedItem().toString());
+        int speciesID = Integer.parseInt(mainWindowDataPropagator.getSpeciesIdMap().get(speciesChooseDropdown4.getSelectionModel().getSelectedIndex()).toString());
+        ObservableList data = DatabaseReader.getSpeciesData(speciesID);
         DatabaseHolder.creator(LifedomainValue.valueOf(data.get(0).toString().split("\\|")[0]), Creators.CreateCulture);
-        DatabaseHolder.holdCulture.setSpeciesName(speciesChooseDropdown4.getSelectionModel().getSelectedItem().toString());
+        DatabaseHolder.holdCulture.setParentSpeciesID(speciesID);
         DatabaseHolder.holdSpecies.setSpeciesName(speciesChooseDropdown4.getSelectionModel().getSelectedItem().toString());
         DatabaseHolder.holdSpecies.setSkills(data.get(0).toString().split("\\|")[3] + ",");
         clearLists4();
@@ -206,9 +207,9 @@ public class CreateCultureController implements Initializable {
                 Parent root = loader.load();
                 Scene scene = new Scene(root);
                 createHoldWindowController = loader.getController();
-                createHoldWindowController.setSpeciesList(speciesList);
+                createHoldWindowController.setDataLists(mainWindowDataPropagator);
                 createHoldWindowStage.setScene(scene);
-                createHoldWindowStage.setTitle("Create Classes for " + DatabaseHolder.holdCulture.getSpeciesName() + " - " + DatabaseHolder.holdCulture.getCultureName());
+                createHoldWindowStage.setTitle("Create Classes for " + DatabaseHolder.holdSpecies.getSpeciesName() + " - " + DatabaseHolder.holdCulture.getCultureName());
                 createHoldWindowStage.show();
             } catch (IOException ex) {
                 ErrorController.ErrorControllerMethod(ex);
@@ -272,8 +273,8 @@ public class CreateCultureController implements Initializable {
         speciesChooseDropdown4.getSelectionModel().select(0);
     }
 
-    void setSpeciesList(ListView speciesList) {
-        this.speciesList = speciesList;
+    void setDataLists(DatabaseHolder.mainWindowData mainWindowDataPropagator) {
+        this.mainWindowDataPropagator = mainWindowDataPropagator;
     }
 
     void setSpeciesSelection(String Selection) {

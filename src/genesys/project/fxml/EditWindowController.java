@@ -11,9 +11,12 @@ import genesys.project.builder.Enums.Enmuerations.MainDomainValue;
 import genesys.project.builder.Enums.Enmuerations.MainLineageValue;
 import genesys.project.builder.Enums.Enmuerations.Modificators;
 import genesys.project.builder.DatabaseHolder;
+import genesys.project.builder.DatabaseHolder.IDDataSet;
+import genesys.project.builder.DatabaseHolder.mainWindowData;
 import genesys.project.builder.DatabaseReader;
 import java.io.IOException;
 import java.net.URL;
+import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -29,7 +32,6 @@ import javafx.stage.Stage;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
-import javafx.scene.control.ListView;
 
 /**
  * FXML Controller class
@@ -97,11 +99,10 @@ public class EditWindowController implements Initializable {
     public Stage rosterCreatorWindowStage = new Stage();
     private RosterCreatorWindowController rosterCreatorWindowController;
 
-    private ListView speciesList;
-    private ListView cultureList;
-    private ListView rosterList;
-    private ListView cultureProgressList;
-
+    //private ListView speciesList;
+    //private ListView cultureList;
+    //private ListView rosterList;
+    //private ListView cultureProgressList;
     /**
      * editWindowNameOnlyStage
      */
@@ -109,6 +110,14 @@ public class EditWindowController implements Initializable {
     private EditWindowNameOnlyController editWindowNameOnlyController;
     private Label editWindowNameOnlyText1;
     private Label editWindowNameOld;
+    private mainWindowData mainWindowDataPropagator;
+    private IDDataSet iDDataPropagator;
+
+    /**
+     * culturesList - culturesId Map
+     */
+    //public static Map culturesIdMap;
+    public static Map classesIdMap;
 
     /**
      * editActions
@@ -123,7 +132,8 @@ public class EditWindowController implements Initializable {
      */
     @FXML
     public void speciesEditDropdownItemStateChangedActions() {
-        cultureEditDropdown.setItems(DatabaseReader.populateDropdownsCultures(speciesEditDropdown.getSelectionModel().getSelectedItem().toString()));
+        iDDataPropagator.setSpeciesID(Integer.parseInt(mainWindowDataPropagator.getSpeciesIdMap().get(mainWindowDataPropagator.getSpeciesList().getSelectionModel().getSelectedIndex()).toString()));
+        cultureEditDropdown.setItems(DatabaseReader.populateDropdownsCultures(iDDataPropagator.getSpeciesID()));
         cultureEditDropdown.getSelectionModel().select(0);
     }
 
@@ -135,10 +145,11 @@ public class EditWindowController implements Initializable {
         if (cultureEditDropdown.getSelectionModel().isEmpty()) {
             cultureEditDropdown.getSelectionModel().select(0);
         }
-        classEditDropdown.setItems(DatabaseReader.populateDropdownsClasses(speciesEditDropdown.getSelectionModel().getSelectedItem().toString(), cultureEditDropdown.getSelectionModel().getSelectedItem().toString()));
+        iDDataPropagator.setCultureID(DatabaseReader.getCultureID(iDDataPropagator.getSpeciesID(), cultureEditDropdown.getSelectionModel().getSelectedItem().toString()));
+        classEditDropdown.setItems(DatabaseReader.populateDropdownsClasses(iDDataPropagator.getCultureID()));
         classEditDropdown.getSelectionModel().select(0);
 
-        heroEditDropdown.setItems(DatabaseReader.populateDropdownsHeroes(speciesEditDropdown.getSelectionModel().getSelectedItem().toString(), cultureEditDropdown.getSelectionModel().getSelectedItem().toString(), classEditDropdown.getSelectionModel().getSelectedItem().toString()));
+        heroEditDropdown.setItems(DatabaseReader.populateDropdownsHeroes(iDDataPropagator.getCultureID(), iDDataPropagator.getClassID()));
         heroEditDropdown.getSelectionModel().select(0);
 
         progressEditDropdown.setItems(FXCollections.observableArrayList(DatabaseHolder.TOPDROP));
@@ -149,7 +160,7 @@ public class EditWindowController implements Initializable {
                         "both"));
         progressEditDropdown.getSelectionModel().select(0);
 
-        rosterEditDropdown.setItems(DatabaseReader.populateDropdownsRosters(speciesEditDropdown.getSelectionModel().getSelectedItem().toString(), cultureEditDropdown.getSelectionModel().getSelectedItem().toString()));
+        rosterEditDropdown.setItems(DatabaseReader.populateDropdownsRosters(iDDataPropagator.getCultureID()));
         rosterEditDropdown.getSelectionModel().select(0);
     }
 
@@ -161,8 +172,9 @@ public class EditWindowController implements Initializable {
         if (classEditDropdown.getSelectionModel().isEmpty()) {
             classEditDropdown.getSelectionModel().select(0);
         }
+        iDDataPropagator.setClassID(DatabaseReader.getClassID(iDDataPropagator.getCultureID(), classEditDropdown.getSelectionModel().getSelectedItem().toString()));
         Object sel = classEditDropdown.getSelectionModel().getSelectedItem();
-        heroEditDropdown.setItems(DatabaseReader.populateDropdownsHeroes(speciesEditDropdown.getSelectionModel().getSelectedItem().toString(), cultureEditDropdown.getSelectionModel().getSelectedItem().toString(), classEditDropdown.getSelectionModel().getSelectedItem().toString()));
+        heroEditDropdown.setItems(DatabaseReader.populateDropdownsHeroes(iDDataPropagator.getCultureID(), iDDataPropagator.getClassID()));
         heroEditDropdown.getSelectionModel().select(0);
         progressEditDropdown.getSelectionModel().select(0);
         rosterEditDropdown.getSelectionModel().select(0);
@@ -174,6 +186,7 @@ public class EditWindowController implements Initializable {
      */
     @FXML
     public void heroEditDropdownItemStateChangedActions() {
+        iDDataPropagator.setHeroID(DatabaseReader.getHeroID(iDDataPropagator.getCultureID(), heroEditDropdown.getSelectionModel().getSelectedItem().toString()));
         Object sel = heroEditDropdown.getSelectionModel().getSelectedItem();
         progressEditDropdown.getSelectionModel().select(0);
         rosterEditDropdown.getSelectionModel().select(0);
@@ -197,6 +210,7 @@ public class EditWindowController implements Initializable {
      */
     @FXML
     public void rosterEditDropdownItemStateChangedActions() {
+        iDDataPropagator.setRosterID(DatabaseReader.getHeroID(iDDataPropagator.getCultureID(), rosterEditDropdown.getSelectionModel().getSelectedItem().toString()));
         Object sel = rosterEditDropdown.getSelectionModel().getSelectedItem();
         heroEditDropdown.getSelectionModel().select(0);
         progressEditDropdown.getSelectionModel().select(0);
@@ -228,7 +242,7 @@ public class EditWindowController implements Initializable {
      */
     public void commenceEditing() {
         if (!speciesEditDropdown.getSelectionModel().getSelectedItem().toString().equals(DatabaseHolder.TOPDROP)) {
-            DatabaseHolder.loadSpeciesToHold(speciesEditDropdown.getSelectionModel().getSelectedItem().toString());
+            DatabaseHolder.loadSpeciesToHold(iDDataPropagator.getSpeciesID());
         }
         if (!speciesEditDropdown.getSelectionModel().getSelectedItem().toString().equals(DatabaseHolder.TOPDROP) && cultureEditDropdown.getSelectionModel().getSelectedItem().toString().equals(DatabaseHolder.TOPDROP)) {
             if (editNameOnlyCheckbox.isSelected()) {
@@ -242,7 +256,7 @@ public class EditWindowController implements Initializable {
         }
         if (!cultureEditDropdown.getSelectionModel().getSelectedItem().toString().equals(DatabaseHolder.TOPDROP) && classEditDropdown.getSelectionModel().getSelectedItem().toString().equals(DatabaseHolder.TOPDROP) && heroEditDropdown.getSelectionModel().getSelectedItem().toString().equals(DatabaseHolder.TOPDROP) && progressEditDropdown.getSelectionModel().getSelectedItem().toString().equals(DatabaseHolder.TOPDROP) && rosterEditDropdown.getSelectionModel().getSelectedItem().toString().equals(DatabaseHolder.TOPDROP)) {
             DatabaseHolder.holdCulture = new DatabaseHolder.ACulture();
-            DatabaseHolder.loadCultureToHold(speciesEditDropdown.getSelectionModel().getSelectedItem().toString(), cultureEditDropdown.getSelectionModel().getSelectedItem().toString());
+            DatabaseHolder.loadCultureToHold(iDDataPropagator.getCultureID());
             if (editNameOnlyCheckbox.isSelected()) {
                 DatabaseHolder.currentTable = DBTables.CreatedCultures;
                 toNameOnly();
@@ -253,7 +267,8 @@ public class EditWindowController implements Initializable {
                 BuilderCORE.setNumberOfClases();
                 DatabaseHolder.modifiedHoldClass = new DatabaseHolder.AClass[DatabaseHolder.holdClass.length];
                 for (int i = 0; i < DatabaseHolder.numberOfClases; i++) {
-                    DatabaseHolder.loadClassToHold(speciesEditDropdown.getSelectionModel().getSelectedItem().toString(), cultureEditDropdown.getSelectionModel().getSelectedItem().toString(), classEditDropdown.getItems().get(i + 1).toString(), i);
+
+                    DatabaseHolder.loadClassToHold(iDDataPropagator.getClassID() /*classEditDropdown.getItems().get(i + 1).toString()*/, i);
                 }
                 modificator(Modificators.ModifyCulture);
             }
@@ -261,11 +276,11 @@ public class EditWindowController implements Initializable {
 
         if (!classEditDropdown.getSelectionModel().getSelectedItem().toString().equals(DatabaseHolder.TOPDROP) && heroEditDropdown.getSelectionModel().getSelectedItem().toString().equals(DatabaseHolder.TOPDROP)) {
             DatabaseHolder.holdCulture = new DatabaseHolder.ACulture();
-            DatabaseHolder.loadCultureToHold(speciesEditDropdown.getSelectionModel().getSelectedItem().toString(), cultureEditDropdown.getSelectionModel().getSelectedItem().toString());
+            DatabaseHolder.loadCultureToHold(iDDataPropagator.getCultureID());
             DatabaseHolder.numberOfClases = 1;
             BuilderCORE.setNumberOfClases();
             DatabaseHolder.modifiedHoldClass = new DatabaseHolder.AClass[1];
-            DatabaseHolder.loadClassToHold(speciesEditDropdown.getSelectionModel().getSelectedItem().toString(), cultureEditDropdown.getSelectionModel().getSelectedItem().toString(), classEditDropdown.getSelectionModel().getSelectedItem().toString(), 0);
+            DatabaseHolder.loadClassToHold(iDDataPropagator.getClassID(), 0);
             if (editNameOnlyCheckbox.isSelected()) {
                 DatabaseHolder.currentTable = DBTables.CreatedClasses;
                 toNameOnly();
@@ -278,7 +293,7 @@ public class EditWindowController implements Initializable {
 
         if (!heroEditDropdown.getSelectionModel().getSelectedItem().toString().equals(DatabaseHolder.TOPDROP)) {
             DatabaseHolder.holdHero = new DatabaseHolder.AHero();
-            DatabaseHolder.loadHeroToHold(speciesEditDropdown.getSelectionModel().getSelectedItem().toString(), cultureEditDropdown.getSelectionModel().getSelectedItem().toString(), heroEditDropdown.getSelectionModel().getSelectedItem().toString());
+            DatabaseHolder.loadHeroToHold(iDDataPropagator.getHeroID());
             if (editNameOnlyCheckbox.isSelected()) {
                 DatabaseHolder.currentTable = DBTables.CreatedHeroes;
                 toNameOnly();
@@ -295,13 +310,15 @@ public class EditWindowController implements Initializable {
             if (progressEditDropdown.getSelectionModel().getSelectedItem().toString().startsWith("Progress: ")) {
                 progressType = "progress";
                 DatabaseHolder.holdProgress = new DatabaseHolder.AProgress();
-                DatabaseHolder.loadProgressToHold(speciesEditDropdown.getSelectionModel().getSelectedItem().toString(), cultureEditDropdown.getSelectionModel().getSelectedItem().toString(), progressEditDropdown.getSelectionModel().getSelectedItem().toString().replaceFirst("Progress: ", ""));
+                iDDataPropagator.setProgressID(DatabaseReader.getProgressID(iDDataPropagator.getCultureID(), progressEditDropdown.getSelectionModel().getSelectedItem().toString().replaceFirst("Progress: ", "")));
+                DatabaseHolder.loadProgressToHold(iDDataPropagator.getProgressID());
                 textName = DatabaseHolder.holdProgress.getProgressName();
             }
             if (progressEditDropdown.getSelectionModel().getSelectedItem().toString().startsWith("Battle: ")) {
                 progressType = "battle";
                 DatabaseHolder.holdBattle = new DatabaseHolder.ABattle();
-                DatabaseHolder.loadBattleToHold(speciesEditDropdown.getSelectionModel().getSelectedItem().toString(), cultureEditDropdown.getSelectionModel().getSelectedItem().toString(), progressEditDropdown.getSelectionModel().getSelectedItem().toString().replaceFirst("Battle: ", ""));
+                iDDataPropagator.setBattleID(DatabaseReader.getBattleID(iDDataPropagator.getCultureID(), progressEditDropdown.getSelectionModel().getSelectedItem().toString().replaceFirst("Battle: ", "")));
+                DatabaseHolder.loadBattleToHold(iDDataPropagator.getBattleID());
                 textName = DatabaseHolder.holdBattle.getBattleName();
             }
             if (editNameOnlyCheckbox.isSelected()) {
@@ -316,24 +333,24 @@ public class EditWindowController implements Initializable {
 
         if (!rosterEditDropdown.getSelectionModel().getSelectedItem().toString().equals(DatabaseHolder.TOPDROP)) {
             DatabaseHolder.holdRoster = new DatabaseHolder.ARoster();
-            DatabaseHolder.loadRosterToHold(speciesEditDropdown.getSelectionModel().getSelectedItem().toString(), cultureEditDropdown.getSelectionModel().getSelectedItem().toString(), rosterEditDropdown.getSelectionModel().getSelectedItem().toString());
+            DatabaseHolder.loadRosterToHold(iDDataPropagator.getRosterID());
             if (editNameOnlyCheckbox.isSelected()) {
                 DatabaseHolder.currentTable = DBTables.CreatedRosters;
                 toNameOnly();
                 editWindowNameOld.setText(DatabaseHolder.holdRoster.getRosterName());
                 editWindowNameOnlyText1.setText("Change the folowing roster name:");
             } else {
-                DatabaseHolder.loadSpeciesToHold(speciesEditDropdown.getSelectionModel().getSelectedItem().toString());
+                DatabaseHolder.loadSpeciesToHold(iDDataPropagator.getSpeciesID());
                 DatabaseHolder.holdCulture = new DatabaseHolder.ACulture();
-                DatabaseHolder.loadCultureToHold(speciesEditDropdown.getSelectionModel().getSelectedItem().toString(), cultureEditDropdown.getSelectionModel().getSelectedItem().toString());
-                ObservableList classesList = DatabaseReader.populateDropdownsClasses(speciesEditDropdown.getSelectionModel().getSelectedItem().toString(), cultureEditDropdown.getSelectionModel().getSelectedItem().toString());
+                DatabaseHolder.loadCultureToHold(iDDataPropagator.getCultureID());
+                ObservableList classesList = DatabaseReader.populateDropdownsClasses(iDDataPropagator.getCultureID());
                 classesList.remove(DatabaseHolder.TOPDROP);
                 DatabaseHolder.holdClass = new DatabaseHolder.AClass[classesList.size()];
                 DatabaseHolder.modifiedHoldClass = new DatabaseHolder.AClass[DatabaseHolder.holdClass.length];
                 for (int i = 0; i < classesList.size(); i++) {
                     DatabaseHolder.holdClass[i] = new DatabaseHolder.AClass();
                     DatabaseHolder.holdClass[i].clearAClass();
-                    DatabaseHolder.loadClassToHold(speciesEditDropdown.getSelectionModel().getSelectedItem().toString(), cultureEditDropdown.getSelectionModel().getSelectedItem().toString(), classesList.get(i).toString(), i);
+                    DatabaseHolder.loadClassToHold(iDDataPropagator.getClassID(), i);
                 }
                 modificator(Modificators.ModifyRoster);
             }
@@ -352,7 +369,8 @@ public class EditWindowController implements Initializable {
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("/genesys/project/fxml/EditWindowNameOnlyFXML.fxml"));
                 Parent root = loader.load();
                 editWindowNameOnlyController = loader.getController();
-                editWindowNameOnlyController.setSpeciesList(speciesList);
+                editWindowNameOnlyController.setDataLists(mainWindowDataPropagator);
+                editWindowNameOnlyController.setIDData(iDDataPropagator);
                 editWindowNameOnlyText1 = editWindowNameOnlyController.getEditWindowNameOnlyText1();
                 editWindowNameOld = editWindowNameOnlyController.getEditWindowNameOld();
                 Scene scene = new Scene(root);
@@ -395,7 +413,8 @@ public class EditWindowController implements Initializable {
                     Parent root = loader.load();
                     Scene scene = new Scene(root);
                     speciesCreatorWindowController = loader.getController();
-                    speciesCreatorWindowController.setSpeciesList(speciesList);
+                    speciesCreatorWindowController.setDataLists(mainWindowDataPropagator);
+                    speciesCreatorWindowController.setIDData(iDDataPropagator);
                     speciesCreatorWindowStage.setScene(scene);
                     speciesCreatorWindowStage.setTitle("Modify Species");
                     speciesCreatorWindowStage.show();
@@ -411,7 +430,8 @@ public class EditWindowController implements Initializable {
                     Parent root = loader.load();
                     Scene scene = new Scene(root);
                     createHoldWindowController = loader.getController();
-                    createHoldWindowController.setSpeciesList(speciesList);
+                    createHoldWindowController.setDataLists(mainWindowDataPropagator);
+                    createHoldWindowController.setIDData(iDDataPropagator);
                     createHoldWindowStage.setScene(scene);
                     createHoldWindowStage.setTitle("Modify Classes");
                     createHoldWindowStage.show();
@@ -425,7 +445,8 @@ public class EditWindowController implements Initializable {
                     Parent root = loader.load();
                     Scene scene = new Scene(root);
                     classCreatorWindowController = loader.getController();
-                    classCreatorWindowController.setSpeciesList(speciesList);
+                    classCreatorWindowController.setDataLists(mainWindowDataPropagator);
+                    classCreatorWindowController.setIDData(iDDataPropagator);
                     classCreatorWindowStage.setScene(scene);
                     createHoldWindowStage.setTitle("Modify Class");
                     classCreatorWindowStage.show();
@@ -446,8 +467,9 @@ public class EditWindowController implements Initializable {
                         Scene scene = new Scene(root);
                         rosterCreatorWindowController = loader.getController();
                         rosterCreatorWindowController.setMaxPoints(DatabaseHolder.holdRoster.getMaxPoints());
+                        rosterCreatorWindowController.setIDData(iDDataPropagator);
                         rosterCreatorWindowStage.setScene(scene);
-                        rosterCreatorWindowStage.setTitle("Create Roster " + DatabaseHolder.holdRoster.getRosterName() + " for " + DatabaseHolder.holdRoster.getSpeciesName() + " - " + DatabaseHolder.holdRoster.getCultureName());
+                        rosterCreatorWindowStage.setTitle("Create Roster " + DatabaseHolder.holdRoster.getRosterName() + " for " + DatabaseHolder.holdSpecies.getSpeciesName() + " - " + DatabaseHolder.holdCulture.getCultureName());
                         rosterCreatorWindowStage.show();
                     } catch (IOException ex) {
                         ErrorController.ErrorControllerMethod(ex);
@@ -475,26 +497,23 @@ public class EditWindowController implements Initializable {
         cultureEditDropdownItemStateChangedActions();
     }
 
-    void setDataLists(ListView speciesList, ListView cultureList, ListView rosterList, ListView cultureProgressList) {
-        this.speciesList = speciesList;
-        this.cultureList = cultureList;
-        this.rosterList = rosterList;
-        this.cultureProgressList = cultureProgressList;
+    void setDataLists(mainWindowData mainWindowDataPropagator) {
+        this.mainWindowDataPropagator = mainWindowDataPropagator;
     }
 
     void editWhat() {
-        if (!speciesList.getSelectionModel().isEmpty()) {
-            speciesEditDropdown.getSelectionModel().select(speciesList.getSelectionModel().getSelectedItem());
+        if (!mainWindowDataPropagator.getSpeciesList().getSelectionModel().isEmpty()) {
+            speciesEditDropdown.getSelectionModel().select(mainWindowDataPropagator.getSpeciesList().getSelectionModel().getSelectedItem());
             speciesEditDropdownItemStateChangedActions();
-            if (!cultureList.getSelectionModel().isEmpty() && !speciesList.isFocused()) {
-                cultureEditDropdown.getSelectionModel().select(cultureList.getSelectionModel().getSelectedItem());
+            if (!mainWindowDataPropagator.getCulturesList().getSelectionModel().isEmpty() && !mainWindowDataPropagator.getSpeciesList().isFocused()) {
+                cultureEditDropdown.getSelectionModel().select(mainWindowDataPropagator.getCulturesList().getSelectionModel().getSelectedItem());
                 cultureEditDropdownItemStateChangedActions();
-                if (!rosterList.getSelectionModel().isEmpty() && !cultureList.isFocused()) {
-                    rosterEditDropdown.getSelectionModel().select(rosterList.getSelectionModel().getSelectedItem());
+                if (!mainWindowDataPropagator.getRostersList().getSelectionModel().isEmpty() && !mainWindowDataPropagator.getCulturesList().isFocused()) {
+                    rosterEditDropdown.getSelectionModel().select(mainWindowDataPropagator.getRostersList().getSelectionModel().getSelectedItem());
                     rosterEditDropdownItemStateChangedActions();
                 }
-                if (!cultureProgressList.getSelectionModel().isEmpty() && !cultureList.isFocused()) {
-                    progressEditDropdown.getSelectionModel().select(cultureProgressList.getSelectionModel().getSelectedItem());
+                if (!mainWindowDataPropagator.getCulturesProgressList().getSelectionModel().isEmpty() && !mainWindowDataPropagator.getCulturesList().isFocused()) {
+                    progressEditDropdown.getSelectionModel().select(mainWindowDataPropagator.getCulturesProgressList().getSelectionModel().getSelectedItem());
                     rosterEditDropdownItemStateChangedActions();
                 }
             }

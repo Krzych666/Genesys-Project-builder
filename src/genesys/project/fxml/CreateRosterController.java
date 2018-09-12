@@ -25,7 +25,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import javafx.fxml.Initializable;
-import javafx.scene.control.ListView;
 import javafx.scene.input.KeyEvent;
 
 /**
@@ -64,7 +63,8 @@ public class CreateRosterController implements Initializable {
      */
     public Stage rosterCreatorWindowStage = new Stage();
     private RosterCreatorWindowController rosterCreatorWindowController;
-    private ListView speciesList;
+    private DatabaseHolder.mainWindowData mainWindowDataPropagator;
+    private static DatabaseHolder.IDDataSet iDDataPropagator;
 
     /**
      * speciesChooseDropdownItemStateChangedActions
@@ -72,7 +72,7 @@ public class CreateRosterController implements Initializable {
     @FXML
     public void speciesChooseDropdownItemStateChangedActions() {
         if (!speciesChooseDropdown.getSelectionModel().getSelectedItem().equals("--CHOOSE--")) {
-            cultureChooseDropdown.setItems(DatabaseReader.populateDropdownsCultures(speciesChooseDropdown.getSelectionModel().getSelectedItem().toString()));
+            cultureChooseDropdown.setItems(DatabaseReader.populateDropdownsCultures(iDDataPropagator.getSpeciesID()));
             cultureChooseDropdown.getSelectionModel().select(0);
         } else {
             cultureChooseDropdown.getItems().clear();
@@ -91,8 +91,7 @@ public class CreateRosterController implements Initializable {
             loadSpecies();
             DatabaseHolder.holdRoster = new DatabaseHolder.ARoster();
             DatabaseHolder.holdRoster.setRosterName(rosterNameTextField.getText());
-            DatabaseHolder.holdRoster.setSpeciesName(speciesChooseDropdown.getSelectionModel().getSelectedItem().toString());
-            DatabaseHolder.holdRoster.setCultureName(cultureChooseDropdown.getSelectionModel().getSelectedItem().toString());
+            DatabaseHolder.holdRoster.setParentCultureId(DatabaseReader.getCultureID(iDDataPropagator.getSpeciesID(), cultureChooseDropdown.getSelectionModel().getSelectedItem().toString()));
             Stage stage = (Stage) selectDataForRoster.getScene().getWindow();
             stage.hide();
             if (rosterCreatorWindowStage.isShowing()) {
@@ -104,8 +103,9 @@ public class CreateRosterController implements Initializable {
                     Scene scene = new Scene(root);
                     rosterCreatorWindowController = loader.getController();
                     rosterCreatorWindowController.setMaxPoints(pointsTextField.getText());
+                    rosterCreatorWindowController.setIDData(iDDataPropagator);
                     rosterCreatorWindowStage.setScene(scene);
-                    rosterCreatorWindowStage.setTitle("Create Roster " + DatabaseHolder.holdRoster.getRosterName() + " for " + DatabaseHolder.holdRoster.getSpeciesName() + " - " + DatabaseHolder.holdRoster.getCultureName());
+                    rosterCreatorWindowStage.setTitle("Create Roster " + DatabaseHolder.holdRoster.getRosterName() + " for " + DatabaseHolder.holdSpecies.getSpeciesName() + " - " + DatabaseHolder.holdCulture.getCultureName());
                     rosterCreatorWindowStage.show();
                 } catch (IOException ex) {
                     ErrorController.ErrorControllerMethod(ex);
@@ -117,17 +117,17 @@ public class CreateRosterController implements Initializable {
     }
 
     private void loadSpecies() {
-        DatabaseHolder.loadSpeciesToHold(speciesChooseDropdown.getSelectionModel().getSelectedItem().toString());
+        DatabaseHolder.loadSpeciesToHold(iDDataPropagator.getSpeciesID());
         DatabaseHolder.holdCulture = new DatabaseHolder.ACulture();
-        DatabaseHolder.loadCultureToHold(speciesChooseDropdown.getSelectionModel().getSelectedItem().toString(), cultureChooseDropdown.getSelectionModel().getSelectedItem().toString());
-        ObservableList classesList = DatabaseReader.populateDropdownsClasses(speciesChooseDropdown.getSelectionModel().getSelectedItem().toString(), cultureChooseDropdown.getSelectionModel().getSelectedItem().toString());
+        DatabaseHolder.loadCultureToHold(iDDataPropagator.getCultureID());
+        ObservableList classesList = DatabaseReader.populateDropdownsClasses(iDDataPropagator.getCultureID());
         classesList.remove(DatabaseHolder.TOPDROP);
         DatabaseHolder.holdClass = new DatabaseHolder.AClass[classesList.size()];
         DatabaseHolder.modifiedHoldClass = new DatabaseHolder.AClass[DatabaseHolder.holdClass.length];
         for (int i = 0; i < classesList.size(); i++) {
             DatabaseHolder.holdClass[i] = new DatabaseHolder.AClass();
             DatabaseHolder.holdClass[i].clearAClass();
-            DatabaseHolder.loadClassToHold(speciesChooseDropdown.getSelectionModel().getSelectedItem().toString(), cultureChooseDropdown.getSelectionModel().getSelectedItem().toString(), classesList.get(i).toString(), i);
+            DatabaseHolder.loadClassToHold(iDDataPropagator.getClassID(), i);
         }
     }
 
@@ -155,12 +155,12 @@ public class CreateRosterController implements Initializable {
         pointsTextField.addEventFilter(KeyEvent.KEY_TYPED, BuilderCORE.numeric_Validation(10));
     }
 
-    void setSpeciesList(ListView speciesList) {
-        this.speciesList = speciesList;
+    void setDataLists(DatabaseHolder.mainWindowData mainWindowDataPropagator) {
+        this.mainWindowDataPropagator = mainWindowDataPropagator;
     }
 
     void setSpeciesAndCultureSelection(String Selection) {
-        speciesChooseDropdown.getSelectionModel().select(speciesList.getSelectionModel().getSelectedItem());
+        speciesChooseDropdown.getSelectionModel().select(mainWindowDataPropagator.getSpeciesList().getSelectionModel().getSelectedItem());
         speciesChooseDropdownItemStateChangedActions();
         cultureChooseDropdown.getSelectionModel().select(Selection);
     }

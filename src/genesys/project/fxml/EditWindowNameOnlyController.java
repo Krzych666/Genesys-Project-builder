@@ -39,7 +39,9 @@ public class EditWindowNameOnlyController implements Initializable {
     @FXML
     private Button editWindowNameButtonCancel;
 
-    private ListView speciesList;
+    private CreateHoldWindowController createHoldWindowController;
+    private DatabaseHolder.mainWindowData mainWindowDataPropagator;
+    private DatabaseHolder.IDDataSet iDDataPropagator;
 
     /**
      * editWindowNameButtonOkAction
@@ -51,22 +53,22 @@ public class EditWindowNameOnlyController implements Initializable {
         stage.hide();
         switch (DatabaseHolder.currentTable) {
             case CreatedSpecies:
-                DatabaseWriter.modifySpeciesName(editWindowNameNew.getText());
+                DatabaseWriter.modifySpeciesName(iDDataPropagator.getSpeciesID(),editWindowNameNew.getText());
                 break;
             case CreatedCultures:
-                DatabaseWriter.modifyCultureName(editWindowNameNew.getText());
+                DatabaseWriter.modifyCultureName(iDDataPropagator.getCultureID(),editWindowNameNew.getText());
                 break;
             case CreatedClasses:
-                DatabaseWriter.modifyClassName(editWindowNameNew.getText(), 0);
+                DatabaseWriter.modifyClassName(iDDataPropagator.getClassID(),editWindowNameNew.getText(), 0);
                 break;
             case CreatedHeroes:
-                DatabaseWriter.modifyHeroName(editWindowNameNew.getText());
+                DatabaseWriter.modifyHeroName(iDDataPropagator.getHeroID(),editWindowNameNew.getText());
                 break;
             case CreatedProgress:
-                DatabaseWriter.modifyProgressName(editWindowNameNew.getText());
+                DatabaseWriter.modifyProgressName(iDDataPropagator.getProgressID(),editWindowNameNew.getText());
                 break;
             case CreatedRosters:
-                DatabaseWriter.modifyRosterName(editWindowNameNew.getText());
+                DatabaseWriter.modifyRosterName(iDDataPropagator.getRosterID(),editWindowNameNew.getText());
                 break;
         }
         editCloseAfterSaveActions();
@@ -77,9 +79,9 @@ public class EditWindowNameOnlyController implements Initializable {
      *
      */
     public void editCloseAfterSaveActions() {
-        if (speciesList != null) {
-            speciesList.setItems(DatabaseReader.getSpeciesList());
-            speciesList.getSelectionModel().clearSelection();
+        if (mainWindowDataPropagator.getSpeciesList() != null) {
+            mainWindowDataPropagator.getSpeciesList().setItems(DatabaseReader.getSpeciesList(mainWindowDataPropagator.getSpeciesIdMap()));
+            mainWindowDataPropagator.getSpeciesList().getSelectionModel().clearSelection();
         }
     }
 
@@ -111,8 +113,12 @@ public class EditWindowNameOnlyController implements Initializable {
         return editWindowNameOld;
     }
 
-    void setSpeciesList(ListView speciesList) {
-        this.speciesList = speciesList;
+    void setDataLists(DatabaseHolder.mainWindowData mainWindowDataPropagator) {
+        this.mainWindowDataPropagator = mainWindowDataPropagator;
+    }
+
+    void setIDData(DatabaseHolder.IDDataSet iDDataPropagator) {
+        this.iDDataPropagator = iDDataPropagator;
     }
 
 }

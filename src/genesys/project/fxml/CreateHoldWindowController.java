@@ -140,8 +140,9 @@ public class CreateHoldWindowController implements Initializable {
      */
     public Stage classCreatorWindowStage = new Stage();
     private ClassCreatorWindowController classCreatorWindowController;
-    private ListView speciesList;
+    private DatabaseHolder.mainWindowData mainWindowDataPropagator;
     private Label[] valuesLabels3;
+    private DatabaseHolder.IDDataSet iDDataPropagator;
 
     /**
      *
@@ -191,9 +192,10 @@ public class CreateHoldWindowController implements Initializable {
                 classCreatorWindowController = loader.getController();
                 classCreatorWindowController.setClassList1(classList1);
                 classCreatorWindowController.setClassesLeft3b(classesLeft3b);
+                classCreatorWindowController.setIDData(iDDataPropagator);
                 Scene scene = new Scene(root);
                 classCreatorWindowStage.setScene(scene);
-                classCreatorWindowStage.setTitle("Create Class for " + DatabaseHolder.holdCulture.getSpeciesName() + " - " + DatabaseHolder.holdCulture.getCultureName());
+                classCreatorWindowStage.setTitle("Create Class for " + DatabaseHolder.holdSpecies.getSpeciesName() + " - " + DatabaseHolder.holdCulture.getCultureName());
                 classCreatorWindowStage.show();
             } catch (IOException ex) {
                 ErrorController.ErrorControllerMethod(ex);
@@ -214,7 +216,7 @@ public class CreateHoldWindowController implements Initializable {
                 if (DatabaseHolder.holdClass[i].getSkills().length() > 2) {
                     DatabaseHolder.holdClass[i].setSkills(DatabaseHolder.holdClass[i].getSkills().substring(0, DatabaseHolder.holdClass[i].getSkills().length() - 1));
                 }
-                DatabaseWriter.modifyClass(i);
+                DatabaseWriter.modifyClass(DatabaseHolder.holdClass[i].getCreatedClassesID(), i);
             }
             //DatabaseModifier.modifyHero();
             //DatabaseModifier.modifyProgress();
@@ -225,8 +227,8 @@ public class CreateHoldWindowController implements Initializable {
             DatabaseWriter.writeToDB();
         }
 
-        speciesList.setItems(DatabaseReader.getSpeciesList());
-        speciesList.getSelectionModel().clearSelection();
+        mainWindowDataPropagator.getSpeciesList().setItems(DatabaseReader.getSpeciesList(mainWindowDataPropagator.getSpeciesIdMap()));
+        mainWindowDataPropagator.getSpeciesList().getSelectionModel().clearSelection();
         Stage stage = (Stage) createSpeciesFinalButton.getScene().getWindow();
         stage.hide();
     }
@@ -305,8 +307,12 @@ public class CreateHoldWindowController implements Initializable {
         }
     }
 
-    void setSpeciesList(ListView speciesList) {
-        this.speciesList = speciesList;
+    void setDataLists(DatabaseHolder.mainWindowData mainWindowDataPropagator) {
+        this.mainWindowDataPropagator = mainWindowDataPropagator;
+    }
+
+    void setIDData(DatabaseHolder.IDDataSet iDDataPropagator) {
+        this.iDDataPropagator = iDDataPropagator;
     }
 
 }

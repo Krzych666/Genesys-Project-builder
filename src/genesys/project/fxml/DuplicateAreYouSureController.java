@@ -5,6 +5,7 @@
  */
 package genesys.project.fxml;
 
+import genesys.project.builder.DatabaseHolder;
 import genesys.project.builder.DatabaseReader;
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -34,7 +35,8 @@ public class DuplicateAreYouSureController implements Initializable {
     @FXML
     private Button duplicateNoButton;
 
-    private ListView speciesList;
+    private DatabaseHolder.mainWindowData mainWindowDataPropagator;
+    private DatabaseHolder.IDDataSet iDDataPropagator;
     Window duplicateWindow;
 
     /**
@@ -49,8 +51,8 @@ public class DuplicateAreYouSureController implements Initializable {
     @FXML
     public void duplicateYesButtonActions() {
         duplicateWindowController.commenceDuplicating();
-        speciesList.setItems(DatabaseReader.getSpeciesList());
-        speciesList.getSelectionModel().clearSelection();
+        mainWindowDataPropagator.getSpeciesList().setItems(DatabaseReader.getSpeciesList(mainWindowDataPropagator.getSpeciesIdMap()));
+        mainWindowDataPropagator.getSpeciesList().getSelectionModel().clearSelection();
         Stage stage = (Stage) duplicateYesButton.getScene().getWindow();
         stage.hide();
         duplicateWindow.hide();
@@ -78,8 +80,12 @@ public class DuplicateAreYouSureController implements Initializable {
     public void initialize(URL url, ResourceBundle rb) {
     }
 
-    void setSpeciesList(ListView speciesList) {
-        this.speciesList = speciesList;
+    void setDataLists(DatabaseHolder.mainWindowData mainWindowDataPropagator) {
+        this.mainWindowDataPropagator = mainWindowDataPropagator;
+    }
+
+    void setIDData(DatabaseHolder.IDDataSet iDDataPropagator) {
+        this.iDDataPropagator = iDDataPropagator;
     }
 
     void getDeleteWindow(Window duplicateWindow) {

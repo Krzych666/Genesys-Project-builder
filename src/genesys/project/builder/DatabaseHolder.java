@@ -15,8 +15,10 @@ import genesys.project.builder.Enums.Enmuerations.MainLineageValue;
 import genesys.project.builder.Enums.Enmuerations.MainOrderValue;
 import genesys.project.builder.Enums.Enmuerations.MainRegionValue;
 import genesys.project.fxml.BuilderFXMLController;
+import java.util.Map;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.scene.control.ListView;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -361,6 +363,7 @@ public class DatabaseHolder {
     public static void loadSpeciesToHold(int selSpecies) {
         ObservableList data = DatabaseReader.getSpeciesData(selSpecies);
         holdSpecies = ASpecies.createASpecies(LifedomainValue.valueOf(data.get(0).toString().split("\\|")[0]));
+        holdSpecies.setCreatedSpeciesID(selSpecies);
         holdSpecies.setLifedomain(LifedomainValue.valueOf(data.get(0).toString().split("\\|")[0]));
         holdSpecies.setCharacteristicGroup(CharacteristicGroup.valueOf(data.get(0).toString().split("\\|")[1]));
         holdSpecies.setSpeciesName(data.get(0).toString().split("\\|")[2]);
@@ -376,6 +379,7 @@ public class DatabaseHolder {
      */
     public static void loadCultureToHold(int selCulture) {
         ObservableList data = DatabaseReader.getCultureData(selCulture);
+        holdCulture.setCreatedCulturesID(selCulture);
         holdCulture.setCultureName(data.get(0).toString().split("\\|")[0]);
         holdCulture.setParentSpeciesID(Integer.parseInt(data.get(0).toString().split("\\|")[1]));
         holdCulture.setAge(Integer.parseInt(data.get(0).toString().split("\\|")[2]));
@@ -391,6 +395,7 @@ public class DatabaseHolder {
      */
     public static void loadClassToHold(int selClass, int a) {
         ObservableList data = DatabaseReader.getClassData(selClass);
+        holdClass[a].setCreatedClassesID(selClass);
         holdClass[a].setClassName(data.get(0).toString().split("\\|")[0]);
         holdClass[a].setSkills(data.get(0).toString().split("\\|")[1] + ",");
         holdClass[a].setParentCultureId(Integer.parseInt(data.get(0).toString().split("\\|")[2]));
@@ -407,6 +412,7 @@ public class DatabaseHolder {
      */
     public static void loadHeroToHold(int selHero) {
         ObservableList data = DatabaseReader.getHeroData(selHero);
+        holdHero.setCreatedHeroesID(selHero);
         holdHero.setHeroName(data.get(0).toString().split("\\|")[0]);
         holdHero.setParentCultureId(Integer.parseInt(data.get(0).toString().split("\\|")[1]));
         holdHero.setAdvancements(data.get(0).toString().split("\\|")[2]);
@@ -421,6 +427,7 @@ public class DatabaseHolder {
      */
     public static void loadProgressToHold(int selProgress) {
         ObservableList data = DatabaseReader.getProgressData(selProgress);
+        holdProgress.setCreatedProgressID(selProgress);
         holdProgress.setParentCultureId(Integer.parseInt(data.get(0).toString().split("\\|")[0]));
         holdProgress.setProgressName(data.get(0).toString().split("\\|")[1]);
         holdProgress.setProgress(data.get(0).toString().split("\\|")[2]);
@@ -434,6 +441,7 @@ public class DatabaseHolder {
      */
     public static void loadRosterToHold(int selRoster) {
         ObservableList data = DatabaseReader.getRosterData(selRoster);
+        holdRoster.setCreatedRosterID(selRoster);
         holdRoster.setParentCultureId(Integer.parseInt(data.get(0).toString().split("\\|")[0]));
         holdRoster.setRosterName(data.get(0).toString().split("\\|")[1]);
         holdRoster.setRoster(data.get(0).toString().split("\\|")[2]);
@@ -447,6 +455,7 @@ public class DatabaseHolder {
      */
     public static void loadBattleToHold(int selBattle) {
         ObservableList data = DatabaseReader.getBattleData(selBattle);
+        holdBattle.setBattlesHistoryID(selBattle);
         holdBattle.setBattleName(data.get(0).toString().split("\\|")[0]);
         holdBattle.setUserSpeciesID(Integer.parseInt(data.get(0).toString().split("\\|")[1]));
         holdBattle.setUserCultureID(Integer.parseInt(data.get(0).toString().split("\\|")[2]));
@@ -956,6 +965,36 @@ public class DatabaseHolder {
             //return aClone;
             return (TheModifiers) super.clone();
         }
+    }
+
+    /**
+     * main Window Data
+     */
+    @Data
+    @NoArgsConstructor
+    public static class mainWindowData {
+
+        private ListView speciesList;
+        private ListView culturesList;
+        private ListView rostersList;
+        private ListView culturesProgressList;
+        private Map speciesIdMap;
+    }
+
+    /**
+     * main Window Data
+     */
+    @Data
+    @NoArgsConstructor
+    public static class IDDataSet {
+
+        private int speciesID;
+        private int cultureID;
+        private int classID;
+        private int heroID;
+        private int rosterID;
+        private int progressID;
+        private int battleID;
     }
 
 }

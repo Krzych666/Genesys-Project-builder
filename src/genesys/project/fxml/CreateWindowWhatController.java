@@ -5,6 +5,8 @@
  */
 package genesys.project.fxml;
 
+import genesys.project.builder.DatabaseHolder;
+import genesys.project.builder.DatabaseHolder.mainWindowData;
 import genesys.project.builder.GenesysProjectBuilder;
 import java.io.IOException;
 import java.net.URL;
@@ -55,7 +57,7 @@ public class CreateWindowWhatController implements Initializable {
     public Stage createRosterStage = new Stage();
     private CreateRosterController createRosterController;
 
-    private ListView speciesList;
+    private mainWindowData mainWindowDataPropagator;
 
     private void newSpeciesActions(String What) {
         try {
@@ -64,7 +66,7 @@ public class CreateWindowWhatController implements Initializable {
             Parent root = loader.load();
             Scene scene = new Scene(root);
             createSpeciesController = loader.getController();
-            createSpeciesController.setSpeciesList(speciesList);
+            createSpeciesController.setDataLists(mainWindowDataPropagator);
             createSpeciesStage.setScene(scene);
             createSpeciesStage.setTitle("Choose Lifedomain");
             if (What.equals("Choose")) {
@@ -89,7 +91,7 @@ public class CreateWindowWhatController implements Initializable {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/genesys/project/fxml/CreateCultureFXML.fxml"));
             Parent root = loader.load();
             createCultureController = loader.getController();
-            createCultureController.setSpeciesList(speciesList);
+            createCultureController.setDataLists(mainWindowDataPropagator);
             Scene scene = new Scene(root);
             createCultureStage.setScene(scene);
             createCultureStage.setTitle("Create Culture");
@@ -114,7 +116,7 @@ public class CreateWindowWhatController implements Initializable {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/genesys/project/fxml/CreateRosterFXML.fxml"));
             Parent root = loader.load();
             createRosterController = loader.getController();
-            createRosterController.setSpeciesList(speciesList);
+            createRosterController.setDataLists(mainWindowDataPropagator);
             Scene scene = new Scene(root);
             createRosterStage.setScene(scene);
             createRosterStage.setTitle("Create Roster");
@@ -144,8 +146,8 @@ public class CreateWindowWhatController implements Initializable {
 
     }
 
-    void setSpeciesList(ListView speciesList) {
-        this.speciesList = speciesList;
+    void setDataLists(DatabaseHolder.mainWindowData mainWindowDataPropagator) {
+        this.mainWindowDataPropagator = mainWindowDataPropagator;
     }
 
     void newWhat(String What, String Selection) {

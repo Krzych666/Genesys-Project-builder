@@ -19,6 +19,7 @@ import genesys.project.builder.Enums.Enmuerations.SecondaryChooserValue;
 import static genesys.project.builder.Enums.Enmuerations.PrimaryChooserValue.*;
 import static genesys.project.builder.Enums.Enmuerations.SecondaryChooserValue.*;
 import genesys.project.builder.DatabaseHolder;
+import genesys.project.builder.DatabaseHolder.mainWindowData;
 import genesys.project.builder.DatabaseHolder.AFey;
 import genesys.project.builder.DatabaseHolder.AReptilia;
 import genesys.project.builder.DatabaseHolder.ABiest;
@@ -181,7 +182,8 @@ public class SpeciesCreatorWindowController implements Initializable {
     public Stage createHoldWindowStage = new Stage();
     private CreateHoldWindowController createHoldWindowController;
 
-    private ListView speciesList;
+    private mainWindowData mainWindowDataPropagator;
+    private DatabaseHolder.IDDataSet iDDataPropagator;
     private Label[] valuesLabels;
     private Boolean simplifyToCoreSkills;
     private String primaryChooserString = "", secondaryChooserString = "";
@@ -323,13 +325,12 @@ public class SpeciesCreatorWindowController implements Initializable {
         DatabaseHolder.holdSpecies.setAge(DatabaseReader.findMaxAge(skillsList1));
         if (DatabaseHolder.isModyfying) {
             DatabaseHolder.isModyfying = !DatabaseHolder.isModyfying;
-            DatabaseWriter.modifySpecies();
+            DatabaseWriter.modifySpecies(DatabaseReader.getSpeciesID(DatabaseHolder.holdSpecies.getSpeciesName()));
             DatabaseHolder.holdSpecies = null;
             DatabaseHolder.modifiedHoldSpecies = null;
-            speciesList.setItems(DatabaseReader.getSpeciesList());
-            speciesList.getSelectionModel().clearSelection();
+            mainWindowDataPropagator.getSpeciesList().setItems(DatabaseReader.getSpeciesList(mainWindowDataPropagator.getSpeciesIdMap()));
+            mainWindowDataPropagator.getSpeciesList().getSelectionModel().clearSelection();
         } else {
-            DatabaseHolder.holdCulture.setSpeciesName(nameInputField.getText());
             DatabaseHolder.holdCulture.setCultureName(nameInputField.getText());
             if (createHoldWindowStage.isShowing()) {
                 createHoldWindowStage.requestFocus();
@@ -338,10 +339,11 @@ public class SpeciesCreatorWindowController implements Initializable {
                     FXMLLoader loader = new FXMLLoader(getClass().getResource("/genesys/project/fxml/CreateHoldWindowFXML.fxml"));
                     Parent root = loader.load();
                     createHoldWindowController = loader.getController();
-                    createHoldWindowController.setSpeciesList(speciesList);
+                    createHoldWindowController.setDataLists(mainWindowDataPropagator);
+                    createHoldWindowController.setIDData(iDDataPropagator);
                     Scene scene = new Scene(root);
                     createHoldWindowStage.setScene(scene);
-                    createHoldWindowStage.setTitle("Create Classes for " + DatabaseHolder.holdCulture.getSpeciesName() + " - " + DatabaseHolder.holdCulture.getCultureName());
+                    createHoldWindowStage.setTitle("Create Classes for " + DatabaseHolder.holdSpecies.getSpeciesName() + " - " + DatabaseHolder.holdCulture.getCultureName());
                     createHoldWindowStage.show();
                 } catch (IOException ex) {
                     ErrorController.ErrorControllerMethod(ex);
@@ -692,8 +694,12 @@ public class SpeciesCreatorWindowController implements Initializable {
         simplifyToCoreSkills = false;
     }
 
-    void setSpeciesList(ListView speciesList) {
-        this.speciesList = speciesList;
+    void setDataLists(DatabaseHolder.mainWindowData mainWindowDataPropagator) {
+        this.mainWindowDataPropagator = mainWindowDataPropagator;
+    }
+
+    void setIDData(DatabaseHolder.IDDataSet iDDataPropagator) {
+        this.iDDataPropagator = iDDataPropagator;
     }
 
 }

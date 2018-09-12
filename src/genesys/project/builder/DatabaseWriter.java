@@ -197,24 +197,19 @@ public class DatabaseWriter {
 // privatize
     /**
      *
+     * @param speciesID
      * @param newSpecies
      */
-    public static void modifySpeciesName(String newSpecies) {
-        executeSQL("UPDATE CreatedSpecies SET SpeciesName='" + newSpecies + "' WHERE SpeciesName='" + DatabaseHolder.holdSpecies.getSpeciesName() + "'");
-        executeSQL("UPDATE CreatedCultures SET SpeciesName='" + newSpecies + "' WHERE SpeciesName='" + DatabaseHolder.holdSpecies.getSpeciesName() + "'");
-        executeSQL("UPDATE CreatedClasses SET SpeciesName='" + newSpecies + "' WHERE SpeciesName='" + DatabaseHolder.holdSpecies.getSpeciesName() + "'");
-        executeSQL("UPDATE CreatedHeroes SET SpeciesName='" + newSpecies + "' WHERE SpeciesName='" + DatabaseHolder.holdSpecies.getSpeciesName() + "'");
-        executeSQL("UPDATE CreatedProgress SET SpeciesName='" + newSpecies + "' WHERE SpeciesName='" + DatabaseHolder.holdSpecies.getSpeciesName() + "'");
-        executeSQL("UPDATE CreatedRosters SET SpeciesName='" + newSpecies + "' WHERE SpeciesName='" + DatabaseHolder.holdSpecies.getSpeciesName() + "'");
-        executeSQL("UPDATE BattleHistory SET UserSpecies='" + newSpecies + "' WHERE UserSpecies='" + DatabaseHolder.holdSpecies.getSpeciesName() + "'");
-        executeSQL("UPDATE BattleHistory SET OponentSpecies='" + newSpecies + "' WHERE OponentSpecies='" + DatabaseHolder.holdSpecies.getSpeciesName() + "'");
+    public static void modifySpeciesName(int speciesID, String newSpecies) {
+        executeSQL("UPDATE CreatedSpecies SET SpeciesName='" + newSpecies + "' WHERE CreatedSpeciesID='" + speciesID + "'");
     }
 
     /**
      * modifySpecies
      *
+     * @param speciesID
      */
-    public static void modifySpecies() {
+    public static void modifySpecies(int speciesID) {
         executeSQL("UPDATE CreatedSpecies "
                 + "SET "
                 + "Lifedomain='" + DatabaseHolder.holdSpecies.getLifedomain()
@@ -224,47 +219,7 @@ public class DatabaseWriter {
                 + "', Skills='" + DatabaseHolder.holdSpecies.getSkills()
                 + "', SpeciesModifiers='" + DatabaseHolder.holdSpecies.getSpeciesModifiers()
                 + "' WHERE "
-                + "SpeciesName='" + DatabaseHolder.modifiedHoldSpecies.getSpeciesName() + "'");
-
-        executeSQL("UPDATE CreatedCultures "
-                + "SET "
-                + "SpeciesName='" + DatabaseHolder.holdSpecies.getSpeciesName()
-                + "' WHERE "
-                + "SpeciesName='" + DatabaseHolder.modifiedHoldSpecies.getSpeciesName() + "'");
-
-        executeSQL("UPDATE CreatedClasses "
-                + "SET "
-                + "SpeciesName='" + DatabaseHolder.holdSpecies.getSpeciesName()
-                + "' WHERE "
-                + "SpeciesName='" + DatabaseHolder.modifiedHoldSpecies.getSpeciesName() + "'");
-
-        executeSQL("UPDATE CreatedHeroes "
-                + "SET "
-                + "SpeciesName='" + DatabaseHolder.holdSpecies.getSpeciesName()
-                + "' WHERE "
-                + "SpeciesName='" + DatabaseHolder.modifiedHoldSpecies.getSpeciesName() + "'");
-
-        executeSQL("UPDATE CreatedProgress "
-                + "SET "
-                + "SpeciesName='" + DatabaseHolder.holdSpecies.getSpeciesName()
-                + "' WHERE "
-                + "SpeciesName='" + DatabaseHolder.modifiedHoldSpecies.getSpeciesName() + "'");
-
-        executeSQL("UPDATE CreatedRosters "
-                + "SET "
-                + "SpeciesName='" + DatabaseHolder.holdSpecies.getSpeciesName()
-                + "' WHERE "
-                + "SpeciesName='" + DatabaseHolder.modifiedHoldSpecies.getSpeciesName() + "'");
-        executeSQL("UPDATE BattleHistory "
-                + "SET "
-                + "UserSpecies='" + DatabaseHolder.holdSpecies.getSpeciesName()
-                + "' WHERE "
-                + "UserSpecies='" + DatabaseHolder.modifiedHoldSpecies.getSpeciesName() + "'");
-        executeSQL("UPDATE BattleHistory "
-                + "SET "
-                + "OponentSpecies='" + DatabaseHolder.holdSpecies.getSpeciesName()
-                + "' WHERE "
-                + "OponentSpecies='" + DatabaseHolder.modifiedHoldSpecies.getSpeciesName() + "'");
+                + "CreatedSpeciesID='" + speciesID + "'");
         checkClassSkillsSpecies();
     }
 
@@ -699,11 +654,10 @@ public class DatabaseWriter {
     /**
      *
      * @param selSpeciesID
-     * @param selCultureID
      * @param newSpeciesID
      *
      */
-    public static void duplicateAllCulturesAndRelatedDataFromSpecies(int selSpeciesID, int selCultureID, int newSpeciesID) {
+    public static void duplicateAllCulturesAndRelatedDataFromSpecies(int selSpeciesID, int newSpeciesID) {
         try {
             chooseConnection(UseCases.Userdb);
             PreparedStatement stmt;

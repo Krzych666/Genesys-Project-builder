@@ -5,6 +5,7 @@
  */
 package genesys.project.fxml;
 
+import genesys.project.builder.DatabaseHolder;
 import genesys.project.builder.DatabaseReader;
 import genesys.project.builder.DatabaseWriter;
 import java.net.URL;
@@ -35,7 +36,8 @@ public class DeleteAreYouSureController implements Initializable {
     @FXML
     private Button deleteNoButton;
 
-    private ListView speciesList;
+    private DatabaseHolder.mainWindowData mainWindowDataPropagator;
+    private DatabaseHolder.IDDataSet iDDataPropagator;
     Window deleteWindow;
 
     /**
@@ -44,9 +46,9 @@ public class DeleteAreYouSureController implements Initializable {
     @FXML
     public void deleteYesButtonActions() {
         DatabaseWriter.commenceDeleting();
-        if (speciesList != null) {
-            speciesList.setItems(DatabaseReader.getSpeciesList());
-            speciesList.getSelectionModel().clearSelection();
+        if (mainWindowDataPropagator.getSpeciesList() != null) {
+            mainWindowDataPropagator.getSpeciesList().setItems(DatabaseReader.getSpeciesList(mainWindowDataPropagator.getSpeciesIdMap()));
+            mainWindowDataPropagator.getSpeciesList().getSelectionModel().clearSelection();
         }
         Stage stage = (Stage) deleteYesButton.getScene().getWindow();
         stage.hide();
@@ -75,8 +77,12 @@ public class DeleteAreYouSureController implements Initializable {
     public void initialize(URL url, ResourceBundle rb) {
     }
 
-    void setSpeciesList(ListView speciesList) {
-        this.speciesList = speciesList;
+    void setDataLists(DatabaseHolder.mainWindowData mainWindowDataPropagator) {
+        this.mainWindowDataPropagator = mainWindowDataPropagator;
+    }
+
+    void setIDData(DatabaseHolder.IDDataSet iDDataPropagator) {
+        this.iDDataPropagator = iDDataPropagator;
     }
 
     void setDeleteWindow(Window deleteWindow) {

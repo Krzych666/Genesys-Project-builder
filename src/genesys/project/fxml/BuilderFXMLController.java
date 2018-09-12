@@ -9,6 +9,7 @@ import genesys.project.builder.BuilderCORE;
 import genesys.project.builder.DatabaseReader;
 import genesys.project.builder.DatabaseHolder;
 import genesys.project.builder.DatabaseHolder.TheModifiers;
+import genesys.project.builder.DatabaseHolder.mainWindowData;
 import genesys.project.builder.Enums.Enmuerations.LifedomainValue;
 import genesys.project.builder.Enums.Enmuerations.CharacteristicGroup;
 import genesys.project.builder.GenesysProjectBuilder;
@@ -68,8 +69,8 @@ public class BuilderFXMLController implements Initializable {
     /**
      * speciesList - speciesId Map
      */
-    public static Map speciesIdMap;
-    public static int speciesID;
+    private static Map speciesIdMap;
+    private static int speciesID;
     @FXML
     private ListView classList;
     /**
@@ -216,6 +217,7 @@ public class BuilderFXMLController implements Initializable {
 
     private TextField[] valuesLabels;
     private Boolean simplifyToCoreSkills;
+    private mainWindowData mainWindowDataPropagator;
 
     MenuItem createIt = new MenuItem("Create new");
     MenuItem editIt = new MenuItem("Edit selected");
@@ -229,7 +231,7 @@ public class BuilderFXMLController implements Initializable {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/genesys/project/fxml/EditWindowFXML.fxml"));
             Parent root = loader.load();
             editWindowController = loader.getController();
-            editWindowController.setDataLists(speciesList, culturesList, rostersList, cultureProgressList);
+            editWindowController.setDataLists(mainWindowDataPropagator);
             Scene scene = new Scene(root);
             editWindowStage.setScene(scene);
             editWindowStage.setTitle("Edit");
@@ -255,7 +257,7 @@ public class BuilderFXMLController implements Initializable {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/genesys/project/fxml/CreateWindowWhatFXML.fxml"));
             Parent root = loader.load();
             createWindowWhatController = loader.getController();
-            createWindowWhatController.setSpeciesList(speciesList);
+            createWindowWhatController.setDataLists(mainWindowDataPropagator);
             Scene scene = new Scene(root);
             createWindowWhatStage.setScene(scene);
             createWindowWhatStage.setTitle("Create");
@@ -321,7 +323,7 @@ public class BuilderFXMLController implements Initializable {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/genesys/project/fxml/DuplicateWindowFXML.fxml"));
             Parent root = loader.load();
             duplicateWindowController = loader.getController();
-            duplicateWindowController.setDataLists(speciesList, culturesList, rostersList, cultureProgressList);
+            duplicateWindowController.setDataLists(mainWindowDataPropagator);
             duplicateWindowController.setDuplicateWindowController(duplicateWindowController);
             Scene scene = new Scene(root);
             duplicateWindowStage.setScene(scene);
@@ -347,7 +349,7 @@ public class BuilderFXMLController implements Initializable {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/genesys/project/fxml/DeleteWindowFXML.fxml"));
             Parent root = loader.load();
             deleteWindowController = loader.getController();
-            deleteWindowController.setDataLists(speciesList, culturesList, rostersList, cultureProgressList);
+            deleteWindowController.setDataLists(mainWindowDataPropagator);
             Scene scene = new Scene(root);
             deleteWindowStage.setScene(scene);
             deleteWindowStage.setTitle("Delete");
@@ -753,6 +755,14 @@ public class BuilderFXMLController implements Initializable {
         }
     }
 
+    public void loadMainWindowData(ListView speciesList, ListView culturesList, ListView rostersList, ListView cultureProgressList, Map speciesIdMap) {
+        mainWindowDataPropagator.setSpeciesList(speciesList);
+        mainWindowDataPropagator.setCulturesList(culturesList);
+        mainWindowDataPropagator.setRostersList(rostersList);
+        mainWindowDataPropagator.setCulturesProgressList(cultureProgressList);
+        mainWindowDataPropagator.setSpeciesIdMap(speciesIdMap);
+    }
+
     /**
      * Initializes the controller class.
      *
@@ -817,5 +827,6 @@ public class BuilderFXMLController implements Initializable {
 
         progressMenu.setDisable(true);
         battlesMenu.setDisable(true);
+        loadMainWindowData(speciesList, culturesList, rostersList, cultureProgressList, speciesIdMap);
     }
 }

@@ -866,6 +866,21 @@ public class DatabaseReader {
         return data;
     }
 
+    public static int getSpeciesID(String speciesName) {
+        ObservableList data = FXCollections.observableArrayList();
+        try {
+            chooseConnection(UseCases.Userdb);
+            PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT * FROM CreatedSpecies WHERE SpeciesName = ?");
+            stmt.setString(1, speciesName);
+            String[] columns = {"CreatedSpeciesID"};
+            data = BuilderCORE.getData(stmt, columns, null, 0);
+        } catch (SQLException ex) {
+            ErrorController.ErrorControllerMethod(ex);
+            Logger.getLogger(DatabaseReader.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return Integer.parseInt(data.get(0).toString());
+    }
+
     public static int getCultureID(int parentSpeciesID, String cultureName) {
         ObservableList data = FXCollections.observableArrayList();
         try {
@@ -882,6 +897,22 @@ public class DatabaseReader {
         return Integer.parseInt(data.get(0).toString());
     }
 
+    public static int getClassID(int parentCultureID, String className) {
+        ObservableList data = FXCollections.observableArrayList();
+        try {
+            chooseConnection(UseCases.Userdb);
+            PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT * FROM CreatedClasses WHERE parentCultureId = ? AND ClassName = ?");
+            stmt.setInt(1, parentCultureID);
+            stmt.setString(2, className);
+            String[] columns = {"CreatedClassesID"};
+            data = BuilderCORE.getData(stmt, columns, null, 0);
+        } catch (SQLException ex) {
+            ErrorController.ErrorControllerMethod(ex);
+            Logger.getLogger(DatabaseReader.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return Integer.parseInt(data.get(0).toString());
+    }
+
     public static int getHeroID(int parentCultureID, String heroName) {
         ObservableList data = FXCollections.observableArrayList();
         try {
@@ -890,6 +921,39 @@ public class DatabaseReader {
             stmt.setInt(1, parentCultureID);
             stmt.setString(2, heroName);
             String[] columns = {"CreatedHeroesID"};
+            data = BuilderCORE.getData(stmt, columns, null, 0);
+        } catch (SQLException ex) {
+            ErrorController.ErrorControllerMethod(ex);
+            Logger.getLogger(DatabaseReader.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return Integer.parseInt(data.get(0).toString());
+    }
+
+    public static int getProgressID(int parentCultureID, String progressName) {
+        ObservableList data = FXCollections.observableArrayList();
+        try {
+            chooseConnection(UseCases.Userdb);
+            PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT * FROM CreatedProgress WHERE parentCultureId = ? AND ProgressName = ?");
+            stmt.setInt(1, parentCultureID);
+            stmt.setString(2, progressName);
+            String[] columns = {"CreatedProgressID"};
+            data = BuilderCORE.getData(stmt, columns, null, 0);
+        } catch (SQLException ex) {
+            ErrorController.ErrorControllerMethod(ex);
+            Logger.getLogger(DatabaseReader.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return Integer.parseInt(data.get(0).toString());
+    }
+
+    public static int getBattleID(int parentCultureID, String battleName) {
+        ObservableList data = FXCollections.observableArrayList();
+        try {
+            chooseConnection(UseCases.Userdb);
+            PreparedStatement stmt = BuilderCORE.getConnection().prepareStatement("SELECT * FROM BattlesHistory WHERE (UserCultureID = ? OR OponentCultureID = ?) AND BattleName = ?");
+            stmt.setInt(1, parentCultureID);
+            stmt.setInt(2, parentCultureID);
+            stmt.setString(3, battleName);
+            String[] columns = {"BattlesHistoryID"};
             data = BuilderCORE.getData(stmt, columns, null, 0);
         } catch (SQLException ex) {
             ErrorController.ErrorControllerMethod(ex);

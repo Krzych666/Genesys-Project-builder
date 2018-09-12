@@ -154,6 +154,7 @@ public class RosterCreatorWindowController implements Initializable {
      */
     public Stage rosterAddUnitStage = new Stage();
     private RosterAddUnitController rosterAddUnitController;
+    private DatabaseHolder.IDDataSet iDDataPropagator;
 
     /**
      * classListMousePressedActions
@@ -206,7 +207,7 @@ public class RosterCreatorWindowController implements Initializable {
                     rosterAddUnitController = loader.getController();
                     rosterAddUnitController.setNameBasePointsRoster(classList.getSelectionModel().getSelectedItem().toString(), Integer.parseInt(pointsPerModelValue.getText()), Roster, currentPointsValue, maxPointsValue);
                     rosterAddUnitStage.setScene(scene);
-                    rosterAddUnitStage.setTitle("Add Unit to " + DatabaseHolder.holdRoster.getRosterName() + " for " + DatabaseHolder.holdRoster.getSpeciesName() + " - " + DatabaseHolder.holdRoster.getCultureName());
+                    rosterAddUnitStage.setTitle("Add Unit to " + DatabaseHolder.holdRoster.getRosterName() + " for " + DatabaseHolder.holdSpecies.getSpeciesName() + " - " + DatabaseHolder.holdCulture.getCultureName());
                     rosterAddUnitStage.show();
                 } catch (IOException ex) {
                     ErrorController.ErrorControllerMethod(ex);
@@ -263,7 +264,7 @@ public class RosterCreatorWindowController implements Initializable {
         DatabaseHolder.holdRoster.setRoster(rosterPrint.toString());
         if (DatabaseHolder.isModyfying) {
             DatabaseHolder.isModyfying = !DatabaseHolder.isModyfying;
-            DatabaseWriter.modifyRoster();
+            DatabaseWriter.modifyRoster(iDDataPropagator.getRosterID());
         } else {
             DatabaseWriter.writeRosterToDB();
         }
@@ -319,5 +320,9 @@ public class RosterCreatorWindowController implements Initializable {
 
     void setMaxPoints(String maxPoints) {
         maxPointsValue.setText(maxPoints);
+    }
+    
+        void setIDData(DatabaseHolder.IDDataSet iDDataPropagator) {
+        this.iDDataPropagator = iDDataPropagator;
     }
 }

@@ -51,7 +51,7 @@ public class CreateSpeciesController implements Initializable {
     public Stage speciesCreatorWindowStage = new Stage();
     private SpeciesCreatorWindowController speciesCreatorWindowController;
 
-    private ListView speciesList;
+    private DatabaseHolder.mainWindowData mainWindowDataPropagator;
 
     /**
      *
@@ -118,7 +118,7 @@ public class CreateSpeciesController implements Initializable {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/genesys/project/fxml/SpeciesCreatorWindowFXML.fxml"));
             Parent root = loader.load();
             speciesCreatorWindowController = loader.getController();
-            speciesCreatorWindowController.setSpeciesList(speciesList);
+            speciesCreatorWindowController.setDataLists(mainWindowDataPropagator);
             Scene scene = new Scene(root);
             speciesCreatorWindowStage.setScene(scene);
             speciesCreatorWindowStage.setTitle("Create Species");
@@ -140,8 +140,8 @@ public class CreateSpeciesController implements Initializable {
 
     }
 
-    void setSpeciesList(ListView speciesList) {
-        this.speciesList = speciesList;
+    void setDataLists(DatabaseHolder.mainWindowData mainWindowDataPropagator) {
+        this.mainWindowDataPropagator = mainWindowDataPropagator;
     }
 
     void newWhat(String What)  {

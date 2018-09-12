@@ -9,8 +9,10 @@ import genesys.project.builder.AvailableSkillsLister;
 import genesys.project.builder.BuilderCORE;
 import genesys.project.builder.DatabaseReader;
 import genesys.project.builder.DatabaseHolder;
+import static genesys.project.builder.DatabaseHolder.holdClass;
 import genesys.project.builder.DatabaseWriter;
 import java.net.URL;
+import java.util.Map;
 import java.util.ResourceBundle;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -154,15 +156,16 @@ public class ClassCreatorWindowController implements Initializable {
     private Label classesLeft3b;
     private Label[] valuesLabels2;
     private ListView classList1;
-    private ListView speciesList;
+    private DatabaseHolder.mainWindowData mainWindowDataPropagator;
     private Boolean simplifyToCoreSkills;
+    private DatabaseHolder.IDDataSet iDDataPropagator;
 
     /**
      * skillsList2MousePressedActions
      *
      */
     @FXML
-    public void skillsList2MousePressedActions()  {
+    public void skillsList2MousePressedActions() {
         availableSkillsList1.getSelectionModel().clearSelection();
         skillsList4.getSelectionModel().clearSelection();
         if (!skillsList2.getSelectionModel().isEmpty()) {
@@ -175,7 +178,7 @@ public class ClassCreatorWindowController implements Initializable {
      *
      */
     @FXML
-    public void availableSkillsList1MousePressedActions()  {
+    public void availableSkillsList1MousePressedActions() {
         skillsList2.getSelectionModel().clearSelection();
         skillsList4.getSelectionModel().clearSelection();
         if (!availableSkillsList1.getSelectionModel().isEmpty()) {
@@ -188,7 +191,7 @@ public class ClassCreatorWindowController implements Initializable {
      *
      */
     @FXML
-    public void skillsList4MousePressedActions()  {
+    public void skillsList4MousePressedActions() {
         availableSkillsList1.getSelectionModel().clearSelection();
         skillsList2.getSelectionModel().clearSelection();
         if (!skillsList4.getSelectionModel().isEmpty()) {
@@ -196,7 +199,7 @@ public class ClassCreatorWindowController implements Initializable {
         }
     }
 
-    private void setAvailableSkills(ObservableList exclude)  {
+    private void setAvailableSkills(ObservableList exclude) {
         availableSkillsList1.setItems(AvailableSkillsLister.getAvailableSkills(DatabaseHolder.holdSpecies.getLifedomain(), DatabaseHolder.holdCulture.getAge(), skillSubSetChooser2.getSelectionModel().getSelectedItem().toString(), exclude));
         availableSkillsList1.setCellFactory(new Callback<ListView<String>, ListCell<String>>() {
             @Override
@@ -230,7 +233,7 @@ public class ClassCreatorWindowController implements Initializable {
      * @
      */
     @FXML
-    public void basedOnChooserItemStateChangedActions()  {
+    public void basedOnChooserItemStateChangedActions() {
         DatabaseHolder.holdClass[DatabaseHolder.b].setBasedOn(basedOnChooser.getSelectionModel().getSelectedItem().toString());
         showBase();
         setAvailableSkills(BuilderCORE.mergeListViews(skillsList2, skillsList4));
@@ -241,7 +244,7 @@ public class ClassCreatorWindowController implements Initializable {
      * @
      */
     @FXML
-    public void classTypeChooserItemStateChangedActions()  {
+    public void classTypeChooserItemStateChangedActions() {
         DatabaseHolder.holdClass[DatabaseHolder.b].setType(classTypeChooser.getSelectionModel().getSelectedItem().toString());
         showBase();
         setAvailableSkills(BuilderCORE.mergeListViews(skillsList2, skillsList4));
@@ -252,7 +255,7 @@ public class ClassCreatorWindowController implements Initializable {
      * @
      */
     @FXML
-    public void skillSetChooser2ItemStateChangedActions()  {
+    public void skillSetChooser2ItemStateChangedActions() {
         if (skillSetChooser2.getSelectionModel().isEmpty()) {
             skillSetChooser2.setItems(DatabaseReader.getSkillSet());
             skillSetChooser2.getSelectionModel().select(0);
@@ -266,7 +269,7 @@ public class ClassCreatorWindowController implements Initializable {
      * @
      */
     @FXML
-    public void skillSubSetChooser2ItemStateChangedActions()  {
+    public void skillSubSetChooser2ItemStateChangedActions() {
         if (skillSubSetChooser2.getSelectionModel().isEmpty()) {
             skillSubSetChooser2.setItems(DatabaseReader.getSubSkillSet(skillSetChooser2.getSelectionModel().getSelectedItem().toString(), DatabaseHolder.holdSpecies.getCharacteristicGroup().toString(), null)); //TODO beast envir
             skillSubSetChooser2.getSelectionModel().select(0);
@@ -279,7 +282,7 @@ public class ClassCreatorWindowController implements Initializable {
      * @
      */
     @FXML
-    public void moveSkillButton2Actions()  {
+    public void moveSkillButton2Actions() {
         moveSkill1();
         availableSkillsList1.getSelectionModel().clearSelection();
         setAvailableSkills(BuilderCORE.mergeListViews(skillsList2, skillsList4));
@@ -295,7 +298,7 @@ public class ClassCreatorWindowController implements Initializable {
         subSkillText2.setText("");
     }
 
-    void moveSkill1()  {
+    void moveSkill1() {
         if (availableSkillsList1.getSelectionModel().getSelectedItem() != null) {
             //SkillsLeftActual2.setText(skillsLeftModify(AvailableSkillsList1.getSelectedValue(),true));
             DatabaseHolder.holdClass[DatabaseHolder.b].addSkills(availableSkillsList1.getSelectionModel().getSelectedItem().toString());
@@ -342,7 +345,7 @@ public class ClassCreatorWindowController implements Initializable {
      *
      * @
      */
-    public void showBase()  {
+    public void showBase() {
         if ("<base species>".equals(basedOnChooser.getSelectionModel().getSelectedItem().toString())) {
             skillsList4.setItems(AvailableSkillsLister.getAddedSkills(DatabaseHolder.holdSpecies.getSkills()));
             BuilderCORE.getSkillModifiers(DatabaseHolder.ruledskills);
@@ -361,7 +364,7 @@ public class ClassCreatorWindowController implements Initializable {
      *
      * @
      */
-    public void populateDropdownsClassType()  {
+    public void populateDropdownsClassType() {
         ObservableList tmp = FXCollections.observableArrayList();
         tmp.setAll((Object[]) DatabaseReader.getClassTypes(DatabaseHolder.holdSpecies.getLifedomain().toString()));
         classTypeChooser.setItems(tmp);
@@ -373,17 +376,17 @@ public class ClassCreatorWindowController implements Initializable {
      *
      */
     @FXML
-    public void createFinish2Actions()  {
+    public void createFinish2Actions() {
         //SpeciesCreatorWindowController.SetMaxClassNumber(); //why?
         Stage stage = (Stage) createFinish2.getScene().getWindow();
         stage.hide();
         if (DatabaseHolder.classIsModyfying) {
             DatabaseHolder.classIsModyfying = !DatabaseHolder.classIsModyfying;
-            DatabaseWriter.modifyClass(0);
+            DatabaseWriter.modifyClass(holdClass[0].getCreatedClassesID(), 0);
             DatabaseHolder.holdSpecies = null;
             DatabaseHolder.modifiedHoldSpecies = null;
-            speciesList.setItems(DatabaseReader.getSpeciesList());
-            speciesList.getSelectionModel().clearSelection();
+            mainWindowDataPropagator.getSpeciesList().setItems(DatabaseReader.getSpeciesList(mainWindowDataPropagator.getSpeciesIdMap()));
+            mainWindowDataPropagator.getSpeciesList().getSelectionModel().clearSelection();
         } else {
             DatabaseHolder.numberOfClases++;
             DatabaseHolder.recognizeClassDo(DatabaseHolder.holdSpecies.getLifedomain(), DatabaseHolder.holdClass[DatabaseHolder.b].getType(), true);
@@ -399,7 +402,7 @@ public class ClassCreatorWindowController implements Initializable {
      *
      * @
      */
-    public void populateLabels()  {
+    public void populateLabels() {
         for (int i = 0; i < valuesLabels2.length; i++) {
             valuesLabels2[i].setText(DatabaseReader.getCharacteristics(DatabaseHolder.holdSpecies.getLifedomain().toString(), DatabaseHolder.holdSpecies.getCharacteristicGroup().toString())[i]);
         }
@@ -429,14 +432,14 @@ public class ClassCreatorWindowController implements Initializable {
     }
 
     @FXML
-    private void subSkillsListMouse2Pressed()  {
+    private void subSkillsListMouse2Pressed() {
         if (!subSkillsList2.getSelectionModel().isEmpty()) {
             subSkillText2.setText(BuilderCORE.generateSubSkillText(subSkillsList2.getSelectionModel().getSelectedItem().toString(), !simplifyToCoreSkills));
         }
     }
 
     @FXML
-    private void showAsCoreSkillsPressed()  {
+    private void showAsCoreSkillsPressed() {
         simplifyToCoreSkills = showAsCoreSkills.isSelected();
         int i = -1;
         if (!subSkillsList2.getSelectionModel().isEmpty()) {
@@ -522,8 +525,12 @@ public class ClassCreatorWindowController implements Initializable {
         this.classList1 = classList1;
     }
 
-    void setSpeciesList(ListView speciesList) {
-        this.speciesList = speciesList;
+    void setDataLists(DatabaseHolder.mainWindowData mainWindowDataPropagator) {
+        this.mainWindowDataPropagator = mainWindowDataPropagator;
+    }
+    
+        void setIDData(DatabaseHolder.IDDataSet iDDataPropagator) {
+        this.iDDataPropagator = iDDataPropagator;
     }
 
 }

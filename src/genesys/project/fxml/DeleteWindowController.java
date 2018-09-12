@@ -7,6 +7,8 @@ package genesys.project.fxml;
 
 import genesys.project.builder.BuilderCORE;
 import genesys.project.builder.DatabaseHolder;
+import genesys.project.builder.DatabaseHolder.IDDataSet;
+import genesys.project.builder.DatabaseHolder.mainWindowData;
 import genesys.project.builder.DatabaseReader;
 import genesys.project.builder.DatabaseWriter;
 import java.io.IOException;
@@ -69,11 +71,9 @@ public class DeleteWindowController implements Initializable {
     public Stage deleteAreYouSureStage = new Stage();
     private DeleteAreYouSureController deleteAreYouSureController;
 
-    private ListView speciesList;
-    private ListView cultureList;
-    private ListView rosterList;
-    private ListView cultureProgressList;
     private Label toDelete;
+    private mainWindowData mainWindowDataPropagator;
+    private IDDataSet iDDataPropagator;
 
     /**
      *
@@ -81,7 +81,8 @@ public class DeleteWindowController implements Initializable {
      */
     @FXML
     public void speciesDeleteDropdownItemStateChangedActions() {
-        cultureDeleteDropdown.setItems(DatabaseReader.populateDropdownsCultures(speciesDeleteDropdown.getSelectionModel().getSelectedItem().toString()));
+        iDDataPropagator.setSpeciesID(Integer.parseInt(mainWindowDataPropagator.getSpeciesIdMap().get(mainWindowDataPropagator.getSpeciesList().getSelectionModel().getSelectedIndex()).toString()));
+        cultureDeleteDropdown.setItems(DatabaseReader.populateDropdownsCultures(iDDataPropagator.getSpeciesID()));
         cultureDeleteDropdown.getSelectionModel().select(0);
     }
 
@@ -94,17 +95,11 @@ public class DeleteWindowController implements Initializable {
         if (cultureDeleteDropdown.getSelectionModel().isEmpty()) {
             cultureDeleteDropdown.getSelectionModel().select(0);
         }
-        classDeleteDropdown.setItems(
-                DatabaseReader.populateDropdownsClasses(
-                        speciesDeleteDropdown.getSelectionModel().getSelectedItem().toString(),
-                        cultureDeleteDropdown.getSelectionModel().getSelectedItem().toString()));
+        iDDataPropagator.setCultureID(DatabaseReader.getCultureID(iDDataPropagator.getSpeciesID(), classDeleteDropdown.getSelectionModel().getSelectedItem().toString()));
+        classDeleteDropdown.setItems(DatabaseReader.populateDropdownsClasses(iDDataPropagator.getCultureID()));
         classDeleteDropdown.getSelectionModel().select(0);
 
-        heroDeleteDropdown.setItems(
-                DatabaseReader.populateDropdownsHeroes(
-                        speciesDeleteDropdown.getSelectionModel().getSelectedItem().toString(),
-                        cultureDeleteDropdown.getSelectionModel().getSelectedItem().toString(),
-                        classDeleteDropdown.getSelectionModel().getSelectedItem().toString()));
+        heroDeleteDropdown.setItems(DatabaseReader.populateDropdownsHeroes(iDDataPropagator.getCultureID(), iDDataPropagator.getClassID()));
         heroDeleteDropdown.getSelectionModel().select(0);
 
         progressDeleteDropdown.setItems(FXCollections.observableArrayList(DatabaseHolder.TOPDROP));
@@ -115,10 +110,7 @@ public class DeleteWindowController implements Initializable {
                         "both"));
         progressDeleteDropdown.getSelectionModel().select(0);
 
-        rosterDeleteDropdown.setItems(
-                DatabaseReader.populateDropdownsRosters(
-                        speciesDeleteDropdown.getSelectionModel().getSelectedItem().toString(),
-                        cultureDeleteDropdown.getSelectionModel().getSelectedItem().toString()));
+        rosterDeleteDropdown.setItems(DatabaseReader.populateDropdownsRosters(iDDataPropagator.getCultureID()));
         rosterDeleteDropdown.getSelectionModel().select(0);
     }
 
@@ -131,13 +123,9 @@ public class DeleteWindowController implements Initializable {
         if (classDeleteDropdown.getSelectionModel().isEmpty()) {
             classDeleteDropdown.getSelectionModel().select(0);
         }
+        iDDataPropagator.setClassID(DatabaseReader.getClassID(iDDataPropagator.getCultureID(), classDeleteDropdown.getSelectionModel().getSelectedItem().toString()));
         Object sel = classDeleteDropdown.getSelectionModel().getSelectedItem();
-
-        heroDeleteDropdown.setItems(
-                DatabaseReader.populateDropdownsHeroes(
-                        speciesDeleteDropdown.getSelectionModel().getSelectedItem().toString(),
-                        cultureDeleteDropdown.getSelectionModel().getSelectedItem().toString(),
-                        classDeleteDropdown.getSelectionModel().getSelectedItem().toString()));
+        heroDeleteDropdown.setItems(DatabaseReader.populateDropdownsHeroes(iDDataPropagator.getCultureID(), iDDataPropagator.getClassID()));
         heroDeleteDropdown.getSelectionModel().select(0);
 
         progressDeleteDropdown.getSelectionModel().select(0);
@@ -150,6 +138,7 @@ public class DeleteWindowController implements Initializable {
      */
     @FXML
     public void heroDeleteDropdownItemStateChangedActions() {
+        iDDataPropagator.setHeroID(DatabaseReader.getHeroID(iDDataPropagator.getCultureID(), heroDeleteDropdown.getSelectionModel().getSelectedItem().toString()));
         Object sel = heroDeleteDropdown.getSelectionModel().getSelectedItem();
         progressDeleteDropdown.getSelectionModel().select(0);
         rosterDeleteDropdown.getSelectionModel().select(0);
@@ -173,6 +162,7 @@ public class DeleteWindowController implements Initializable {
      */
     @FXML
     public void rosterDeleteDropdownItemStateChangedActions() {
+        iDDataPropagator.setRosterID(DatabaseReader.getHeroID(iDDataPropagator.getCultureID(), rosterDeleteDropdown.getSelectionModel().getSelectedItem().toString()));
         Object sel = rosterDeleteDropdown.getSelectionModel().getSelectedItem();
         heroDeleteDropdown.getSelectionModel().select(0);
         progressDeleteDropdown.getSelectionModel().select(0);
@@ -194,7 +184,8 @@ public class DeleteWindowController implements Initializable {
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("/genesys/project/fxml/DeleteAreYouSureFXML.fxml"));
                 Parent root = loader.load();
                 deleteAreYouSureController = loader.getController();
-                deleteAreYouSureController.setSpeciesList(speciesList);
+                deleteAreYouSureController.setDataLists(mainWindowDataPropagator);
+                deleteAreYouSureController.setIDData(iDDataPropagator);
                 deleteAreYouSureController.setDeleteWindow(deleteFinishButton.getScene().getWindow());
                 Scene scene = new Scene(root);
                 deleteAreYouSureStage.setScene(scene);
@@ -403,22 +394,19 @@ public class DeleteWindowController implements Initializable {
         cultureDeleteDropdownItemStateChangedActions();
     }
 
-    void setDataLists(ListView speciesList, ListView cultureList, ListView rosterList, ListView cultureProgressList) {
-        this.speciesList = speciesList;
-        this.cultureList = cultureList;
-        this.rosterList = rosterList;
-        this.cultureProgressList = cultureProgressList;
+    void setDataLists(DatabaseHolder.mainWindowData mainWindowDataPropagator) {
+        this.mainWindowDataPropagator = mainWindowDataPropagator;
     }
 
     void setSelected() {
-        if (!speciesList.getSelectionModel().isEmpty()) {
-            speciesDeleteDropdown.getSelectionModel().select(speciesList.getSelectionModel().getSelectedItem());
+        if (!mainWindowDataPropagator.getSpeciesList().getSelectionModel().isEmpty()) {
+            speciesDeleteDropdown.getSelectionModel().select(mainWindowDataPropagator.getSpeciesList().getSelectionModel().getSelectedItem());
             speciesDeleteDropdownItemStateChangedActions();
-            if (!cultureList.getSelectionModel().isEmpty() && !speciesList.isFocused()) {
-                cultureDeleteDropdown.getSelectionModel().select(cultureList.getSelectionModel().getSelectedItem());
+            if (!mainWindowDataPropagator.getCulturesList().getSelectionModel().isEmpty() && !mainWindowDataPropagator.getSpeciesList().isFocused()) {
+                cultureDeleteDropdown.getSelectionModel().select(mainWindowDataPropagator.getCulturesList().getSelectionModel().getSelectedItem());
                 cultureDeleteDropdownItemStateChangedActions();
-                if (!rosterList.getSelectionModel().isEmpty() && !cultureList.isFocused()) {
-                    rosterDeleteDropdown.getSelectionModel().select(rosterList.getSelectionModel().getSelectedItem());
+                if (!mainWindowDataPropagator.getRostersList().getSelectionModel().isEmpty() && !mainWindowDataPropagator.getCulturesList().isFocused()) {
+                    rosterDeleteDropdown.getSelectionModel().select(mainWindowDataPropagator.getRostersList().getSelectionModel().getSelectedItem());
                     rosterDeleteDropdownItemStateChangedActions();
                 }
             }
